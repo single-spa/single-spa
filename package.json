@@ -1,0 +1,25 @@
+{
+  "name": "single-spa",
+  "version": "1.0.0",
+  "description": "Multiple applications, one page",
+  "main": "dist/single-spa.js",
+  "scripts": {
+    "build": "babel src/single-spa.js --out-file dist/single-spa.js"
+  },
+  "keywords": [
+    "single",
+    "page",
+    "application",
+    "spa",
+    "multiple",
+    "lifecycle"
+  ],
+  "author": "Joel Denning",
+  "license": "MIT",
+  "dependencies": {
+    "es6-module-loader": "0.17.7"
+  },
+  "devDependencies": {
+    "babel": "^5.8.23"
+  }
+}
