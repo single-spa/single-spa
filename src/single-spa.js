@@ -86,26 +86,26 @@ function triggerAppChange() {
 		let appWillUnmountPromise = mountedApp ? mountedApp.applicationWillUnmount() : new Promise((resolve) => resolve());
 
 		appWillUnmountPromise.then(function() {
-			let appLoadedPromise = newApp.entry ? new Promise((resolve) => resolve()) : loadAppForFirstTime(newApp.appLocation);
-			appLoadedPromise.then(function() {
-				let appMountedPromise = new Promise(function(resolve) {
-					if (mountedApp) {
-						mountedApp.unmountApplication().then(() => {
-							finishUnmountingApp(mountedApp);
-							resolve();
-						});
-					} else {
+			let appUnmountedPromise = new Promise(function(resolve) {
+				if (mountedApp) {
+					mountedApp.unmountApplication().then(() => {
+						finishUnmountingApp(mountedApp);
 						resolve();
-					}
-				});
-				appMountedPromise.then(function() {
+					});
+				} else {
+					resolve();
+				}
+			});
+			appUnmountedPromise.then(() => {
+				let appLoadedPromise = newApp.entry ? new Promise((resolve) => resolve()) : loadAppForFirstTime(newApp.appLocation);
+				appLoadedPromise.then(function() {
 					newApp.applicationWillMount().then(function() {
 						appWillBeMounted(newApp);
 						newApp.mountApplication().then(function() {
 							mountedApp = newApp;
 						});
 					})
-				});
+				})
 			})
 		})
 	}
