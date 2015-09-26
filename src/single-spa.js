@@ -2,6 +2,8 @@ let appLocationToApp = {};
 let unhandledRouteHandlers = [];
 let mountedApp;
 const nativeAddEventListener = window.addEventListener;
+const urlLoader = new LoaderPolyfill();
+const nativeSystemGlobal = window.System;
 
 window.singlespa = function(element) {
 	window.history.pushState(undefined, '', element.getAttribute('href'));
@@ -48,14 +50,17 @@ export function updateApplicationSourceCode(appName) {
 
 function loadAppForFirstTime(appLocation) {
 	return new Promise(function(resolve, reject) {
-		System.import(appLocation).then(function(restOfApp) {
+		var currentAppSystemGlobal = window.System;
+		window.System = nativeSystemGlobal;
+		nativeSystemGlobal.import(appLocation).then(function(restOfApp) {
 			if (restOfApp.default) {
 				restOfApp = restOfApp.default;
 			}
 			registerApplication(appLocation, restOfApp);
 			let app = appLocationToApp[appLocation];
+			window.System = currentAppSystemGlobal;
 			app.entryWillBeInstalled().then(() => {
-				System.import(app.entry).then(() => {
+				window.System.import(app.entry).then(() => {
 					resolve();
 				})
 			})
@@ -88,7 +93,7 @@ function triggerAppChange() {
 		appWillUnmountPromise.then(function() {
 			let appUnmountedPromise = new Promise(function(resolve) {
 				if (mountedApp) {
-					mountedApp.unmountApplication().then(() => {
+					mountedApp.unmountApplication(mountedApp.containerEl).then(() => {
 						finishUnmountingApp(mountedApp);
 						resolve();
 					});
@@ -101,7 +106,7 @@ function triggerAppChange() {
 				appLoadedPromise.then(function() {
 					newApp.applicationWillMount().then(function() {
 						appWillBeMounted(newApp);
-						newApp.mountApplication().then(function() {
+						newApp.mountApplication(newApp.containerEl).then(function() {
 							mountedApp = newApp;
 						});
 					})
@@ -130,6 +135,18 @@ function appForCurrentURL() {
 	}
 }
 
+function appWillBeMounted(app) {
+	app.hashChangeFunctions.forEach((hashChangeFunction) => {
+		nativeAddEventListener('hashchange', hashChangeFunction);
+	});
+	app.popStateFunctions.forEach((popStateFunction) => {
+		nativeAddEventListener('popstate', popStateFunction);
+	});
+	app.containerEl = document.createElement('div');
+	app.containerEl.setAttribute('single-spa-active-app', app.location);
+	document.body.appendChild(app.containerEl);
+}
+
 function finishUnmountingApp(app) {
 	app.hashChangeFunctions.forEach((hashChangeFunction) => {
 		window.removeEventListener('hashchange', hashChangeFunction);
@@ -137,16 +154,7 @@ function finishUnmountingApp(app) {
 	app.popStateFunctions.forEach((popStateFunction) => {
 		window.removeEventListener('popstate', popStateFunctions);
 	});
-	//TODO clean up the dom???
-}
-
-function appWillBeMounted(app) {
-	app.hashChangeFunctions.forEach((hashChangeFunction) => {
-		nativeAddEventListener('hashchange', hashChangeFunction);
-	});
-	app.popStateFunctions.forEach((popStateFunction) => {
-		nativeAddEventListener('popstate', popStateFunctions);
-	});
+	document.body.removeChild(app.containerEl);
 }
 
 window.addEventListener = function(name, fn) {
