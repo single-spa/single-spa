@@ -143,7 +143,7 @@ function appWillBeMounted(app) {
 		nativeAddEventListener('popstate', popStateFunction);
 	});
 	app.containerEl = document.createElement('div');
-	app.containerEl.setAttribute('single-spa-active-app', app.location);
+	app.containerEl.setAttribute('single-spa-active-app', app.appLocation);
 	document.body.appendChild(app.containerEl);
 }
 
