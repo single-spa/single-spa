@@ -152,7 +152,7 @@ function finishUnmountingApp(app) {
 		window.removeEventListener('hashchange', hashChangeFunction);
 	});
 	app.popStateFunctions.forEach((popStateFunction) => {
-		window.removeEventListener('popstate', popStateFunctions);
+		window.removeEventListener('popstate', popStateFunction);
 	});
 	document.body.removeChild(app.containerEl);
 }
