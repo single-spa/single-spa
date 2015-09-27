@@ -1,0 +1,67 @@
+{
+  "name": "angular-ui-router",
+  "description": "State-based routing for AngularJS",
+  "version": "0.2.8",
+  "homepage": "http://angular-ui.github.com/",
+  "contributors": [
+    {
+      "name": "Nate Abele",
+      "email": "nate@unionofrad.com",
+      "web": "https://github.com/nateabele"
+    },
+    {
+      "name": "Tim Kindberg",
+      "web": "https://github.com/timkindberg"
+    },
+    {
+      "name": "Karsten Sperling",
+      "web": "https://github.com/ksperling"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "AngularUI",
+      "web": "https://github.com/angular-ui?tab=members"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular-ui/ui-router.git"
+  },
+  "bugs": {
+    "url": "https://github.com/angular-ui/ui-router/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/angular-ui/ui-router/blob/master/LICENSE"
+    }
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-contrib-jshint": "~0.7.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-connect": "~0.5.0",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-karma": "~0.6.2",
+    "jsdoc": "git://github.com/jsdoc3/jsdoc.git#v3.2.2",
+    "shelljs": "~0.2.6",
+    "faithful-exec": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-jasmine": "~0.1.3",
+    "karma-requirejs": "~0.2.0",
+    "karma-script-launcher": "~0.1.0",
+    "karma-coffee-preprocessor": "~0.1.0",
+    "karma": "~0.10.4",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "load-grunt-tasks": "~0.2.0",
+    "grunt-conventional-changelog": "~1.0.0",
+    "grunt-ngdocs": "~0.1.7"
+  },
+  "registry": "github",
+  "main": "./release/angular-ui-router.js"
+}

@@ -1,0 +1,93 @@
+{
+  "name": "core-js",
+  "description": "Standard library",
+  "version": "1.1.4",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zloirock/core-js.git"
+  },
+  "main": "index.js",
+  "devDependencies": {
+    "webpack": "1.12.x",
+    "LiveScript": "1.3.x",
+    "grunt": "0.4.x",
+    "grunt-cli": "0.1.x",
+    "grunt-livescript": "0.5.x",
+    "grunt-contrib-uglify": "0.9.x",
+    "grunt-contrib-watch": "0.6.x",
+    "grunt-contrib-clean": "0.6.x",
+    "grunt-contrib-copy": "0.8.x",
+    "grunt-karma": "0.12.x",
+    "karma": "0.13.x",
+    "karma-qunit": "0.1.x",
+    "karma-chrome-launcher": "0.2.x",
+    "karma-ie-launcher": "0.2.x",
+    "karma-firefox-launcher": "0.1.x",
+    "karma-phantomjs-launcher": "0.2.x",
+    "karma-phantomjs2-launcher": "^0.3.2",
+    "promises-aplus-tests": "2.1.x",
+    "eslint": "1.3.x"
+  },
+  "scripts": {
+    "grunt": "grunt",
+    "lint": "eslint es5 es6 es7 js web core fn modules",
+    "promises-tests": "promises-aplus-tests tests/promises-aplus/adapter",
+    "test": "npm run lint && npm run grunt livescript client karma:continuous library karma:continuous-library && npm run promises-tests && lsc tests/commonjs",
+    "lt": "npm run lint && npm run grunt livescript client karma:lt library karma:lt-library && npm run promises-tests && lsc tests/commonjs"
+  },
+  "license": "MIT",
+  "keywords": [
+    "ES5",
+    "ECMAScript 5",
+    "ES6",
+    "ECMAScript 6",
+    "ES7",
+    "ECMAScript 7",
+    "Harmony",
+    "Strawman",
+    "Map",
+    "Set",
+    "WeakMap",
+    "WeakSet",
+    "Promise",
+    "Symbol",
+    "Array generics",
+    "setImmediate",
+    "Dict",
+    "partial application"
+  ],
+  "gitHead": "77902780b95f958650ec48b4dda934712952d630",
+  "bugs": {
+    "url": "https://github.com/zloirock/core-js/issues"
+  },
+  "homepage": "https://github.com/zloirock/core-js#readme",
+  "_id": "core-js@1.1.4",
+  "_shasum": "e0c75b4505ac3d2119db508b9a9ebabb368bfea3",
+  "_from": ".",
+  "_npmVersion": "2.13.3",
+  "_nodeVersion": "3.0.0",
+  "_npmUser": {
+    "name": "zloirock",
+    "email": "zloirock@zloirock.ru"
+  },
+  "dist": {
+    "shasum": "e0c75b4505ac3d2119db508b9a9ebabb368bfea3",
+    "tarball": "http://npm.canopytax.com/core-js/-/core-js-1.1.4.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "zloirock",
+      "email": "zloirock@zloirock.ru"
+    }
+  ],
+  "format": "cjs",
+  "ignore": [
+    "node_modules"
+  ],
+  "registry": "npm",
+  "dependencies": {
+    "systemjs-json": "github:systemjs/plugin-json@^0.1.0",
+    "process": "github:jspm/nodelibs-process@^0.1.0",
+    "fs": "github:jspm/nodelibs-fs@^0.1.0"
+  }
+}

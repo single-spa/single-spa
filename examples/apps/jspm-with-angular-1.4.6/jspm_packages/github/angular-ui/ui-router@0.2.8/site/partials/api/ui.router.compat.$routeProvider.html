@@ -1,0 +1,48 @@
+<h1><code ng:non-bindable="">$routeProvider</code>
+<span class="hint">(service in module <code ng:non-bindable="">ui.router.compat</code>
+)</span>
+</h1>
+<div><h2 id="Description">Description</h2>
+<div class="description"><p><code>$routeProvider</code> of the <code>ui.router.compat</code> module overwrites the existing
+<code>routeProvider</code> from the core. This is done to provide compatibility between
+the UI Router and the core router.</p>
+
+<p>It also provides a <code>when()</code> method to register routes that map to certain urls.
+Behind the scenes it actually delegates either to 
+<a href="#/api/ui.router.router.$urlRouterProvider">$urlRouterProvider</a> or to the 
+<a href="#/api/ui.router.state.$stateProvider">$stateProvider</a> to postprocess the given 
+router definition object.</p></div>
+<h2 id="Dependencies">Dependencies</h2>
+<ul class="dependencies"><li><code ng:non-bindable=""><a href="#/api/ui.router.state.$stateProvider">$stateProvider</a></code>
+</li>
+<li><code ng:non-bindable=""><a href="#/api/ui.router.router.$urlRouterProvider">$urlRouterProvider</a></code>
+</li>
+</ul>
+<div class="member method"><h2 id="Methods">Methods</h2>
+<ul class="methods"><li><h3 id="when">when(url, route)</h3>
+<div class="when"><p>Registers a route with a given route definition object. The route definition
+object has the same interface the angular core route definition object has.</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">url – {string} – </code>
+<p>URL as string</p></li>
+<li><code ng:non-bindable="">route – {object} – </code>
+<p>Route definition object</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{object}</code>
+– <p>$routeProvider - $routeProvider instance</p></div>
+<h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+var app = angular.module('app', ['ui.router.compat']);
+
+app.config(function ($routeProvider) {
+  $routeProvider.when('home', {
+    controller: function () { ... },
+    templateUrl: 'path/to/template'
+  });
+});
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>

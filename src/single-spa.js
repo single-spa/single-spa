@@ -4,6 +4,17 @@ let mountedApp;
 const nativeAddEventListener = window.addEventListener;
 const urlLoader = new LoaderPolyfill();
 const nativeSystemGlobal = window.System;
+const requiredLifeCycleFuncs = [
+	'entryWillBeInstalled',
+	'entryWasInstalled',
+	'applicationWillMount',
+	'mountApplication',
+	'applicationWasMounted',
+	'applicationWillUnmount',
+	'unmountApplication',
+	'activeApplicationSourceWillUpdate',
+	'activeApplicationSourceWillUpdate'
+];
 
 window.singlespa = function(element) {
 	window.history.pushState(undefined, '', element.getAttribute('href'));
@@ -42,42 +53,29 @@ export function updateApplicationSourceCode(appName) {
 		throw new Error(`No such app '${appName}'`);
 	}
 	let app = appLocationToApp[appName];
-	app.lifecycleFunctions.activeApplicationSourceWillUpdate().then(() => {
+	app.lifecycleFunctions.activeApplicationSourceWillUpdate()
+	.then((resolve) => {
 		//TODO reload the app
-		app.lifecycleFunctions.activeApplicationSourceWasUpdated();
-	});
+		resolve()
+	})
+	.then(app.lifecycleFunctions.activeApplicationSourceWasUpdated);
 }
 
-function loadAppForFirstTime(appLocation) {
-	return new Promise(function(resolve, reject) {
-		var currentAppSystemGlobal = window.System;
-		window.System = nativeSystemGlobal;
-		nativeSystemGlobal.import(appLocation).then(function(restOfApp) {
-			if (restOfApp.default) {
-				restOfApp = restOfApp.default;
-			}
-			registerApplication(appLocation, restOfApp);
-			let app = appLocationToApp[appLocation];
-			window.System = currentAppSystemGlobal;
-			app.entryWillBeInstalled().then(() => {
-				window.System.import(app.entry).then(() => {
+function callLifecycleFunction(app, funcName, ...args) {
+	return new Promise((resolve) => {
+		callFunc(0);
+		function callFunc(i) {
+			app.lifecycles[i][funcName](...args)
+			.then(() => {
+				if (i === app.lifecycles.length - 1) {
 					resolve();
-				})
+				} else {
+					callFunc(++i);
+				}
 			})
-		})
+		}
 	})
 }
-
-function registerApplication(appLocation, partialApp) {
-	let app = appLocationToApp[appLocation];
-	for (propertyName in partialApp) {
-		app[propertyName] = partialApp[propertyName];
-	}
-	app.hashChangeFunctions = [];
-	app.popStateFunctions = [];
-}
-
-nativeAddEventListener('popstate', triggerAppChange);
 
 function triggerAppChange() {
 	let newApp = appForCurrentURL();
@@ -88,12 +86,14 @@ function triggerAppChange() {
 	}
 
 	if (newApp !== mountedApp) {
-		let appWillUnmountPromise = mountedApp ? mountedApp.applicationWillUnmount() : new Promise((resolve) => resolve());
+		let appWillUnmountPromise = mountedApp ? callLifecycleFunction(mountedApp, 'applicationWillUnmount') : new Promise((resolve) => resolve());
 
-		appWillUnmountPromise.then(function() {
-			let appUnmountedPromise = new Promise(function(resolve) {
+		appWillUnmountPromise
+		.then(() => {
+			return new Promise(function(resolve) {
 				if (mountedApp) {
-					mountedApp.unmountApplication(mountedApp.containerEl).then(() => {
+					callLifecycleFunction(mountedApp, 'unmountApplication', mountedApp.containerEl)
+					.then(() => {
 						finishUnmountingApp(mountedApp);
 						resolve();
 					});
@@ -101,20 +101,66 @@ function triggerAppChange() {
 					resolve();
 				}
 			});
-			appUnmountedPromise.then(() => {
-				let appLoadedPromise = newApp.entry ? new Promise((resolve) => resolve()) : loadAppForFirstTime(newApp.appLocation);
-				appLoadedPromise.then(function() {
-					newApp.applicationWillMount().then(function() {
-						appWillBeMounted(newApp);
-						newApp.mountApplication(newApp.containerEl).then(function() {
-							mountedApp = newApp;
-						});
-					})
-				})
-			})
 		})
+		.then(() => {
+			if (newApp.entryURI) {
+				return new Promise((resolve) => resolve());
+			} else {
+				return loadAppForFirstTime(newApp.appLocation);
+			}
+		})
+		.then(() => callLifecycleFunction(newApp, 'applicationWillMount'))
+		.then(() => appWillBeMounted(newApp))
+		.then(() => callLifecycleFunction(newApp, 'mountApplication', newApp.containerEl))
+		.then(() => mountedApp = newApp)
 	}
 }
+
+function loadAppForFirstTime(appLocation) {
+	return new Promise(function(resolve, reject) {
+		var currentAppSystemGlobal = window.System;
+		window.System = nativeSystemGlobal;
+		nativeSystemGlobal.import(appLocation).then(function(restOfApp) {
+			registerApplication(appLocation, restOfApp.entryURI, restOfApp.lifecycles);
+			let app = appLocationToApp[appLocation];
+			window.System = currentAppSystemGlobal;
+			callLifecycleFunction(app, 'entryWillBeInstalled')
+			.then(() => window.System.import(app.entryURI))
+			.then(() => callLifecycleFunction(app, 'entryWasInstalled'))
+			.then(() => resolve())
+		})
+	})
+}
+
+function registerApplication(appLocation, entryURI, lifecycles) {
+	//validate
+	if (typeof entryURI !== 'string') {
+		throw new Error(`App ${appLocation} must export an entryURI string`);
+	}
+	if (typeof lifecycles !== 'object' && typeof lifecycles !== 'function') {
+		throw new Error(`App ${appLocation} must export a 'lifecycles' object or array of objects`);
+	}
+	if (!Array.isArray(lifecycles)) {
+		lifecycles = [lifecycles];
+	}
+	for (let i=0; i<lifecycles.length; i++) {
+		requiredLifeCycleFuncs.forEach((requiredLifeCycleFunc) => {
+			if (typeof lifecycles[i][requiredLifeCycleFunc] !== 'function') {
+				throw new Error(`In app '${appLocation}', The lifecycle at index ${i} does not have required function ${requiredLifeCycleFunc}`);
+			}
+		});
+	}
+
+	//register
+	let app = appLocationToApp[appLocation];
+	app.entryURI = entryURI;
+	app.hashChangeFunctions = [];
+	app.popStateFunctions = [];
+	app.lifecycles = lifecycles;
+}
+
+nativeAddEventListener('popstate', triggerAppChange);
+
 
 function appForCurrentURL() {
 	let appsForCurrentUrl = [];
@@ -131,20 +177,23 @@ function appForCurrentURL() {
 			return appsForCurrentUrl[0];
 		default:
 			appNames = appsForCurrentUrl.map((app) => app.name);
-			throw new Error(`The following applications all claim to own the location ${window.location.href} -- ${appnames.toString()}`)
+		throw new Error(`The following applications all claim to own the location ${window.location.href} -- ${appnames.toString()}`)
 	}
 }
 
 function appWillBeMounted(app) {
-	app.hashChangeFunctions.forEach((hashChangeFunction) => {
-		nativeAddEventListener('hashchange', hashChangeFunction);
-	});
-	app.popStateFunctions.forEach((popStateFunction) => {
-		nativeAddEventListener('popstate', popStateFunction);
-	});
-	app.containerEl = document.createElement('div');
-	app.containerEl.setAttribute('single-spa-active-app', app.appLocation);
-	document.body.appendChild(app.containerEl);
+	return new Promise((resolve) => {
+		app.hashChangeFunctions.forEach((hashChangeFunction) => {
+			nativeAddEventListener('hashchange', hashChangeFunction);
+		});
+		app.popStateFunctions.forEach((popStateFunction) => {
+			nativeAddEventListener('popstate', popStateFunction);
+		});
+		app.containerEl = document.createElement('div');
+		app.containerEl.setAttribute('single-spa-active-app', app.appLocation);
+		document.body.appendChild(app.containerEl);
+		resolve();
+	})
 }
 
 function finishUnmountingApp(app) {

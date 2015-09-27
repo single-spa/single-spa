@@ -1,0 +1,17 @@
+<div>
+  <h2>{{contact.name}}</h2>
+  <ul>
+    <li ng-repeat="item in contact.items">
+
+      <!-- Here's another ui-sref except THIS time we are passing parameters
+           AND inheriting parameters from active ancestor states. So we don't
+           need to resupply the contactId parameter. -->
+      <a ui-sref="contacts.detail.item({itemId:item.id})">{{item.type}}</a>
+    </li>
+  </ul>
+  <div ui-view class="slide">
+    <!-- Example of default content. This content will be replace as soon as
+         this ui-view is populate with a template -->
+    <small class="muted">Click on a contact item to view and/or edit it.</small>
+  </div>
+</div>

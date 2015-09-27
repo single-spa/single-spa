@@ -1,0 +1,56 @@
+{
+  "author": {
+    "name": "Roman Shtylman",
+    "email": "shtylman@gmail.com"
+  },
+  "name": "process",
+  "description": "process information for node.js and browsers",
+  "keywords": [
+    "process"
+  ],
+  "version": "0.10.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/shtylman/node-process.git"
+  },
+  "browser": "./browser.js",
+  "main": "./browser.js",
+  "engines": {
+    "node": ">= 0.6.0"
+  },
+  "gitHead": "b723f82028b12e94abfe732e9f432a3fb2b5cece",
+  "bugs": {
+    "url": "https://github.com/shtylman/node-process/issues"
+  },
+  "homepage": "https://github.com/shtylman/node-process",
+  "_id": "process@0.10.1",
+  "scripts": {},
+  "_shasum": "842457cc51cfed72dc775afeeafb8c6034372725",
+  "_from": ".",
+  "_npmVersion": "2.6.1",
+  "_nodeVersion": "0.10.35",
+  "_npmUser": {
+    "name": "shtylman",
+    "email": "shtylman@gmail.com"
+  },
+  "maintainers": [
+    {
+      "name": "coolaj86",
+      "email": "coolaj86@gmail.com"
+    },
+    {
+      "name": "shtylman",
+      "email": "shtylman@gmail.com"
+    }
+  ],
+  "dist": {
+    "shasum": "842457cc51cfed72dc775afeeafb8c6034372725",
+    "tarball": "http://npm.canopytax.com/process/-/process-0.10.1.tgz"
+  },
+  "format": "cjs",
+  "ignore": [
+    "node_modules"
+  ],
+  "registry": "npm",
+  "dependencies": {}
+}

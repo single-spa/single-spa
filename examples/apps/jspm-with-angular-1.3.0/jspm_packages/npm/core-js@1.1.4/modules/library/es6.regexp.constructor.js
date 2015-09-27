@@ -1,0 +1,2 @@
+/* */ 
+require('./$.species')(RegExp);

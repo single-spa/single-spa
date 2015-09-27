@@ -1,0 +1,27 @@
+<div class="row">
+  <div class="span3">
+    <div class="pa-sidebar well well-small">
+      <ul class="nav nav-list">
+        <li ng-class="{ active: $state.includes('contacts.list') }"><a ui-sref="contacts.list">All Contacts</a></li>
+        <li class="nav-header">Top Contacts</li>
+
+        <!-- This <li> will only add the 'active' class if 'contacts.detail' or its descendants are active
+             AND if it is the link for the active contact (aka contactId) -->
+        <li ng-repeat="contact in contacts | limitTo:2"
+            ng-class="{ active: $state.includes('contacts.detail') && $stateParams.contactId == contact.id }">
+
+          <!-- Here's a ui-sref that is also providing necessary parameters -->
+          <a ui-sref="contacts.detail({contactId:contact.id})">{{contact.name}}</a>
+        </li>
+      </ul>
+      <hr>
+      <button class="btn" ng-click="goToRandom()">Show random contact</button>
+
+      <!-- Another named view -->
+      <div ui-view="menuTip" class="slide"></div>
+    </div>
+  </div>
+
+  <!-- Our unnamed main ui-view for this template -->
+  <div ui-view class="span9 slide"></div>
+</div>

@@ -1,0 +1,33 @@
+<h1><code ng:non-bindable="">ui-sref-active</code>
+<span class="hint">(directive in module <code ng:non-bindable="">ui.router.state</code>
+)</span>
+</h1>
+<div><h2 id="Description">Description</h2>
+<div class="description"><p>A directive working alongside ui-sref to add classes to an element when the 
+related ui-sref directive's state is active, and removing them when it is inactive.
+The primary use-case is to simplify the special appearance of navigation menus 
+relying on <code>ui-sref</code>, by having the "active" state's menu button appear different,
+distinguishing it from the inactive menu items.</p></div>
+<h2 id="Dependencies">Dependencies</h2>
+<ul class="dependencies"><li><code ng:non-bindable=""><a href="#/api/ui.router.state.$state">$state</a></code>
+</li>
+<li><code ng:non-bindable=""><a href="#/api/ui.router.state.$stateParams">$stateParams</a></code>
+</li>
+<li><code ng:non-bindable=""><a href="#/api/ng.$interpolate">$interpolate</a></code>
+</li>
+</ul>
+<h2 id="Usage">Usage</h2>
+<div class="usage">as attribute<pre class="prettyprint linenums">&lt;ANY ui-sref-active&gt;
+   ...
+&lt;/ANY&gt;</pre>
+</div>
+<h2 id="Example">Example</h2>
+<div class="example"><pre class="prettyprint linenums">
+&lt;ul&gt;
+  &lt;li ui-sref-active="active" class="item active"&gt;
+    &lt;a ui-sref="app.user({user: 'bilbobaggins'})" href="/users/bilbobaggins"&gt;@bilbobaggins&lt;/a&gt;
+  &lt;/li&gt;
+  &lt;!-- ... --&gt;
+&lt;/ul&gt;
+</pre></div>
+</div>

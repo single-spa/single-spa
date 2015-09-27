@@ -1,0 +1,16 @@
+{
+  "name": "angular-ui-router",
+  "version": "0.2.8",
+  "description": "State-based routing for AngularJS",
+  "keywords": [
+    "angular",
+    "states",
+    "routing"
+  ],
+  "main": "release/angular-ui-router.min.js",
+  "scripts": [
+    "release/angular-ui-router.min.js"
+  ],
+  "license": "MIT",
+  "repo": "angular-ui/ui-router"
+}
