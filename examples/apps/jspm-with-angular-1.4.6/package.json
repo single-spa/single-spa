@@ -1,6 +1,8 @@
 {
+  "scripts": {
+    "setup": "jspm install"
+  },
   "jspm": {
-    "directories": {},
     "dependencies": {
       "angular": "github:angular/bower-angular@1.4.6",
       "angular-ui-router": "github:angular-ui/ui-router@0.2.8"

@@ -2,7 +2,7 @@
   "name": "single-spa",
   "version": "1.0.0",
   "description": "Multiple applications, one page",
-  "main": "dist/single-spa.js",
+  "main": "src/single-spa.js",
   "scripts": {
     "build": "babel src/single-spa.js --out-file dist/single-spa.js"
   },

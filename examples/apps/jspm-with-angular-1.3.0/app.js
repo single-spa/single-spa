@@ -9,7 +9,7 @@ const jspmApp = defaultJspmApp({
 const angular1App = defaultAngular1App({
 	angularPromise: () => {
 		return new Promise((resolve) => {
-			System.import('angular')
+			window.System.import('angular')
 			.then((angular) => resolve(angular));
 		})
 	},

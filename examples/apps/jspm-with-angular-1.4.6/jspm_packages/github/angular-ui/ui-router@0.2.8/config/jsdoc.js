@@ -1,6 +1,0 @@
-{
-  "plugins": [ "plugins/markdown" ],
-  "markdown": {
-    "parser": "gfm"
-  }
-}

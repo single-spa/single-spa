@@ -1,5 +1,5 @@
 System.config({
-  baseURL: '/apps/jspm-with-angular-1.4.6',
+  baseURL: "/apps/jspm-with-angular-1.4.6",
   defaultJSExtensions: true,
   transpiler: "babel",
   babelOptions: {

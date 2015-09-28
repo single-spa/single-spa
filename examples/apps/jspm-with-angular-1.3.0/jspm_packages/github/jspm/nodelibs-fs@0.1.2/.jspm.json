@@ -1,8 +1,0 @@
-{
-  "registry": "npm",
-  "format": "cjs",
-  "ignore": [
-    "node_modules"
-  ],
-  "dependencies": {}
-}
