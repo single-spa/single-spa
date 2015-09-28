@@ -4,7 +4,7 @@ Multiple applications all lazily loaded and mounted/unmounted in the same single
 
 ## Ideology
 
-The hope here is that "one SPA to rule them all" will help scale teams and organizations that have complex apps -- this is done making it easier to divide the code into different repositories. To explain why single SPA is advantageous, consider the following **disadvantages of a multiple SPA approach**:
+The hope here is that "one SPA to rule them all" will help scale teams and organizations that have complex apps -- this is done by making it easier to split code and then deploy it independently. To explain why single SPA is advantageous, consider the following **disadvantages of a multiple SPA approach**:
 
 1. Implementation details are usually reflected in the URL (different subdomains for different SPAs, or different apps own different prefixes in the window.location.pathname)
 2. Each SPA tends to become a monolith, since it's easier to add to an existing SPA than it is to figure out how to deploy a new SPA.
