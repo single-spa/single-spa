@@ -1,4 +1,3 @@
 node_modules/
-examples/node_modules/
-examples/jspm_packages/
-examples/apps/**/jspm_packages/
+jspm_packages/
+bower_components/
