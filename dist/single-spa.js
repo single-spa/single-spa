@@ -12,7 +12,7 @@ var mountedApp = undefined;
 var nativeAddEventListener = window.addEventListener;
 var urlLoader = new LoaderPolyfill();
 var nativeSystemGlobal = window.System;
-var requiredLifeCycleFuncs = ['entryWillBeInstalled', 'entryWasInstalled', 'applicationWillMount', 'mountApplication', 'applicationWasMounted', 'applicationWillUnmount', 'unmountApplication', 'activeApplicationSourceWillUpdate', 'activeApplicationSourceWillUpdate'];
+var requiredLifeCycleFuncs = ['scriptsWillBeLoaded', 'scriptsWereLoaded', 'applicationWillMount', 'applicationWasMounted', 'applicationWillUnmount', 'applicationWasUnmounted', 'activeApplicationSourceWillUpdate', 'activeApplicationSourceWillUpdate'];
 
 window.singlespa = function (element) {
 	window.history.pushState(undefined, '', element.getAttribute('href'));
@@ -84,39 +84,70 @@ function triggerAppChange() {
 	}
 
 	if (newApp !== mountedApp) {
-		var appWillUnmountPromise = mountedApp ? callLifecycleFunction(mountedApp, 'applicationWillUnmount') : new Promise(function (resolve) {
-			return resolve();
-		});
 
-		appWillUnmountPromise.then(function () {
-			return new Promise(function (resolve) {
-				if (mountedApp) {
-					callLifecycleFunction(mountedApp, 'unmountApplication', mountedApp.containerEl).then(function () {
-						finishUnmountingApp(mountedApp);
-						resolve();
-					});
-				} else {
-					resolve();
-				}
+		(mountedApp ? callLifecycleFunction(mountedApp, 'applicationWillUnmount') : new Promise(function (resolve) {
+			return resolve();
+		})).then(function () {
+			return cleanupDom();
+		}).then(function () {
+			return finishUnmountingApp(mountedApp);
+		}).then(function () {
+			return mountedApp ? callLifecycleFunction(mountedApp, 'applicationWasUnmounted') : new Promise(function (resolve) {
+				return resolve();
 			});
 		}).then(function () {
-			if (newApp.entryURI) {
-				return new Promise(function (resolve) {
-					return resolve();
-				});
-			} else {
-				return loadAppForFirstTime(newApp.appLocation);
-			}
+			return newApp.scriptsLoaded ? new Promise(function (resolve) {
+				return resolve();
+			}) : loadAppForFirstTime(newApp.appLocation);
 		}).then(function () {
 			return callLifecycleFunction(newApp, 'applicationWillMount');
 		}).then(function () {
 			return appWillBeMounted(newApp);
 		}).then(function () {
-			return callLifecycleFunction(newApp, 'mountApplication', newApp.containerEl);
+			return insertDomFrom(newApp);
+		}).then(function () {
+			return callLifecycleFunction(newApp, 'applicationWasMounted');
 		}).then(function () {
 			return mountedApp = newApp;
 		});
 	}
+}
+
+function cleanupDom() {
+	return new Promise(function (resolve) {
+		while (document.head.childNodes.length > 0) {
+			document.head.removeChild(document.head.childNodes[0]);
+		}
+		while (document.body.childNodes.length > 0) {
+			document.body.removeChild(document.body.childNodes[0]);
+		}
+		resolve();
+	});
+}
+
+function insertDomFrom(app) {
+	return new Promise(function (resolve) {
+		var deepClone = true;
+		var clonedAppDom = app.parsedDom.cloneNode(deepClone);
+
+		for (var i = 0; i < clonedAppDom.attributes.length; i++) {
+			var attr = clonedAppDom.attributes[i];
+			document.documentElement.setAttribute(attr.name, attr.value);
+		}
+
+		var appHead = app.parsedDom.querySelector('head');
+		while (appHead.childNodes.length > 0) {
+			document.head.appendChild(appHead.childNodes[0]);
+		}
+
+		var appBody = app.parsedDom.querySelector('body');
+		while (appBody.childNodes.length > 0) {
+			document.body.appendChild(appBody.childNodes[0]);
+		}
+
+		app.parsedDom = clonedAppDom;
+		resolve();
+	});
 }
 
 function loadAppForFirstTime(appLocation) {
@@ -124,13 +155,13 @@ function loadAppForFirstTime(appLocation) {
 		var currentAppSystemGlobal = window.System;
 		window.System = nativeSystemGlobal;
 		nativeSystemGlobal['import'](appLocation).then(function (restOfApp) {
-			registerApplication(appLocation, restOfApp.entryURI, restOfApp.lifecycles);
+			registerApplication(appLocation, restOfApp.publicRoot, restOfApp.pathToIndex, restOfApp.lifecycles);
 			var app = appLocationToApp[appLocation];
 			window.System = currentAppSystemGlobal;
-			callLifecycleFunction(app, 'entryWillBeInstalled').then(function () {
-				return window.System['import'](app.entryURI);
+			callLifecycleFunction(app, 'scriptsWillBeLoaded').then(function () {
+				return loadIndex(app);
 			}).then(function () {
-				return callLifecycleFunction(app, 'entryWasInstalled');
+				return callLifecycleFunction(app, 'scriptsWereLoaded');
 			}).then(function () {
 				return resolve();
 			});
@@ -138,10 +169,101 @@ function loadAppForFirstTime(appLocation) {
 	});
 }
 
-function registerApplication(appLocation, entryURI, lifecycles) {
+function loadIndex(app) {
+	return new Promise(function (resolve) {
+		var request = new XMLHttpRequest();
+		request.addEventListener('load', htmlLoaded);
+		request.open('GET', window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/' + app.publicRoot + '/' + app.pathToIndex);
+		request.send();
+
+		function htmlLoaded() {
+			var parser = new DOMParser();
+			var dom = parser.parseFromString(this.responseText, 'text/html');
+			var isLoadingScript = false;
+			var scriptsToBeLoaded = [];
+
+			traverseNode(dom);
+			app.parsedDom = dom.documentElement;
+			if (app.scriptsLoaded) {
+				setTimeout(function () {
+					resolve();
+				}, 10);
+			}
+
+			function traverseNode(node) {
+				for (var i = 0; i < node.childNodes.length; i++) {
+					var child = node.childNodes[i];
+					if (child.tagName === 'SCRIPT') {
+						if (child.getAttribute('src')) {
+							child.setAttribute('src', prependURL(child.getAttribute('src'), app.publicRoot));
+						}
+						//we put the scripts onto the page as part of the scriptsLoaded lifecycle
+						scriptsToBeLoaded.push(child);
+						appendScriptTag();
+					} else if (child.tagName === 'LINK' && child.getAttribute('href')) {
+						child.setAttribute('href', prependURL(child.getAttribute('href'), app.publicRoot));
+					} else if (child.tagName === 'IMG' && child.getAttribute('src')) {
+						child.setAttribute('src', prependURL(child.getAttribute('src'), app.publicRoot));
+					}
+					traverseNode(child);
+				}
+			}
+
+			function prependURL(url, prefix) {
+				var parsedURL = document.createElement('a');
+				parsedURL.href = url;
+				var result = parsedURL.protocol + '//' + (parsedURL.hostname + ':' + parsedURL.port + '/' + prefix + '/' + parsedURL.pathname + parsedURL.search + parsedURL.hash).replace(/[\/]+/g, '/');
+				return result;
+			}
+
+			function appendScriptTag() {
+				if (isLoadingScript) {
+					return;
+				}
+				if (scriptsToBeLoaded.length === 0) {
+					app.scriptsLoaded = true;
+					if (app.parsedDom) {
+						//loading a script was the last thing we were waiting on
+						setTimeout(function () {
+							resolve();
+						}, 10);
+					}
+					return;
+				}
+				var originalScriptTag = scriptsToBeLoaded.splice(0, 1)[0];
+				//one does not simply append script tags to the dom
+				var scriptTag = document.createElement('script');
+				for (var i = 0; i < originalScriptTag.attributes.length; i++) {
+					scriptTag.setAttribute(originalScriptTag.attributes[i].nodeName, originalScriptTag.getAttribute(originalScriptTag.attributes[i].nodeName));
+				}
+				if (!scriptTag.src) {
+					scriptTag.text = originalScriptTag.text;
+				}
+				isLoadingScript = true;
+				document.head.appendChild(scriptTag);
+				if (scriptTag.src) {
+					scriptTag.onload = function () {
+						isLoadingScript = false;
+						appendScriptTag();
+					};
+				} else {
+					isLoadingScript = false;
+					appendScriptTag();
+				}
+				//normally when you appendChild, the old parent no longer has the child anymore. We have to simulate that since we're not really appending the child
+				originalScriptTag.remove();
+			}
+		}
+	});
+}
+
+function registerApplication(appLocation, publicRoot, pathToIndex, lifecycles) {
 	//validate
-	if (typeof entryURI !== 'string') {
-		throw new Error('App ' + appLocation + ' must export an entryURI string');
+	if (typeof publicRoot !== 'string') {
+		throw new Error('App ' + appLocation + ' must export a publicRoot string');
+	}
+	if (typeof pathToIndex !== 'string') {
+		throw new Error('App ' + appLocation + ' must export a pathToIndex string');
 	}
 	if (typeof lifecycles !== 'object' && typeof lifecycles !== 'function') {
 		throw new Error('App ' + appLocation + ' must export a \'lifecycles\' object or array of objects');
@@ -164,7 +286,8 @@ function registerApplication(appLocation, entryURI, lifecycles) {
 
 	//register
 	var app = appLocationToApp[appLocation];
-	app.entryURI = entryURI;
+	app.publicRoot = publicRoot;
+	app.pathToIndex = pathToIndex;
 	app.hashChangeFunctions = [];
 	app.popStateFunctions = [];
 	app.lifecycles = lifecycles;
@@ -201,21 +324,24 @@ function appWillBeMounted(app) {
 		app.popStateFunctions.forEach(function (popStateFunction) {
 			nativeAddEventListener('popstate', popStateFunction);
 		});
-		app.containerEl = document.createElement('div');
-		app.containerEl.setAttribute('single-spa-active-app', app.appLocation);
-		document.body.appendChild(app.containerEl);
 		resolve();
 	});
 }
 
 function finishUnmountingApp(app) {
-	app.hashChangeFunctions.forEach(function (hashChangeFunction) {
-		window.removeEventListener('hashchange', hashChangeFunction);
+	return new Promise(function (resolve) {
+		if (!app) {
+			resolve();
+			return;
+		}
+		app.hashChangeFunctions.forEach(function (hashChangeFunction) {
+			window.removeEventListener('hashchange', hashChangeFunction);
+		});
+		app.popStateFunctions.forEach(function (popStateFunction) {
+			window.removeEventListener('popstate', popStateFunction);
+		});
+		resolve();
 	});
-	app.popStateFunctions.forEach(function (popStateFunction) {
-		window.removeEventListener('popstate', popStateFunction);
-	});
-	document.body.removeChild(app.containerEl);
 }
 
 window.addEventListener = function (name, fn) {

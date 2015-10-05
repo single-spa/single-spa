@@ -14,13 +14,12 @@ System.config({
   },
 
   map: {
-    "angular": "github:angular/bower-angular@1.2.0",
     "babel": "npm:babel-core@5.8.25",
     "babel-runtime": "npm:babel-runtime@5.8.24",
     "core-js": "npm:core-js@1.1.4",
-    "single-spa": "github:single-spa@1.0.0",
-    "single-spa-angular1": "npm:single-spa-angular1@1.0.1",
-    "single-spa-jspm": "npm:single-spa-jspm@1.0.1",
+    "single-spa": "github:single-spa@1.1.0",
+    "single-spa-angular1": "npm:single-spa-angular1@1.1.0",
+    "single-spa-jspm": "npm:single-spa-jspm@1.1.0",
     "github:jspm/nodelibs-process@0.1.1": {
       "process": "npm:process@0.10.1"
     },
