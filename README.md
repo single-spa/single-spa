@@ -12,18 +12,10 @@ The hope here is that "one SPA to rule them all" will help scale teams and organ
 4. Shared functionality can *only* be accomplished via shared libraries, instead of a service oriented architecture ("Update it and hope library consumers upgrade" vs "Deploy it once and now everyone has it")
 
 ## How to use it
-So right now it's still really alpha and so the best thing to do is look at [examples directory](https://github.com/joeldenning/single-spa/tree/master/examples). Especially the following files:
-- [The index.html file](https://github.com/joeldenning/single-spa/blob/master/examples/index.html)
-- [The root app](https://github.com/joeldenning/single-spa/blob/master/examples/bootstrap.js)
-- [The children apps](https://github.com/joeldenning/single-spa/tree/master/examples/apps)
+So right now it's still pretty alpha and so the best thing to do is look at the [examples repository](https://github.com/joeldenning/single-spa-examples). Especially the following files:
+- [The index.html file](https://github.com/joeldenning/single-spa-examples/blob/master/index.html)
+- [The root app](https://github.com/joeldenning/single-spa-examples/blob/master/bootstrap.js)
+- [The children apps](https://github.com/joeldenning/single-spa-examples/tree/master/apps)
 
-Also note that it requires that the root app that loads all other apps to be written with JSPM. The goal is to move away from that towards the [whatwg/loader standard](https://github.com/whatwg/loader) or maybe towards no loader standard at all (which would offload all of the loading work to the user).
+Also note that it requires that as of 10/8/15, the root app that loads all other apps must be written with JSPM.  The goal is to move away from that towards the [whatwg/loader standard](https://github.com/whatwg/loader) or maybe towards no loader standard at all (which would offload all of the loading work to the user).
 
-## How to get the examples running
-```
-git clone git@github.com:joeldenning/single-spa.git
-cd single-spa/examples
-npm run setup
-python -m SimpleHTTPServer 8000
-open localhost:8000
-```
