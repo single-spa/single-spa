@@ -2,6 +2,9 @@
 
 Multiple applications all lazily loaded and mounted/unmounted in the same single page application (SPA). The apps can be deployed independently to your web server of choice, lazy-loaded onto the page independently, and nested.
 
+## View the demo!
+A [demo is live](http://single-spa.surge.sh) on surge.sh. Don't be turned off by the lack of styling -- I'll be fixing that soon.
+
 ## Ideology
 
 The hope here is that "one SPA to rule them all" will help scale teams and organizations that have complex apps -- this is done by making it easier to split code and then deploy it independently. To explain why single SPA is advantageous, consider the following **disadvantages of a multiple SPA approach**:
