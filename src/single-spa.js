@@ -109,7 +109,7 @@ function triggerAppChange(event) {
 function cleanupDom() {
     return new Promise((resolve) => {
         for (let i=0; i<document.documentElement.attributes.length; i++) {
-            document.documentElement.removeAttribute(document.documentElement.attributes[i]);
+            document.documentElement.removeAttribute(document.documentElement.attributes[i].name);
         }
         while (document.head.childNodes.length > 0) {
             document.head.removeChild(document.head.childNodes[0]);
@@ -342,7 +342,6 @@ window.addEventListener = function(name, fn) {
             nativeAddEventListener.apply(this, arguments);
         }
     } else {
-        console.warn(`event listener is being added when there is no mounted app`);
         nativeAddEventListener.apply(this, arguments);
     }
 }
