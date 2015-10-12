@@ -17,9 +17,7 @@ const requiredLifeCycleFuncs = [
 
 window.singlespa = function(element) {
     window.history.pushState(undefined, '', element.getAttribute('href'));
-    setTimeout(function() {
-        triggerAppChange();
-    }, 10);
+    setTimeout(() => triggerAppChange(), 10);
     return false;
 }
 
@@ -76,7 +74,7 @@ function callLifecycleFunction(app, funcName, ...args) {
     })
 }
 
-function triggerAppChange() {
+function triggerAppChange(event) {
     let newApp = appForCurrentURL();
     if (!newApp) {
         unhandledRouteHandlers.forEach((handler) => {
@@ -99,11 +97,20 @@ function triggerAppChange() {
         .then(() => insertDomFrom(newApp))
         .then(() => callLifecycleFunction(newApp, 'applicationWasMounted'))
         .then(() => mountedApp = newApp)
+    } else if (mountedApp && event) {
+        var eventArgs = arguments;
+        if (event.type === 'popstate')
+            mountedApp.popStateFunctions.forEach((popStateFunction) => popStateFunction.apply(window, eventArgs));
+        else if (event.type === 'hashchange')
+            mountedApp.hashChangeFunctions.forEach((hashChangeFunction) => hashChangeFunction.apply(window, eventArgs));
     }
 }
 
 function cleanupDom() {
     return new Promise((resolve) => {
+        for (let i=0; i<document.documentElement.attributes.length; i++) {
+            document.documentElement.removeAttribute(document.documentElement.attributes[i]);
+        }
         while (document.head.childNodes.length > 0) {
             document.head.removeChild(document.head.childNodes[0]);
         }
@@ -274,8 +281,9 @@ function registerApplication(appLocation, publicRoot, pathToIndex, lifecycles) {
     app.lifecycles = lifecycles;
 }
 
-nativeAddEventListener('popstate', triggerAppChange);
-
+nativeAddEventListener('popstate', function() {
+    triggerAppChange.apply(undefined, arguments);
+});
 
 function appForCurrentURL() {
     let appsForCurrentUrl = [];
@@ -330,7 +338,11 @@ window.addEventListener = function(name, fn) {
             mountedApp.popStateFunctions.push(fn);
         } else if (name === 'hashchange') {
             mountedApp.hashChangeFunctions.push(fn);
+        } else {
+            nativeAddEventListener.apply(this, arguments);
         }
+    } else {
+        console.warn(`event listener is being added when there is no mounted app`);
         nativeAddEventListener.apply(this, arguments);
     }
 }
