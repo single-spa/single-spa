@@ -205,8 +205,11 @@ function loadIndex(app) {
             function prependURL(url, prefix) {
                 let parsedURL = document.createElement('a');
                 parsedURL.href = url;
-                let result = `${parsedURL.protocol}//` + `${parsedURL.hostname}:${parsedURL.port}/${prefix}/${parsedURL.pathname}${parsedURL.search}${parsedURL.hash}`.replace(/[\/]+/g, '/');
-                return result;
+                if (parsedURL.host === window.location.host) {
+                    return `${parsedURL.protocol}//` + `${parsedURL.hostname}:${parsedURL.port}/${prefix}/${parsedURL.pathname}${parsedURL.search}${parsedURL.hash}`.replace(/[\/]+/g, '/');
+                } else {
+                    return url;
+                }
             }
 
             function appendScriptTag() {
@@ -300,7 +303,7 @@ function appForCurrentURL() {
             return appsForCurrentUrl[0];
         default:
             appNames = appsForCurrentUrl.map((app) => app.name);
-        throw new Error(`The following applications all claim to own the location ${window.location.href} -- ${appnames.toString()}`)
+        throw new Error(`The following applications all claim to own the location ${window.location.href} -- ${appNames.toString()}`)
     }
 }
 
