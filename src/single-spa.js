@@ -15,10 +15,49 @@ const requiredLifeCycleFuncs = [
     'activeApplicationSourceWillUpdate'
 ];
 
-window.singlespa = function(element) {
+window.singlespa = {};
+
+window.singlespa.navigateTo = function(element) {
     window.history.pushState(undefined, '', element.getAttribute('href'));
     setTimeout(() => triggerAppChange(), 10);
     return false;
+}
+
+window.singlespa.transpile = function(source, urlPrefix) {
+    if (!mountedApp && typeof urlPrefix !== 'string') {
+        throw new Error(`Single Spa can only transpile html and js when an app is mounted or a urlPrefix is provided`);
+    }
+    let prefix = urlPrefix || mountedApp.publicRoot;
+    //We've got to be careful about not incurring a bunch of latency here
+    source = prependAllTagAttributesAsAUrl(source, prefix, 'img', 'src');
+    source = prependAllTagAttributesAsAUrl(source, prefix, 'link', 'href');
+    return source;
+}
+
+function prependAllTagAttributesAsAUrl(source, prefix, tagName, attrName) {
+    //We've got to be careful about not incurring a bunch of latency here
+    let nextTagIndex = 0;
+    while ((nextTagIndex = source.indexOf(`<${tagName}`, nextTagIndex + 1)) >= 0) {
+        let closingTagIndex = source.indexOf('>', nextTagIndex);
+        let attrIndex = source.indexOf(`${attrName}`, nextTagIndex);
+        if (attrIndex < closingTagIndex) {
+            let openingQuote = source.indexOf('"', attrIndex);
+            let quoteChar = '"';
+            if (!openingQuote) {
+                openingQuote = source.indexOf("'", attrIndex);
+                quoteChar = "'";
+            }
+            if (openingQuote > 0 && openingQuote < closingTagIndex) {
+                let closingQuote = source.indexOf(quoteChar, openingQuote + 1);
+                let before = source.substring(0, openingQuote + 1)
+                let content = prependUrl(source.substr(openingQuote + 1, closingQuote - openingQuote - 1), prefix);
+                let after = source.substring(closingQuote);
+                source = before + content + after;
+            }
+        }
+    }
+
+    return source;
 }
 
 export function declareChildApplication(appLocation, activeWhen) {
@@ -188,29 +227,20 @@ function loadIndex(app) {
                     const child = node.childNodes[i];
                     if (child.tagName === 'SCRIPT') {
                         if (child.getAttribute('src')) {
-                            child.setAttribute('src', prependURL(child.getAttribute('src'), app.publicRoot));
+                            child.setAttribute('src', prependUrl(child.getAttribute('src'), app.publicRoot));
                         }
                         //we put the scripts onto the page as part of the scriptsLoaded lifecycle
                         scriptsToBeLoaded.push(child);
                         appendScriptTag();
                     } else if (child.tagName === 'LINK' && child.getAttribute('href')) {
-                        child.setAttribute('href', prependURL(child.getAttribute('href'), app.publicRoot));
+                        child.setAttribute('href', prependUrl(child.getAttribute('href'), app.publicRoot));
                     } else if (child.tagName === 'IMG' && child.getAttribute('src')) {
-                        child.setAttribute('src', prependURL(child.getAttribute('src'), app.publicRoot));
+                        child.setAttribute('src', prependUrl(child.getAttribute('src'), app.publicRoot));
                     }
                     traverseNode(child);
                 }
             }
 
-            function prependURL(url, prefix) {
-                let parsedURL = document.createElement('a');
-                parsedURL.href = url;
-                if (parsedURL.host === window.location.host) {
-                    return `${parsedURL.protocol}//` + `${parsedURL.hostname}:${parsedURL.port}/${prefix}/${parsedURL.pathname}${parsedURL.search}${parsedURL.hash}`.replace(/[\/]+/g, '/');
-                } else {
-                    return url;
-                }
-            }
 
             function appendScriptTag() {
                 if (isLoadingScript) {
@@ -333,6 +363,16 @@ function finishUnmountingApp(app) {
         });
         resolve();
     })
+}
+
+function prependUrl(url, prefix) {
+    let parsedURL = document.createElement('a');
+    parsedURL.href = url;
+    if (parsedURL.host === window.location.host) {
+        return `${parsedURL.protocol}//` + `${parsedURL.hostname}:${parsedURL.port}/${prefix}/${parsedURL.pathname}${parsedURL.search}${parsedURL.hash}`.replace(/[\/]+/g, '/');
+    } else {
+        return url;
+    }
 }
 
 window.addEventListener = function(name, fn) {
