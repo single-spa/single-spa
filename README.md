@@ -2,6 +2,8 @@
 
 Multiple applications all lazily loaded and mounted/unmounted in the same single page application (SPA). The apps can be deployed independently to your web server of choice, lazy-loaded onto the page independently, and nested.
 
+In this context, an application is an html document that pulls in JS, CSS, and more HTML. This means that many pre-existing applications do not need to change at all in order to work with single-spa.
+
 ## View the demo!
 A [demo is live](http://single-spa.surge.sh) on surge.sh. Don't be turned off by the lack of styling -- I'll be fixing that soon. It's based on the code in the [examples](https://github.com/joeldenning/single-spa-examples) repository.
 
@@ -15,10 +17,22 @@ The hope here is that "one SPA to rule them all" will help scale teams and organ
 4. Shared functionality can *only* be accomplished via shared libraries, instead of a service oriented architecture ("Update it and hope library consumers upgrade" vs "Deploy it once and now everyone has it")
 
 ## How to use it
-So right now it's still pretty alpha and so the best thing to do is look at the [examples repository](https://github.com/joeldenning/single-spa-examples). Especially the following files:
+In general, the process is to create a root app which imports single-spa and declares child applications by calling `singleSpa.declareChildApplication(...)`. Each child application starts out as just a single-spa.config.js file, with the rest of the app (the html document, the js, the css, etc) being lazy loaded later on. As the app is being loaded, mounted, unmounted, etc., lifecycle functions are called to allow customized behavior. SSPA plugins are written to standardize the lifecycle functions for popular technologies like angular, jspm, react, webpack, etc.
+### Configuring JSPM apps to be SSPA apps.
+`jspm install npm:single-spa-jspm`
+and then add the following to your single-spa.config.js:
+```
+import { defaultJspmApp } from "single-spa-jspm";
+export const lifecycles = [...(any other plugins)..., defaultJspmApp()]
+```
+Thus far it seems that it's best to put your JSPM lifecycles at the end of the array.
+### Read the examples
+So right now it's still somewhat alpha and so the best thing to do is look at the [examples repository](https://github.com/joeldenning/single-spa-examples). Especially the following files:
 - [The index.html file](https://github.com/joeldenning/single-spa-examples/blob/master/index.html)
 - [The root app](https://github.com/joeldenning/single-spa-examples/blob/master/bootstrap.js)
 - [The children apps](https://github.com/joeldenning/single-spa-examples/tree/master/apps)
 
-Also note that it requires that as of 10/8/15, the root app that loads all other apps must be written with JSPM.  The goal is to move away from that towards the [whatwg/loader standard](https://github.com/whatwg/loader) or maybe towards no loader standard at all (which would offload all of the loading work to the user).
+Also note that it requires that as of 10/19/15, the root app that loads all other apps must be written with JSPM.  The goal is to move away from that towards the [whatwg/loader standard](https://github.com/whatwg/loader) or maybe towards no loader standard at all (which would offload all of the loading work to the user).
 
+## Things that are not supported
+- Single Spa is the one who controls the `<base>` tag, which means that apps should not control it. single-spa-angular1 makes it possible for angular to still work (even with History API pretty urls!) without the angular app putting a `<base>` tag in the app's index.html.
