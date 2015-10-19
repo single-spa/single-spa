@@ -34,6 +34,18 @@ window.singlespa.transpile = function(source, urlPrefix) {
     return source;
 }
 
+window.singlespa.prependUrl = prependUrl;
+
+function prependUrl(prefix, url) {
+    let parsedURL = document.createElement('a');
+    parsedURL.href = url;
+    if (parsedURL.host === window.location.host) {
+        return `${parsedURL.protocol}//` + `${parsedURL.hostname}:${parsedURL.port}/${prefix}/${parsedURL.pathname}${parsedURL.search}${parsedURL.hash}`.replace(/[\/]+/g, '/');
+    } else {
+        return url;
+    }
+}
+
 function prependAllTagAttributesAsAUrl(source, prefix, tagName, attrName) {
     //We've got to be careful about not incurring a bunch of latency here
     let nextTagIndex = 0;
@@ -50,7 +62,7 @@ function prependAllTagAttributesAsAUrl(source, prefix, tagName, attrName) {
             if (openingQuote > 0 && openingQuote < closingTagIndex) {
                 let closingQuote = source.indexOf(quoteChar, openingQuote + 1);
                 let before = source.substring(0, openingQuote + 1)
-                let content = prependUrl(source.substr(openingQuote + 1, closingQuote - openingQuote - 1), prefix);
+                let content = prependUrl(prefix, source.substr(openingQuote + 1, closingQuote - openingQuote - 1));
                 let after = source.substring(closingQuote);
                 source = before + content + after;
             }
@@ -227,15 +239,15 @@ function loadIndex(app) {
                     const child = node.childNodes[i];
                     if (child.tagName === 'SCRIPT') {
                         if (child.getAttribute('src')) {
-                            child.setAttribute('src', prependUrl(child.getAttribute('src'), app.publicRoot));
+                            child.setAttribute('src', prependUrl(app.publicRoot, child.getAttribute('src')));
                         }
                         //we put the scripts onto the page as part of the scriptsLoaded lifecycle
                         scriptsToBeLoaded.push(child);
                         appendScriptTag();
                     } else if (child.tagName === 'LINK' && child.getAttribute('href')) {
-                        child.setAttribute('href', prependUrl(child.getAttribute('href'), app.publicRoot));
+                        child.setAttribute('href', prependUrl(app.publicRoot, child.getAttribute('href')));
                     } else if (child.tagName === 'IMG' && child.getAttribute('src')) {
-                        child.setAttribute('src', prependUrl(child.getAttribute('src'), app.publicRoot));
+                        child.setAttribute('src', prependUrl(app.publicRoot, child.getAttribute('src')));
                     }
                     traverseNode(child);
                 }
@@ -363,16 +375,6 @@ function finishUnmountingApp(app) {
         });
         resolve();
     })
-}
-
-function prependUrl(url, prefix) {
-    let parsedURL = document.createElement('a');
-    parsedURL.href = url;
-    if (parsedURL.host === window.location.host) {
-        return `${parsedURL.protocol}//` + `${parsedURL.hostname}:${parsedURL.port}/${prefix}/${parsedURL.pathname}${parsedURL.search}${parsedURL.hash}`.replace(/[\/]+/g, '/');
-    } else {
-        return url;
-    }
 }
 
 window.addEventListener = function(name, fn) {
