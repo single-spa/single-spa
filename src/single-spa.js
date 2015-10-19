@@ -16,60 +16,20 @@ const requiredLifeCycleFuncs = [
 ];
 
 window.singlespa = {};
-
-window.singlespa.navigateTo = function(element) {
-    window.history.pushState(undefined, '', element.getAttribute('href'));
-    setTimeout(() => triggerAppChange(), 10);
-    return false;
-}
-
-window.singlespa.transpile = function(source, urlPrefix) {
-    if (!mountedApp && typeof urlPrefix !== 'string') {
-        throw new Error(`Single Spa can only transpile html and js when an app is mounted or a urlPrefix is provided`);
-    }
-    let prefix = urlPrefix || mountedApp.publicRoot;
-    //We've got to be careful about not incurring a bunch of latency here
-    source = prependAllTagAttributesAsAUrl(source, prefix, 'img', 'src');
-    source = prependAllTagAttributesAsAUrl(source, prefix, 'link', 'href');
-    return source;
-}
-
 window.singlespa.prependUrl = prependUrl;
 
 function prependUrl(prefix, url) {
+    if (!url.startsWith('/')) {
+        //relative urls are taken care of by the <base> tag
+        return url;
+    }
     let parsedURL = document.createElement('a');
     parsedURL.href = url;
-    if (parsedURL.host === window.location.host) {
+    if (parsedURL.host === window.location.host && !parsedURL.pathname.startsWith(url)) {
         return `${parsedURL.protocol}//` + `${parsedURL.hostname}:${parsedURL.port}/${prefix}/${parsedURL.pathname}${parsedURL.search}${parsedURL.hash}`.replace(/[\/]+/g, '/');
     } else {
         return url;
     }
-}
-
-function prependAllTagAttributesAsAUrl(source, prefix, tagName, attrName) {
-    //We've got to be careful about not incurring a bunch of latency here
-    let nextTagIndex = 0;
-    while ((nextTagIndex = source.indexOf(`<${tagName}`, nextTagIndex + 1)) >= 0) {
-        let closingTagIndex = source.indexOf('>', nextTagIndex);
-        let attrIndex = source.indexOf(`${attrName}`, nextTagIndex);
-        if (attrIndex < closingTagIndex) {
-            let openingQuote = source.indexOf('"', attrIndex);
-            let quoteChar = '"';
-            if (!openingQuote) {
-                openingQuote = source.indexOf("'", attrIndex);
-                quoteChar = "'";
-            }
-            if (openingQuote > 0 && openingQuote < closingTagIndex) {
-                let closingQuote = source.indexOf(quoteChar, openingQuote + 1);
-                let before = source.substring(0, openingQuote + 1)
-                let content = prependUrl(prefix, source.substr(openingQuote + 1, closingQuote - openingQuote - 1));
-                let after = source.substring(closingQuote);
-                source = before + content + after;
-            }
-        }
-    }
-
-    return source;
 }
 
 export function declareChildApplication(appLocation, activeWhen) {
@@ -143,18 +103,32 @@ function triggerAppChange(event) {
         .then(() => finishUnmountingApp(mountedApp))
         .then(() => (mountedApp ? callLifecycleFunction(mountedApp, 'applicationWasUnmounted') : new Promise((resolve) => resolve())))
         .then(() => (newApp.scriptsLoaded ? new Promise((resolve) => resolve()) : loadAppForFirstTime(newApp.appLocation)))
+        .then(() => updateBaseTag(newApp.publicRoot))
         .then(() => callLifecycleFunction(newApp, 'applicationWillMount'))
         .then(() => appWillBeMounted(newApp))
         .then(() => insertDomFrom(newApp))
         .then(() => callLifecycleFunction(newApp, 'applicationWasMounted'))
         .then(() => mountedApp = newApp)
-    } else if (mountedApp && event) {
-        var eventArgs = arguments;
-        if (event.type === 'popstate')
-            mountedApp.popStateFunctions.forEach((popStateFunction) => popStateFunction.apply(window, eventArgs));
-        else if (event.type === 'hashchange')
-            mountedApp.hashChangeFunctions.forEach((hashChangeFunction) => hashChangeFunction.apply(window, eventArgs));
     }
+}
+
+function updateBaseTag(newBaseHref) {
+    return new Promise((resolve) => {
+        if (document.baseURI === `${window.location.protocol}//` + `${window.location.hostname}:${window.location.port}${newBaseHref}`) {
+            debugger;
+            resolve();
+        } else {
+            newBaseHref = `/${newBaseHref}/`.replace(/[\/]+/g, '/');
+            let baseTags = document.querySelectorAll('base');
+            for (let i=0; i<baseTags.length; i++) {
+                baseTags[i].parentNode.removeChild(baseTags[i]);
+            }
+            let newBase = document.createElement('base');
+            newBase.setAttribute('href', newBaseHref);
+            document.head.appendChild(newBase);
+            resolve();
+        }
+    });
 }
 
 function cleanupDom() {
@@ -162,8 +136,12 @@ function cleanupDom() {
         for (let i=0; i<document.documentElement.attributes.length; i++) {
             document.documentElement.removeAttribute(document.documentElement.attributes[i].name);
         }
-        while (document.head.childNodes.length > 0) {
-            document.head.removeChild(document.head.childNodes[0]);
+        let numHeadElsToSkip = 0;
+        while (document.head.childNodes.length > numHeadElsToSkip) {
+            if (document.head.childNodes[numHeadElsToSkip].tagName !== 'BASE')
+                document.head.removeChild(document.head.childNodes[numHeadElsToSkip]);
+            else
+                numHeadElsToSkip++;
         }
         while (document.body.childNodes.length > 0) {
             document.body.removeChild(document.body.childNodes[0]);
@@ -205,7 +183,8 @@ function loadAppForFirstTime(appLocation) {
             registerApplication(appLocation, restOfApp.publicRoot, restOfApp.pathToIndex, restOfApp.lifecycles);
             let app = appLocationToApp[appLocation];
             window.System = currentAppSystemGlobal;
-            callLifecycleFunction(app, 'scriptsWillBeLoaded')
+            updateBaseTag(app.publicRoot)
+            .then(() => callLifecycleFunction(app, 'scriptsWillBeLoaded'))
             .then(() => loadIndex(app))
             .then(() => callLifecycleFunction(app, 'scriptsWereLoaded'))
             .then(() => resolve())
@@ -238,16 +217,8 @@ function loadIndex(app) {
                 for (let i=0; i<node.childNodes.length; i++) {
                     const child = node.childNodes[i];
                     if (child.tagName === 'SCRIPT') {
-                        if (child.getAttribute('src')) {
-                            child.setAttribute('src', prependUrl(app.publicRoot, child.getAttribute('src')));
-                        }
-                        //we put the scripts onto the page as part of the scriptsLoaded lifecycle
                         scriptsToBeLoaded.push(child);
                         appendScriptTag();
-                    } else if (child.tagName === 'LINK' && child.getAttribute('href')) {
-                        child.setAttribute('href', prependUrl(app.publicRoot, child.getAttribute('href')));
-                    } else if (child.tagName === 'IMG' && child.getAttribute('src')) {
-                        child.setAttribute('src', prependUrl(app.publicRoot, child.getAttribute('src')));
                     }
                     traverseNode(child);
                 }
@@ -383,10 +354,35 @@ window.addEventListener = function(name, fn) {
             mountedApp.popStateFunctions.push(fn);
         } else if (name === 'hashchange') {
             mountedApp.hashChangeFunctions.push(fn);
-        } else {
-            nativeAddEventListener.apply(this, arguments);
         }
+    }
+    nativeAddEventListener.apply(this, arguments);
+}
+
+function addEventsToAnchors() {
+    setTimeout(function() {
+        const aTags = document.querySelectorAll('a:not([singlespa])');
+        for (let i=0; i<aTags.length; i++) {
+            aTags[i].addEventListener('click', anchorClicked);
+            aTags[i].setAttribute('singlespa', '');
+        }
+        addEventsToAnchors();
+    }, 12)
+}
+
+addEventsToAnchors();
+
+function anchorClicked(event) {
+    if (window.location.host !== this.host || window.location.protocol !== this.protocol) {
+        //do the default thing
+        return;
     } else {
-        nativeAddEventListener.apply(this, arguments);
+        event.preventDefault();
+        if (this.getAttribute('href').startsWith('#')) {
+            window.location.hash = this.getAttribute('href');
+        } else {
+            window.history.pushState(undefined, '', this.href);
+        }
+        setTimeout(() => triggerAppChange(), 2);
     }
 }
