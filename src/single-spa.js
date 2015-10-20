@@ -2,7 +2,6 @@ let appLocationToApp = {};
 let unhandledRouteHandlers = [];
 let mountedApp;
 const nativeAddEventListener = window.addEventListener;
-const urlLoader = new LoaderPolyfill();
 const nativeSystemGlobal = window.System;
 const requiredLifeCycleFuncs = [
     'scriptsWillBeLoaded',
@@ -46,7 +45,7 @@ export function declareChildApplication(appLocation, activeWhen) {
         parentApp: mountedApp ? mountedApp.appLocation : null
     };
 
-    triggerAppChange();
+    triggerAppChange(true);
 }
 
 export function addUnhandledRouteHandler(handler) {
@@ -81,34 +80,42 @@ function callLifecycleFunction(app, funcName, ...args) {
                     callFunc(++i);
                 }
             })
+            .catch((ex) => {
+                throw ex;
+            });
         }
     })
 }
 
-function triggerAppChange(event) {
+function triggerAppChange(appMayNotBeMountedYet) {
     let newApp = appForCurrentURL();
     if (!newApp) {
         unhandledRouteHandlers.forEach((handler) => {
             handler(mountedApp);
         });
         //nothing to do. Leave the app how it was
-        console.warn(`No app matches the url ${window.location.toString()}, and there are no unhandledRouteHandlers`);
+        if (!appMayNotBeMountedYet)
+            console.warn(`No app matches the url ${window.location.toString()}, and there are no unhandledRouteHandlers`);
         return;
     }
 
     if (newApp !== mountedApp) {
+        let oldApp = mountedApp;
 
-        (mountedApp ? callLifecycleFunction(mountedApp, 'applicationWillUnmount') : new Promise((resolve) => resolve()))
+        (oldApp ? callLifecycleFunction(oldApp, 'applicationWillUnmount') : new Promise((resolve) => resolve()))
         .then(() => cleanupDom())
-        .then(() => finishUnmountingApp(mountedApp))
-        .then(() => (mountedApp ? callLifecycleFunction(mountedApp, 'applicationWasUnmounted') : new Promise((resolve) => resolve())))
+        .then(() => finishUnmountingApp(oldApp))
+        .then(() => (oldApp ? callLifecycleFunction(oldApp, 'applicationWasUnmounted') : new Promise((resolve) => resolve())))
+        .then(() => mountedApp = newApp)
         .then(() => (newApp.scriptsLoaded ? new Promise((resolve) => resolve()) : loadAppForFirstTime(newApp.appLocation)))
         .then(() => updateBaseTag(newApp.publicRoot))
         .then(() => callLifecycleFunction(newApp, 'applicationWillMount'))
         .then(() => appWillBeMounted(newApp))
         .then(() => insertDomFrom(newApp))
         .then(() => callLifecycleFunction(newApp, 'applicationWasMounted'))
-        .then(() => mountedApp = newApp)
+        .catch((ex) => {
+            throw ex;
+        })
     }
 }
 
@@ -133,8 +140,8 @@ function updateBaseTag(newBaseHref) {
 
 function cleanupDom() {
     return new Promise((resolve) => {
-        for (let i=0; i<document.documentElement.attributes.length; i++) {
-            document.documentElement.removeAttribute(document.documentElement.attributes[i].name);
+        while (document.documentElement.attributes.length > 0) {
+            document.documentElement.removeAttribute(document.documentElement.attributes[0].name);
         }
         let numHeadElsToSkip = 0;
         while (document.head.childNodes.length > numHeadElsToSkip) {
@@ -188,6 +195,12 @@ function loadAppForFirstTime(appLocation) {
             .then(() => loadIndex(app))
             .then(() => callLifecycleFunction(app, 'scriptsWereLoaded'))
             .then(() => resolve())
+            .catch((ex) => {
+                throw ex;
+            });;
+        })
+        .catch((ex) => {
+            throw ex;
         })
     })
 }
@@ -292,14 +305,9 @@ function registerApplication(appLocation, publicRoot, pathToIndex, lifecycles) {
     let app = appLocationToApp[appLocation];
     app.publicRoot = publicRoot;
     app.pathToIndex = pathToIndex;
-    app.hashChangeFunctions = [];
-    app.popStateFunctions = [];
+    app.windowEventListeners = {};
     app.lifecycles = lifecycles;
 }
-
-nativeAddEventListener('popstate', function() {
-    triggerAppChange.apply(undefined, arguments);
-});
 
 function appForCurrentURL() {
     let appsForCurrentUrl = [];
@@ -322,39 +330,32 @@ function appForCurrentURL() {
 
 function appWillBeMounted(app) {
     return new Promise((resolve) => {
-        app.hashChangeFunctions.forEach((hashChangeFunction) => {
-            nativeAddEventListener('hashchange', hashChangeFunction);
-        });
-        app.popStateFunctions.forEach((popStateFunction) => {
-            nativeAddEventListener('popstate', popStateFunction);
-        });
+        for (let eventName in app.windowEventListeners) {
+            for (let i=0; i<app.windowEventListeners[eventName].length; i++)
+                nativeAddEventListener(eventName, app.windowEventListeners[eventName][i]);
+        }
         resolve();
     })
 }
 
 function finishUnmountingApp(app) {
     return new Promise((resolve) => {
-        if (!app) {
-            resolve()
-            return;
+        if (app) {
+            for (let eventName in app.windowEventListeners) {
+                for (let i=0; i<app.windowEventListeners[eventName].length; i++)
+                    window.removeEventListener(eventName, app.windowEventListeners[eventName][i]);
+            }
         }
-        app.hashChangeFunctions.forEach((hashChangeFunction) => {
-            window.removeEventListener('hashchange', hashChangeFunction);
-        });
-        app.popStateFunctions.forEach((popStateFunction) => {
-            window.removeEventListener('popstate', popStateFunction);
-        });
         resolve();
     })
 }
 
 window.addEventListener = function(name, fn) {
     if (mountedApp) {
-        if (name === 'popstate') {
-            mountedApp.popStateFunctions.push(fn);
-        } else if (name === 'hashchange') {
-            mountedApp.hashChangeFunctions.push(fn);
+        if (!mountedApp.windowEventListeners[name]) {
+            mountedApp.windowEventListeners[name] = [];
         }
+        mountedApp.windowEventListeners[name].push(fn);
     }
     nativeAddEventListener.apply(this, arguments);
 }
@@ -382,7 +383,8 @@ function anchorClicked(event) {
             window.location.hash = this.getAttribute('href');
         } else {
             window.history.pushState(undefined, '', this.href);
+            //calling pushState programatically doesn't fire the popstate event
+            setTimeout(triggerAppChange(), 2);
         }
-        setTimeout(() => triggerAppChange(), 2);
     }
 }
