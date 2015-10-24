@@ -21,7 +21,7 @@
     "es6-module-loader": "0.17.7"
   },
   "devDependencies": {
-    "babel": "5.8.23"
+    "babel": "5.8.29"
   },
   "publishConfig": {
     "registry": "http://registry.npmjs.org"
