@@ -70,7 +70,12 @@ export function updateApplicationSourceCode(appName) {
 
 function callLifecycleFunction(app, funcName, ...args) {
     return new Promise((resolve) => {
-        callFunc(0);
+        if (app.lifecycles.length > 0) {
+            callFunc(0);
+        } else {
+            //nothing to do
+            resolve();
+        }
         function callFunc(i) {
             app.lifecycles[i][funcName](...args)
             .then(() => {
