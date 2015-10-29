@@ -223,6 +223,9 @@ function loadIndex(app) {
             let isLoadingScript = false;
             let scriptsToBeLoaded = [];
 
+            //for when there ain't no scripts to load, we default to all scripts being loaded
+            app.scriptsLoaded = true;
+
             traverseNode(dom);
             app.parsedDom = dom.documentElement;
             if (app.scriptsLoaded) {
@@ -244,6 +247,7 @@ function loadIndex(app) {
 
 
             function appendScriptTag() {
+                app.scriptsLoaded = false;
                 if (isLoadingScript) {
                     return;
                 }
