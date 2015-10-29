@@ -53,7 +53,7 @@ export const lifecycles = [...(any other plugins)..., defaultJspmApp()]
 ```
 Thus far it seems that it's best to put your JSPM lifecycles at the end of the array.
 ### Configuring Webpack apps
-So far, webpack has not required any special configuration to work in an SSPA environment. So no need to add a "lifecycle" for webpack in your single-spa.config.js file.
+So far, webpack has not required any special configuration to work in an SSPA environment. It works out of the box! So no need to add a "lifecycle" for webpack in your single-spa.config.js file.
 ### Configuring Angular apps
 From your root app,
 `jspm install npm:single-spa-angular1`
