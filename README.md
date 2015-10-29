@@ -18,7 +18,33 @@ The hope here is that "one SPA to rule them all" will help scale teams and organ
 
 ## How to use it
 In general, the process is to create a root app which imports single-spa and declares child applications by calling `singleSpa.declareChildApplication(...)`. Each child application starts out as just a single-spa.config.js file, with the rest of the app (the html document, the js, the css, etc) being lazy loaded later on. As the app is being loaded, mounted, unmounted, etc., lifecycle functions are called to allow customized behavior. SSPA plugins are written to standardize the lifecycle functions for popular technologies like angular, jspm, react, webpack, etc.
-### Configuring JSPM apps to be SSPA apps.
+
+Example:
+```
+// root-app.html
+<html>
+    <head>
+        <script src="/jspm_packages/system.src.js"></script>
+        <script src="/config.js"></script>
+        <script>
+            System.import('/root-app.js');
+        </script>
+        <base href="/"></base>
+    </head>
+</html>
+
+// root-app.js
+import { declareChildApplication } from "single-spa";
+declareChildApplication('/apps/myApp/single-spa.config.js', () => window.location.pathname.startsWith('/myApp'));
+
+// apps/myApp/single-spa.config.js
+export const publicRoot = '/apps/the-directory-my-app-is-in'; //the path on the web server to the directory the app is in.
+export const pathToIndex = 'index.html'; //This is a relative url (based on publicRoot) to the html document that bootstraps your app
+export const lifecycles = []; //put any plugins (i.e., for jspm or angular) here
+```
+
+### Configuring JSPM apps
+From your root app,
 `jspm install npm:single-spa-jspm`
 and then add the following to your single-spa.config.js:
 ```
@@ -26,6 +52,24 @@ import { defaultJspmApp } from "single-spa-jspm";
 export const lifecycles = [...(any other plugins)..., defaultJspmApp()]
 ```
 Thus far it seems that it's best to put your JSPM lifecycles at the end of the array.
+### Configuring Webpack apps
+So far, webpack has not required any special configuration to work in an SSPA environment. So no need to add a "lifecycle" for webpack in your single-spa.config.js file.
+### Configuring Angular apps
+From your root app,
+`jspm install npm:single-spa-angular1`
+and then add the following to your single-spa.config.js
+```
+import { defaultAngular1App } from "single-spa-angular1";
+
+export const publicRoot = '....'; //the path on the web server to the directory the app is in
+
+const angular1App = defaultAngular1App({
+    publicRoot: publicRoot,
+    rootAngularModule: '[name of your root angular module]',
+    rootElementGetter: () => document.querySelector('#app-root') //or some other way of getting the root element
+});
+export const lifecycles = [...(any other plugins)..., angular1App]
+```
 ### Read the examples
 So right now it's still somewhat alpha and so the best thing to do is look at the [examples repository](https://github.com/joeldenning/single-spa-examples). Especially the following files:
 - [The index.html file](https://github.com/joeldenning/single-spa-examples/blob/master/index.html)
