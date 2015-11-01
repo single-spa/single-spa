@@ -13,11 +13,11 @@ var appLocationToApp = {};
 var unhandledRouteHandlers = [];
 var mountedApp = undefined;
 var nativeAddEventListener = window.addEventListener;
-var nativeSystemGlobal = window.System;
 var requiredLifeCycleFuncs = ['scriptsWillBeLoaded', 'scriptsWereLoaded', 'applicationWillMount', 'applicationWasMounted', 'applicationWillUnmount', 'applicationWasUnmounted', 'activeApplicationSourceWillUpdate', 'activeApplicationSourceWillUpdate'];
 
 window.singlespa = {};
 window.singlespa.prependUrl = prependUrl;
+window.singlespa.loader = window.System; //hard dependency on JSPM being on the page
 
 function prependUrl(prefix, url) {
     if (!url.startsWith('/')) {
@@ -204,8 +204,8 @@ function insertDomFrom(app) {
 function loadAppForFirstTime(appLocation) {
     return new Promise(function (resolve, reject) {
         var currentAppSystemGlobal = window.System;
-        window.System = nativeSystemGlobal;
-        nativeSystemGlobal.import(appLocation).then(function (restOfApp) {
+        window.System = window.singlespa.loader;
+        window.singlespa.loader.import(appLocation).then(function (restOfApp) {
             registerApplication(appLocation, restOfApp.publicRoot, restOfApp.pathToIndex, restOfApp.lifecycles);
             var app = appLocationToApp[appLocation];
             window.System = currentAppSystemGlobal;
