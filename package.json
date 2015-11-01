@@ -6,6 +6,7 @@
   "scripts": {
     "build": "babel src/single-spa.js --out-file dist/single-spa.js --source-maps"
   },
+  "repository": "https://github.com/joeldenning/single-spa",
   "keywords": [
     "single",
     "page",
