@@ -1,6 +1,6 @@
 {
   "name": "single-spa",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Multiple applications, one page",
   "main": "dist/single-spa.js",
   "scripts": {
