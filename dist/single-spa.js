@@ -1,16 +1,18 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.declareChildApplication = declareChildApplication;
 exports.addUnhandledRouteHandler = addUnhandledRouteHandler;
 exports.updateApplicationSourceCode = updateApplicationSourceCode;
+
+function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
 var appLocationToApp = {};
 var unhandledRouteHandlers = [];
 var mountedApp = undefined;
 var nativeAddEventListener = window.addEventListener;
-var urlLoader = new LoaderPolyfill();
 var nativeSystemGlobal = window.System;
 var requiredLifeCycleFuncs = ['scriptsWillBeLoaded', 'scriptsWereLoaded', 'applicationWillMount', 'applicationWasMounted', 'applicationWillUnmount', 'applicationWasUnmounted', 'activeApplicationSourceWillUpdate', 'activeApplicationSourceWillUpdate'];
 
@@ -42,7 +44,7 @@ function declareChildApplication(appLocation, activeWhen) {
         parentApp: mountedApp ? mountedApp.appLocation : null
     };
 
-    triggerAppChange();
+    triggerAppChange(true);
 }
 
 function addUnhandledRouteHandler(handler) {
@@ -69,7 +71,12 @@ function callLifecycleFunction(app, funcName) {
     }
 
     return new Promise(function (resolve) {
-        callFunc(0);
+        if (app.lifecycles.length > 0) {
+            callFunc(0);
+        } else {
+            //nothing to do
+            resolve();
+        }
         function callFunc(i) {
             var _app$lifecycles$i;
 
@@ -79,51 +86,58 @@ function callLifecycleFunction(app, funcName) {
                 } else {
                     callFunc(++i);
                 }
+            }).catch(function (ex) {
+                throw ex;
             });
         }
     });
 }
 
-function triggerAppChange(event) {
+function triggerAppChange(appMayNotBeMountedYet) {
     var newApp = appForCurrentURL();
     if (!newApp) {
         unhandledRouteHandlers.forEach(function (handler) {
             handler(mountedApp);
         });
         //nothing to do. Leave the app how it was
-        console.warn('No app matches the url ' + window.location.toString() + ', and there are no unhandledRouteHandlers');
+        if (!appMayNotBeMountedYet) console.warn('No app matches the url ' + window.location.toString() + ', and there are no unhandledRouteHandlers');
         return;
     }
 
     if (newApp !== mountedApp) {
+        (function () {
+            var oldApp = mountedApp;
 
-        (mountedApp ? callLifecycleFunction(mountedApp, 'applicationWillUnmount') : new Promise(function (resolve) {
-            return resolve();
-        })).then(function () {
-            return cleanupDom();
-        }).then(function () {
-            return finishUnmountingApp(mountedApp);
-        }).then(function () {
-            return mountedApp ? callLifecycleFunction(mountedApp, 'applicationWasUnmounted') : new Promise(function (resolve) {
+            (oldApp ? callLifecycleFunction(oldApp, 'applicationWillUnmount') : new Promise(function (resolve) {
                 return resolve();
+            })).then(function () {
+                return cleanupDom();
+            }).then(function () {
+                return finishUnmountingApp(oldApp);
+            }).then(function () {
+                return oldApp ? callLifecycleFunction(oldApp, 'applicationWasUnmounted') : new Promise(function (resolve) {
+                    return resolve();
+                });
+            }).then(function () {
+                return mountedApp = newApp;
+            }).then(function () {
+                return newApp.scriptsLoaded ? new Promise(function (resolve) {
+                    return resolve();
+                }) : loadAppForFirstTime(newApp.appLocation);
+            }).then(function () {
+                return updateBaseTag(newApp.publicRoot);
+            }).then(function () {
+                return callLifecycleFunction(newApp, 'applicationWillMount');
+            }).then(function () {
+                return appWillBeMounted(newApp);
+            }).then(function () {
+                return insertDomFrom(newApp);
+            }).then(function () {
+                return callLifecycleFunction(newApp, 'applicationWasMounted');
+            }).catch(function (ex) {
+                throw ex;
             });
-        }).then(function () {
-            return newApp.scriptsLoaded ? new Promise(function (resolve) {
-                return resolve();
-            }) : loadAppForFirstTime(newApp.appLocation);
-        }).then(function () {
-            return updateBaseTag(newApp.publicRoot);
-        }).then(function () {
-            return callLifecycleFunction(newApp, 'applicationWillMount');
-        }).then(function () {
-            return appWillBeMounted(newApp);
-        }).then(function () {
-            return insertDomFrom(newApp);
-        }).then(function () {
-            return callLifecycleFunction(newApp, 'applicationWasMounted');
-        }).then(function () {
-            return mountedApp = newApp;
-        });
+        })();
     }
 }
 
@@ -148,8 +162,8 @@ function updateBaseTag(newBaseHref) {
 
 function cleanupDom() {
     return new Promise(function (resolve) {
-        for (var i = 0; i < document.documentElement.attributes.length; i++) {
-            document.documentElement.removeAttribute(document.documentElement.attributes[i].name);
+        while (document.documentElement.attributes.length > 0) {
+            document.documentElement.removeAttribute(document.documentElement.attributes[0].name);
         }
         var numHeadElsToSkip = 0;
         while (document.head.childNodes.length > numHeadElsToSkip) {
@@ -191,7 +205,7 @@ function loadAppForFirstTime(appLocation) {
     return new Promise(function (resolve, reject) {
         var currentAppSystemGlobal = window.System;
         window.System = nativeSystemGlobal;
-        nativeSystemGlobal['import'](appLocation).then(function (restOfApp) {
+        nativeSystemGlobal.import(appLocation).then(function (restOfApp) {
             registerApplication(appLocation, restOfApp.publicRoot, restOfApp.pathToIndex, restOfApp.lifecycles);
             var app = appLocationToApp[appLocation];
             window.System = currentAppSystemGlobal;
@@ -203,7 +217,11 @@ function loadAppForFirstTime(appLocation) {
                 return callLifecycleFunction(app, 'scriptsWereLoaded');
             }).then(function () {
                 return resolve();
-            });
+            }).catch(function (ex) {
+                throw ex;
+            });;
+        }).catch(function (ex) {
+            throw ex;
         });
     });
 }
@@ -220,6 +238,9 @@ function loadIndex(app) {
             var dom = parser.parseFromString(this.responseText, 'text/html');
             var isLoadingScript = false;
             var scriptsToBeLoaded = [];
+
+            //for when there ain't no scripts to load, we default to all scripts being loaded
+            app.scriptsLoaded = true;
 
             traverseNode(dom);
             app.parsedDom = dom.documentElement;
@@ -241,6 +262,7 @@ function loadIndex(app) {
             }
 
             function appendScriptTag() {
+                app.scriptsLoaded = false;
                 if (isLoadingScript) {
                     return;
                 }
@@ -289,14 +311,14 @@ function registerApplication(appLocation, publicRoot, pathToIndex, lifecycles) {
     if (typeof pathToIndex !== 'string') {
         throw new Error('App ' + appLocation + ' must export a pathToIndex string');
     }
-    if (typeof lifecycles !== 'object' && typeof lifecycles !== 'function') {
+    if ((typeof lifecycles === 'undefined' ? 'undefined' : _typeof(lifecycles)) !== 'object' && typeof lifecycles !== 'function') {
         throw new Error('App ' + appLocation + ' must export a \'lifecycles\' object or array of objects');
     }
     if (!Array.isArray(lifecycles)) {
         lifecycles = [lifecycles];
     }
 
-    var _loop = function (i) {
+    var _loop = function _loop(i) {
         requiredLifeCycleFuncs.forEach(function (requiredLifeCycleFunc) {
             if (typeof lifecycles[i][requiredLifeCycleFunc] !== 'function') {
                 throw new Error('In app \'' + appLocation + '\', The lifecycle at index ' + i + ' does not have required function ' + requiredLifeCycleFunc);
@@ -312,14 +334,9 @@ function registerApplication(appLocation, publicRoot, pathToIndex, lifecycles) {
     var app = appLocationToApp[appLocation];
     app.publicRoot = publicRoot;
     app.pathToIndex = pathToIndex;
-    app.hashChangeFunctions = [];
-    app.popStateFunctions = [];
+    app.windowEventListeners = {};
     app.lifecycles = lifecycles;
 }
-
-nativeAddEventListener('popstate', function () {
-    triggerAppChange.apply(undefined, arguments);
-});
 
 function appForCurrentURL() {
     var appsForCurrentUrl = [];
@@ -344,39 +361,34 @@ function appForCurrentURL() {
 
 function appWillBeMounted(app) {
     return new Promise(function (resolve) {
-        app.hashChangeFunctions.forEach(function (hashChangeFunction) {
-            nativeAddEventListener('hashchange', hashChangeFunction);
-        });
-        app.popStateFunctions.forEach(function (popStateFunction) {
-            nativeAddEventListener('popstate', popStateFunction);
-        });
+        for (var eventName in app.windowEventListeners) {
+            for (var i = 0; i < app.windowEventListeners[eventName].length; i++) {
+                nativeAddEventListener(eventName, app.windowEventListeners[eventName][i]);
+            }
+        }
         resolve();
     });
 }
 
 function finishUnmountingApp(app) {
     return new Promise(function (resolve) {
-        if (!app) {
-            resolve();
-            return;
+        if (app) {
+            for (var eventName in app.windowEventListeners) {
+                for (var i = 0; i < app.windowEventListeners[eventName].length; i++) {
+                    window.removeEventListener(eventName, app.windowEventListeners[eventName][i]);
+                }
+            }
         }
-        app.hashChangeFunctions.forEach(function (hashChangeFunction) {
-            window.removeEventListener('hashchange', hashChangeFunction);
-        });
-        app.popStateFunctions.forEach(function (popStateFunction) {
-            window.removeEventListener('popstate', popStateFunction);
-        });
         resolve();
     });
 }
 
 window.addEventListener = function (name, fn) {
     if (mountedApp) {
-        if (name === 'popstate') {
-            mountedApp.popStateFunctions.push(fn);
-        } else if (name === 'hashchange') {
-            mountedApp.hashChangeFunctions.push(fn);
+        if (!mountedApp.windowEventListeners[name]) {
+            mountedApp.windowEventListeners[name] = [];
         }
+        mountedApp.windowEventListeners[name].push(fn);
     }
     nativeAddEventListener.apply(this, arguments);
 };
@@ -404,9 +416,10 @@ function anchorClicked(event) {
             window.location.hash = this.getAttribute('href');
         } else {
             window.history.pushState(undefined, '', this.href);
+            //calling pushState programatically doesn't fire the popstate event
+            setTimeout(triggerAppChange(), 2);
         }
-        setTimeout(function () {
-            return triggerAppChange();
-        }, 2);
     }
 }
+
+//# sourceMappingURL=single-spa.js.map
