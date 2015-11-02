@@ -2,16 +2,6 @@ let appLocationToApp = {};
 let unhandledRouteHandlers = [];
 let mountedApp;
 const nativeAddEventListener = window.addEventListener;
-const requiredLifeCycleFuncs = [
-    'scriptsWillBeLoaded',
-    'scriptsWereLoaded',
-    'applicationWillMount',
-    'applicationWasMounted',
-    'applicationWillUnmount',
-    'applicationWasUnmounted',
-    'activeApplicationSourceWillUpdate',
-    'activeApplicationSourceWillUpdate'
-];
 
 window.singlespa = {};
 window.singlespa.prependUrl = prependUrl;
@@ -77,7 +67,13 @@ function callLifecycleFunction(app, funcName, ...args) {
             resolve();
         }
         function callFunc(i) {
-            app.lifecycles[i][funcName](...args)
+            let funcPromise;
+            if (app.lifecycles[i][funcName]) {
+                funcPromise = app.lifecycles[i][funcName](...args);
+            } else {
+                funcPromise = new Promise((resolve) => resolve());
+            }
+            funcPromise
             .then(() => {
                 if (i === app.lifecycles.length - 1) {
                     resolve();
@@ -106,17 +102,18 @@ function triggerAppChange(appMayNotBeMountedYet) {
 
     if (newApp !== mountedApp) {
         let oldApp = mountedApp;
+        let newAppHasBeenMountedBefore = !!newApp.scriptsLoaded;
 
         (oldApp ? callLifecycleFunction(oldApp, 'applicationWillUnmount') : new Promise((resolve) => resolve()))
         .then(() => cleanupDom())
         .then(() => finishUnmountingApp(oldApp))
         .then(() => (oldApp ? callLifecycleFunction(oldApp, 'applicationWasUnmounted') : new Promise((resolve) => resolve())))
         .then(() => mountedApp = newApp)
-        .then(() => (newApp.scriptsLoaded ? new Promise((resolve) => resolve()) : loadAppForFirstTime(newApp.appLocation)))
+        .then(() => (newAppHasBeenMountedBefore ? new Promise((resolve) => resolve()) : loadAppForFirstTime(newApp.appLocation)))
         .then(() => updateBaseTag(newApp.publicRoot))
         .then(() => callLifecycleFunction(newApp, 'applicationWillMount'))
         .then(() => appWillBeMounted(newApp))
-        .then(() => insertDomFrom(newApp))
+        .then(() => insertDomFrom(newApp, !newAppHasBeenMountedBefore))
         .then(() => callLifecycleFunction(newApp, 'applicationWasMounted'))
         .catch((ex) => {
             throw ex;
@@ -162,7 +159,7 @@ function cleanupDom() {
     })
 }
 
-function insertDomFrom(app) {
+function insertDomFrom(app, firstTime) {
     return new Promise((resolve) => {
         const deepClone = true;
         let clonedAppDom = app.parsedDom.cloneNode(deepClone);
@@ -183,6 +180,13 @@ function insertDomFrom(app) {
         }
 
         app.parsedDom = clonedAppDom;
+
+        if (firstTime) {
+            const event = document.createEvent('Event');
+            event.initEvent('DOMContentLoaded', true, true);
+            window.document.dispatchEvent(event);
+        }
+
         resolve();
     })
 }
@@ -272,7 +276,7 @@ function loadIndex(app) {
                 }
                 isLoadingScript = true;
                 document.head.appendChild(scriptTag);
-                if (scriptTag.src) {
+                if (scriptTag.src && (!scriptTag.type || scriptTag.type === 'text/javascript')) {
                     scriptTag.onload = () => {
                         isLoadingScript = false;
                         appendScriptTag();
@@ -301,13 +305,6 @@ function registerApplication(appLocation, publicRoot, pathToIndex, lifecycles) {
     }
     if (!Array.isArray(lifecycles)) {
         lifecycles = [lifecycles];
-    }
-    for (let i=0; i<lifecycles.length; i++) {
-        requiredLifeCycleFuncs.forEach((requiredLifeCycleFunc) => {
-            if (typeof lifecycles[i][requiredLifeCycleFunc] !== 'function') {
-                throw new Error(`In app '${appLocation}', The lifecycle at index ${i} does not have required function ${requiredLifeCycleFunc}`);
-            }
-        });
     }
 
     //register

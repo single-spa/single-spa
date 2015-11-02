@@ -13,7 +13,6 @@ var appLocationToApp = {};
 var unhandledRouteHandlers = [];
 var mountedApp = undefined;
 var nativeAddEventListener = window.addEventListener;
-var requiredLifeCycleFuncs = ['scriptsWillBeLoaded', 'scriptsWereLoaded', 'applicationWillMount', 'applicationWasMounted', 'applicationWillUnmount', 'applicationWasUnmounted', 'activeApplicationSourceWillUpdate', 'activeApplicationSourceWillUpdate'];
 
 window.singlespa = {};
 window.singlespa.prependUrl = prependUrl;
@@ -78,9 +77,17 @@ function callLifecycleFunction(app, funcName) {
             resolve();
         }
         function callFunc(i) {
-            var _app$lifecycles$i;
+            var funcPromise = undefined;
+            if (app.lifecycles[i][funcName]) {
+                var _app$lifecycles$i;
 
-            (_app$lifecycles$i = app.lifecycles[i])[funcName].apply(_app$lifecycles$i, args).then(function () {
+                funcPromise = (_app$lifecycles$i = app.lifecycles[i])[funcName].apply(_app$lifecycles$i, args);
+            } else {
+                funcPromise = new Promise(function (resolve) {
+                    return resolve();
+                });
+            }
+            funcPromise.then(function () {
                 if (i === app.lifecycles.length - 1) {
                     resolve();
                 } else {
@@ -107,6 +114,7 @@ function triggerAppChange(appMayNotBeMountedYet) {
     if (newApp !== mountedApp) {
         (function () {
             var oldApp = mountedApp;
+            var newAppHasBeenMountedBefore = !!newApp.scriptsLoaded;
 
             (oldApp ? callLifecycleFunction(oldApp, 'applicationWillUnmount') : new Promise(function (resolve) {
                 return resolve();
@@ -121,7 +129,7 @@ function triggerAppChange(appMayNotBeMountedYet) {
             }).then(function () {
                 return mountedApp = newApp;
             }).then(function () {
-                return newApp.scriptsLoaded ? new Promise(function (resolve) {
+                return newAppHasBeenMountedBefore ? new Promise(function (resolve) {
                     return resolve();
                 }) : loadAppForFirstTime(newApp.appLocation);
             }).then(function () {
@@ -131,7 +139,7 @@ function triggerAppChange(appMayNotBeMountedYet) {
             }).then(function () {
                 return appWillBeMounted(newApp);
             }).then(function () {
-                return insertDomFrom(newApp);
+                return insertDomFrom(newApp, !newAppHasBeenMountedBefore);
             }).then(function () {
                 return callLifecycleFunction(newApp, 'applicationWasMounted');
             }).catch(function (ex) {
@@ -176,7 +184,7 @@ function cleanupDom() {
     });
 }
 
-function insertDomFrom(app) {
+function insertDomFrom(app, firstTime) {
     return new Promise(function (resolve) {
         var deepClone = true;
         var clonedAppDom = app.parsedDom.cloneNode(deepClone);
@@ -197,6 +205,13 @@ function insertDomFrom(app) {
         }
 
         app.parsedDom = clonedAppDom;
+
+        if (firstTime) {
+            var event = document.createEvent('Event');
+            event.initEvent('DOMContentLoaded', true, true);
+            window.document.dispatchEvent(event);
+        }
+
         resolve();
     });
 }
@@ -287,7 +302,7 @@ function loadIndex(app) {
                 }
                 isLoadingScript = true;
                 document.head.appendChild(scriptTag);
-                if (scriptTag.src) {
+                if (scriptTag.src && (!scriptTag.type || scriptTag.type === 'text/javascript')) {
                     scriptTag.onload = function () {
                         isLoadingScript = false;
                         appendScriptTag();
@@ -316,18 +331,6 @@ function registerApplication(appLocation, publicRoot, pathToIndex, lifecycles) {
     }
     if (!Array.isArray(lifecycles)) {
         lifecycles = [lifecycles];
-    }
-
-    var _loop = function _loop(i) {
-        requiredLifeCycleFuncs.forEach(function (requiredLifeCycleFunc) {
-            if (typeof lifecycles[i][requiredLifeCycleFunc] !== 'function') {
-                throw new Error('In app \'' + appLocation + '\', The lifecycle at index ' + i + ' does not have required function ' + requiredLifeCycleFunc);
-            }
-        });
-    };
-
-    for (var i = 0; i < lifecycles.length; i++) {
-        _loop(i);
     }
 
     //register
