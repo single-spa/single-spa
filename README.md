@@ -97,12 +97,12 @@ export const pathToIndex = 'index.html';
 export const lifecycles = [...(any other plugins)..., appWithGlobals(['app1', 'globalVar1', 'anotherGlobal'])]
 ```
 ### Read the examples
-So right now it's still somewhat alpha and so the best thing to do is look at the [examples repository](https://github.com/joeldenning/single-spa-examples). Especially the following files:
+There is also an [examples repository](https://github.com/joeldenning/single-spa-examples) that shows several apps working great in a single-spa environment. The following files are a good place to start:
 - [The index.html file](https://github.com/joeldenning/single-spa-examples/blob/master/index.html)
 - [The root app](https://github.com/joeldenning/single-spa-examples/blob/master/bootstrap.js)
 - [The children apps](https://github.com/joeldenning/single-spa-examples/tree/master/apps)
 
-Also note that it requires that as of 10/19/15, the root app that loads all other apps must be written with JSPM.  The goal is to move away from that towards the [whatwg/loader standard](https://github.com/whatwg/loader) or maybe towards no loader standard at all (which would offload all of the loading work to the user).
+Also note that it requires that as of 11/1/15, the root app that loads all other apps must be written with JSPM.  The goal is to move away from that towards the [whatwg/loader standard](https://github.com/whatwg/loader) or maybe towards no loader standard at all (which would offload all of the loading work to the user).
 
 ## Things that are not supported
 - Single Spa is the one who controls the `<base>` tag, which means that apps should not control it. single-spa-angular1 makes it possible for angular to still work (even with History API pretty urls!) without the angular app putting a `<base>` tag in the app's index.html.
