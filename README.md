@@ -29,7 +29,6 @@ Example:
         <script>
             System.import('/root-app.js');
         </script>
-        <base href="/"></base>
     </head>
 </html>
 
@@ -44,9 +43,9 @@ export const lifecycles = []; //put any plugins (i.e., for jspm or angular) here
 ```
 
 ### Configuring JSPM apps
-From your root app,
+[single-spa-jspm](https://github.com/joeldenning/single-spa-jspm) is an actively maintained project that eases the burden of configuring jspm apps. To use it, run the following in your root app's directory
 `jspm install npm:single-spa-jspm`
-and then add the following to your single-spa.config.js:
+and then add the following to the jspm app's single-spa.config.js:
 ```
 import { defaultJspmApp } from "single-spa-jspm";
 export const lifecycles = [...(any other plugins)..., defaultJspmApp()]
@@ -54,8 +53,25 @@ export const lifecycles = [...(any other plugins)..., defaultJspmApp()]
 Thus far it seems that it's best to put your JSPM lifecycles at the end of the array.
 ### Configuring Webpack apps
 So far, webpack has not required any special configuration to work in an SSPA environment. It works out of the box! So no need to add a "lifecycle" for webpack in your single-spa.config.js file.
+### Configuring React apps
+[single-spa-react](https://github.com/joeldenning/single-spa-react) is an actively maintained project that eases the burden of configuring react apps. To use it, run the following in your root app's directory
+`jspm install npm:single-spa-react`
+and then add the following to your single-spa.config.js:
+```
+import { defaultReactApp } from "single-spa-react";
+
+export const publicRoot = '...';
+export const pathToIndex = 'index.html';
+
+const reactApp = defaultReactApp({
+    rootElementGetter: function() {
+        return document.querySelector('#root-react-element');
+    }
+});
+export const lifecycles = [reactApp, ...(any other plugins)...];
+```
 ### Configuring Angular apps
-From your root app,
+[single-spa-angular1](https://github.com/joeldenning/single-spa-angular1) is an actively maintained project that eases the burden of configuring Angular apps. To use it, run the following in your root app's directory
 `jspm install npm:single-spa-angular1`
 and then add the following to your single-spa.config.js
 ```
@@ -69,6 +85,16 @@ const angular1App = defaultAngular1App({
     rootElementGetter: () => document.querySelector('#app-root') //or some other way of getting the root element
 });
 export const lifecycles = [...(any other plugins)..., angular1App]
+```
+### Configuring apps that leak globals
+[single-spa-globals](https://github.com/joeldenning/single-spa-jspm) is an actively maintained project that eases the burden of configuring apps that leak globals. To use it, run the following in your root app's directory
+`jspm install npm:single-spa-globals`
+and then add the following to your single-spa.config.js
+```
+import { appWithGlobals } from "single-spa-globals";
+export const publicRoot = '....';
+export const pathToIndex = 'index.html';
+export const lifecycles = [...(any other plugins)..., appWithGlobals(['app1', 'globalVar1', 'anotherGlobal'])]
 ```
 ### Read the examples
 So right now it's still somewhat alpha and so the best thing to do is look at the [examples repository](https://github.com/joeldenning/single-spa-examples). Especially the following files:
