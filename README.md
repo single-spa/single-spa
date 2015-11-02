@@ -87,7 +87,7 @@ const angular1App = defaultAngular1App({
 export const lifecycles = [...(any other plugins)..., angular1App]
 ```
 ### Configuring apps that leak globals
-[single-spa-globals](https://github.com/joeldenning/single-spa-jspm) is an actively maintained project that eases the burden of configuring apps that leak globals. To use it, run the following in your root app's directory
+[single-spa-globals](https://github.com/joeldenning/single-spa-globals) is an actively maintained project that eases the burden of configuring apps that leak globals. To use it, run the following in your root app's directory
 `jspm install npm:single-spa-globals`
 and then add the following to your single-spa.config.js
 ```
