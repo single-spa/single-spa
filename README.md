@@ -1,8 +1,8 @@
 # single-spa
 
-Multiple applications all lazily loaded and mounted/unmounted in the same single page application (SPA). The apps can be deployed independently to your web server of choice, lazy-loaded onto the page independently, and nested.
+Multiple applications all lazily loaded and mounted/unmounted in the same single page application (SPA). The apps can be deployed independently to your web server of choice, lazy-loaded onto the page independently, and nested. Single-spa also allows for **service oriented javascript**, where a "service" (a shared es6 module) is a singleton that each app can call, without resorting to shared libraries that can be out of sync across apps.
 
-In this context, an application is an html document that pulls in JS, CSS, and more HTML. This means that many pre-existing applications do not need to change at all in order to work with single-spa.
+In this context, an application is an html document that pulls in JS, CSS, and more HTML. This means that many pre-existing applications do not need to change at all in order to work with single-spa. You just need to add a configuration file on top of your existing SPA.
 
 ## View the demo!
 A [demo is live](http://single-spa.surge.sh) on surge.sh. Don't be turned off by the lack of styling -- I'll be fixing that soon. It's based on the code in the [examples](https://github.com/joeldenning/single-spa-examples) repository.
@@ -102,7 +102,7 @@ There is also an [examples repository](https://github.com/joeldenning/single-spa
 - [The root app](https://github.com/joeldenning/single-spa-examples/blob/master/bootstrap.js)
 - [The children apps](https://github.com/joeldenning/single-spa-examples/tree/master/apps)
 
-Also note that it requires that as of 11/1/15, the root app that loads all other apps must be written with JSPM.  The goal is to move away from that towards the [whatwg/loader standard](https://github.com/whatwg/loader) or maybe towards no loader standard at all (which would offload all of the loading work to the user).
+Also note that it requires that as of 11/1/15, the root app that loads all other apps must be written with JSPM.  The goal is to move away from that towards the [whatwg/loader standard](https://github.com/whatwg/loader), probably polyfilled with the [es6-module-loader](https://github.com/ModuleLoader/es6-module-loader).
 
 ## Things that are not supported
 - Single Spa is the one who controls the `<base>` tag, which means that apps should not control it. single-spa-angular1 makes it possible for angular to still work (even with History API pretty urls!) without the angular app putting a `<base>` tag in the app's index.html.
