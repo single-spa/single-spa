@@ -218,7 +218,7 @@ function loadIndex(app) {
     return new Promise((resolve) => {
         let request = new XMLHttpRequest();
         request.addEventListener('load', htmlLoaded);
-        request.open('GET', `${window.location.protocol}//${window.location.hostname}:${window.location.port}/${app.publicRoot}/${app.pathToIndex}`);
+        request.open('GET', `${window.location.protocol}//${window.location.hostname}:${window.location.port}` + `/${app.publicRoot}/${app.pathToIndex}`.replace(/\/\//g, '/'));
         request.send();
 
         function htmlLoaded() {
