@@ -7,7 +7,7 @@ exports.declareChildApplication = declareChildApplication;
 exports.addUnhandledRouteHandler = addUnhandledRouteHandler;
 exports.updateApplicationSourceCode = updateApplicationSourceCode;
 
-function _typeof(obj) { return obj && obj.constructor === Symbol ? "symbol" : typeof obj; }
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 var appLocationToApp = {};
 var unhandledRouteHandlers = [];
