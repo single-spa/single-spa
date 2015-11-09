@@ -105,7 +105,15 @@ export const pathToIndex = 'index.html';
 export const lifecycles = [...(any other plugins)..., appWithGlobals(['app1', 'globalVar1', 'anotherGlobal'])]
 ```
 ### Configuring React-Router apps
-react-router apps require no more configuration than plain old react apps. See above for how to configure react apps.
+react-router apps usually require no more configuration than plain old react apps (see above for how to do that). The only thing that may need to change in your app is the `basename` that is used when creating your history object. But that only needs to happen if you're using URLs to determine which app is active at any given time.
+
+For example, you may have to do something like this:
+```javascript
+import history from "history";
+const history = history.useBasename(history.createHistory)({
+  basename: '/path-that-is-active-when-this-app-is-active'
+})
+```
 ### Read the examples
 There is also an [examples repository](https://github.com/joeldenning/single-spa-examples) that shows several apps working great in a single-spa environment. The following files are a good place to start:
 - [The index.html file](https://github.com/joeldenning/single-spa-examples/blob/master/index.html)
