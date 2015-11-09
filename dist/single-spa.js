@@ -131,17 +131,13 @@ function triggerAppChange(appMayNotBeMountedYet) {
             }).then(function () {
                 return newAppHasBeenMountedBefore ? new Promise(function (resolve) {
                     return resolve();
-                }) : loadAppForFirstTime(newApp.appLocation);
+                }) : setupApp(newApp.appLocation);
             }).then(function () {
                 return updateBaseTag(newApp.publicRoot);
-            }).then(function () {
-                return callLifecycleFunction(newApp, 'applicationWillMount');
             }).then(function () {
                 return appWillBeMounted(newApp);
             }).then(function () {
                 return insertDomFrom(newApp, !newAppHasBeenMountedBefore);
-            }).then(function () {
-                return callLifecycleFunction(newApp, 'applicationWasMounted');
             }).catch(function (ex) {
                 throw ex;
             });
@@ -188,35 +184,159 @@ function insertDomFrom(app, firstTime) {
     return new Promise(function (resolve) {
         var deepClone = true;
         var clonedAppDom = app.parsedDom.cloneNode(deepClone);
+        var appHead = clonedAppDom.querySelector('head');
+        var appBody = clonedAppDom.querySelector('body');
 
-        for (var i = 0; i < clonedAppDom.attributes.length; i++) {
-            var attr = clonedAppDom.attributes[i];
-            document.documentElement.setAttribute(attr.name, attr.value);
+        (firstTime ? callLifecycleFunction(app, 'scriptsWillBeLoaded') : new Promise(function (resolve) {
+            return resolve();
+        })).then(function () {
+            if (clonedAppDom.attributes) {
+                for (var i = 0; i < clonedAppDom.attributes.length; i++) {
+                    var attr = clonedAppDom.attributes[i];
+                    document.documentElement.setAttribute(attr.name, attr.value);
+                }
+            }
+            resolve();
+        }).then(function () {
+            return firstTime ? insertDomPreservingScriptExecutionOrder(document.head, appHead) : insertDomNoScripts(document.head, appHead);
+        }).then(firstTime ? function () {
+            return callLifecycleFunction(app, 'scriptsWereLoaded');
+        } : new Promise(function (resolve) {
+            return resolve();
+        })).then(function () {
+            return callLifecycleFunction(app, 'applicationWillMount');
+        }).then(function () {
+            return firstTime ? insertDomPreservingScriptExecutionOrder(document.body, appBody) : insertDomNoScripts(document.body, appBody);
+        }).then(function () {
+            return new Promise(function (resolve) {
+                if (firstTime) {
+                    var event = document.createEvent('Event');
+                    event.initEvent('DOMContentLoaded', true, true);
+                    window.document.dispatchEvent(event);
+
+                    //we only load script tags once
+                    app.scriptsLoaded = true;
+                    var scripts = app.parsedDom.querySelectorAll('script');
+                    for (var i = 0; i < scripts.length; i++) {
+                        scripts[i].remove();
+                    }
+                }
+                resolve();
+            });
+        }).then(function () {
+            return callLifecycleFunction(app, 'applicationWasMounted');
+        }).then(function () {
+            return resolve();
+        }).catch(function (ex) {
+            throw ex;
+        });
+    });
+}
+
+function insertDomNoScripts(where, what) {
+    return new Promise(function (resolve) {
+        while (what.childNodes.length > 0) {
+            where.appendChild(what.childNodes[0]);
         }
-
-        var appHead = app.parsedDom.querySelector('head');
-        while (appHead.childNodes.length > 0) {
-            document.head.appendChild(appHead.childNodes[0]);
-        }
-
-        var appBody = app.parsedDom.querySelector('body');
-        while (appBody.childNodes.length > 0) {
-            document.body.appendChild(appBody.childNodes[0]);
-        }
-
-        app.parsedDom = clonedAppDom;
-
-        if (firstTime) {
-            var event = document.createEvent('Event');
-            event.initEvent('DOMContentLoaded', true, true);
-            window.document.dispatchEvent(event);
-        }
-
         resolve();
     });
 }
 
-function loadAppForFirstTime(appLocation) {
+function insertDomPreservingScriptExecutionOrder(where, what) {
+    return new Promise(function (rootResolve) {
+        //Time to get fancy -- we need to load scripts synchronously before proceeding to the next html element
+        iterateThroughNode();
+
+        function iterateThroughNode(index) {
+            if (what.childNodes.length > 0) {
+                traverseNode(where, what.childNodes[0]).then(function () {
+                    return iterateThroughNode();
+                }).catch(function (ex) {
+                    throw ex;
+                });
+            } else {
+                rootResolve();
+            }
+        }
+
+        function traverseNode(domLocation, node) {
+            return new Promise(function (resolve) {
+                /* 1. Append node without any of it's children
+                 * 2. Traverse the children one by one
+                 */
+
+                var children = [];
+                var nodeAppendedPromise = undefined;
+                var appendedNode = undefined;
+                if (node.tagName === 'SCRIPT') {
+                    //one does not simply append script tags
+                    nodeAppendedPromise = new Promise(function (resolve) {
+                        var originalScriptTag = node;
+                        var scriptTag = document.createElement('script');
+                        for (var i = 0; i < originalScriptTag.attributes.length; i++) {
+                            scriptTag.setAttribute(originalScriptTag.attributes[i].nodeName, originalScriptTag.getAttribute(originalScriptTag.attributes[i].nodeName));
+                        }
+                        if (!scriptTag.src) {
+                            scriptTag.text = originalScriptTag.text;
+                        }
+                        while (originalScriptTag.childNodes.length > 0) {
+                            originalScriptTag.removeChild(originalScriptTag.childNodes[0]);
+                        }
+                        originalScriptTag.remove();
+                        domLocation.appendChild(scriptTag);
+                        appendedNode = scriptTag;
+                        if (scriptTag.src && (!scriptTag.type || scriptTag.type === 'text/javascript')) {
+                            scriptTag.onload = function () {
+                                resolve();
+                            };
+                        } else {
+                            resolve();
+                        }
+                    });
+                } else {
+                    //remove the children
+                    while (node.childNodes.length > 0) {
+                        children.push(node.removeChild(node.childNodes[0]));
+                    }
+
+                    //append
+                    nodeAppendedPromise = new Promise(function (resolve) {
+                        appendedNode = domLocation.appendChild(node);
+                        resolve();
+                    });
+                }
+
+                //traverse the children
+                nodeAppendedPromise.then(function () {
+                    return traverseChildren();
+                }).then(function () {
+                    return resolve();
+                }).catch(function (ex) {
+                    throw ex;
+                });
+
+                function traverseChildren() {
+                    return new Promise(function (resolve) {
+                        traverseChild();
+                        function traverseChild() {
+                            if (children.length === 0) {
+                                resolve();
+                            } else {
+                                traverseNode(node, children.shift()).then(function () {
+                                    return traverseChild(node, children);
+                                }).catch(function (ex) {
+                                    throw ex;
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
+function setupApp(appLocation) {
     return new Promise(function (resolve, reject) {
         var currentAppSystemGlobal = window.System;
         window.System = window.singlespa.loader;
@@ -224,17 +344,11 @@ function loadAppForFirstTime(appLocation) {
             registerApplication(appLocation, restOfApp.publicRoot, restOfApp.pathToIndex, restOfApp.lifecycles);
             var app = appLocationToApp[appLocation];
             window.System = currentAppSystemGlobal;
-            updateBaseTag(app.publicRoot).then(function () {
-                return callLifecycleFunction(app, 'scriptsWillBeLoaded');
-            }).then(function () {
-                return loadIndex(app);
-            }).then(function () {
-                return callLifecycleFunction(app, 'scriptsWereLoaded');
-            }).then(function () {
+            loadIndex(app).then(function () {
                 return resolve();
             }).catch(function (ex) {
                 throw ex;
-            });;
+            });
         }).catch(function (ex) {
             throw ex;
         });
@@ -251,69 +365,9 @@ function loadIndex(app) {
         function htmlLoaded() {
             var parser = new DOMParser();
             var dom = parser.parseFromString(this.responseText, 'text/html');
-            var isLoadingScript = false;
-            var scriptsToBeLoaded = [];
 
-            //for when there ain't no scripts to load, we default to all scripts being loaded
-            app.scriptsLoaded = true;
-
-            traverseNode(dom);
-            app.parsedDom = dom.documentElement;
-            if (app.scriptsLoaded) {
-                setTimeout(function () {
-                    resolve();
-                }, 10);
-            }
-
-            function traverseNode(node) {
-                for (var i = 0; i < node.childNodes.length; i++) {
-                    var child = node.childNodes[i];
-                    if (child.tagName === 'SCRIPT') {
-                        scriptsToBeLoaded.push(child);
-                        appendScriptTag();
-                    }
-                    traverseNode(child);
-                }
-            }
-
-            function appendScriptTag() {
-                app.scriptsLoaded = false;
-                if (isLoadingScript) {
-                    return;
-                }
-                if (scriptsToBeLoaded.length === 0) {
-                    app.scriptsLoaded = true;
-                    if (app.parsedDom) {
-                        //loading a script was the last thing we were waiting on
-                        setTimeout(function () {
-                            resolve();
-                        }, 10);
-                    }
-                    return;
-                }
-                var originalScriptTag = scriptsToBeLoaded.splice(0, 1)[0];
-                //one does not simply append script tags to the dom
-                var scriptTag = document.createElement('script');
-                for (var i = 0; i < originalScriptTag.attributes.length; i++) {
-                    scriptTag.setAttribute(originalScriptTag.attributes[i].nodeName, originalScriptTag.getAttribute(originalScriptTag.attributes[i].nodeName));
-                }
-                if (!scriptTag.src) {
-                    scriptTag.text = originalScriptTag.text;
-                }
-                isLoadingScript = true;
-                document.head.appendChild(scriptTag);
-                if (scriptTag.src && (!scriptTag.type || scriptTag.type === 'text/javascript')) {
-                    scriptTag.onload = function () {
-                        isLoadingScript = false;
-                        appendScriptTag();
-                    };
-                } else {
-                    isLoadingScript = false;
-                    appendScriptTag();
-                }
-                //normally when you appendChild, the old parent no longer has the child anymore. We have to simulate that since we're not really appending the child
-                originalScriptTag.remove();
-            }
+            app.parsedDom = dom;
+            resolve();
         }
     });
 }
@@ -404,23 +458,36 @@ function addEventsToAnchors() {
             aTags[i].setAttribute('singlespa', '');
         }
         addEventsToAnchors();
-    }, 12);
+    }, 40);
 }
 
 addEventsToAnchors();
 
 function anchorClicked(event) {
-    if (window.location.host !== this.host || window.location.protocol !== this.protocol) {
-        //do the default thing
-        return;
-    } else {
+    if (this.getAttribute('href') && this.getAttribute('href').indexOf('#') === 0) {
+        //the browser will prepend the href with whatever is in the <base> tag, which is not desirable
+        window.location.hash = this.getAttribute('href');
         event.preventDefault();
-        if (this.getAttribute('href').startsWith('#')) {
-            window.location.hash = this.getAttribute('href');
+    } else {
+        var externalLink = window.location.host !== this.host || window.location.protocol !== this.protocol;
+        if (externalLink) {
+            //do the default thing
+            return;
         } else {
+            //change the url
             window.history.pushState(undefined, '', this.href);
-            //calling pushState programatically doesn't fire the popstate event
-            setTimeout(triggerAppChange(), 2);
+            //check if that means that we need to change the app
+            var appNeedsToChange = appForCurrentURL() !== mountedApp;
+            if (!appNeedsToChange) {
+                //do the default thing
+                return;
+            } else {
+                //only preventDefault when we're sure that single-spa is the sole handler of this event
+                event.preventDefault();
+                setTimeout(function () {
+                    return triggerAppChange();
+                }, 2);
+            }
         }
     }
 }

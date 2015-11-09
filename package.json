@@ -24,6 +24,10 @@
     "babel-cli": "6.0.15",
     "babel-preset-es2015": "6.0.15"
   },
+  "ignore": [
+    "node_modules",
+    "examples"
+  ],
   "publishConfig": {
     "registry": "http://registry.npmjs.org"
   }
