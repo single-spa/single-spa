@@ -53,6 +53,8 @@ export const lifecycles = [...(any other plugins)..., defaultJspmApp()]
 Thus far it seems that it's best to put your JSPM lifecycles at the end of the array.
 ### Configuring Webpack apps
 So far, webpack has not required any special configuration to work in an SSPA environment. It works out of the box! So no need to add a "lifecycle" for webpack in your single-spa.config.js file.
+
+One thing to watch out for, though, is to make sure that any urls in your webpack config are relative urls. For example, use `publicPath: 'build/'` instead of `publicPath: '/build/'`
 ### Configuring React apps
 [single-spa-react](https://github.com/joeldenning/single-spa-react) is an actively maintained project that eases the burden of configuring react apps. To use it, run the following in your root app's directory
 `jspm install npm:single-spa-react`
@@ -66,6 +68,12 @@ export const pathToIndex = 'index.html';
 const reactApp = defaultReactApp({
     rootElementGetter: function() {
         return document.querySelector('#root-react-element');
+    },
+    mountApp: function() {
+        return ReactDOM.render(<MyApp/>, document.getElementById('root-react-element');
+    },
+    ReactDOMGetter: function() { //only needed if the ReactDOM object is not leaked as a global
+        return window.app.ReactDOM; //or however you want to reference ReactDOM
     }
 });
 export const lifecycles = [reactApp, ...(any other plugins)...];
@@ -96,6 +104,8 @@ export const publicRoot = '....';
 export const pathToIndex = 'index.html';
 export const lifecycles = [...(any other plugins)..., appWithGlobals(['app1', 'globalVar1', 'anotherGlobal'])]
 ```
+### Configuring React-Router apps
+react-router apps require no more configuration than plain old react apps. See above for how to configure react apps.
 ### Read the examples
 There is also an [examples repository](https://github.com/joeldenning/single-spa-examples) that shows several apps working great in a single-spa environment. The following files are a good place to start:
 - [The index.html file](https://github.com/joeldenning/single-spa-examples/blob/master/index.html)
