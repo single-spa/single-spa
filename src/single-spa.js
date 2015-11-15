@@ -417,18 +417,23 @@ window.addEventListener = function(name, fn) {
     nativeAddEventListener.apply(this, arguments);
 }
 
-function addEventsToAnchors() {
-    setTimeout(function() {
-        const aTags = document.querySelectorAll('a:not([singlespa])');
-        for (let i=0; i<aTags.length; i++) {
-            aTags[i].addEventListener('click', anchorClicked);
-            aTags[i].setAttribute('singlespa', '');
+const anchorAddedObserver = new MutationObserver(function(mutations) {
+    //my guess is that it is faster just to do one querySelectorAll instead of iterating through the mutations
+    const links = document.querySelectorAll('a');
+    for (let i=0; i<links.length; i++) {
+        const a = links[i];
+        if (!a.singlespa) {
+            a.singlespa = true;
+            a.addEventListener('click', anchorClicked);
         }
-        addEventsToAnchors();
-    }, 40)
-}
+    }
+});
 
-addEventsToAnchors();
+anchorAddedObserver.observe(document, {
+    subtree: true,
+    childList: true,
+    characterData: true,
+});
 
 function anchorClicked(event) {
     if (this.getAttribute('href') && this.getAttribute('href').indexOf('#') === 0) {
