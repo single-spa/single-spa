@@ -366,7 +366,7 @@ function loadIndex(app) {
             var parser = new DOMParser();
             var dom = parser.parseFromString(this.responseText, 'text/html');
 
-            app.parsedDom = dom;
+            app.parsedDom = document.importNode(dom.documentElement, true);
             resolve();
         }
     });

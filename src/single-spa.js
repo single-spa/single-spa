@@ -336,7 +336,7 @@ function loadIndex(app) {
             let parser = new DOMParser();
             let dom = parser.parseFromString(this.responseText, 'text/html');
 
-            app.parsedDom = dom;
+            app.parsedDom = document.importNode(dom.documentElement, true);
             resolve();
 
         }
