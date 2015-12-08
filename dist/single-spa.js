@@ -218,7 +218,7 @@ function insertDomFrom(app, firstTime) {
                     app.scriptsLoaded = true;
                     var scripts = app.parsedDom.querySelectorAll('script');
                     for (var i = 0; i < scripts.length; i++) {
-                        scripts[i].remove();
+                        scripts[i].parentNode.removeChild(scripts[i]);
                     }
                 }
                 resolve();
@@ -282,7 +282,7 @@ function insertDomPreservingScriptExecutionOrder(where, what) {
                         while (originalScriptTag.childNodes.length > 0) {
                             originalScriptTag.removeChild(originalScriptTag.childNodes[0]);
                         }
-                        originalScriptTag.remove();
+                        originalScriptTag.parentNode.removeChild(originalScriptTag);
                         domLocation.appendChild(scriptTag);
                         appendedNode = scriptTag;
                         if (scriptTag.src && (!scriptTag.type || scriptTag.type === 'text/javascript')) {
