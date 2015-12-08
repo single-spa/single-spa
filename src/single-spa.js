@@ -7,6 +7,11 @@ window.singlespa = {};
 window.singlespa.prependUrl = prependUrl;
 window.singlespa.loader = window.System; //hard dependency on JSPM being on the page
 
+if (!window.Symbol) {
+    //babel uses Symbol in its _typeof function, and it breaks in IE unless we polyfill at least a little bit
+    window.Symbol = function() {};
+}
+
 function prependUrl(prefix, url) {
     if (!url.startsWith('/')) {
         //relative urls are taken care of by the <base> tag
@@ -351,7 +356,7 @@ function registerApplication(appLocation, publicRoot, pathToIndex, lifecycles) {
     if (typeof pathToIndex !== 'string') {
         throw new Error(`App ${appLocation} must export a pathToIndex string`);
     }
-    if (typeof lifecycles !== 'object' && typeof lifecycles !== 'function') {
+    if (typeof lifecycles !== 'object') {
         throw new Error(`App ${appLocation} must export a 'lifecycles' object or array of objects`);
     }
     if (!Array.isArray(lifecycles)) {
