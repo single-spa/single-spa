@@ -18,7 +18,7 @@
   "author": "Joel Denning",
   "license": "MIT",
   "dependencies": {
-    "es6-module-loader": "0.17.8"
+    "es6-module-loader": "0.17.11"
   },
   "devDependencies": {
     "babel-cli": "^6.3.15",
