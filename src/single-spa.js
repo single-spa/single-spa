@@ -1,29 +1,72 @@
-let appLocationToApp = {};
-let unhandledRouteHandlers = [];
-let mountedApp;
-const nativeAddEventListener = window.addEventListener;
+import { handleChildAppError } from './single-spa-child-app-error.js';
 
-window.singlespa = {};
-window.singlespa.prependUrl = prependUrl;
-window.singlespa.loader = window.System; //hard dependency on JSPM being on the page
+// App statuses
+const NOT_BOOTSTRAPPED = 'NOT_BOOTSTRAPPED',
+	LOADING_SOURCE_CODE = 'LOADING_SOURCE_CODE',
+	BOOTSTRAPPING = 'BOOTSTRAPPING',
+	NOT_MOUNTED = 'NOT_MOUNTED',
+	MOUNTING = 'MOUNTING',
+	MOUNTED = 'MOUNTED',
+	UNMOUNTING = 'UNMOUNTING',
+	SKIP_BECAUSE_BROKEN = 'SKIP_BECAUSE_BROKEN';
 
-if (!window.Symbol) {
-    //babel uses Symbol in its _typeof function, and it breaks in IE unless we polyfill at least a little bit
-    window.Symbol = function() {};
+// Things that need to be reset with the init function;
+let Loader, childApps, bootstrapMaxTime, mountMaxTime, unmountMaxTime, peopleWaitingOnAppChange, appChangeUnderway;
+
+export function reset() {
+	console.log(`---------------------------`, 'resetting', `---------------------------`)
+	childApps = [];
+
+	peopleWaitingOnAppChange = [];
+	appChangeUnderway = false;
+
+	Loader = typeof SystemJS !== 'undefined' ? SystemJS : null;
+
+	bootstrapMaxTime = 4000;
+	mountMaxTime = 2000;
+	unmountMaxTime = 2000;
+}
+// initialize for the first time
+reset();
+
+export function setLoader(loader) {
+	if (!loader || typeof loader.import !== 'function') {
+		throw new Error(`'loader' is not a real loader. Must have an import function that returns a Promise`);
+	}
+	Loader = loader;
 }
 
-function prependUrl(prefix, url) {
-    if (!url.startsWith('/')) {
-        //relative urls are taken care of by the <base> tag
-        return url;
-    }
-    let parsedURL = document.createElement('a');
-    parsedURL.href = url;
-    if (parsedURL.host === window.location.host && !parsedURL.pathname.startsWith(url)) {
-        return `${parsedURL.protocol}//` + `${parsedURL.hostname}:${parsedURL.port}/${prefix}/${parsedURL.pathname}${parsedURL.search}${parsedURL.hash}`.replace(/[\/]+/g, '/');
-    } else {
-        return url;
-    }
+export function getMountedApps() {
+	return childApps.filter(isActive).map(toLocation);
+}
+
+export function getAppStatus(appName) {
+	const app = childApps.find(app => app.appLocation === appName);
+	return app ? app.status : null;
+}
+
+export function setBootstrapMaxTime(time) {
+	if (typeof time !== 'number' || time <= 0) {
+		throw new Error(`bootstrap max time must be a positive integer number of milliseconds`);
+	}
+
+	bootstrapMaxTime = time;
+}
+
+export function setMountMaxTime(time) {
+	if (typeof time !== 'number' || time <= 0) {
+		throw new Error(`mount max time must be a positive integer number of milliseconds`);
+	}
+
+	mountMaxTime = time;
+}
+
+export function setUnmountMaxTime(time) {
+	if (typeof time !== 'number' || time <= 0) {
+		throw new Error(`unmount max time must be a positive integer number of milliseconds`);
+	}
+
+	unmountMaxTime = time;
 }
 
 export function declareChildApplication(appLocation, activeWhen) {
@@ -31,439 +74,326 @@ export function declareChildApplication(appLocation, activeWhen) {
         throw new Error(`The first argument must be a non-empty string 'appLocation'`);
     if (typeof activeWhen !== 'function')
         throw new Error(`The second argument must be a function 'activeWhen'`);
-    if (appLocationToApp[appLocation])
+    if (childApps[appLocation])
         throw new Error(`There is already an app declared at location ${appLocation}`);
 
-    appLocationToApp[appLocation] = {
+    childApps.push({
         appLocation: appLocation,
         activeWhen: activeWhen,
-        parentApp: mountedApp ? mountedApp.appLocation : null
-    };
-
-    triggerAppChange(true);
-}
-
-export function addUnhandledRouteHandler(handler) {
-    if (typeof handler !== 'function') {
-        throw new Error(`The first argument must be a handler function`);
-    }
-    unhandledRouteHandlers.push(handler);
-}
-
-export function updateApplicationSourceCode(appName) {
-    if (!appLocationToApp[appName]) {
-        throw new Error(`No such app '${appName}'`);
-    }
-    let app = appLocationToApp[appName];
-    app.lifecycleFunctions.activeApplicationSourceWillUpdate()
-    .then((resolve) => {
-        //TODO reload the app
-        resolve()
-    })
-    .then(app.lifecycleFunctions.activeApplicationSourceWasUpdated);
-}
-
-function callLifecycleFunction(app, funcName, ...args) {
-    return new Promise((resolve) => {
-        if (app.lifecycles.length > 0) {
-            callFunc(0);
-        } else {
-            //nothing to do
-            resolve();
-        }
-        function callFunc(i) {
-            let funcPromise;
-            if (app.lifecycles[i][funcName]) {
-                funcPromise = app.lifecycles[i][funcName](...args);
-            } else {
-                funcPromise = new Promise((resolve) => resolve());
-            }
-            funcPromise
-            .then(() => {
-                if (i === app.lifecycles.length - 1) {
-                    resolve();
-                } else {
-                    callFunc(++i);
-                }
-            })
-            .catch((ex) => {
-                throw ex;
-            });
-        }
-    })
-}
-
-function triggerAppChange(appMayNotBeMountedYet) {
-    let newApp = appForCurrentURL();
-    if (!newApp) {
-        unhandledRouteHandlers.forEach((handler) => {
-            handler(mountedApp);
-        });
-        //nothing to do. Leave the app how it was
-        if (!appMayNotBeMountedYet)
-            console.warn(`No app matches the url ${window.location.toString()}, and there are no unhandledRouteHandlers`);
-        return;
-    }
-
-    if (newApp !== mountedApp) {
-        let oldApp = mountedApp;
-        let newAppHasBeenMountedBefore = !!newApp.scriptsLoaded;
-
-        (oldApp ? callLifecycleFunction(oldApp, 'applicationWillUnmount') : new Promise((resolve) => resolve()))
-        .then(() => cleanupDom())
-        .then(() => finishUnmountingApp(oldApp))
-        .then(() => (oldApp ? callLifecycleFunction(oldApp, 'applicationWasUnmounted') : new Promise((resolve) => resolve())))
-        .then(() => mountedApp = newApp)
-        .then(() => (newAppHasBeenMountedBefore ? new Promise((resolve) => resolve()) : setupApp(newApp.appLocation)))
-        .then(() => updateBaseTag(newApp.publicRoot))
-        .then(() => appWillBeMounted(newApp))
-        .then(() => insertDomFrom(newApp, !newAppHasBeenMountedBefore))
-        .catch((ex) => {
-            throw ex;
-        })
-    }
-}
-
-function updateBaseTag(newBaseHref) {
-    return new Promise((resolve) => {
-        if (document.baseURI === `${window.location.protocol}//` + `${window.location.hostname}:${window.location.port}${newBaseHref}`) {
-            debugger;
-            resolve();
-        } else {
-            newBaseHref = `/${newBaseHref}/`.replace(/[\/]+/g, '/');
-            let baseTags = document.querySelectorAll('base');
-            for (let i=0; i<baseTags.length; i++) {
-                baseTags[i].parentNode.removeChild(baseTags[i]);
-            }
-            let newBase = document.createElement('base');
-            newBase.setAttribute('href', newBaseHref);
-            document.head.appendChild(newBase);
-            resolve();
-        }
+		status: NOT_BOOTSTRAPPED,
     });
+
+	triggerAppChange();
 }
 
-function cleanupDom() {
-    return new Promise((resolve) => {
-        while (document.documentElement.attributes.length > 0) {
-            document.documentElement.removeAttribute(document.documentElement.attributes[0].name);
-        }
-        let numHeadElsToSkip = 0;
-        while (document.head.childNodes.length > numHeadElsToSkip) {
-            if (document.head.childNodes[numHeadElsToSkip].tagName !== 'BASE')
-                document.head.removeChild(document.head.childNodes[numHeadElsToSkip]);
-            else
-                numHeadElsToSkip++;
-        }
-        while (document.body.childNodes.length > 0) {
-            document.body.removeChild(document.body.childNodes[0]);
-        }
-        resolve();
-    })
+export function triggerAppChange(pendingPromises = []) {
+	console.log('\n\n\n')
+	if (appChangeUnderway) {
+		console.log('people waiting')
+		return new Promise((resolve, reject) => {
+			peopleWaitingOnAppChange.push({
+				resolve,
+				reject,
+			});
+		});
+	}
+
+	appChangeUnderway = true;
+
+	return new Promise((_resolve, _reject) => {
+
+		const unmountPromises = childApps
+			.filter(shouldntBeActive)
+			.filter(notSkipped)
+			.filter(isActive)
+			.map(toUnmountPromise)
+		console.log('unmount promises = ', unmountPromises);
+
+		Promise
+		.all(unmountPromises)
+		.then(() => {
+			console.log('done unmounting apps')
+
+			const bootstrapPromises = childApps
+				.filter(shouldBeActive)
+				.filter(notSkipped)
+				.filter(isntActive)
+				.map(toBootstrapPromise)
+
+			console.log('bootstrap promises = ', bootstrapPromises)
+
+			Promise
+			.all(bootstrapPromises)
+			.then(appsToMount => {
+				appsToMount = appsToMount
+					.filter(notSkipped)
+					.map(toMountPromise)
+
+				console.log('appsToMount = ', appsToMount)
+
+				Promise
+				.all(appsToMount)
+				.then(() => {
+					console.log('mounted all the apps')
+					resolve(getMountedApps());
+				})
+				.catch(reject);
+			})
+			.catch(reject);
+		})
+		.catch(reject);
+
+		function resolve() {
+			_resolve.apply(this, arguments);
+			appChangeUnderway = false;
+			pendingPromises.forEach(promise => promise.resolve.apply(this, arguments));
+
+			if (peopleWaitingOnAppChange.length > 0) {
+				const nextPendingPromises = peopleWaitingOnAppChange;
+				peopleWaitingOnAppChange = [];
+				triggerAppChange(nextPendingPromises);
+			}
+		}
+
+		function reject() {
+			_reject.apply(this, arguments);
+			pendingPromises.forEach(promise => promise.reject.apply(this, arguments));
+		}
+	});
 }
 
-function insertDomFrom(app, firstTime) {
-    return new Promise((resolve) => {
-        const deepClone = true;
-        const clonedAppDom = app.parsedDom.cloneNode(deepClone);
-        const appHead = clonedAppDom.querySelector('head');
-        const appBody = clonedAppDom.querySelector('body');
+function toBootstrapPromise(app) {
+	if (app.status !== NOT_BOOTSTRAPPED) {
+		return Promise.resolve(app);
+	}
 
-        (firstTime ? callLifecycleFunction(app, 'scriptsWillBeLoaded') : new Promise((resolve) => resolve()))
-        .then(() => {
-            if (clonedAppDom.attributes) {
-                for (let i=0; i<clonedAppDom.attributes.length; i++) {
-                    const attr = clonedAppDom.attributes[i];
-                    document.documentElement.setAttribute(attr.name, attr.value);
-                }
-            }
-            resolve();
-        })
-        .then(() => (firstTime ? insertDomPreservingScriptExecutionOrder(document.head, appHead) : insertDomNoScripts(document.head, appHead)))
-        .then(firstTime ? (() => callLifecycleFunction(app, 'scriptsWereLoaded')) : new Promise((resolve) => resolve()))
-        .then(() => callLifecycleFunction(app, 'applicationWillMount'))
-        .then(() => (firstTime ? insertDomPreservingScriptExecutionOrder(document.body, appBody) : insertDomNoScripts(document.body, appBody)))
-        .then(() => {
-            return new Promise((resolve) => {
-                if (firstTime) {
-                    const event = document.createEvent('Event');
-                    event.initEvent('DOMContentLoaded', true, true);
-                    window.document.dispatchEvent(event);
+	return new Promise((resolve, reject) => {
+		console.log(`bootstrapping app ${app.appLocation}`)
+		app.status = LOADING_SOURCE_CODE;
 
-                    //we only load script tags once
-                    app.scriptsLoaded = true;
-                    const scripts = app.parsedDom.querySelectorAll('script');
-                    for (let i=0; i<scripts.length; i++) {
-                        scripts[i].parentNode.removeChild(scripts[i]);
-                    }
-                }
-                resolve();
-            });
-        })
-        .then(() => callLifecycleFunction(app, 'applicationWasMounted'))
-        .then(() => resolve())
-        .catch((ex) => {
-            throw ex;
-        });
-    });
+		Loader
+		.import(app.appLocation)
+		.then(appOpts => {
+			console.log(`app opts for ${app.appLocation}`);
+
+			let validationErrMessage;
+
+			if (typeof appOpts !== 'object') {
+				validationErrMessage = `App '${app.appLocation}' does not export an object`;
+			}
+
+			if (!validLifecycleFn(appOpts.bootstrap)) {
+				validationErrMessage = `App '${app.appLocation}' does not export a bootstrap function or array of functions`;
+			}
+
+			if (!validLifecycleFn(appOpts.mount)) {
+				validationErrMessage = `App '${app.appLocation}' does not export a mount function or array of functions`;
+			}
+
+			if (!validLifecycleFn(appOpts.unmount)) {
+				validationErrMessage = `App '${app.appLocation}' does not export an unmount function or array of functions`;
+			}
+
+			if (validationErrMessage) {
+				handleChildAppError(validationErrMessage);
+				app.status = SKIP_BECAUSE_BROKEN;
+				resolve(app);
+				return;
+			}
+
+			app.bootstrap = flattenFnArray(appOpts.bootstrap, `App '${app.appLocation}' bootstrap function`);
+			app.mount = flattenFnArray(appOpts.mount, `App '${app.appLocation}' mount function`);
+			app.unmount = flattenFnArray(appOpts.unmount, `App '${app.appLocation}' unmount function`);
+			app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
+
+			console.log('has valid opts')
+
+			app.status = BOOTSTRAPPING;
+			reasonableTime(app.bootstrap(), `Bootstrapping app '${app.appLocation}'`, app.timeouts.bootstrap)
+			.then(() => {
+				console.log(`app ${app.appLocation} bootstrapped`)
+				app.status = NOT_MOUNTED;
+				resolve(app);
+			})
+			.catch((ex) => {
+				handleChildAppError(ex);
+				app.status = SKIP_BECAUSE_BROKEN;
+				resolve(app);
+			});
+
+			function validLifecycleFn(fn) {
+				return fn && (typeof fn === 'function' || isArrayOfFns(fn));
+
+				function isArrayOfFns(arr) {
+					return Array.isArray(arr) && !arr.find(item => typeof item !== 'function');
+				}
+			}
+
+			function flattenFnArray(fns, description) {
+				fns = Array.isArray(fns) ? fns : [fns];
+
+				return function() {
+					return new Promise((resolve, reject) => {
+						waitForPromises(0);
+
+						function waitForPromises(index) {
+							const promise = fns[index]();
+							if (!(promise instanceof Promise)) {
+								// console.log(`${description} isn't promise`)
+								reject(`${description} at index ${index} did not return a promise`);
+							} else {
+								// console.log(`${description} is promise`)
+								promise
+								.then(() => {
+									console.log(`${description} done`)
+									if (index === fns.length - 1) {
+										resolve();
+									} else {
+										waitForPromises(index + 1);
+									}
+								})
+								.catch(reject);
+							}
+						}
+					});
+				}
+			}
+
+			function ensureValidAppTimeouts(timeouts = {}) {
+				console.log('timeouts')
+				console.dir(timeouts)
+				return {
+					bootstrap: {
+						millis: bootstrapMaxTime,
+						dieOnTimeout: false,
+					},
+					mount: {
+						millis: mountMaxTime,
+						dieOnTimeout: false,
+					},
+					unmount: {
+						millis: unmountMaxTime,
+						dieOnTimeout: false,
+					},
+					...timeouts,
+				};
+			}
+		})
+		.catch(ex => {
+			handleChildAppError(ex);
+			app.status = SKIP_BECAUSE_BROKEN;
+			resolve(app);
+		});
+	});
 }
 
-function insertDomNoScripts(where, what) {
-    return new Promise((resolve) => {
-        while (what.childNodes.length > 0) {
-            where.appendChild(what.childNodes[0]);
-        }
-        resolve();
-    });
+function toMountPromise(app) {
+	console.log('to mount promise')
+	return new Promise((resolve, reject) => {
+		reasonableTime(app.mount(), `Mounting application ${app.appLocation}'`, app.timeouts.mount)
+		.then(() => {
+			app.status = MOUNTED;
+			resolve(app);
+		})
+		.catch(ex => {
+			handleChildAppError(ex);
+			app.status = SKIP_BECAUSE_BROKEN;
+			resolve(app);
+		});
+	});
 }
 
-function insertDomPreservingScriptExecutionOrder(where, what) {
-    return new Promise((rootResolve) => {
-        //Time to get fancy -- we need to load scripts synchronously before proceeding to the next html element
-        iterateThroughNode();
+function toUnmountPromise(app) {
+	return new Promise((resolve, reject) => {
+		app.status = UNMOUNTING
 
-        function iterateThroughNode(index) {
-            if (what.childNodes.length > 0) {
-                traverseNode(where, what.childNodes[0])
-                .then(() => iterateThroughNode())
-                .catch((ex) => {
-                    throw ex;
-                });
-            } else {
-                rootResolve();
-            }
-        }
-
-        function traverseNode(domLocation, node) {
-            return new Promise((resolve) => {
-                /* 1. Append node without any of it's children
-                 * 2. Traverse the children one by one
-                 */
-
-                const children = [];
-                let nodeAppendedPromise;
-                let appendedNode;
-                if (node.tagName === 'SCRIPT') {
-                    //one does not simply append script tags
-                    nodeAppendedPromise = new Promise((resolve) => {
-                        const originalScriptTag = node;
-                        const scriptTag = document.createElement('script');
-                        for (let i=0; i<originalScriptTag.attributes.length; i++) {
-                            scriptTag.setAttribute(originalScriptTag.attributes[i].nodeName, originalScriptTag.getAttribute(originalScriptTag.attributes[i].nodeName));
-                        }
-                        if (!scriptTag.src) {
-                            scriptTag.text = originalScriptTag.text;
-                        }
-                        while (originalScriptTag.childNodes.length > 0) {
-                            originalScriptTag.removeChild(originalScriptTag.childNodes[0]);
-                        }
-                        originalScriptTag.parentNode.removeChild(originalScriptTag);
-                        domLocation.appendChild(scriptTag);
-                        appendedNode = scriptTag;
-                        if (scriptTag.src && (!scriptTag.type || scriptTag.type === 'text/javascript')) {
-                            scriptTag.onload = () => {
-                                resolve();
-                            }
-                        } else {
-                            resolve();
-                        }
-                    });
-                } else {
-                    //remove the children
-                    while (node.childNodes.length > 0) {
-                        children.push(node.removeChild(node.childNodes[0]));
-                    }
-
-                    //append
-                    nodeAppendedPromise = new Promise((resolve) => {
-                        appendedNode = domLocation.appendChild(node);
-                        resolve();
-                    });
-                }
-
-                //traverse the children
-                nodeAppendedPromise
-                .then(() => traverseChildren())
-                .then(() => resolve())
-                .catch((ex) => {
-                    throw ex;
-                });
-
-                function traverseChildren() {
-                    return new Promise((resolve) => {
-                        traverseChild()
-                        function traverseChild() {
-                            if (children.length === 0) {
-                                resolve();
-                            } else {
-                                traverseNode(node, children.shift())
-                                .then(() => traverseChild(node, children))
-                                .catch((ex) => {
-                                    throw ex;
-                                });
-                            }
-                        }
-                    });
-                }
-            });
-        }
-    });
+		reasonableTime(app.unmount(), `Unmounting application ${app.appLocation}'`, app.timeouts.unmount)
+		.then(() => {
+			app.status = NOT_MOUNTED;
+			resolve(app);
+		})
+		.catch(ex => {
+			handleChildAppError(ex);
+			app.status = SKIP_BECAUSE_BROKEN;
+			resolve(app);
+		});
+	});
 }
 
-function setupApp(appLocation) {
-    return new Promise(function(resolve, reject) {
-        var currentAppSystemGlobal = window.System;
-        window.System = window.singlespa.loader;
-        window.singlespa.loader.import(appLocation).then(function(restOfApp) {
-            registerApplication(appLocation, restOfApp.publicRoot, restOfApp.pathToIndex, restOfApp.lifecycles);
-            let app = appLocationToApp[appLocation];
-            window.System = currentAppSystemGlobal;
-            loadIndex(app)
-            .then(() => resolve())
-            .catch((ex) => {
-                throw ex;
-            });
-        })
-        .catch((ex) => {
-            throw ex;
-        })
-    })
+function reasonableTime(promise, description, timeoutConfig, app) {
+	console.log(`${description}, dieOnTimeout = ${timeoutConfig.dieOnTimeout}`);
+	const maxWarnings = 3;
+	const warningPeriod = 1000;
+
+	return new Promise((resolve, reject) => {
+		let finished = false;
+
+		promise
+		.then(val => {
+			console.log('resolving reasonable time')
+			finished = true;
+			resolve(val);
+		})
+		.catch(val => {
+			console.log('rejecting reasonable time')
+			finished = true;
+			reject(val);
+		});
+
+		setTimeout(() => maybeTimingOut(1), Math.max(0, timeoutConfig.millis - (maxWarnings * warningPeriod)));
+
+		function maybeTimingOut(numWarnings) {
+			if (!finished) {
+				if (numWarnings >= numWarnings) {
+					if (timeoutConfig.dieOnTimeout) {
+						reject(`${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds`);
+					} else {
+						console.error(`${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds -- we're no longer going to warn you about it.`);
+						//don't resolve or reject, we're waiting this one out
+					}
+				} else {
+					console.warn(`${description} did not resolve or reject within ${timeoutConfig.millis} milliseconds`);
+					setTimeout(() => maybeTimingOut(numWarnings + 1), warningPeriod);
+				}
+			}
+		}
+	});
 }
 
-function loadIndex(app) {
-    return new Promise((resolve) => {
-        let request = new XMLHttpRequest();
-        request.addEventListener('load', htmlLoaded);
-        request.open('GET', `${window.location.protocol}//${window.location.hostname}:${window.location.port}` + `/${app.publicRoot}/${app.pathToIndex}`.replace(/\/\//g, '/'));
-        request.send();
-
-        function htmlLoaded() {
-            let parser = new DOMParser();
-            let dom = parser.parseFromString(this.responseText, 'text/html');
-
-            app.parsedDom = document.importNode(dom.documentElement, true);
-            resolve();
-
-        }
-    });
+function shouldBeActive(app) {
+	try {
+		return app.activeWhen(window.location);
+	} catch (ex) {
+		handleChildAppError(ex);
+		app.status = SKIP_BECAUSE_BROKEN;
+	}
 }
 
-function registerApplication(appLocation, publicRoot, pathToIndex, lifecycles) {
-    //validate
-    if (typeof publicRoot !== 'string') {
-        throw new Error(`App ${appLocation} must export a publicRoot string`);
-    }
-    if (typeof pathToIndex !== 'string') {
-        throw new Error(`App ${appLocation} must export a pathToIndex string`);
-    }
-    if (typeof lifecycles !== 'object') {
-        throw new Error(`App ${appLocation} must export a 'lifecycles' object or array of objects`);
-    }
-    if (!Array.isArray(lifecycles)) {
-        lifecycles = [lifecycles];
-    }
-
-    //register
-    let app = appLocationToApp[appLocation];
-    app.publicRoot = publicRoot;
-    app.pathToIndex = pathToIndex;
-    app.windowEventListeners = {};
-    app.lifecycles = lifecycles;
+function shouldntBeActive(app) {
+	try {
+		return !app.activeWhen(window.location);
+	} catch (ex) {
+		handleChildAppError(ex);
+		app.status = SKIP_BECAUSE_BROKEN;
+	}
 }
 
-function appForCurrentURL() {
-    let appsForCurrentUrl = [];
-    for (let appName in appLocationToApp) {
-        let app = appLocationToApp[appName];
-        if (app.activeWhen(window.location)) {
-            appsForCurrentUrl.push(app);
-        }
-    }
-    switch (appsForCurrentUrl.length) {
-        case 0:
-            return undefined;
-        case 1:
-            return appsForCurrentUrl[0];
-        default:
-            appNames = appsForCurrentUrl.map((app) => app.name);
-        throw new Error(`The following applications all claim to own the location ${window.location.href} -- ${appNames.toString()}`)
-    }
+function isActive(app) {
+	return app.status === MOUNTED;
 }
 
-function appWillBeMounted(app) {
-    return new Promise((resolve) => {
-        for (let eventName in app.windowEventListeners) {
-            for (let i=0; i<app.windowEventListeners[eventName].length; i++)
-                nativeAddEventListener(eventName, app.windowEventListeners[eventName][i]);
-        }
-        resolve();
-    })
+function isntActive(app) {
+	return !isActive(app);
 }
 
-function finishUnmountingApp(app) {
-    return new Promise((resolve) => {
-        if (app) {
-            for (let eventName in app.windowEventListeners) {
-                for (let i=0; i<app.windowEventListeners[eventName].length; i++)
-                    window.removeEventListener(eventName, app.windowEventListeners[eventName][i]);
-            }
-        }
-        resolve();
-    })
+function notBootstrapped(app) {
+	return app.status !== NOT_BOOTSTRAPPED;
 }
 
-window.addEventListener = function(name, fn) {
-    if (mountedApp) {
-        if (!mountedApp.windowEventListeners[name]) {
-            mountedApp.windowEventListeners[name] = [];
-        }
-        mountedApp.windowEventListeners[name].push(fn);
-    }
-    nativeAddEventListener.apply(this, arguments);
+function notSkipped(item) {
+	return item !== SKIP_BECAUSE_BROKEN && (!item || item.status !== SKIP_BECAUSE_BROKEN);
 }
 
-const anchorAddedObserver = new MutationObserver(function(mutations) {
-    //my guess is that it is faster just to do one querySelectorAll instead of iterating through the mutations
-    const links = document.querySelectorAll('a');
-    for (let i=0; i<links.length; i++) {
-        const a = links[i];
-        if (!a.singlespa) {
-            a.singlespa = true;
-            a.addEventListener('click', anchorClicked);
-        }
-    }
-});
-
-anchorAddedObserver.observe(document, {
-    subtree: true,
-    childList: true,
-    characterData: true,
-});
-
-function anchorClicked(event) {
-    if (this.getAttribute('href') && this.getAttribute('href').indexOf('#') === 0) {
-        //the browser will prepend the href with whatever is in the <base> tag, which is not desirable
-        window.location.hash = this.getAttribute('href');
-        event.preventDefault();
-    } else {
-        const externalLink = window.location.host !== this.host || window.location.protocol !== this.protocol;
-        if (externalLink) {
-            //do the default thing
-            return;
-        } else {
-            //change the url
-            window.history.pushState(undefined, '', this.href);
-            //check if that means that we need to change the app
-            const appNeedsToChange = appForCurrentURL() !== mountedApp;
-            if (!appNeedsToChange) {
-                //do the default thing
-                return;
-            } else {
-                //only preventDefault when we're sure that single-spa is the sole handler of this event
-                event.preventDefault();
-                setTimeout(() => triggerAppChange(), 2);
-            }
-
-        }
-    }
+function toLocation(app) {
+	return app.appLocation;
 }
