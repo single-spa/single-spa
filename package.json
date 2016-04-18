@@ -5,8 +5,10 @@
   "main": "lib/single-spa.js",
   "scripts": {
     "postinstall": "jspm install",
-    "build": "rm -rf build && jspm build src/single-spa.js lib/single-spa.js --format cjs",
-    "test": "jasmine"
+    "build": "npm run clean && babel src --out-dir lib",
+    "clean": "rm -rf lib",
+    "test": "jasmine",
+    "build:canopy": "npm run build && rm -rf ../../workplace/customer-spa/jspm_packages/npm/single-spa@1.3.4 && rsync -av . ../../workplace/customer-spa/jspm_packages/npm/single-spa@1.3.4 --exclude node_modules --exclude .git --exclude --spec --exclude examples"
   },
   "repository": "https://github.com/joeldenning/single-spa",
   "keywords": [
