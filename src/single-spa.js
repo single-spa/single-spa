@@ -14,7 +14,7 @@ const NOT_BOOTSTRAPPED = 'NOT_BOOTSTRAPPED',
 let Loader, childApps, bootstrapMaxTime, mountMaxTime, unmountMaxTime, peopleWaitingOnAppChange, appChangeUnderway;
 
 export function reset() {
-	console.log(`---------------------------`, 'resetting', `---------------------------`)
+	// console.log(`---------------------------`, 'resetting', `---------------------------`)
 	childApps = [];
 
 	peopleWaitingOnAppChange = [];
@@ -87,9 +87,9 @@ export function declareChildApplication(appLocation, activeWhen) {
 }
 
 export function triggerAppChange(pendingPromises = []) {
-	console.log('\n\n\n')
+	// console.log('\n\n\n')
 	if (appChangeUnderway) {
-		console.log('people waiting')
+		// console.log('people waiting')
 		return new Promise((resolve, reject) => {
 			peopleWaitingOnAppChange.push({
 				resolve,
@@ -107,12 +107,12 @@ export function triggerAppChange(pendingPromises = []) {
 			.filter(notSkipped)
 			.filter(isActive)
 			.map(toUnmountPromise)
-		console.log('unmount promises = ', unmountPromises);
+		// console.log('unmount promises = ', unmountPromises);
 
 		Promise
 		.all(unmountPromises)
 		.then(() => {
-			console.log('done unmounting apps')
+			// console.log('done unmounting apps')
 
 			const bootstrapPromises = childApps
 				.filter(shouldBeActive)
@@ -120,7 +120,7 @@ export function triggerAppChange(pendingPromises = []) {
 				.filter(isntActive)
 				.map(toBootstrapPromise)
 
-			console.log('bootstrap promises = ', bootstrapPromises)
+			// console.log('bootstrap promises = ', bootstrapPromises)
 
 			Promise
 			.all(bootstrapPromises)
@@ -129,12 +129,12 @@ export function triggerAppChange(pendingPromises = []) {
 					.filter(notSkipped)
 					.map(toMountPromise)
 
-				console.log('appsToMount = ', appsToMount)
+				// console.log('appsToMount = ', appsToMount)
 
 				Promise
 				.all(appsToMount)
 				.then(() => {
-					console.log('mounted all the apps')
+					// console.log('mounted all the apps')
 					resolve(getMountedApps());
 				})
 				.catch(reject);
@@ -168,13 +168,13 @@ function toBootstrapPromise(app) {
 	}
 
 	return new Promise((resolve, reject) => {
-		console.log(`bootstrapping app ${app.appLocation}`)
+		// console.log(`bootstrapping app ${app.appLocation}`)
 		app.status = LOADING_SOURCE_CODE;
 
 		Loader
 		.import(app.appLocation)
 		.then(appOpts => {
-			console.log(`app opts for ${app.appLocation}`);
+			// console.log(`app opts for ${app.appLocation}`);
 
 			let validationErrMessage;
 
@@ -206,12 +206,12 @@ function toBootstrapPromise(app) {
 			app.unmount = flattenFnArray(appOpts.unmount, `App '${app.appLocation}' unmount function`);
 			app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
 
-			console.log('has valid opts')
+			// console.log('has valid opts')
 
 			app.status = BOOTSTRAPPING;
 			reasonableTime(app.bootstrap(), `Bootstrapping app '${app.appLocation}'`, app.timeouts.bootstrap)
 			.then(() => {
-				console.log(`app ${app.appLocation} bootstrapped`)
+				// console.log(`app ${app.appLocation} bootstrapped`)
 				app.status = NOT_MOUNTED;
 				resolve(app);
 			})
@@ -245,7 +245,7 @@ function toBootstrapPromise(app) {
 								// console.log(`${description} is promise`)
 								promise
 								.then(() => {
-									console.log(`${description} done`)
+									// console.log(`${description} done`)
 									if (index === fns.length - 1) {
 										resolve();
 									} else {
@@ -260,8 +260,8 @@ function toBootstrapPromise(app) {
 			}
 
 			function ensureValidAppTimeouts(timeouts = {}) {
-				console.log('timeouts')
-				console.dir(timeouts)
+				// console.log('timeouts')
+				// console.dir(timeouts)
 				return {
 					bootstrap: {
 						millis: bootstrapMaxTime,
@@ -288,7 +288,7 @@ function toBootstrapPromise(app) {
 }
 
 function toMountPromise(app) {
-	console.log('to mount promise')
+	// console.log('to mount promise')
 	return new Promise((resolve, reject) => {
 		reasonableTime(app.mount(), `Mounting application ${app.appLocation}'`, app.timeouts.mount)
 		.then(() => {
@@ -321,7 +321,7 @@ function toUnmountPromise(app) {
 }
 
 function reasonableTime(promise, description, timeoutConfig, app) {
-	console.log(`${description}, dieOnTimeout = ${timeoutConfig.dieOnTimeout}`);
+	// console.log(`${description}, dieOnTimeout = ${timeoutConfig.dieOnTimeout}`);
 	const maxWarnings = 3;
 	const warningPeriod = 1000;
 
@@ -330,12 +330,12 @@ function reasonableTime(promise, description, timeoutConfig, app) {
 
 		promise
 		.then(val => {
-			console.log('resolving reasonable time')
+			// console.log('resolving reasonable time')
 			finished = true;
 			resolve(val);
 		})
 		.catch(val => {
-			console.log('rejecting reasonable time')
+			// console.log('rejecting reasonable time')
 			finished = true;
 			reject(val);
 		});

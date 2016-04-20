@@ -1,11 +1,12 @@
 {
   "name": "single-spa",
-  "version": "1.3.4",
+  "version": "2.0.0-alpha-1",
   "description": "Multiple applications, one page",
   "main": "lib/single-spa.js",
   "scripts": {
     "postinstall": "jspm install",
     "build": "npm run clean && babel src --out-dir lib",
+    "prepublish": "npm run build",
     "clean": "rm -rf lib",
     "test": "jasmine",
     "build:canopy": "npm run build && rm -rf ../../workplace/customer-spa/jspm_packages/npm/single-spa@1.3.4 && rsync -av . ../../workplace/customer-spa/jspm_packages/npm/single-spa@1.3.4 --exclude node_modules --exclude .git --exclude --spec --exclude examples"
