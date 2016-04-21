@@ -12,11 +12,16 @@ export function handleChildAppError(message) {
 	}
 }
 
-function SingleSpaChildAppError(message) {
+function SingleSpaChildAppError(obj) {
 	this.name = 'SingleSpaChildAppError';
-	const err = new Error(message || 'An error has occurred within a ChildApp of single-spa');
-	this.message = err.message;
-	this.stack = err.stack;
+	if (obj instanceof Error) {
+		this.message = obj.message
+		this.stack = obj.stack;
+	} else {
+		const err = new Error(obj || 'An error has occurred within a ChildApp of single-spa');
+		this.message = err.message;
+		this.stack = err.stack;
+	}
 }
 
 SingleSpaChildAppError.prototype = Object.create(Error.prototype);
