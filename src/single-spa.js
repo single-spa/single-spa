@@ -89,7 +89,11 @@ export function declareChildApplication(appLocation, activeWhen) {
 	triggerAppChange();
 }
 
-export function triggerAppChange(pendingPromises = []) {
+export function triggerAppChange() {
+	return performAppChanges();
+}
+
+function performAppChanges(pendingPromises = []) {
 	// console.log('\n\n\n')
 	if (appChangeUnderway) {
 		// console.log('people waiting')
@@ -154,7 +158,7 @@ export function triggerAppChange(pendingPromises = []) {
 			if (peopleWaitingOnAppChange.length > 0) {
 				const nextPendingPromises = peopleWaitingOnAppChange;
 				peopleWaitingOnAppChange = [];
-				triggerAppChange(nextPendingPromises);
+				performAppChanges(nextPendingPromises);
 			}
 		}
 
