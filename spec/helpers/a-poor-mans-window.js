@@ -1,0 +1,4 @@
+global.window = {
+	location: '',
+	addEventListener: () => {},
+};

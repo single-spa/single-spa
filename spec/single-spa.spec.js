@@ -37,12 +37,13 @@ describe(`single-spa`, () => {
 			},
 		};
 
-		singleSpa.reset();
-		singleSpa.setLoader(Loader);
-
 		global.window = {
 			location: '',
+			addEventListener: () => {},
 		};
+
+		singleSpa.reset();
+		singleSpa.setLoader(Loader);
 
 		singleSpa.getMountedApps = function() {
 			return originalGetMountedApps()

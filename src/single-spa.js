@@ -25,6 +25,9 @@ export function reset() {
 	bootstrapMaxTime = 4000;
 	mountMaxTime = 2000;
 	unmountMaxTime = 2000;
+
+	window.addEventListener('hashchange', triggerAppChange);
+	window.addEventListener('popstate', triggerAppChange);
 }
 // initialize for the first time
 reset();
