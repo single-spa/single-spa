@@ -4,6 +4,8 @@ Multiple applications all lazily loaded and mounted/unmounted in the same single
 
 In this context, an application is an html document that pulls in JS, CSS, and more HTML. This means that many pre-existing applications do not need to change at all in order to work with single-spa. You just need to add a configuration file on top of your existing SPA.
 
+Single-spa works in Chrome, Firefox, Safari, IE11, and Edge.
+
 ## View the demo!
 A [demo is live](http://single-spa.surge.sh) on surge.sh. Don't be turned off by the lack of styling -- I'll be fixing that soon. It's based on the code in the [examples](https://github.com/joeldenning/single-spa-examples) repository.
 
