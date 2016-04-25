@@ -1,4 +1,8 @@
 import { handleChildAppError } from './single-spa-child-app-error.js';
+import { ensureJQuerySupport } from './jquery-support.js';
+
+const originalAddEventListener = window.addEventListener;
+const originalRemoveEventListener = window.removeEventListener;
 
 // App statuses
 const NOT_BOOTSTRAPPED = 'NOT_BOOTSTRAPPED',
@@ -11,7 +15,7 @@ const NOT_BOOTSTRAPPED = 'NOT_BOOTSTRAPPED',
 	SKIP_BECAUSE_BROKEN = 'SKIP_BECAUSE_BROKEN';
 
 // Things that need to be reset with the init function;
-let Loader, childApps, bootstrapMaxTime, mountMaxTime, unmountMaxTime, peopleWaitingOnAppChange, appChangeUnderway;
+let Loader, childApps, bootstrapMaxTime, mountMaxTime, unmountMaxTime, peopleWaitingOnAppChange, appChangeUnderway, capturedEventListeners;
 
 export function reset() {
 	// console.log(`---------------------------`, 'resetting', `---------------------------`)
@@ -26,8 +30,63 @@ export function reset() {
 	mountMaxTime = 2000;
 	unmountMaxTime = 2000;
 
-	window.addEventListener('hashchange', triggerAppChange);
-	window.addEventListener('popstate', triggerAppChange);
+	window.addEventListener('hashchange', urlReroute);
+	window.addEventListener('popstate', urlReroute);
+
+	capturedEventListeners = {
+		hashchange: [],
+		popstate: [],
+	};
+
+	window.addEventListener = function(eventName, fn) {
+		if (typeof fn === 'function') {
+			if (eventName === 'hashchange' && !capturedEventListeners.hashchange.find(listener => listener === fn)) {
+				capturedEventListeners.hashchange.push(fn);
+				return;
+			} else if (eventName === 'popstate' && !capturedEventListeners.popstate.find(listener => listener === fn)) {
+				capturedEventListeners.popstate.push(fn);
+				return;
+			}
+		}
+
+		return originalAddEventListener.apply(this, arguments);
+	}
+
+	window.removeEventListener = function(eventName, listenerFn) {
+		if (typeof listenerFn === 'function') {
+			if (eventName === 'hashchange') {
+				capturedEventListeners.hashchange = capturedEventListeners.hashchange.filter(fn => fn.toString() !== listenerFn.toString());
+				return;
+			} else if (eventName === 'popstate') {
+				capturedEventListeners.popstate = capturedEventListeners.popstate.filter(fn => fn.toString() !== listenerFn.toString());
+				return;
+			}
+		}
+
+		return originalRemoveEventListener.apply(this, arguments);
+	}
+
+	const originalPushState = window.history.pushState;
+	window.history.pushState = function(state) {
+		const result = originalPushState.apply(this, arguments);
+
+		const popstateEvent = new PopStateEvent('popstate', {
+			target: window,
+			type: 'popstate',
+			bubbles: true,
+			cancelable: false,
+			state: state
+		});
+		document.dispatchEvent(popstateEvent);
+		
+		return result;
+	}
+
+	window.history.replaceState = function() {
+		const result = originalReplaceState.apply(this, arguments);
+		performAppChanges();
+		return result;
+	}
 }
 // initialize for the first time
 reset();
@@ -86,6 +145,8 @@ export function declareChildApplication(appLocation, activeWhen) {
 		status: NOT_BOOTSTRAPPED,
     });
 
+	ensureJQuerySupport();
+
 	triggerAppChange();
 }
 
@@ -93,7 +154,11 @@ export function triggerAppChange() {
 	return performAppChanges();
 }
 
-function performAppChanges(pendingPromises = []) {
+function urlReroute() {
+	performAppChanges([], arguments)
+}
+
+function performAppChanges(pendingPromises = [], eventArguments) {
 	// console.log('\n\n\n')
 	if (appChangeUnderway) {
 		// console.log('people waiting')
@@ -119,6 +184,7 @@ function performAppChanges(pendingPromises = []) {
 		Promise
 		.all(unmountPromises)
 		.then(() => {
+			callCapturedEventListeners();
 			// console.log('done unmounting apps')
 
 			const bootstrapPromises = childApps
@@ -148,7 +214,24 @@ function performAppChanges(pendingPromises = []) {
 			})
 			.catch(reject);
 		})
-		.catch(reject);
+		.catch(ex => {
+			callCapturedEventListeners();
+			reject(ex);
+		});
+
+		function callCapturedEventListeners() {
+			if (eventArguments) {
+				if (eventArguments[0].type === 'hashchange') {
+					capturedEventListeners.hashchange.forEach(listener => {
+						listener.apply(this, eventArguments);
+					});
+				} else if (eventArguments[0].type === 'popstate') {
+					capturedEventListeners.popstate.forEach(listener => {
+						listener.apply(this, eventArguments);
+					});
+				}
+			}
+		}
 
 		function resolve() {
 			_resolve.apply(this, arguments);

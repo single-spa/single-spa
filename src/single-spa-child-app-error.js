@@ -7,6 +7,7 @@ export function handleChildAppError(message) {
 		});
 	} else {
 		console.log(`---------------`)
+		console.error(message);
 		console.error((new SingleSpaChildAppError(message)).stack);
 		console.log(`---------------`)
 	}
