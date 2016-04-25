@@ -147,6 +147,31 @@ export function triggerAppChange() {
 	return performAppChanges();
 }
 
+export function navigateToUrl(obj) {
+	let url;
+	if (typeof obj === 'string') {
+		url = obj ;
+	} else if (this && this.href) {
+		url = this.href;
+	} else if (obj && obj.currentTarget && obj.currentTarget.href && obj.preventDefault) {
+		url = obj.currentTarget.href;
+		obj.preventDefault();
+	} else {
+		throw new Error(`singleSpaNavigate must be either called with a string url, with an <a> tag as its context, or with an event whose currentTarget is an <a> tag`);
+	}
+
+	const anchorElement= document.createElement('a');
+	anchorElement.setAttribute('href', url);
+
+	if (window.location.origin + window.location.pathname === anchorElement.origin + anchorElement.pathname) {
+		window.location.hash = anchorElement.hash;
+	} else {
+		window.history.pushState(null, null, url);
+	}
+}
+
+window.singleSpaNavigate = navigateToUrl;
+
 function urlReroute() {
 	performAppChanges([], arguments)
 }

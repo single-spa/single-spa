@@ -9,7 +9,7 @@
     "prepublish": "npm run build",
     "clean": "rm -rf lib",
     "test": "jasmine",
-    "build:canopy": "npm run build && rm -rf ../../workplace/customer-spa/jspm_packages/npm/single-spa@2.0.0 && rsync -av . ../../workplace/customer-spa/jspm_packages/npm/single-spa@2.0.0 --exclude node_modules --exclude .git --exclude --spec --exclude examples"
+    "build:canopy": "npm run build && rm -rf ../../workplace/customer-spa/jspm_packages/npm/single-spa@2.0.1 && rsync -av . ../../workplace/customer-spa/jspm_packages/npm/single-spa@2.0.1 --exclude node_modules --exclude .git --exclude --spec --exclude examples"
   },
   "repository": "https://github.com/CanopyTax/single-spa",
   "keywords": [
