@@ -70,14 +70,7 @@ export function reset() {
 	window.history.pushState = function(state) {
 		const result = originalPushState.apply(this, arguments);
 
-		const popstateEvent = new PopStateEvent('popstate', {
-			target: window,
-			type: 'popstate',
-			bubbles: true,
-			cancelable: false,
-			state: state
-		});
-		document.dispatchEvent(popstateEvent);
+		performAppChanges();
 		
 		return result;
 	}
