@@ -34,8 +34,5 @@
   },
   "ignore": [
     "examples"
-  ],
-  "publishConfig": {
-    "registry": "http://registry.npmjs.org"
-  }
+  ]
 }
