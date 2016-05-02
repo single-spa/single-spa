@@ -4,12 +4,11 @@
   "description": "Multiple applications, one page",
   "main": "lib/single-spa.js",
   "scripts": {
-    "postinstall": "jspm install",
     "build": "npm run clean && babel src --out-dir lib",
     "prepublish": "npm run build",
     "clean": "rm -rf lib",
     "test": "jasmine",
-    "build:canopy": "npm run build && rm -rf ../../workplace/customer-spa/jspm_packages/npm/single-spa@2.0.2 && rsync -av . ../../workplace/customer-spa/jspm_packages/npm/single-spa@2.0.2 --exclude node_modules --exclude .git --exclude --spec --exclude examples"
+    "build:canopy": "npm run build && rm -rf ../spalpatine/jspm_packages/npm/single-spa@2.0.2 && rsync -av . ../spalpatine/jspm_packages/npm/single-spa@2.0.2 --exclude node_modules --exclude .git --exclude --spec --exclude examples"
   },
   "repository": "https://github.com/CanopyTax/single-spa",
   "keywords": [

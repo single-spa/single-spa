@@ -13,45 +13,33 @@ export function ensureJQuerySupport() {
 		const originalJQueryOff = jQuery.fn.off;
 
 		jQuery.fn.on = function(eventString, fn) {
-			if (typeof eventString !== 'string') {
-				return originalJQueryOn.apply(this, arguments);
-			}
-
-			const eventNames = eventString.split(/\s+/);
-			eventNames.forEach(eventName => {
-				if (eventName === 'hashchange' || eventName === 'popstate') {
-					window.addEventListener(eventName, fn);
-					eventString = eventString.replace(eventName, '');
-				}
-			});
-
-			if (eventString.trim() === '') {
-				return this;
-			} else {
-				return originalJQueryOn.apply(this, arguments);
-			}
+			return captureRoutingEvents.call(this, originalJQueryOn, window.addEventListener, eventString, fn, arguments);
 		}
 
 		jQuery.fn.off = function(eventString, fn) {
-			if (typeof eventString !== 'string') {
-				return originalJQueryOn.apply(this, arguments);
-			}
-
-			const eventNames = eventString.split(/\s+/);
-			eventNames.forEach(eventName => {
-				if (eventName === 'hashchange' || eventName === 'popstate') {
-					window.removeEventListener(eventName, fn);
-					eventString = eventString.replace(eventName, '');
-				}
-			});
-
-			if (eventString.trim() === '') {
-				return this;
-			} else {
-				return originalJQueryOff.apply(this, arguments);
-			}
+			return captureRoutingEvents.call(this, originalJQueryOff, window.removeEventListener, eventString, fn, arguments);
 		}
 
 		hasInitialized = true;
+	}
+}
+
+function captureRoutingEvents(originalJQueryFunction, nativeFunctionToCall, eventString, fn, originalArgs) {
+	if (typeof eventString !== 'string') {
+		return originalJQueryFunction.apply(this, originalArgs);
+	}
+
+	const eventNames = eventString.split(/\s+/);
+	eventNames.forEach(eventName => {
+		if (eventName === 'hashchange' || eventName === 'popstate') {
+			nativeFunctionToCall(eventName, fn);
+			eventString = eventString.replace(eventName, '');
+		}
+	});
+
+	if (eventString.trim() === '') {
+		return this;
+	} else {
+		return originalJQueryFunction.apply(this, originalArgs);
 	}
 }
