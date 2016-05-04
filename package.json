@@ -4,7 +4,6 @@
   "description": "Multiple applications, one page",
   "main": "lib/single-spa.js",
   "scripts": {
-    "postinstall": "jspm install",
     "build": "npm run clean && babel src --out-dir lib",
     "prepublish": "npm run build",
     "clean": "rm -rf lib",
