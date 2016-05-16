@@ -1,4 +1,6 @@
 # single-spa
+[![npm version](https://img.shields.io/npm/v/single-spa.svg?style=flat-square)](https://www.npmjs.org/package/single-spa)
+[![Build Status](https://img.shields.io/travis/CanopyTax/single-spa.svg?style=flat-square)](https://travis-ci.org/CanopyTax/single-spa)
 
 Multiple applications all lazily loaded and mounted/unmounted in the same single page application (SPA). The apps can be deployed independently to your web server of choice, lazy-loaded onto the page independently, and nested. Single-spa also allows for **service oriented javascript**, where a "service" (a shared es6 module) is a singleton that each app can call, without resorting to shared libraries that can be out of sync across apps.
 

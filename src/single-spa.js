@@ -187,12 +187,18 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 
 	return new Promise((_resolve, _reject) => {
 
+		let wasNoOp = true;
+
 		const unmountPromises = childApps
 			.filter(shouldntBeActive)
 			.filter(notSkipped)
 			.filter(isActive)
 			.map(toUnmountPromise)
 		// console.log('unmount promises = ', unmountPromises);
+		
+		if (unmountPromises.length > 0) {
+			wasNoOp = false;
+		}
 
 		Promise
 		.all(unmountPromises)
@@ -206,6 +212,10 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 				.filter(isntActive)
 				.map(toBootstrapPromise)
 
+			if (bootstrapPromises.length > 0) {
+				wasNoOp = false;
+			}
+
 			// console.log('bootstrap promises = ', bootstrapPromises)
 
 			Promise
@@ -214,6 +224,10 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 				appsToMount = appsToMount
 					.filter(notSkipped)
 					.map(toMountPromise)
+
+				if (appsToMount.length > 0) {
+					wasNoOp = false;
+				}
 
 				// console.log('appsToMount = ', appsToMount)
 
@@ -252,6 +266,12 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 				const nextPendingPromises = peopleWaitingOnAppChange;
 				peopleWaitingOnAppChange = [];
 				performAppChanges(nextPendingPromises);
+			} else {
+				if (!wasNoOp) {
+					window.dispatchEvent(new CustomEvent("single-spa:app-change"));
+				}
+
+				window.dispatchEvent(new CustomEvent("single-spa:routing-event"));
 			}
 		}
 

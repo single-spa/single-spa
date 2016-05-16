@@ -40,6 +40,9 @@ describe(`single-spa`, () => {
 		global.window = {
 			location: '',
 			addEventListener: () => {},
+			history: {
+				pushState: () => {},
+			},
 		};
 
 		singleSpa.reset();
