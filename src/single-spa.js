@@ -14,6 +14,9 @@ const NOT_BOOTSTRAPPED = 'NOT_BOOTSTRAPPED',
 	UNMOUNTING = 'UNMOUNTING',
 	SKIP_BECAUSE_BROKEN = 'SKIP_BECAUSE_BROKEN';
 
+// Constants that don't change no matter what
+export const routingEventsListeningTo = ['hashchange', 'popstate'];
+
 // Things that need to be reset with the init function;
 let Loader, childApps, bootstrapMaxTime, mountMaxTime, unmountMaxTime, peopleWaitingOnAppChange, appChangeUnderway, capturedEventListeners;
 
@@ -40,12 +43,8 @@ export function reset() {
 
 	window.addEventListener = function(eventName, fn) {
 		if (typeof fn === 'function') {
-			if (eventName === 'hashchange' && !capturedEventListeners.hashchange.find(listener => listener === fn)) {
-				capturedEventListeners.hashchange.push(fn);
-				return;
-			} else if (eventName === 'popstate' && !capturedEventListeners.popstate.find(listener => listener === fn)) {
-				capturedEventListeners.popstate.push(fn);
-				return;
+			if (routingEventsListeningTo.indexOf(eventName) >= 0 && !capturedEventListeners[eventName].find(listener => listener === fn)) {
+				capturedEventListeners[eventName].push(fn);
 			}
 		}
 
@@ -54,12 +53,8 @@ export function reset() {
 
 	window.removeEventListener = function(eventName, listenerFn) {
 		if (typeof listenerFn === 'function') {
-			if (eventName === 'hashchange') {
-				capturedEventListeners.hashchange = capturedEventListeners.hashchange.filter(fn => fn.toString() !== listenerFn.toString());
-				return;
-			} else if (eventName === 'popstate') {
-				capturedEventListeners.popstate = capturedEventListeners.popstate.filter(fn => fn.toString() !== listenerFn.toString());
-				return;
+			if (routingEventsListeningTo.indexOf(eventName) >= 0) {
+				capturedEventListeners[eventName] = capturedEventListeners[eventName].filter(fn => fn.toString() !== listenerFn.toString());
 			}
 		}
 
@@ -253,12 +248,9 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 
 		function callCapturedEventListeners() {
 			if (eventArguments) {
-				if (eventArguments[0].type === 'hashchange') {
-					capturedEventListeners.hashchange.forEach(listener => {
-						listener.apply(this, eventArguments);
-					});
-				} else if (eventArguments[0].type === 'popstate') {
-					capturedEventListeners.popstate.forEach(listener => {
+				const eventType = eventArguments[0].type;
+				if (routingEventsListeningTo.indexOf(eventType) >= 0) {
+					capturedEventListeners[eventType].forEach(listener => {
 						listener.apply(this, eventArguments);
 					});
 				}
