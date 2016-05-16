@@ -15,7 +15,7 @@ const NOT_BOOTSTRAPPED = 'NOT_BOOTSTRAPPED',
 	SKIP_BECAUSE_BROKEN = 'SKIP_BECAUSE_BROKEN';
 
 // Constants that don't change no matter what
-const routingEventsListeningTo = ['hashchange', 'popstate'];
+export const routingEventsListeningTo = ['hashchange', 'popstate'];
 
 // Things that need to be reset with the init function;
 let Loader, childApps, bootstrapMaxTime, mountMaxTime, unmountMaxTime, peopleWaitingOnAppChange, appChangeUnderway, capturedEventListeners;

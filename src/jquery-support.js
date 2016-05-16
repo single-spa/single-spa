@@ -1,3 +1,5 @@
+import { routingEventsListeningTo } from './single-spa.js';
+
 let hasInitialized = false;
 
 export function ensureJQuerySupport() {
@@ -31,7 +33,7 @@ function captureRoutingEvents(originalJQueryFunction, nativeFunctionToCall, even
 
 	const eventNames = eventString.split(/\s+/);
 	eventNames.forEach(eventName => {
-		if (eventName === 'hashchange' || eventName === 'popstate') {
+		if (routingEventsListeningTo.indexOf(eventName) >= 0) {
 			nativeFunctionToCall(eventName, fn);
 			eventString = eventString.replace(eventName, '');
 		}
