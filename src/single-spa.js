@@ -43,7 +43,7 @@ export function reset() {
 
 	window.addEventListener = function(eventName, fn) {
 		if (typeof fn === 'function') {
-			if (routingEventsListeningTo.includes(eventName) && !capturedEventListeners[eventName].find(listener => listener === fn)) {
+			if (routingEventsListeningTo.indexOf(eventName) >= 0 && !capturedEventListeners[eventName].find(listener => listener === fn)) {
 				capturedEventListeners[eventName].push(fn);
 			}
 		}
@@ -53,7 +53,7 @@ export function reset() {
 
 	window.removeEventListener = function(eventName, listenerFn) {
 		if (typeof listenerFn === 'function') {
-			if (routingEventsListeningTo.includes(eventName)) {
+			if (routingEventsListeningTo.indexOf(eventName) >= 0) {
 				capturedEventListeners[eventName] = capturedEventListeners[eventName].filter(fn => fn.toString() !== listenerFn.toString());
 			}
 		}
@@ -249,7 +249,7 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 		function callCapturedEventListeners() {
 			if (eventArguments) {
 				const eventType = eventArguments[0].type;
-				if (routingEventsListeningTo.includes(eventType)) {
+				if (routingEventsListeningTo.indexOf(eventType) >= 0) {
 					capturedEventListeners[eventType].forEach(listener => {
 						listener.apply(this, eventArguments);
 					});
