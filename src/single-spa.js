@@ -45,6 +45,7 @@ export function reset() {
 		if (typeof fn === 'function') {
 			if (routingEventsListeningTo.indexOf(eventName) >= 0 && !capturedEventListeners[eventName].find(listener => listener === fn)) {
 				capturedEventListeners[eventName].push(fn);
+				return;
 			}
 		}
 
@@ -55,6 +56,7 @@ export function reset() {
 		if (typeof listenerFn === 'function') {
 			if (routingEventsListeningTo.indexOf(eventName) >= 0) {
 				capturedEventListeners[eventName] = capturedEventListeners[eventName].filter(fn => fn.toString() !== listenerFn.toString());
+				return;
 			}
 		}
 
