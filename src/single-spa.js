@@ -462,11 +462,12 @@ function reasonableTime(promise, description, timeoutConfig, app) {
 			reject(val);
 		});
 
-		setTimeout(() => maybeTimingOut(1), Math.max(0, timeoutConfig.millis - (maxWarnings * warningPeriod)));
+		setTimeout(() => maybeTimingOut(1), warningPeriod);
+		setTimeout(() => maybeTimingOut(maxWarnings), timeoutConfig.millis);
 
 		function maybeTimingOut(numWarnings) {
 			if (!finished) {
-				if (numWarnings >= numWarnings) {
+				if (numWarnings >= maxWarnings) {
 					if (timeoutConfig.dieOnTimeout) {
 						reject(`${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds`);
 					} else {
