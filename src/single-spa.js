@@ -21,7 +21,6 @@ export const routingEventsListeningTo = ['hashchange', 'popstate'];
 let Loader, childApps, bootstrapMaxTime, mountMaxTime, unmountMaxTime, peopleWaitingOnAppChange, appChangeUnderway, capturedEventListeners;
 
 export function reset() {
-	// console.log(`---------------------------`, 'resetting', `---------------------------`)
 	childApps = [];
 
 	peopleWaitingOnAppChange = [];
@@ -30,8 +29,8 @@ export function reset() {
 	Loader = typeof SystemJS !== 'undefined' ? SystemJS : null;
 
 	bootstrapMaxTime = 4000;
-	mountMaxTime = 2000;
-	unmountMaxTime = 2000;
+	mountMaxTime = 3000;
+	unmountMaxTime = 3000;
 
 	window.addEventListener('hashchange', urlReroute);
 	window.addEventListener('popstate', urlReroute);
@@ -174,9 +173,7 @@ function urlReroute() {
 }
 
 function performAppChanges(pendingPromises = [], eventArguments) {
-	// console.log('\n\n\n')
 	if (appChangeUnderway) {
-		// console.log('people waiting')
 		return new Promise((resolve, reject) => {
 			peopleWaitingOnAppChange.push({
 				resolve,
@@ -196,7 +193,6 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 			.filter(notSkipped)
 			.filter(isActive)
 			.map(toUnmountPromise)
-		// console.log('unmount promises = ', unmountPromises);
 		
 		if (unmountPromises.length > 0) {
 			wasNoOp = false;
@@ -206,7 +202,6 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 		.all(unmountPromises)
 		.then(() => {
 			callCapturedEventListeners();
-			// console.log('done unmounting apps')
 
 			const bootstrapPromises = childApps
 				.filter(shouldBeActive)
@@ -217,8 +212,6 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 			if (bootstrapPromises.length > 0) {
 				wasNoOp = false;
 			}
-
-			// console.log('bootstrap promises = ', bootstrapPromises)
 
 			Promise
 			.all(bootstrapPromises)
@@ -231,12 +224,9 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 					wasNoOp = false;
 				}
 
-				// console.log('appsToMount = ', appsToMount)
-
 				Promise
 				.all(appsToMount)
 				.then(() => {
-					// console.log('mounted all the apps')
 					resolve(getMountedApps());
 				})
 				.catch(reject);
@@ -290,34 +280,31 @@ function toBootstrapPromise(app) {
 	}
 
 	return new Promise((resolve, reject) => {
-		// console.log(`bootstrapping app ${app.appLocation}`)
 		app.status = LOADING_SOURCE_CODE;
 
 		Loader
 		.import(app.appLocation)
 		.then(appOpts => {
-			// console.log(`app opts for ${app.appLocation}`);
-
 			let validationErrMessage;
 
 			if (typeof appOpts !== 'object') {
-				validationErrMessage = `App '${app.appLocation}' does not export an object`;
+				validationErrMessage = `does not export an object`;
 			}
 
 			if (!validLifecycleFn(appOpts.bootstrap)) {
-				validationErrMessage = `App '${app.appLocation}' does not export a bootstrap function or array of functions`;
+				validationErrMessage = `does not export a bootstrap function or array of functions`;
 			}
 
 			if (!validLifecycleFn(appOpts.mount)) {
-				validationErrMessage = `App '${app.appLocation}' does not export a mount function or array of functions`;
+				validationErrMessage = `does not export a mount function or array of functions`;
 			}
 
 			if (!validLifecycleFn(appOpts.unmount)) {
-				validationErrMessage = `App '${app.appLocation}' does not export an unmount function or array of functions`;
+				validationErrMessage = `does not export an unmount function or array of functions`;
 			}
 
 			if (validationErrMessage) {
-				handleChildAppError(validationErrMessage);
+				handleChildAppError(validationErrMessage, app);
 				app.status = SKIP_BECAUSE_BROKEN;
 				resolve(app);
 				return;
@@ -328,17 +315,14 @@ function toBootstrapPromise(app) {
 			app.unmount = flattenFnArray(appOpts.unmount, `App '${app.appLocation}' unmount function`);
 			app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
 
-			// console.log('has valid opts')
-
 			app.status = BOOTSTRAPPING;
 			reasonableTime(app.bootstrap(), `Bootstrapping app '${app.appLocation}'`, app.timeouts.bootstrap)
 			.then(() => {
-				// console.log(`app ${app.appLocation} bootstrapped`)
 				app.status = NOT_MOUNTED;
 				resolve(app);
 			})
 			.catch((ex) => {
-				handleChildAppError(ex);
+				handleChildAppError(ex, app);
 				app.status = SKIP_BECAUSE_BROKEN;
 				resolve(app);
 			});
@@ -361,13 +345,10 @@ function toBootstrapPromise(app) {
 						function waitForPromises(index) {
 							const promise = fns[index]();
 							if (!(promise instanceof Promise)) {
-								// console.log(`${description} isn't promise`)
 								reject(`${description} at index ${index} did not return a promise`);
 							} else {
-								// console.log(`${description} is promise`)
 								promise
 								.then(() => {
-									// console.log(`${description} done`)
 									if (index === fns.length - 1) {
 										resolve();
 									} else {
@@ -382,8 +363,6 @@ function toBootstrapPromise(app) {
 			}
 
 			function ensureValidAppTimeouts(timeouts = {}) {
-				// console.log('timeouts')
-				// console.dir(timeouts)
 				return {
 					bootstrap: {
 						millis: bootstrapMaxTime,
@@ -402,7 +381,7 @@ function toBootstrapPromise(app) {
 			}
 		})
 		.catch(ex => {
-			handleChildAppError(ex);
+			handleChildAppError(ex, app);
 			app.status = SKIP_BECAUSE_BROKEN;
 			resolve(app);
 		});
@@ -410,7 +389,6 @@ function toBootstrapPromise(app) {
 }
 
 function toMountPromise(app) {
-	// console.log('to mount promise')
 	return new Promise((resolve, reject) => {
 		reasonableTime(app.mount(), `Mounting application ${app.appLocation}'`, app.timeouts.mount)
 		.then(() => {
@@ -418,7 +396,7 @@ function toMountPromise(app) {
 			resolve(app);
 		})
 		.catch(ex => {
-			handleChildAppError(ex);
+			handleChildAppError(ex, app);
 			app.status = SKIP_BECAUSE_BROKEN;
 			resolve(app);
 		});
@@ -435,7 +413,7 @@ function toUnmountPromise(app) {
 			resolve(app);
 		})
 		.catch(ex => {
-			handleChildAppError(ex);
+			handleChildAppError(ex, app);
 			app.status = SKIP_BECAUSE_BROKEN;
 			resolve(app);
 		});
@@ -443,40 +421,42 @@ function toUnmountPromise(app) {
 }
 
 function reasonableTime(promise, description, timeoutConfig, app) {
-	// console.log(`${description}, dieOnTimeout = ${timeoutConfig.dieOnTimeout}`);
-	const maxWarnings = 3;
 	const warningPeriod = 1000;
 
 	return new Promise((resolve, reject) => {
 		let finished = false;
+		let errored = false;
 
 		promise
 		.then(val => {
-			// console.log('resolving reasonable time')
 			finished = true;
 			resolve(val);
 		})
 		.catch(val => {
-			// console.log('rejecting reasonable time')
 			finished = true;
 			reject(val);
 		});
 
 		setTimeout(() => maybeTimingOut(1), warningPeriod);
-		setTimeout(() => maybeTimingOut(maxWarnings), timeoutConfig.millis);
+		setTimeout(() => maybeTimingOut(true), timeoutConfig.millis);
 
-		function maybeTimingOut(numWarnings) {
+		function maybeTimingOut(shouldError) {
 			if (!finished) {
-				if (numWarnings >= maxWarnings) {
+				if (shouldError === true) {
+					errored = true;
 					if (timeoutConfig.dieOnTimeout) {
 						reject(`${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds`);
 					} else {
 						console.error(`${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds -- we're no longer going to warn you about it.`);
 						//don't resolve or reject, we're waiting this one out
 					}
-				} else {
-					console.warn(`${description} did not resolve or reject within ${timeoutConfig.millis} milliseconds`);
-					setTimeout(() => maybeTimingOut(numWarnings + 1), warningPeriod);
+				} else if (!errored) {
+					const numWarnings = shouldError;
+					const numMillis = numWarnings * warningPeriod;
+					console.warn(`${description} did not resolve or reject within ${numMillis} milliseconds`);
+					if (numMillis + warningPeriod < timeoutConfig.millis) {
+						setTimeout(() => maybeTimingOut(numWarnings + 1), warningPeriod);
+					}
 				}
 			}
 		}
@@ -487,7 +467,7 @@ function shouldBeActive(app) {
 	try {
 		return app.activeWhen(window.location);
 	} catch (ex) {
-		handleChildAppError(ex);
+		handleChildAppError(ex, app);
 		app.status = SKIP_BECAUSE_BROKEN;
 	}
 }
@@ -496,7 +476,7 @@ function shouldntBeActive(app) {
 	try {
 		return !app.activeWhen(window.location);
 	} catch (ex) {
-		handleChildAppError(ex);
+		handleChildAppError(ex, app);
 		app.status = SKIP_BECAUSE_BROKEN;
 	}
 }

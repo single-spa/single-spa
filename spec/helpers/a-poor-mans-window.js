@@ -4,4 +4,5 @@ global.window = {
 	history: {
 		pushState: () => {},
 	},
+	SINGLE_SPA_TESTING: true,
 };

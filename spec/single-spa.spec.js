@@ -37,14 +37,6 @@ describe(`single-spa`, () => {
 			},
 		};
 
-		global.window = {
-			location: '',
-			addEventListener: () => {},
-			history: {
-				pushState: () => {},
-			},
-		};
-
 		singleSpa.reset();
 		singleSpa.setLoader(Loader);
 
