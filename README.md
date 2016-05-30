@@ -70,5 +70,8 @@ export function unmount() {
 }
 ```
 
+## API
+See [single-spa api](/docs/single-spa-api.md) and [child application api](/docs/child-applications.md#api).
+
 ## View the demo!
 A [demo is live](http://single-spa.surge.sh) on surge.sh, but is based on an old version of single-spa. The demo will soon be updated to use single-spa@2.x
