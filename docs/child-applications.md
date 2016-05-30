@@ -1,4 +1,4 @@
-# Child applications
+# Child applications (chapps)
 
 A single-spa child application is everything that a normal SPA is, except that it doesn't have an HTML page.
 In a single-spa world, your app might contain many child applications, each with their own framework.
@@ -11,7 +11,7 @@ Whenever a child application is *not mounted*, it should remain completely dorma
 ## Creating a child application
 
 To create a child application, first
-[register the application with single-spa](/docs/root-application.md#registering-child-applications).
+[register the application with single-spa](/docs/root-application.md#declaring-child-applications).
 Once registered, the child application must correctly implement **all** of the following lifecycle functions
 inside of its main entry point.
 
@@ -25,21 +25,29 @@ Lifecycle functions are exported from the main entry point of a child applicatio
 Notes:
 - Lifecycle functions are not called with any arguments.
 - All lifecycle functions currently must be implemented by every child application.
-- Each lifecycle function must either return a Promise or be an `async function`.
-- If an array of functions is exported (instead of just a function), functions will be called
-  one-after-the-other, waiting for the completion of one function before calling the next.
+- Each lifecycle function must either return a `Promise` or be an `async function`.
+- If an array of functions is exported (instead of just one function), the functions will be called
+  one-after-the-other, waiting for the resolution of one function's promise before calling the next.
+
+### Lifecycle middleware
+Middleware that helps implement lifecycle functions for specific frameworks, libraries, and applications
+is available for many popular technologies. See [middleware docs](/docs/middleware.md) for details.
 
 ### load
 Although this is not a lifecycle function at all, `load` is an important part of any child application's
 lifecycle. It refers to when the code for a child application is fetched from the server and executed.
-It is best practice to do as little as possible / nothing at all during `load`, but instead to wait
-until the bootstrap lifecycle function to do anything. If you need to do something during `load`,
-simply put the code into a child application's main entry point, but not inside of an exported function.
+The code for a child application is *always* lazy loaded by single-spa and will only be fetched from
+the server once the child application's [activity function](/docs/root-application.md#activity-function)
+returns a truthy value for the first time. It is best practice to do as little as possible / nothing at all
+during `load`, but instead to wait until the bootstrap lifecycle function to do anything.
+If you need to do something during `load`, simply put the code into a child application's main entry point,
+but not inside of an exported function.
 
 For example:
-```
+```js
 console.log("The child application has been loaded!");
 require('./path-to-some-file-i-want-to-execute');
+
 export function bootstrap() {...}
 export function mount() {...}
 export function unmount() {...}
