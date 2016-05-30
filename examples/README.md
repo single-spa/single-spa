@@ -1,5 +1,3 @@
 # Examples
-There is [a whole repository](https://github.com/joeldenning/single-spa-examples) dedicated to examples. What you'll find there is one SPA with the following:
-- [The index.html file](https://github.com/joeldenning/single-spa-examples/blob/master/index.html)
-- [The root app](https://github.com/joeldenning/single-spa-examples/blob/master/bootstrap.js)
-- [Many children apps](https://github.com/joeldenning/single-spa-examples/tree/master/apps)
+There is [a whole repository](https://github.com/joeldenning/single-spa-examples) dedicated to examples. However, those examples
+are not yet up-to-date with single-spa@2.x's api. Contributions are welcome to that project in the meantime.
