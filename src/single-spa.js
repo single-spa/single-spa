@@ -18,7 +18,7 @@ const NOT_BOOTSTRAPPED = 'NOT_BOOTSTRAPPED',
 export const routingEventsListeningTo = ['hashchange', 'popstate'];
 
 // Things that need to be reset with the init function;
-let Loader, childApps, bootstrapMaxTime, mountMaxTime, unmountMaxTime, peopleWaitingOnAppChange, appChangeUnderway, capturedEventListeners;
+let Loader, childApps, globalTimeoutConfig, peopleWaitingOnAppChange, appChangeUnderway, capturedEventListeners;
 
 export function reset() {
 	childApps = [];
@@ -34,9 +34,20 @@ export function reset() {
 		Loader = null;
 	}
 
-	bootstrapMaxTime = 4000;
-	mountMaxTime = 3000;
-	unmountMaxTime = 3000;
+	globalTimeoutConfig = {
+		bootstrap: {
+			millis: 4000,
+			dieOnTimeout: false,
+		},
+		mount: {
+			millis: 3000,
+			dieOnTimeout: false,
+		},
+		unmount: {
+			millis: 3000,
+			dieOnTimeout: false,
+		},
+	}
 
 	window.addEventListener('hashchange', urlReroute);
 	window.addEventListener('popstate', urlReroute);
@@ -102,28 +113,37 @@ export function getAppStatus(appName) {
 	return app ? app.status : null;
 }
 
-export function setBootstrapMaxTime(time) {
+export function setBootstrapMaxTime(time, dieOnTimeout = false) {
 	if (typeof time !== 'number' || time <= 0) {
 		throw new Error(`bootstrap max time must be a positive integer number of milliseconds`);
 	}
 
-	bootstrapMaxTime = time;
+	globalTimeoutConfig.bootstrap = {
+		millis: time,
+		dieOnTimeout,
+	};
 }
 
-export function setMountMaxTime(time) {
+export function setMountMaxTime(time, dieOnTimeout = false) {
 	if (typeof time !== 'number' || time <= 0) {
 		throw new Error(`mount max time must be a positive integer number of milliseconds`);
 	}
 
-	mountMaxTime = time;
+	globalTimeoutConfig.mount = {
+		millis: time,
+		dieOnTimeout,
+	};
 }
 
-export function setUnmountMaxTime(time) {
+export function setUnmountMaxTime(time, dieOnTimeout = false) {
 	if (typeof time !== 'number' || time <= 0) {
 		throw new Error(`unmount max time must be a positive integer number of milliseconds`);
 	}
 
-	unmountMaxTime = time;
+	globalTimeoutConfig.unmount = {
+		millis: time,
+		dieOnTimeout,
+	};
 }
 
 export function declareChildApplication(appLocation, activeWhen) {
@@ -370,18 +390,7 @@ function toBootstrapPromise(app) {
 
 			function ensureValidAppTimeouts(timeouts = {}) {
 				return {
-					bootstrap: {
-						millis: bootstrapMaxTime,
-						dieOnTimeout: false,
-					},
-					mount: {
-						millis: mountMaxTime,
-						dieOnTimeout: false,
-					},
-					unmount: {
-						millis: unmountMaxTime,
-						dieOnTimeout: false,
-					},
+					...globalTimeoutConfig,
 					...timeouts,
 				};
 			}
