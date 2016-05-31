@@ -3,7 +3,7 @@ The single-spa library does not `export default`, but instead exports named func
 
 ## declareChildApplication
 `declareChildApplication(name, activeWhen)` is the most important api and the only api that is required to be
-used in order for single-spa to work. It is described in detail inside of the [root-application.md docs](/docs/root-application.md)
+used in order for single-spa to work. It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
 
 ## triggerAppChange
 `triggerAppChange()` takes in no arguments and returns a Promise that will resolve/reject when all apps that
