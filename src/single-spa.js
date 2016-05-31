@@ -1,6 +1,8 @@
 import { handleChildAppError } from './single-spa-child-app-error.js';
 import { ensureJQuerySupport } from './jquery-support.js';
 
+const window = typeof window !== 'undefined' ? window : global;
+
 const originalAddEventListener = window.addEventListener;
 const originalRemoveEventListener = window.removeEventListener;
 
