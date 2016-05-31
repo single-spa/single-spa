@@ -11,6 +11,7 @@ single-spa works in Chrome, Firefox, Safari, IE11, and Edge.
 
 ## Architectural Overview
 Apps built with single-spa are made up of the following pieces:
+
 1. An index.html file
 1. A root application, in which child applications are registered. In order to register a child application, two things must be provided:
   1. The path to the application
@@ -23,8 +24,6 @@ If you're using a bundler (such as webpack or browserify) instead of a loader, o
 to see your options.
 
 ## Simple Usage
-*Note*: in order to understand
-
 *Note*: this example uses [jspm](https://github.com/jspm/jspm-cli), since it's the easiest way to set up a loader. However, jspm and systemjs are not required.
 ```bash
 npm install -g jspm@beta
