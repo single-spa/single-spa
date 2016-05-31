@@ -63,7 +63,7 @@ describe(`single-spa`, () => {
 			expect(childModule.isMounted).toEqual(false);
 			expect(singleSpa.getMountedApps()).toEqual([]);
 
-			window.location = 'happy-basic';
+			global.location = 'happy-basic';
 
 			singleSpa
 			.triggerAppChange()
@@ -72,7 +72,7 @@ describe(`single-spa`, () => {
 				expect(childModule.isMounted).toEqual(true);
 				expect(singleSpa.getMountedApps()).toEqual(['happy-basic']);
 
-				window.location = 'not-happy-basic';
+				global.location = 'not-happy-basic';
 
 				singleSpa
 				.triggerAppChange()
@@ -98,7 +98,7 @@ describe(`single-spa`, () => {
 		it(`is never mounted`, (done) => {
 			const childModule = easyDeclareChild('invalid-no-bootstrap');
 
-			window.location = 'invalid-no-bootstrap';
+			global.location = 'invalid-no-bootstrap';
 
 			singleSpa
 			.triggerAppChange()
@@ -119,7 +119,7 @@ describe(`single-spa`, () => {
 		it(`is never bootstrapped`, (done) => {
 			const childModule = easyDeclareChild('invalid-no-mount');
 
-			window.location = 'invalid-no-mount';
+			global.location = 'invalid-no-mount';
 
 			singleSpa
 			.triggerAppChange()
@@ -140,7 +140,7 @@ describe(`single-spa`, () => {
 		it(`is never bootstrapped`, (done) => {
 			const childModule = easyDeclareChild('invalid-no-unmount');
 
-			window.location = 'invalid-no-unmount';
+			global.location = 'invalid-no-unmount';
 
 			singleSpa
 			.triggerAppChange()
@@ -162,7 +162,7 @@ describe(`single-spa`, () => {
 		it(`is never bootstrapped, mounted, or unmounted`, (done) => {
 			const childModule = easyDeclareChild('invalid-bootstrap');
 
-			window.location = 'invalid-bootstrap';
+			global.location = 'invalid-bootstrap';
 
 			singleSpa
 			.triggerAppChange()
@@ -184,7 +184,7 @@ describe(`single-spa`, () => {
 		it(`is bootstrapped and mounted, but then put in a broken state and never unmounted`, (done) => {
 			const childModule = easyDeclareChild('invalid-mount');
 
-			window.location = 'invalid-mount';
+			global.location = 'invalid-mount';
 
 			singleSpa
 			.triggerAppChange()
@@ -194,7 +194,7 @@ describe(`single-spa`, () => {
 				expect(singleSpa.getMountedApps()).toEqual([]);
 				expect(singleSpa.getAppStatus('invalid-mount')).toEqual('SKIP_BECAUSE_BROKEN');
 
-				window.location = 'not-invalid-mount';
+				global.location = 'not-invalid-mount';
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
@@ -220,7 +220,7 @@ describe(`single-spa`, () => {
 		it(`is bootstrapped, mounted, and unmounted, but then put in a broken state and never again mounted`, (done) => {
 			const childModule = easyDeclareChild('invalid-unmount');
 
-			window.location = 'invalid-unmount';
+			global.location = 'invalid-unmount';
 
 			singleSpa
 			.triggerAppChange()
@@ -231,7 +231,7 @@ describe(`single-spa`, () => {
 				expect(singleSpa.getAppStatus('invalid-unmount')).toEqual('MOUNTED');
 
 				// now unmount, which will be the first time it enters a broken state
-				window.location = 'not-invalid-unmount';
+				global.location = 'not-invalid-unmount';
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
@@ -242,7 +242,7 @@ describe(`single-spa`, () => {
 					expect(singleSpa.getAppStatus('invalid-unmount')).toEqual('SKIP_BECAUSE_BROKEN');
 
 					// now remount and check if it tries to mount despite being in a broken state
-					window.location = 'invalid-unmount';
+					global.location = 'invalid-unmount';
 					singleSpa
 					.triggerAppChange()
 					.then(() => {
@@ -279,7 +279,7 @@ describe(`single-spa`, () => {
 			module.bootstrapCalled = false;
 			module.mountCalled = false;
 
-			window.location = 'bootstrap-times-out';
+			global.location = 'bootstrap-times-out';
 
 			singleSpa
 			.triggerAppChange()
@@ -303,7 +303,7 @@ describe(`single-spa`, () => {
 			module.timeouts.bootstrap.dieOnTimeout = true;
 			module.bootstrapCalled = false;
 			module.mountCalled = false;
-			window.location = 'bootstrap-times-out';
+			global.location = 'bootstrap-times-out';
 
 			singleSpa
 			.triggerAppChange()
@@ -329,7 +329,7 @@ describe(`single-spa`, () => {
 			module.reset();
 			module.timeouts.mount.dieOnTimeout = false;
 
-			window.location = 'mount-times-out';
+			global.location = 'mount-times-out';
 
 			singleSpa
 			.triggerAppChange()
@@ -352,7 +352,7 @@ describe(`single-spa`, () => {
 			// when dieOnTimeout is false, single-spa just waits forever for it
 			module.reset();
 			module.timeouts.mount.dieOnTimeout = true;
-			window.location = 'mount-times-out';
+			global.location = 'mount-times-out';
 
 			singleSpa
 			.triggerAppChange()
@@ -378,7 +378,7 @@ describe(`single-spa`, () => {
 			module.reset();
 			module.timeouts.unmount.dieOnTimeout = false;
 
-			window.location = 'unmount-times-out';
+			global.location = 'unmount-times-out';
 
 			singleSpa
 			.triggerAppChange()
@@ -388,7 +388,7 @@ describe(`single-spa`, () => {
 				expect(singleSpa.getMountedApps()).toEqual(['unmount-times-out']);
 				expect(singleSpa.getAppStatus('unmount-times-out')).toEqual('MOUNTED');
 
-				window.location = 'not-unmount-times-out';
+				global.location = 'not-unmount-times-out';
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
@@ -415,7 +415,7 @@ describe(`single-spa`, () => {
 			module.reset();
 			module.timeouts.unmount.dieOnTimeout = true;
 
-			window.location = 'unmount-times-out';
+			global.location = 'unmount-times-out';
 
 			singleSpa
 			.triggerAppChange()
@@ -425,7 +425,7 @@ describe(`single-spa`, () => {
 				expect(singleSpa.getMountedApps()).toEqual(['unmount-times-out']);
 				expect(singleSpa.getAppStatus('unmount-times-out')).toEqual('MOUNTED');
 
-				window.location = 'not-unmount-times-out';
+				global.location = 'not-unmount-times-out';
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
@@ -450,7 +450,7 @@ describe(`single-spa`, () => {
 		it(`waits for each of the functions one by one, in order`, (done) => {
 			const module = easyDeclareChild('multiple-lifecycle-functions');
 
-			window.location = 'multiple-lifecycle-functions';
+			global.location = 'multiple-lifecycle-functions';
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
@@ -464,7 +464,7 @@ describe(`single-spa`, () => {
 				expect(module.mount2Called).toEqual(true);
 				expect(module.mount3Called).toEqual(true);
 
-				window.location = 'not-multiple-lifecycle-functions';
+				global.location = 'not-multiple-lifecycle-functions';
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
@@ -492,7 +492,7 @@ describe(`single-spa`, () => {
 		it(`puts the modules into SKIP_BECAUSE_BROKEN and doesn't mount it`, (done) => {
 			const module = easyDeclareChild('bootstrap-rejects');
 
-			window.location = 'bootstrap-rejects';
+			global.location = 'bootstrap-rejects';
 
 			singleSpa
 			.triggerAppChange()
@@ -515,7 +515,7 @@ describe(`single-spa`, () => {
 		it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN and never unmounts`, () => {
 			const module = easyDeclareChild('mount-rejects');
 
-			window.location = 'mount-rejects';
+			global.location = 'mount-rejects';
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
@@ -524,7 +524,7 @@ describe(`single-spa`, () => {
 				expect(singleSpa.getMountedApps()).toEqual([]);
 				expect(singleSpa.getAppStatus('mount-rejects')).toEqual('SKIP_BECAUSE_BROKEN');
 
-				window.location = 'not-mount-rejects';
+				global.location = 'not-mount-rejects';
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
@@ -550,7 +550,7 @@ describe(`single-spa`, () => {
 		it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN once it unmounts`, () => {
 			const module = easyDeclareChild('unmount-rejects');
 
-			window.location = 'unmount-rejects';
+			global.location = 'unmount-rejects';
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
@@ -560,7 +560,7 @@ describe(`single-spa`, () => {
 				expect(singleSpa.getMountedApps()).toEqual([]);
 				expect(singleSpa.getAppStatus('unmount-rejects')).toEqual('SKIP_BECAUSE_BROKEN');
 
-				window.location = 'not-unmount-rejects';
+				global.location = 'not-unmount-rejects';
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
@@ -568,7 +568,7 @@ describe(`single-spa`, () => {
 					expect(singleSpa.getMountedApps()).toEqual([]);
 					expect(singleSpa.getAppStatus('unmount-rejects')).toEqual('SKIP_BECAUSE_BROKEN');
 
-					window.location = 'unmount-rejects';
+					global.location = 'unmount-rejects';
 					singleSpa
 					.triggerAppChange()
 					.then(() => {

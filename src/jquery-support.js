@@ -1,5 +1,7 @@
 import { routingEventsListeningTo } from './single-spa.js';
 
+const window = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : self);
+
 let hasInitialized = false;
 
 export function ensureJQuerySupport() {

@@ -1,3 +1,5 @@
+const window = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : self);
+
 export function handleChildAppError(message, childApp) {
 	//detect if running in browser, where it's safer to throw lots of uncaught exceptions
 	if (window.SINGLE_SPA_TESTING) {
