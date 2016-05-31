@@ -1,6 +1,6 @@
 # Root application
 The single-spa root application consists of all code that is not part of a
-[child application](/docs/child-application.md). Ideally, this only includes an html file
+[child application ("chapp")](/docs/child-applications.md). Ideally, this only includes an html file
 and a javascript file that declares single-spa child applications. It is best practice to keep your
 root application as small as possible and to simply defer to single-spa to manage
 all of the child applications. The root application should not be doing client-side html
@@ -45,6 +45,11 @@ The second argument to `declareChildApplication` must be a function that takes i
 value whenever the child application should be active. Most commonly, the activity function determines if a chapp
 is active by looking at `window.location`. When this is done, single-spa as a whole is acting as a high-level router
 that is framework agnostic.
+
+single-spa will call each child application's activity function under the following scenarios:
+- `hashchange` or `popstate` event
+- `pushState` or `replaceState` is called
+- [`triggerAppChange`](/docs/single-spa-api.md#triggerAppChange) api is called on single-spa
 
 ## Two chapps simultaneously??
 Yep, it's possible. And it's actually not that scary if you do it right. And once you do,

@@ -26,7 +26,13 @@ export function reset() {
 	peopleWaitingOnAppChange = [];
 	appChangeUnderway = false;
 
-	Loader = typeof SystemJS !== 'undefined' ? SystemJS : null;
+	if (typeof SystemJS !== 'undefined') {
+		Loader = SystemJS;
+	} else if (typeof System !== 'undefined' && typeof System.import === 'function') {
+		Loader = System;
+	} else {
+		Loader = null;
+	}
 
 	bootstrapMaxTime = 4000;
 	mountMaxTime = 3000;

@@ -31,7 +31,7 @@ Notes:
 
 ### Lifecycle middleware
 Middleware that helps implement lifecycle functions for specific frameworks, libraries, and applications
-is available for many popular technologies. See [middleware docs](/docs/middleware.md) for details.
+is available for many popular technologies. See [middleware docs](/docs/single-spa-ecosystem.md) for details.
 
 ### load
 Although this is not a lifecycle function at all, `load` is an important part of any child application's
@@ -138,4 +138,32 @@ export const unmount = [
 		})
 	}
 ];
+```
+
+## Timeouts
+By default, child applications obey the [global dieOnTimeout configuration](/docs/single-spa-api.md#dieOnTimeout),
+but can override that behavior for their specific application. This is done by exporting a `timeouts` object
+from the main entry point of the child application. Example:
+
+```js
+// app-1.main-entry.js
+
+export function bootstrap() {...}
+export function mount() {...}
+export function unmount() {...}
+
+export const timeouts = {
+	bootstrap: {
+		millis: 5000,
+		dieOnTimeout: true,
+	},
+	mount: {
+		millis: 5000,
+		dieOnTimeout: false,
+	},
+	unmount: {
+		millis: 5000,
+		dieOnTimeout: true,
+	},
+};
 ```
