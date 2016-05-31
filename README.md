@@ -24,6 +24,9 @@ In order to use single-spa, you must be using a javascript [loader](https://gith
 If you're using a bundler (such as webpack or browserify) instead of a loader, or if you're using a non-standard loader (such as requirejs), check out [the migration guide](/docs/migrating-existing-spas.md)
 to see your options.
 
+## Documentation
+See the [docs](/docs) directory.
+
 ## Simple Usage
 *Note*: this example uses [jspm](https://github.com/jspm/jspm-cli), since it's the easiest way to set up a loader. However, jspm and systemjs are not required.
 ```bash
