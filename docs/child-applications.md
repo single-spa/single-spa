@@ -141,7 +141,7 @@ export const unmount = [
 ```
 
 ## Timeouts
-By default, child applications obey the [global dieOnTimeout configuration](/docs/single-spa-api.md#dieOnTimeout),
+By default, child applications obey the [global dieOnTimeout configuration](/docs/single-spa-api.md#dieontimeout),
 but can override that behavior for their specific application. This is done by exporting a `timeouts` object
 from the main entry point of the child application. Example:
 

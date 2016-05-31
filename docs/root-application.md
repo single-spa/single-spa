@@ -13,7 +13,7 @@ Feel free to do whatever you want in your index.html file, but add in a couple o
 specific things in there:
 
 1. Make sure your loader is recognized by single-spa. If the loader is found at `window.System` or `window.SystemJS`,
-   then single-spa will automatically detect it. Otherwise, use the [`setLoader`](/docs/single-spa-api.md#setLoader) api.
+   then single-spa will automatically detect it. Otherwise, use the [`setLoader`](/docs/single-spa-api.md#setloader) api.
 1. Import your single-spa root application.
 
 ## Declaring child applications
@@ -49,7 +49,7 @@ that is framework agnostic.
 single-spa will call each child application's activity function under the following scenarios:
 - `hashchange` or `popstate` event
 - `pushState` or `replaceState` is called
-- [`triggerAppChange`](/docs/single-spa-api.md#triggerAppChange) api is called on single-spa
+- [`triggerAppChange`](/docs/single-spa-api.md#triggerappchange) api is called on single-spa
 
 ## Two chapps simultaneously??
 Yep, it's possible. And it's actually not that scary if you do it right. And once you do,

@@ -3,7 +3,8 @@
 [![Build Status](https://img.shields.io/travis/CanopyTax/single-spa.svg?style=flat-square)](https://travis-ci.org/CanopyTax/single-spa)
 
 Combine multiple SPAs into one SPA by implementing lifecycle functions. Allows you to:
-- [Trade off between frameworks without refreshing the page](/docs/child-applications.md) (React, ng1, ng2, ember, or whatever you're using)
+- [Trade off between frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) [without refreshing the page](/docs/child-applications.md)
+  (React, ng1, ng2, ember, or whatever you're using)
 - [Lazy load code for improved initial load time](/docs/child-applications.md#load). This is baked in and requires no configuration.
 - [Ensure that no single part of the app can break everything](/docs/application-blast-radius.md).
 
@@ -31,7 +32,7 @@ jspm init
 jspm install npm:single-spa
 ```
 
-Create an index.html file (see [docs](/docs/root-application.md#index.html-file) for more detail).
+Create an index.html file (see [docs](/docs/root-application.md#indexhtml-file) for more detail).
 ```html
 <html>
     <head>
