@@ -18,3 +18,6 @@ to bring in either SystemJS or another loader. If you choose SystemJS,
 try out the [webpack-system-register](https://github.com/CanopyTax/webpack-system-register)
 plugin which will wrap your webpack bundle into a format that SystemJS
 can fully communicate with.
+
+Alternatively, if you find a way to get things working with just a `require.ensure`
+or with webpack 2's `System.import` support, definitely let us know!
