@@ -187,7 +187,10 @@ export function navigateToUrl(obj) {
 	const anchorElement= document.createElement('a');
 	anchorElement.setAttribute('href', url);
 
-	if (window.location.origin + window.location.pathname === anchorElement.origin + anchorElement.pathname) {
+	// MS Edge does not put an `origin` property on anchor elements :(
+	const anchorOrigin = anchorElement.origin || anchorElement.protocol + "//" + anchorElement.hostname + (anchorElement.port ? ':' + anchorElement.port : '');
+
+	if (window.location.origin + window.location.pathname === anchorOrigin + anchorElement.pathname) {
 		window.location.hash = anchorElement.hash;
 	} else {
 		window.history.pushState(null, null, url);
