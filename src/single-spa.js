@@ -22,6 +22,8 @@ export const routingEventsListeningTo = ['hashchange', 'popstate'];
 // Things that need to be reset with the init function;
 let Loader, childApps, globalTimeoutConfig, peopleWaitingOnAppChange, appChangeUnderway, capturedEventListeners, isPaused;
 
+export { ensureJQuerySupport } from './jquery-support.js';
+
 export function reset() {
 	isPaused = false;
 	childApps = [];

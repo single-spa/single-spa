@@ -4,8 +4,7 @@ const window = typeof window !== 'undefined' ? window : (typeof global !== 'unde
 
 let hasInitialized = false;
 
-export function ensureJQuerySupport() {
-	let jQuery = window.jQuery;
+export function ensureJQuerySupport(jQuery = window.jQuery) {
 	if (!jQuery) {
 		if (window.$ && window.$.fn && window.$.fn.jquery) {
 			jQuery = window.$;

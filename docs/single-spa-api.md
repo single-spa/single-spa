@@ -52,6 +52,13 @@ will not be called until unpause is called.
 ## unpause
 `unpause()` all child application lifecycles.
 
+## ensureJQuerySupport
+`ensureJQuerySupport(jQuery)`: Since jquery does some weird things with event listeners, single-spa
+has to specifically monkey patch each version of jQuery that you're using. single-spa tries to do
+this automatically as much as possible for looking for window.jQuery or window.$, but if you want
+to give your version of jQuery to single-spa manually, call ensureJQuerySupport(jQuery). The
+jQuery argument is actually optional and will default to window.jQuery.
+
 ## setBootstrapMaxTime
 `setBootstrapMaxTime(millis, dieOnTimeout = false)` takes in a number of milliseconds and a boolean dieOnTimeout
 that defaults to false. It sets the global configuration for bootstrap timeouts and does not return any value.
