@@ -8,7 +8,7 @@
     "prepublish": "npm run build",
     "clean": "rm -rf lib",
     "test": "jasmine",
-    "build:canopy": "npm run build && rm -rf ../spalpatine/jspm_packages/npm/single-spa@2.0.12 && rsync -av . ../spalpatine/jspm_packages/npm/single-spa@2.0.12 --exclude node_modules --exclude .git --exclude --spec --exclude examples && cd ../spalpatine && npm run build-common-deps && cd ../single-spa"
+    "build:canopy": "npm run build && rm -rf ../spalpatine/jspm_packages/npm/single-spa@2.1.0 && rsync -av . ../spalpatine/jspm_packages/npm/single-spa@2.1.0 --exclude node_modules --exclude .git --exclude --spec --exclude examples && cd ../spalpatine && npm run build-common-deps && cd ../single-spa"
   },
   "repository": "https://github.com/CanopyTax/single-spa",
   "keywords": [

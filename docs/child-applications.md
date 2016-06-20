@@ -17,7 +17,9 @@ inside of its main entry point.
 
 ## Child application lifecycle
 During the course of a single-spa app, child applications are loaded, initialized, mounted, and remounted.
-single-spa provides hooks into these lifecycle events via lifecycle functions.
+single-spa provides hooks into the latter three lifecycle events via lifecycle functions. In order to
+hook into the `load` lifecycle, simply put code into the application that is run without a function being
+called.
 
 A lifecycle function is a function or array of functions that single-spa will call on a child application.
 Lifecycle functions are exported from the main entry point of a child application.
@@ -28,6 +30,8 @@ Notes:
 - Each lifecycle function must either return a `Promise` or be an `async function`.
 - If an array of functions is exported (instead of just one function), the functions will be called
   one-after-the-other, waiting for the resolution of one function's promise before calling the next.
+- If single-spa is [paused](/docs/single-spa-api.md#pause), no lifecycle functions will be called on any
+  child applications.
 
 ### Lifecycle middleware
 Middleware that helps implement lifecycle functions for specific frameworks, libraries, and applications

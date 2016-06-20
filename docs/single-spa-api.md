@@ -45,6 +45,13 @@ or `null` (when the app doesn't exist). The string status is one of the followin
 - `SKIP_BECAUSE_BROKEN`: the app threw an error during load, bootstrap, mount, or unmount and has been
    siloed because it is misbehaving. Other apps may continue on normally, but this one will be skipped.
 
+## pause
+`pause()`: when single-spa is paused, all child application lifecycles (except for importing the child app's source code)
+will not be called until unpause is called.
+
+## unpause
+`unpause()` all child application lifecycles.
+
 ## setBootstrapMaxTime
 `setBootstrapMaxTime(millis, dieOnTimeout = false)` takes in a number of milliseconds and a boolean dieOnTimeout
 that defaults to false. It sets the global configuration for bootstrap timeouts and does not return any value.
