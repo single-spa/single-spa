@@ -20,9 +20,10 @@ const NOT_BOOTSTRAPPED = 'NOT_BOOTSTRAPPED',
 export const routingEventsListeningTo = ['hashchange', 'popstate'];
 
 // Things that need to be reset with the init function;
-let Loader, childApps, globalTimeoutConfig, peopleWaitingOnAppChange, appChangeUnderway, capturedEventListeners;
+let Loader, childApps, globalTimeoutConfig, peopleWaitingOnAppChange, appChangeUnderway, capturedEventListeners, isPaused;
 
 export function reset() {
+	isPaused = false;
 	childApps = [];
 
 	peopleWaitingOnAppChange = [];
@@ -165,10 +166,26 @@ export function declareChildApplication(appLocation, activeWhen) {
 	ensureJQuerySupport();
 
 	triggerAppChange();
+
+	if (activeWhen(window.location)) {
+		// Start loading the child application as soon as possible, especially if paused.
+		Loader
+		.import(appLocation)
+		.catch(ex => {throw ex});
+	}
 }
 
 export function triggerAppChange() {
 	return performAppChanges();
+}
+
+export function pause() {
+	isPaused = true;
+}
+
+export function unpause() {
+	isPaused = false;
+	performAppChanges();
 }
 
 export function navigateToUrl(obj) {
@@ -211,6 +228,10 @@ function performAppChanges(pendingPromises = [], eventArguments) {
 				reject,
 			});
 		});
+	}
+
+	if (isPaused) {
+		return Promise.resolve(getMountedApps());
 	}
 
 	appChangeUnderway = true;
