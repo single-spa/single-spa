@@ -93,6 +93,7 @@ export function reset() {
 		return result;
 	}
 
+	const originalReplaceState = window.history.replaceState;
 	window.history.replaceState = function() {
 		const result = originalReplaceState.apply(this, arguments);
 		performAppChanges();

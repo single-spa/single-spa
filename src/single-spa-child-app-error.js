@@ -21,7 +21,13 @@ function SingleSpaChildAppError(obj, childApp) {
 		this.message = createMessage(childApp, obj.message);
 		this.stack = obj.stack;
 	} else {
-		const err = new Error(obj || 'An error has occurred within a ChildApp of single-spa');
+		let msg;
+		try {
+			msg = JSON.stringify(obj);
+		} catch(ex) {
+			msg = obj || 'An error has occurred within a child app of single-spa';
+		}
+		const err = new Error(msg);
 		this.message = createMessage(childApp, err.message);
 		this.stack = err.stack;
 	}
