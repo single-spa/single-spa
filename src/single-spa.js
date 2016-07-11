@@ -204,14 +204,10 @@ export function navigateToUrl(obj) {
 		throw new Error(`singleSpaNavigate must be either called with a string url, with an <a> tag as its context, or with an event whose currentTarget is an <a> tag`);
 	}
 
-	const anchorElement= document.createElement('a');
-	anchorElement.setAttribute('href', url);
+	const href = window.location.href;
 
-	// MS Edge does not put an `origin` property on anchor elements :(
-	const anchorOrigin = anchorElement.origin || anchorElement.protocol + "//" + anchorElement.hostname + (anchorElement.port ? ':' + anchorElement.port : '');
-
-	if (window.location.origin + window.location.pathname === anchorOrigin + anchorElement.pathname) {
-		window.location.hash = anchorElement.hash;
+	if (href.substring(0, href.indexOf('#')) === url.substring(0, url.indexOf('#'))) {
+		window.location.hash = url.substring(url.indexOf('#'));
 	} else {
 		window.history.pushState(null, null, url);
 	}

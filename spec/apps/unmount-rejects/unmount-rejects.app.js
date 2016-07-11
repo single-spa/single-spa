@@ -17,7 +17,7 @@ export function mount() {
 }
 
 export function unmount() {
-	return new Promise((resolve, rejects) => {
+	return new Promise((resolve, reject) => {
 		numUnmounts++;
 		reject();
 	});
