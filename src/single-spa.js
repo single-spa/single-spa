@@ -1,5 +1,6 @@
 import { handleChildAppError } from './single-spa-child-app-error.js';
 import { ensureJQuerySupport } from './jquery-support.js';
+import { parseUri } from './single-spa.helpers.js';
 
 const window = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : self);
 
@@ -204,12 +205,21 @@ export function navigateToUrl(obj) {
 		throw new Error(`singleSpaNavigate must be either called with a string url, with an <a> tag as its context, or with an event whose currentTarget is an <a> tag`);
 	}
 
-	const href = window.location.href;
+	const current = parseUri(window.location.href);
+	const destination = parseUri(url);
 
-	if (url.indexOf('#') > -1 && href.substring(0, href.indexOf('#')) === url.substring(0, url.indexOf('#'))) {
-		window.location.hash = url.substring(url.indexOf('#'));
-	} else {
+	if (url.indexOf('#') === 0) {
+		window.location.hash = '#' + destination.anchor;
+	} else if (!isSamePath(destination.path, current.path) || (current.host !== destination.host && destination.host)) {
+		// different path or a different host
 		window.history.pushState(null, null, url);
+	} else {
+		window.location.hash = '#' + destination.anchor;
+	}
+
+	function isSamePath(destination, current) {
+		// if the destination has a path but no domain, it doesn't include the root '/'
+		return current === destination || current === '/' + destination;
 	}
 }
 
