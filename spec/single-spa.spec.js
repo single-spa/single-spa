@@ -636,6 +636,41 @@ describe(`single-spa`, () => {
 			expect(global.location.hash).toBe('#a/other');
 		});
 
+		it('should update hash when destination starts with a hash', function() {
+			singleSpa.navigateToUrl.call({href: '#a/other'});
+			expect(global.location.hash).toBe('#a/other');
+		});
+
+		it(`should update hash when destination doesn't contain domain, but same path`, function() {
+			singleSpa.navigateToUrl.call({href: '/something#a/other'});
+			expect(global.location.hash).toBe('#a/other');
+			global.location.hash = '';
+
+			singleSpa.navigateToUrl.call({href: 'something#a/other'});
+			expect(global.location.hash).toBe('#a/other');
+		});
+
+		it(`should call push state when the destination doesn't contain domain and has different path 1`, function() {
+			singleSpa.navigateToUrl('somethinger#b/my-route');
+			expect(global.location.hash).toBe('#a/hash');
+			expect(global.history.pushState).toHaveBeenCalled();
+			expect(global.history.pushState).toHaveBeenCalledWith(null, null, 'somethinger#b/my-route');
+		});
+
+		it(`should call push state when the destination doesn't contain domain and has different path 2`, function() {
+			singleSpa.navigateToUrl('/somethinger#b/my-route');
+			expect(global.location.hash).toBe('#a/hash');
+			expect(global.history.pushState).toHaveBeenCalled();
+			expect(global.history.pushState).toHaveBeenCalledWith(null, null, '/somethinger#b/my-route');
+		});
+
+		it(`should call push state when the destination doesn't contain domain and has different path`, function() {
+			singleSpa.navigateToUrl('some#b/my-route');
+			expect(global.location.hash).toBe('#a/hash');
+			expect(global.history.pushState).toHaveBeenCalled();
+			expect(global.history.pushState).toHaveBeenCalledWith(null, null, 'some#b/my-route');
+		});
+
 		it(`should call push state when the origin's don't match`, function() {
 			singleSpa.navigateToUrl('https://other-app.com/something#b/my-route');
 			expect(global.location.hash).toBe('#a/hash');
