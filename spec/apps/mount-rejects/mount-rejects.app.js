@@ -10,7 +10,7 @@ export function bootstrap() {
 }
 
 export function mount() {
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		wasMounted = true;
 		reject(`mount-rejects app rejected the mount lifecycle`);
 	});

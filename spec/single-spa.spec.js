@@ -512,7 +512,7 @@ describe(`single-spa`, () => {
 	});
 
 	describe(`mount-rejects`, () => {
-		it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN and never unmounts`, () => {
+		it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN and never unmounts`, (done) => {
 			const module = easyDeclareChild('mount-rejects');
 
 			global.location = 'mount-rejects';
@@ -547,7 +547,7 @@ describe(`single-spa`, () => {
 	});
 
 	describe(`unmount-rejects`, () => {
-		it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN once it unmounts`, () => {
+		it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN once it unmounts`, (done) => {
 			const module = easyDeclareChild('unmount-rejects');
 
 			global.location = 'unmount-rejects';
@@ -557,8 +557,8 @@ describe(`single-spa`, () => {
 				expect(module.numBootstraps).toEqual(1);
 				expect(module.numMounts).toEqual(1);
 				expect(module.numUnmounts).toEqual(0);
-				expect(singleSpa.getMountedApps()).toEqual([]);
-				expect(singleSpa.getAppStatus('unmount-rejects')).toEqual('SKIP_BECAUSE_BROKEN');
+				expect(singleSpa.getMountedApps()).toEqual(['unmount-rejects']);
+				expect(singleSpa.getAppStatus('unmount-rejects')).toEqual('MOUNTED');
 
 				global.location = 'not-unmount-rejects';
 				singleSpa
@@ -593,6 +593,92 @@ describe(`single-spa`, () => {
 				fail(ex);
 				done();
 			});
+		});
+	});
+
+	describe('url navigation', function() {
+		let oldLocation;
+		let location;
+
+		beforeEach(function() {
+			oldLocation = global.location;
+			global.location = {
+				href: 'https://app.com/something#a/hash',
+				hash: '#a/hash',
+			};
+			global.history.pushState = jasmine.createSpy();
+		});
+
+		afterEach(function() {
+			global.history.pushState = () => {};
+			global.location.href = '';
+			global.location.hash = '';
+		});
+
+		it('should navigate with a string', function() {
+			singleSpa.navigateToUrl('https://app.com/something#a/other');
+			expect(global.location.hash).toBe('#a/other');
+		});
+
+		it('should navigate with an event', function() {
+			const event = {
+				currentTarget: {href: 'https://app.com/something#a/other'},
+				preventDefault: jasmine.createSpy(),
+			};
+
+			singleSpa.navigateToUrl(event);
+			expect(global.location.hash).toBe('#a/other');
+			expect(event.preventDefault).toHaveBeenCalled();
+		});
+
+		it('should navigate with a defined context', function() {
+			singleSpa.navigateToUrl.call({href: 'https://app.com/something#a/other'});
+			expect(global.location.hash).toBe('#a/other');
+		});
+
+		it(`should call push state when the origin's don't match`, function() {
+			singleSpa.navigateToUrl('https://other-app.com/something#b/my-route');
+			expect(global.location.hash).toBe('#a/hash');
+			expect(global.history.pushState).toHaveBeenCalled();
+			expect(global.history.pushState).toHaveBeenCalledWith(null, null, 'https://other-app.com/something#b/my-route');
+		});
+
+		it(`should call push state when the url has no hash`, function() {
+			singleSpa.navigateToUrl('https://app.com/something/b/hash');
+			expect(global.location.hash).toBe('#a/hash');
+			expect(global.history.pushState).toHaveBeenCalled();
+			expect(global.history.pushState).toHaveBeenCalledWith(null, null, 'https://app.com/something/b/hash');
+		});
+
+		it(`should call push state when the path before the hash don't match`, function() {
+			singleSpa.navigateToUrl('https://app.com/something-b/#a/hash');
+			expect(global.location.hash).toBe('#a/hash');
+			expect(global.history.pushState).toHaveBeenCalled();
+			expect(global.history.pushState).toHaveBeenCalledWith(null, null, 'https://app.com/something-b/#a/hash');
+		});
+
+		it('should error if not called with appropriate args', function() {
+			const errors = [
+				null,
+				undefined,
+				1234,
+			];
+
+			errors.forEach(arg => {
+				expect(makeError.bind(null, arg)).toThrow();
+			});
+
+			function makeError(err) {
+				singleSpa.navigateToUrl(err);
+			}
+		});
+
+		it('should error if not called with appropriate context', function() {
+			expect(makeError).toThrow();
+
+			function makeError(err) {
+				singleSpa.navigateToUrl.call({});
+			}
 		});
 	});
 });
