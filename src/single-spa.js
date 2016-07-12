@@ -206,7 +206,7 @@ export function navigateToUrl(obj) {
 
 	const href = window.location.href;
 
-	if (href.substring(0, href.indexOf('#')) === url.substring(0, url.indexOf('#'))) {
+	if (url.indexOf('#') > -1 && href.substring(0, href.indexOf('#')) === url.substring(0, url.indexOf('#'))) {
 		window.location.hash = url.substring(url.indexOf('#'));
 	} else {
 		window.history.pushState(null, null, url);

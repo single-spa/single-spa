@@ -643,6 +643,20 @@ describe(`single-spa`, () => {
 			expect(global.history.pushState).toHaveBeenCalledWith(null, null, 'https://other-app.com/something#b/my-route');
 		});
 
+		it(`should call push state when the url has no hash`, function() {
+			singleSpa.navigateToUrl('https://app.com/something/b/hash');
+			expect(global.location.hash).toBe('#a/hash');
+			expect(global.history.pushState).toHaveBeenCalled();
+			expect(global.history.pushState).toHaveBeenCalledWith(null, null, 'https://app.com/something/b/hash');
+		});
+
+		it(`should call push state when the path before the hash don't match`, function() {
+			singleSpa.navigateToUrl('https://app.com/something-b/#a/hash');
+			expect(global.location.hash).toBe('#a/hash');
+			expect(global.history.pushState).toHaveBeenCalled();
+			expect(global.history.pushState).toHaveBeenCalledWith(null, null, 'https://app.com/something-b/#a/hash');
+		});
+
 		it('should error if not called with appropriate args', function() {
 			const errors = [
 				null,
