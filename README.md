@@ -15,7 +15,7 @@ Apps built with single-spa are made up of the following pieces:
 
 1. An index.html file
 1. A root application, in which child applications are registered. In order to register a child application, two things must be provided:
-  1. The path to the application
+  1. The url to the application
   1. A function that determines if the application is active
 1. Many child applications, each of which is like an SPA itself. Child applications respond to url routing events and must know how to bootstrap, mount, and unmount themselves from the DOM.
 
