@@ -38,17 +38,17 @@ jspm install npm:single-spa
 Create an index.html file (see [docs](/docs/root-application.md#indexhtml-file) for more detail).
 ```html
 <html>
-    <head>
-		<script src="jspm_packages/system.src.js"></script>
-		<script src="jspm.browser.js"></script>
-		<script src="jspm.config.js"></script>
-        <script>
-            System.import('src/main.js');
-        </script>
-    </head>
-	<body>
-		<div id="main-content"></div>
-	</body>
+  <head>
+    <script src="jspm_packages/system.src.js"></script>
+    <script src="jspm.browser.js"></script>
+    <script src="jspm.config.js"></script>
+    <script>
+      System.import('src/main.js');
+    </script>
+  </head>
+  <body>
+    <div id="main-content"></div>
+  </body>
 </html>
 ```
 
@@ -65,24 +65,24 @@ document.getElementById('main-content').textContent += "App1 is loaded.";
 
 // apps/app1/app1.js
 export function bootstrap() {
-	return new Promise((resolve, reject) => {
-		document.getElementById('main-content').textContent += "App1 is bootstrapped.";
-		resolve();
-	});
+  return new Promise((resolve, reject) => {
+    document.getElementById('main-content').textContent += "App1 is bootstrapped.";
+    resolve();
+  });
 }
 
 export function mount() {
-	return new Promise((resolve, reject) => {
-		document.getElementById('main-content').textContent += "App1 is mounted!";
-		resolve();
-	});
+  return new Promise((resolve, reject) => {
+    document.getElementById('main-content').textContent += "App1 is mounted!";
+    resolve();
+  });
 }
 
 export function unmount() {
-	return new Promise((resolve, reject) => {
-		document.getElementById('main-content').textContent = "";
-		resolve();
-	});
+  return new Promise((resolve, reject) => {
+    document.getElementById('main-content').textContent = "";
+    resolve();
+  });
 }
 ```
 
