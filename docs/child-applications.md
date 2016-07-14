@@ -63,24 +63,24 @@ mounted for the first time.
 
 ```js
 export function bootstrap() {
-	return new Promise((resolve, reject) => {
-		resolve();
-	})
+  return new Promise((resolve, reject) => {
+    resolve();
+  })
 }
 ```
 
 ```js
 export const bootstrap = [
-	function firstThing() {
-		return new Promise((resolve, reject) => {
-			resolve();
-		})
-	},
-	function secondThing() {
-		return new Promise((resolve, reject) => {
-			resolve();
-		})
-	}
+  function firstThing() {
+    return new Promise((resolve, reject) => {
+      resolve();
+    })
+  },
+  function secondThing() {
+    return new Promise((resolve, reject) => {
+      resolve();
+    })
+  }
 ];
 ```
 
@@ -94,24 +94,24 @@ instead should be handled by the childl application itself.
 
 ```js
 export function mount() {
-	return new Promise((resolve, reject) => {
-		resolve();
-	})
+  return new Promise((resolve, reject) => {
+    resolve();
+  })
 }
 ```
 
 ```js
 export const mount = [
-	function firstThing() {
-		return new Promise((resolve, reject) => {
-			resolve();
-		})
-	},
-	function secondThing() {
-		return new Promise((resolve, reject) => {
-			resolve();
-		})
-	}
+  function firstThing() {
+    return new Promise((resolve, reject) => {
+      resolve();
+    })
+  },
+  function secondThing() {
+    return new Promise((resolve, reject) => {
+      resolve();
+    })
+  }
 ];
 ```
 
@@ -123,24 +123,24 @@ observable subscriptions, etc. that were created at any point when the child app
 
 ```js
 export function unmount() {
-	return new Promise((resolve, reject) => {
-		resolve();
-	})
+  return new Promise((resolve, reject) => {
+    resolve();
+  })
 }
 ```
 
 ```js
 export const unmount = [
-	function firstThing() {
-		return new Promise((resolve, reject) => {
-			resolve();
-		})
-	},
-	function secondThing() {
-		return new Promise((resolve, reject) => {
-			resolve();
-		})
-	}
+  function firstThing() {
+    return new Promise((resolve, reject) => {
+      resolve();
+    })
+  },
+  function secondThing() {
+    return new Promise((resolve, reject) => {
+      resolve();
+    })
+  }
 ];
 ```
 
@@ -157,17 +157,17 @@ export function mount() {...}
 export function unmount() {...}
 
 export const timeouts = {
-	bootstrap: {
-		millis: 5000,
-		dieOnTimeout: true,
-	},
-	mount: {
-		millis: 5000,
-		dieOnTimeout: false,
-	},
-	unmount: {
-		millis: 5000,
-		dieOnTimeout: true,
-	},
+  bootstrap: {
+    millis: 5000,
+    dieOnTimeout: true,
+  },
+  mount: {
+    millis: 5000,
+    dieOnTimeout: false,
+  },
+  unmount: {
+    millis: 5000,
+    dieOnTimeout: true,
+  },
 };
 ```
