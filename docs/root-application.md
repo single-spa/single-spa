@@ -30,10 +30,10 @@ In order to declare a child application, call the `declareChildApplication(path,
 import { declareChildApplication } from 'single-spa';
 
 declareChildApplication("src/app1/app1.main.js", function() {
-	return window.location.hash.indexOf("#/app1/") === 0;
+  return window.location.hash.indexOf("#/app1/") === 0;
 });
 declareChildApplication("src/app2/app2.main.js", function() {
-	return window.location.hash.indexOf("#/app2/") === 0;
+  return window.location.hash.indexOf("#/app2/") === 0;
 });
 ```
 
