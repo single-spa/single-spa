@@ -9,6 +9,7 @@ export function handleChildAppError(err, childApp) {
 		console.error(transformedErr);
 		console.log(`---------------`)
 	} else {
+		// The setTimeout ensures that single-spa doesn't die when this error is thrown.
 		setTimeout(() => {
 			throw transformedErr;
 		});
