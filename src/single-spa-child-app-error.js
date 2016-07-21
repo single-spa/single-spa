@@ -22,7 +22,7 @@ function transformErr(ogErr, childApp) {
 	let result;
 
 	if (ogErr instanceof Error) {
-		err.message = errPrefix + ogErr.message;
+		ogErr.message = errPrefix + ogErr.message;
 		result = ogErr;
 	} else {
 		console.warn(`While ${childApp.status}, '${childApp.appLocation}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
