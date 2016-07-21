@@ -29,6 +29,7 @@ function transformErr(ogErr, childApp) {
 		try {
 			result = new Error(JSON.stringify(ogErr));
 		} catch(err) {
+			// If it's not an Error and you can't stringify it, then what else can you even do to it?
 			result = ogErr;
 		}
 	}
