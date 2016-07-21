@@ -1,41 +1,36 @@
 const window = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : self);
 
-export function handleChildAppError(message, childApp) {
+export function handleChildAppError(err, childApp) {
+	const transformedErr = transformErr(err, childApp);
+
 	//detect if running in browser, where it's safer to throw lots of uncaught exceptions
 	if (window.SINGLE_SPA_TESTING) {
 		console.log(`---------------`)
-		console.error(createMessage(childApp, message));
-		console.error((new SingleSpaChildAppError(message, childApp)).stack);
+		console.error(transformedErr);
 		console.log(`---------------`)
 	} else {
-		//The set timeout ensures that single-spa doesn't die with this erro
 		setTimeout(() => {
-			throw new SingleSpaChildAppError(message, childApp);
+			throw transformedErr;
 		});
 	}
 }
 
-function SingleSpaChildAppError(obj, childApp) {
-	this.name = 'SingleSpaChildAppError';
-	if (obj instanceof Error) {
-		this.message = createMessage(childApp, obj.message);
-		this.stack = obj.stack;
+function transformErr(ogErr, childApp) {
+	const errPrefix = `'${childApp.appLocation}' died in status ${childApp.status}: `;
+
+	let result;
+
+	if (ogErr instanceof Error) {
+		err.message = errPrefix + ogErr.message;
+		result = ogErr;
 	} else {
-		let msg;
+		console.warn(`While ${childApp.status}, '${childApp.appLocation}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
 		try {
-			msg = JSON.stringify(obj);
-		} catch(ex) {
-			msg = obj || 'An error has occurred within a child app of single-spa';
+			result = new Error(JSON.stringify(ogErr));
+		} catch(err) {
+			result = ogErr;
 		}
-		const err = new Error(msg);
-		this.message = createMessage(childApp, err.message);
-		this.stack = err.stack;
 	}
-}
 
-function createMessage(childApp, message) {
-	return `App '${childApp.appLocation}' is misbehaving -- ${message}`;
+	return result;
 }
-
-SingleSpaChildAppError.prototype = Object.create(Error.prototype);
-SingleSpaChildAppError.prototype.constructor = SingleSpaChildAppError;
