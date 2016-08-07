@@ -398,6 +398,9 @@ function toBootstrapPromise(app) {
 
 			function flattenFnArray(fns, description) {
 				fns = Array.isArray(fns) ? fns : [fns];
+				if (fns.length === 0) {
+					fns = [() => Promise.resolve()];
+				}
 
 				return function() {
 					return new Promise((resolve, reject) => {

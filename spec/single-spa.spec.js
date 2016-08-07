@@ -58,7 +58,6 @@ describe(`single-spa`, () => {
 	describe('happy-basic app', () => {
 		it(`goes through the whole lifecycle successfully`, (done) => {
 			const childModule = easyDeclareChild('happy-basic')
-			console.dir(childModule)
 			expect(childModule.wasBootstrapped).toEqual(false);
 			expect(childModule.isMounted).toEqual(false);
 			expect(singleSpa.getMountedApps()).toEqual([]);
@@ -79,6 +78,38 @@ describe(`single-spa`, () => {
 				.then(() => {
 					expect(childModule.wasBootstrapped).toEqual(true);
 					expect(childModule.isMounted).toEqual(false);
+					expect(singleSpa.getMountedApps()).toEqual([]);
+					done();
+				})
+				.catch(ex => {
+					fail(ex);
+					done();
+				});
+			})
+			.catch(ex => {
+				fail(ex);
+				done();
+			})
+		});
+	});
+
+	describe('empty-array-lifecycles app', () => {
+		fit(`goes through the whole lifecycle successfully`, (done) => {
+			const childModule = easyDeclareChild('empty-array-lifecycles')
+			expect(singleSpa.getMountedApps()).toEqual([]);
+
+			global.location = 'empty-array-lifecycles';
+
+			singleSpa
+			.triggerAppChange()
+			.then(() => {
+				expect(singleSpa.getMountedApps()).toEqual(['empty-array-lifecycles']);
+
+				global.location = 'not-happy-basic';
+
+				singleSpa
+				.triggerAppChange()
+				.then(() => {
 					expect(singleSpa.getMountedApps()).toEqual([]);
 					done();
 				})
