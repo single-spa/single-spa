@@ -94,7 +94,7 @@ describe(`single-spa`, () => {
 	});
 
 	describe('empty-array-lifecycles app', () => {
-		fit(`goes through the whole lifecycle successfully`, (done) => {
+		it(`goes through the whole lifecycle successfully`, (done) => {
 			const childModule = easyDeclareChild('empty-array-lifecycles')
 			expect(singleSpa.getMountedApps()).toEqual([]);
 

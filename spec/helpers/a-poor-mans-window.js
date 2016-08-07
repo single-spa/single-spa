@@ -5,4 +5,6 @@ Object.assign(global, {
 		pushState: () => {},
 	},
 	SINGLE_SPA_TESTING: true,
+	document: {
+	},
 });

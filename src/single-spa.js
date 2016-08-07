@@ -1,3 +1,4 @@
+import CustomEvent from 'custom-event';
 import { handleChildAppError } from './single-spa-child-app-error.js';
 import { ensureJQuerySupport } from './jquery-support.js';
 import { parseUri } from './single-spa.helpers.js';
