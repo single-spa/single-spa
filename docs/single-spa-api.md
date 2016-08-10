@@ -76,7 +76,7 @@ See dieOnTimeout section below for details.
 
 ## dieOnTimeout
 `dieOnTimeout` refers to configuration of what should happen when child applications take longer than expected
-to load, bootstrap, mount, or unmount. There is both a global configuration applicable to all chapps, and also
+to load, bootstrap, mount, or unmount. There is both a global configuration applicable to all child applications, and also
 the ability for each child application to override this behavior for itself. See [child application configuration
 for timeouts](/docs/child-applications.md#timeouts) for details on child application overrides of the global
 behavior.
