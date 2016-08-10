@@ -1,4 +1,4 @@
-# Child applications (chapps)
+# Child applications
 
 A single-spa child application is everything that a normal SPA is, except that it doesn't have an HTML page.
 In a single-spa world, your app might contain many child applications, each with their own framework.
