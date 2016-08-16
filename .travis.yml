@@ -3,6 +3,5 @@ node_js:
   - "6.0.0"
 before_script:
   - npm install
-  - npm run postinstall
 script:
   - npm run test:travis
