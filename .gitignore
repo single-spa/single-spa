@@ -3,3 +3,5 @@ jspm_packages/
 bower_components/
 npm-debug.log
 lib
+coverage/
+dist/

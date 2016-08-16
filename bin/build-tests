@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+jspm build \
+	spec/single-spa.spec.js \
+	spec/single-spa.spec.build.js \
+	--format umd \
+	--global-name singleSpaTests \
+	--source-map-contents \
+	--skip-rollup \
+	"$@"
