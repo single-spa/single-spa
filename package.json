@@ -4,6 +4,7 @@
   "description": "Multiple applications, one page",
   "main": "dist/single-spa.js",
   "scripts": {
+    "postinstall": "jspm install",
     "build": "./bin/build-code",
     "watch": "./bin/build-code -dw",
     "build:test": "./bin/build-tests",
