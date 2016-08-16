@@ -17,8 +17,9 @@ import multipleLifecycleFunctions from 'spec/child-apps/multiple-lifecycle-funct
 import unmountRejects from 'spec/child-apps/unmount-rejects/unmount-rejects.spec.js';
 import unmountTimesOut from 'spec/child-apps/unmount-times-out/unmount-times-out.spec.js';
 import unmountTimesOutDies from 'spec/child-apps/unmount-times-out-dies/unmount-times-out-dies.spec.js';
+import navigateToUrlTests from 'spec/apis/navigate-to-url.spec.js';
 
-describe("SystemJS loader", () => {
+describe("SystemJS loader :", () => {
 	beforeAll(done => {
 		resetSingleSpa()
 		.then(() => {
@@ -30,22 +31,28 @@ describe("SystemJS loader", () => {
 		.catch(err => {throw err})
 	})
 
-	bootstrapRejectsApp();
-	bootstrapTimesOutApp();
-	bootstrapTimesOutDies();
-	emptyArrayLifecycles();
-	happyBasic();
-	invalidBootstrap();
-	invalidMount();
-	invalidNoBootstrap();
-	invalidNoMount();
-	invalidNoUnmount();
-	invalidUnmount();
-	mountRejects();
-	mountTimesOut();
-	mountTimesOutDies();
-	multipleLifecycleFunctions();
-	unmountRejects();
-	unmountTimesOut();
-	unmountTimesOutDies();
+	describe('apis :', () => {
+		navigateToUrlTests();
+	});
+
+	describe('child apps :', () => {
+		bootstrapRejectsApp();
+		bootstrapTimesOutApp();
+		bootstrapTimesOutDies();
+		emptyArrayLifecycles();
+		happyBasic();
+		invalidBootstrap();
+		invalidMount();
+		invalidNoBootstrap();
+		invalidNoMount();
+		invalidNoUnmount();
+		invalidUnmount();
+		mountRejects();
+		mountTimesOut();
+		mountTimesOutDies();
+		multipleLifecycleFunctions();
+		unmountRejects();
+		unmountTimesOut();
+		unmountTimesOutDies();
+	});
 });
