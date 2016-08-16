@@ -28,7 +28,7 @@ var customLaunchers = {
 		base: 'SauceLabs',
 		browserName: 'edge',
 		platform: 'Windows 10',
-		version: '13.10586',
+		version: '13.1',
 	},
 };
 
