@@ -20,17 +20,36 @@ export function reroute(pendingPromises = [], eventArguments) {
 		});
 	}
 
-	if (!isStarted()) {
-		return Promise.resolve(getMountedApps());
+	appChangeUnderway = true;
+	let wasNoOp = true;
+
+	if (isStarted()) {
+		return performAppChanges();
+	} else {
+		return loadAndBootstrapApps();
 	}
 
-	appChangeUnderway = true;
+	async function loadAndBootstrapApps() {
+		const loadThenBootstrapPromises = getAppsToLoad().map(app => {
+			return toLoadPromise(app)
+				.then(toBootstrapPromise)
+		});
 
-	return performAppChanges();
+		if (loadThenBootstrapPromises.length > 0) {
+			wasNoOp = false;
+		}
+
+		try {
+			await Promise.all(unmountPromises);
+		} catch(err) {
+			callCapturedEventListeners(eventArguments);
+			throw err;
+		}
+
+		return finishUpAndReturn();
+	}
 
 	async function performAppChanges() {
-		let wasNoOp = true;
-
 		const unmountPromises = getAppsToUnmount().map(toUnmountPromise);
 		if (unmountPromises.length > 0) {
 			wasNoOp = false;
@@ -89,6 +108,10 @@ export function reroute(pendingPromises = [], eventArguments) {
 			throw err;
 		}
 
+		return finishUpAndReturn();
+	}
+
+	function finishUpAndReturn() {
 		const returnValue = getMountedApps();
 
 		pendingPromises.forEach(promise => promise.resolve(returnValue));

@@ -27,16 +27,15 @@ export default function() {
 			expect(location.hash).toBe('#a/other');
 		});
 
-		it('should navigate with an event', function(done) {
+		it('should navigate with an event', function() {
 			const a = document.createElement("a");
 			a.setAttribute("href", hrefWithoutHash() + "#a/other");
 			a.addEventListener("click", singleSpa.navigateToUrl);
+			// IE requires an element to be on the dom before click events will be fired.
+			document.body.appendChild(a);
 			a.click();
-			setTimeout(() => {
-				// IE is weird and doesn't navigate immediately to the url like you would think.
-				expect(location.hash).toBe('#a/other');
-				done();
-			});
+			expect(location.hash).toBe('#a/other');
+			document.body.removeChild(a);
 		});
 
 		it('should navigate with an anchor tag as its context', function() {
