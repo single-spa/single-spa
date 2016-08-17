@@ -1,6 +1,14 @@
 # single-spa API
 The single-spa library does not `export default`, but instead exports named functions and variables.
 
+## start
+`start(opts)` is a function that must be called by your root application. Before `start` is called, child
+applications will be loaded and bootstrapped, but will never be mounted or unmounted.
+
+The `opts` argument is an object with the following properties:
+  - `loader` (required): The loader that will be used by single-spa to lazy load code. A loader must implement `Loader.import(...).then(...).catch(...)`,
+  and the most commonly used loader is [SystemJS](https://github.com/systemjs/systemjs).
+
 ## declareChildApplication
 `declareChildApplication(name, activeWhen)` is the most important api and the only api that is required to be
 used in order for single-spa to work. It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
@@ -20,13 +28,6 @@ allows for easy url navigation between child applications, without needing to de
   (ideal for the `<a onclick="singleSpaNavigate"></a>` use case).
 
 This function is exposed onto the window as `window.singleSpaNavigate`, for convenience.
-
-## start
-`start(opts)` is a function that must be called by your root application. Before `start` is called, child
-applications will be loaded and bootstrapped, but will never be mounted or unmounted. The `opts` argument
-is an object with the following properties:
-	- `loader` (required): The loader that will be used by single-spa to lazy load code. A loader must implement `Loader.import(...).then(...).catch(...)`,
-	  and the most commonly used loader is [SystemJS](https://github.com/systemjs/systemjs).
 
 ## getMountedApps
 `getMountedApps()` returns an array of strings, where each string is the name of the child application,
