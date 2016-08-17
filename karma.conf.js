@@ -15,15 +15,13 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
-			'node_modules/babel-polyfill/dist/polyfill.js',
-			'node_modules/systemjs/dist/system-polyfills.js',
-			'node_modules/systemjs/dist/system.src.js',
+			'jspm_packages/system-polyfills.js',
+			'jspm_packages/system.src.js',
 			'jspm.config.js',
-			{ pattern: 'spec/**/*.*', watched: true, included: false, served: true },
-			{ pattern: 'jspm_packages/**/*.*', watched: true, included: false, served: true },
-			{ pattern: 'dist/**/*.*', watched: true, included: false, served: true },
 			{ pattern: 'spec/**/*.spec.build.js', watched: true, included: true, served: true },
-			{ pattern: 'src/**/*.spec.js', watched: true, included: true, served: true },
+			{ pattern: 'spec/**/*.*', watched: true, included: false, served: true },
+			{ pattern: 'jspm_packages/**/*.*', watched: false, included: false, served: true },
+			{ pattern: 'lib/**/*.*', watched: true, included: false, served: true },
 		],
 
 

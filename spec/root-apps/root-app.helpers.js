@@ -7,7 +7,7 @@ export function resetSingleSpa() {
 	return new Promise((resolve, reject) => {
 		const scriptEl = document.createElement("script");
 		scriptEl.setAttribute("id", "single-spa-distributable");
-		scriptEl.setAttribute("src", "/base/dist/single-spa.js");
+		scriptEl.setAttribute("src", "/base/lib/single-spa.js");
 		scriptEl.onload = resolve;
 		scriptEl.onerror = reject;
 		document.head.appendChild(scriptEl);

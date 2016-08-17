@@ -2,7 +2,7 @@
 
 jspm build \
 	single-spa \
-	dist/single-spa.js \
+	lib/single-spa.js \
 	--format umd \
 	--global-name singleSpa \
 	--source-map-contents \

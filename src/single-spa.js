@@ -4,6 +4,7 @@ export { setBootstrapMaxTime, setMountMaxTime, setUnmountMaxTime } from './child
 export { declareChildApplication, getMountedApps, getAppStatus } from './child-applications/child-apps.js';
 export { navigateToUrl } from './navigation/navigation-events.js';
 export { reroute as triggerAppChange } from './navigation/reroute.js';
+export { setLoader } from './loader.js';
 
 export {
 	NOT_LOADED,

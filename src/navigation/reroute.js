@@ -26,21 +26,18 @@ export function reroute(pendingPromises = [], eventArguments) {
 	if (isStarted()) {
 		return performAppChanges();
 	} else {
-		return loadAndBootstrapApps();
+		return loadApps();
 	}
 
-	async function loadAndBootstrapApps() {
-		const loadThenBootstrapPromises = getAppsToLoad().map(app => {
-			return toLoadPromise(app)
-				.then(toBootstrapPromise)
-		});
+	async function loadApps() {
+		const loadPromises = getAppsToLoad().map(toLoadPromise);
 
-		if (loadThenBootstrapPromises.length > 0) {
+		if (loadPromises.length > 0) {
 			wasNoOp = false;
 		}
 
 		try {
-			await Promise.all(unmountPromises);
+			await Promise.all(loadPromises);
 		} catch(err) {
 			callCapturedEventListeners(eventArguments);
 			throw err;
@@ -68,7 +65,6 @@ export function reroute(pendingPromises = [], eventArguments) {
 					await unmountAllPromise;
 					return toMountPromise(app);
 				})
-				.then(toMountPromise)
 		})
 		if (loadThenMountPromises.length > 0) {
 			wasNoOp = false;
@@ -80,10 +76,11 @@ export function reroute(pendingPromises = [], eventArguments) {
 		 */
 		const mountPromises = getAppsToMount()
 			.filter(appToMount => appsToLoad.indexOf(appToMount) < 0)
-			.map(appToMount => {
-				return unmountAllPromise
-					.then(toMountPromise);
-			});
+			.map(async function(appToMount) {
+				await toBootstrapPromise(appToMount);
+				await unmountAllPromise;
+				return toMountPromise(appToMount);
+			})
 		if (mountPromises.length > 0) {
 			wasNoOp = false;
 		}

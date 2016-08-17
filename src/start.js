@@ -3,11 +3,7 @@ import { setLoader } from './loader.js';
 
 export let started = false;
 
-export function start(opts) {
-	if (typeof opts !== "object" || !opts.loader) {
-		throw new Error(`single-spa start() must be given an 'opts' object that has a 'loader' property`);
-	}
-	setLoader(opts.loader);
+export function start() {
 	started = true;
 	reroute();
 }

@@ -1,3 +1,4 @@
+import { Loader } from '../loader.js';
 import { ensureJQuerySupport } from '../jquery-support.js';
 import { isActive, isLoaded, isntLoaded, toLocation, NOT_LOADED, shouldBeActive, shouldntBeActive, isntActive, notSkipped } from './child-app.helpers.js';
 import { reroute } from 'src/navigation/reroute.js';
@@ -15,6 +16,8 @@ export function getAppStatus(appName) {
 }
 
 export function declareChildApplication(appLocation, activeWhen) {
+	if (!Loader)
+		throw new Error(`You cannot declare a single-spa child application without first specifying the single-spa Loader. Please call singleSpa.setLoader API before declaring child applications`);
     if (typeof appLocation !== 'string' || appLocation.length === 0)
         throw new Error(`The first argument must be a non-empty string 'appLocation'`);
     if (typeof activeWhen !== 'function')

@@ -30,8 +30,8 @@ Notes:
 - Each lifecycle function must either return a `Promise` or be an `async function`.
 - If an array of functions is exported (instead of just one function), the functions will be called
   one-after-the-other, waiting for the resolution of one function's promise before calling the next.
-- If single-spa is [not started](/docs/single-spa-api.md#start), applications will be loaded and bootstrapped
-  but will not be mounted or unmounted.
+- If single-spa is [not started](/docs/single-spa-api.md#start), applications will be loaded,
+  but will not be bootstrapped, mounted or unmounted.
 
 ### Lifecycle middleware
 Middleware that helps implement lifecycle functions for specific frameworks, libraries, and applications

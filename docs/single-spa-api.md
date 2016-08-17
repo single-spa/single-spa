@@ -1,13 +1,15 @@
 # single-spa API
 The single-spa library does not `export default`, but instead exports named functions and variables.
 
-## start
-`start(opts)` is a function that must be called by your root application. Before `start` is called, child
-applications will be loaded and bootstrapped, but will never be mounted or unmounted.
+## setLoader
+`setLoader(Loader)` sets the javascript [loader](https://whatwg.github.io/loader/) that will be used by single-spa.
+A loader must implement `Loader.import(...).then(...).catch(...)`, and the most commonly used loader is
+[SystemJS](https://github.com/systemjs/systemjs). This API should be called **before** any `declareChildApplication`
+calls are made.
 
-The `opts` argument is an object with the following properties:
-  - `loader` (required): The loader that will be used by single-spa to lazy load code. A loader must implement `Loader.import(...).then(...).catch(...)`,
-  and the most commonly used loader is [SystemJS](https://github.com/systemjs/systemjs).
+## start
+`start()` is a function that must be called by your root application. Before `start` is called, child
+applications will be loaded, but will never be bootstrapped, mounted or unmounted.
 
 ## declareChildApplication
 `declareChildApplication(name, activeWhen)` is the most important api and the only api that is required to be

@@ -23,9 +23,8 @@ describe("SystemJS loader :", () => {
 	beforeAll(done => {
 		resetSingleSpa()
 		.then(() => {
-			singleSpa.start({
-				loader: System
-			});
+			singleSpa.setLoader(SystemJS);
+			singleSpa.start();
 			done();
 		})
 		.catch(err => {throw err})

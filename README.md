@@ -55,11 +55,10 @@ Create an index.html file (see [docs](/docs/root-application.md#indexhtml-file) 
 Create the root application (see [docs](/docs/root-application.md) for more detail).
 ```js
 // src/main.js
-import { declareChildApplication, start } from "single-spa";
+import { declareChildApplication, setLoader, start } from "single-spa";
+setLoader(SystemJS);
 declareChildApplication('/apps/app1/app1.js', () => window.location.hash === '');
-start({
-  loader: System,
-})
+start()
 ```
 
 Create the child application (see [docs](/docs/child-applications.md) for more detail).
