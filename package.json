@@ -43,7 +43,7 @@
     "examples"
   ],
   "jspmPackage": true,
-  "format": "umd",
+  "format": "amd",
   "registry": "npm",
   "jspm": {
     "name": "single-spa",
