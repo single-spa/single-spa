@@ -42,7 +42,7 @@
   "ignore": [
     "examples"
   ],
-  "jspmPackages": true,
+  "jspmPackage": true,
   "format": "umd",
   "registry": "npm",
   "jspm": {
