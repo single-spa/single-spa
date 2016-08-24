@@ -42,6 +42,9 @@
   "ignore": [
     "examples"
   ],
+  "jspmPackages": true,
+  "format": "umd",
+  "registry": "npm",
   "jspm": {
     "name": "single-spa",
     "main": "single-spa.js",
