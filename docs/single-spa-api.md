@@ -1,6 +1,16 @@
 # single-spa API
 The single-spa library does not `export default`, but instead exports named functions and variables.
 
+## setLoader
+`setLoader(Loader)` sets the javascript [loader](https://whatwg.github.io/loader/) that will be used by single-spa.
+A loader must implement `Loader.import(...).then(...).catch(...)`, and the most commonly used loader is
+[SystemJS](https://github.com/systemjs/systemjs). This API should be called **before** any `declareChildApplication`
+calls are made.
+
+## start
+`start()` is a function that must be called by your root application. Before `start` is called, child
+applications will be loaded, but will never be bootstrapped, mounted or unmounted.
+
 ## declareChildApplication
 `declareChildApplication(name, activeWhen)` is the most important api and the only api that is required to be
 used in order for single-spa to work. It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
@@ -21,12 +31,6 @@ allows for easy url navigation between child applications, without needing to de
 
 This function is exposed onto the window as `window.singleSpaNavigate`, for convenience.
 
-## setLoader
-`setLoader(Loader)` sets the javascript [loader](https://whatwg.github.io/loader/) that will be used by single-spa.
-A loader must implement `Loader.import(...).then(...).catch(...)`, and the most commonly used loader is
-[SystemJS](https://github.com/systemjs/systemjs). This API should be called **before** any `declareChildApplication`
-calls are made. If not specified, single-spa will default to `window.SystemJS` first, and then to `window.System`.
-
 ## getMountedApps
 `getMountedApps()` returns an array of strings, where each string is the name of the child application,
 as defined in the call to `declareChildApplication`.
@@ -44,13 +48,6 @@ or `null` (when the app doesn't exist). The string status is one of the followin
 - `UNMOUNTING`: the app is currently being unmounted, but has not yet finished.
 - `SKIP_BECAUSE_BROKEN`: the app threw an error during load, bootstrap, mount, or unmount and has been
    siloed because it is misbehaving. Other apps may continue on normally, but this one will be skipped.
-
-## pause
-`pause()`: when single-spa is paused, all child application lifecycles (except for importing the child app's source code)
-will not be called until unpause is called.
-
-## unpause
-`unpause()` all child application lifecycles.
 
 ## ensureJQuerySupport
 `ensureJQuerySupport(jQuery)`: Since jquery does some weird things with event listeners, single-spa

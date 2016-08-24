@@ -4,11 +4,17 @@
   "description": "Multiple applications, one page",
   "main": "lib/single-spa.js",
   "scripts": {
-    "build": "npm run clean && babel src --out-dir lib",
+    "postinstall": "jspm install",
+    "build": "./bin/build-code",
+    "watch": "./bin/build-code -dw",
+    "build:test": "./bin/build-tests",
+    "build:test:watch": "./bin/build-tests -dw",
     "prepublish": "npm run build",
     "clean": "rm -rf lib",
-    "test": "jasmine",
-    "build:canopy": "npm run build && rm -rf ../spalpatine/jspm_packages/npm/single-spa@2.1.8 && rsync -av . ../spalpatine/jspm_packages/npm/single-spa@2.1.8 --exclude node_modules --exclude .git --exclude --spec --exclude examples && cd ../spalpatine && npm run build-common-deps && cd ../single-spa"
+    "test": "npm run build:test && npm run build && karma start --single-run",
+    "test:watch": "npm run build:test && npm run build && concurrently 'npm run build:test:watch' 'npm run watch' 'karma start'",
+    "test:travis": "npm run build:test && npm run build && karma start karma-saucelabs.conf.js --single-run",
+    "build:canopy": "npm run build && rm -rf ../spalpatine/jspm_packages/npm/single-spa@2.1.8 && rsync -av . ../spalpatine/jspm_packages/npm/single-spa@2.1.8 --exclude node_modules --exclude .git --exclude --spec --exclude examples --exclude jspm_packages --exclude spec --exclude docs && cd ../spalpatine && npm run build-common-deps && cd ../single-spa"
   },
   "repository": "https://github.com/CanopyTax/single-spa",
   "keywords": [
@@ -23,17 +29,80 @@
   ],
   "author": "Joel Denning",
   "license": "MIT",
-  "dependencies": {
-    "custom-event": "^1.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "babel-cli": "^6.7.5",
-    "babel-plugin-transform-object-rest-spread": "^6.6.5",
-    "babel-polyfill": "^6.7.4",
-    "babel-preset-es2015": "^6.6.0",
-    "jasmine": "^2.4.1"
+    "concurrently": "^2.2.0",
+    "jasmine": "^2.4.1",
+    "jspm": "^0.17.0-beta.25",
+    "karma": "^1.1.2",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-jasmine": "^1.0.2",
+    "karma-sauce-launcher": "^1.0.0"
   },
   "ignore": [
     "examples"
-  ]
+  ],
+  "jspm": {
+    "name": "single-spa",
+    "main": "single-spa.js",
+    "dependencies": {
+      "babel-preset-stage-3": "npm:babel-preset-stage-3@^6.11.0",
+      "custom-event": "npm:custom-event@^1.0.0"
+    },
+    "devDependencies": {
+      "babel-preset-es2015": "npm:babel-preset-es2015@^6.13.2",
+      "babel-preset-stage-1": "npm:babel-preset-stage-1@^6.13.0",
+      "http": "github:jspm/nodelibs-http@^0.2.0-alpha",
+      "module": "github:jspm/nodelibs-module@^0.2.0-alpha",
+      "plugin-babel": "npm:systemjs-plugin-babel@^0.0.13",
+      "url": "github:jspm/nodelibs-url@^0.2.0-alpha"
+    },
+    "peerDependencies": {
+      "assert": "github:jspm/nodelibs-assert@^0.2.0-alpha",
+      "buffer": "github:jspm/nodelibs-buffer@^0.2.0-alpha",
+      "child_process": "github:jspm/nodelibs-child_process@^0.2.0-alpha",
+      "constants": "github:jspm/nodelibs-constants@^0.2.0-alpha",
+      "crypto": "github:jspm/nodelibs-crypto@^0.2.0-alpha",
+      "events": "github:jspm/nodelibs-events@^0.2.0-alpha",
+      "fs": "github:jspm/nodelibs-fs@^0.2.0-alpha",
+      "os": "github:jspm/nodelibs-os@^0.2.0-alpha",
+      "path": "github:jspm/nodelibs-path@^0.2.0-alpha",
+      "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
+      "stream": "github:jspm/nodelibs-stream@^0.2.0-alpha",
+      "string_decoder": "github:jspm/nodelibs-string_decoder@^0.2.0-alpha",
+      "util": "github:jspm/nodelibs-util@^0.2.0-alpha",
+      "vm": "github:jspm/nodelibs-vm@^0.2.0-alpha"
+    },
+    "overrides": {
+      "npm:debug@2.2.0": {
+        "main": "browser.js",
+        "jspmNodeConversion": false,
+        "format": "cjs",
+        "map": {
+          "./browser.js": {
+            "node": "./node.js"
+          },
+          "fs": "@node/fs",
+          "net": "@node/net",
+          "tty": "@node/tty",
+          "util": "@node/util"
+        }
+      },
+      "npm:inherits@2.0.1": {
+        "ignore": [
+          "test.js"
+        ]
+      },
+      "npm:lodash@4.15.0": {
+        "map": {
+          "buffer": "@empty",
+          "process": "@empty"
+        }
+      },
+      "npm:ms@0.7.1": {
+        "jspmNodeConversion": false,
+        "format": "cjs"
+      }
+    }
+  }
 }

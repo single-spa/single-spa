@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+jspm build \
+	single-spa \
+	lib/single-spa.js \
+	--format umd \
+	--global-name singleSpa \
+	--source-map-contents \
+	"$@"

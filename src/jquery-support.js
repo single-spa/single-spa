@@ -1,6 +1,4 @@
-import { routingEventsListeningTo } from './single-spa.js';
-
-const window = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : self);
+import { routingEventsListeningTo } from './navigation/navigation-events.js';
 
 let hasInitialized = false;
 
