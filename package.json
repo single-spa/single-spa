@@ -14,7 +14,7 @@
     "test": "npm run build:test && npm run build && karma start --single-run",
     "test:watch": "npm run build:test && npm run build && concurrently 'npm run build:test:watch' 'npm run watch' 'karma start'",
     "test:travis": "npm run build:test && npm run build && karma start karma-saucelabs.conf.js --single-run",
-    "build:canopy": "npm run build && rm -rf ../spalpatine/jspm_packages/npm/single-spa@3.0.2 && rsync -av . ../spalpatine/jspm_packages/npm/single-spa@3.0.2 --exclude node_modules --exclude .git --exclude --spec --exclude examples --exclude jspm_packages --exclude spec --exclude docs && cd ../spalpatine && npm run build-common-deps && cd ../single-spa"
+    "build:canopy": "npm run build && rm -rf ../spalpatine/jspm_packages/npm/single-spa@3.0.4 && rsync -av . ../spalpatine/jspm_packages/npm/single-spa@3.0.4 --exclude node_modules --exclude .git --exclude --spec --exclude examples --exclude jspm_packages --exclude spec --exclude docs && cd ../spalpatine && npm run build-common-deps && cd ../single-spa"
   },
   "repository": "https://github.com/CanopyTax/single-spa",
   "keywords": [
