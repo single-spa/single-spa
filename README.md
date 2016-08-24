@@ -4,7 +4,7 @@
 
 Combine multiple SPAs into one SPA by implementing lifecycle functions. Allows you to:
 - [Trade off between frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) [without refreshing the page](/docs/child-applications.md)
-  (React, ng1, ng2, ember, or whatever you're using)
+  (React, Angular 1, Angular 2, Ember, or whatever you're using)
 - [Lazy load code for improved initial load time](/docs/child-applications.md#load). This is baked in and requires no configuration.
 - [Ensure that no single part of the app can break everything](/docs/application-blast-radius.md).
 
@@ -92,4 +92,4 @@ export function unmount() {
 See [single-spa api](/docs/single-spa-api.md) and [child application api](/docs/child-applications.md#child-application-lifecycle).
 
 ## View the demo!
-A [demo is live](http://single-spa.surge.sh) on surge.sh, but is based on an old version of single-spa. The demo will soon be updated to use single-spa@2.x
+A [demo is live](http://single-spa.surge.sh) on surge.sh, but is based on an old version of single-spa. The demo will soon be updated to use single-spa@3.x
