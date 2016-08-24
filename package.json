@@ -47,7 +47,7 @@
   "registry": "npm",
   "jspm": {
     "name": "single-spa",
-    "main": "single-spa.js",
+    "main": "lib/single-spa.js",
     "dependencies": {
       "babel-preset-stage-3": "npm:babel-preset-stage-3@^6.11.0",
       "custom-event": "npm:custom-event@^1.0.0"
