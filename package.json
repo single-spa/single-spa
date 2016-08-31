@@ -7,7 +7,7 @@
     "postinstall": "jspm install",
     "build": "./bin/build-code",
     "watch": "./bin/build-code -dw",
-    "build:test": "./bin/build-tests",
+    "build:test": "rm -rf spec/bundles && ./bin/build-tests",
     "build:test:watch": "./bin/build-tests -dw",
     "prepublish": "npm run build",
     "clean": "rm -rf lib",
