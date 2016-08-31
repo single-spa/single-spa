@@ -26,6 +26,9 @@ describe("SystemJS loader :", () => {
 
 		System.normalize = function(name, ...rest) {
 			if (typeof name === 'string' && name.indexOf('./') === 0 && name.lastIndexOf('.app.js') === name.length - '.app.js'.length) {
+				/* This is a bit of hackery to get the System.imports in the specs to resolve properly
+				 * even though they have weird paths so that they're compatible with webpack
+				 */
 				name = `/base/spec/child-apps/${name.slice(2, name.length - '.app.js'.length)}/${name.slice(2)}`;
 			}
 
