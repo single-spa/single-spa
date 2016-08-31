@@ -21,7 +21,7 @@ function transformErr(ogErr, childApp) {
 	} else {
 		console.warn(`While ${childApp.status}, '${childApp.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
 		try {
-			result = new Error(JSON.stringify(ogErr));
+			result = new Error(errPrefix + JSON.stringify(ogErr));
 		} catch(err) {
 			// If it's not an Error and you can't stringify it, then what else can you even do to it?
 			result = ogErr;
