@@ -29,6 +29,7 @@
   "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.14.0",
+    "babel-loader": "^6.2.5",
     "babel-preset-latest": "^6.14.0",
     "concurrently": "^2.2.0",
     "jasmine": "^2.4.1",

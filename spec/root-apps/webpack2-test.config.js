@@ -6,14 +6,16 @@ module.exports = {
 		publicPath: '/base/spec/bundles/',
 	},
 	devtool: 'source-map',
-	loaders: [
-		{
-			test: /\.js$/,
-			exclude: /(node_modules|bower_components)/,
-			loader: 'babel', // 'babel-loader' is also a legal name to reference
-			query: {
-				presets: ['latest']
+	module: {
+		loaders: [
+			{
+				test: /\.js$/,
+				exclude: /(node_modules|bower_components)/,
+				loader: 'babel', // 'babel-loader' is also a legal name to reference
+				query: {
+					presets: ['latest']
+				}
 			}
-		}
-	],
+		],
+	},
 };
