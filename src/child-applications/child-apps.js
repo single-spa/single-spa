@@ -26,8 +26,8 @@ export function declareChildApplication(appLocation, arg1, arg2) {
 		if (!Loader) {
 			throw new Error(`You cannot declare a single-spa child application without either providing a way to load the application or a Loader. See https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-api.md#declarechildapplication`);
 		}
-			loadImpl = () => Loader.import(appLocation);
-			activeWhen = arg1;
+		loadImpl = () => Loader.import(appLocation);
+		activeWhen = arg1;
 	} else {
 		loadImpl = arg1;
 		activeWhen = arg2;
