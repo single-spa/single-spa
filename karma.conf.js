@@ -18,10 +18,11 @@ module.exports = function(config) {
 			'jspm_packages/system-polyfills.js',
 			'jspm_packages/system.src.js',
 			'jspm.config.js',
-			{ pattern: 'spec/**/*.spec.build.js', watched: true, included: true, served: true },
-			{ pattern: 'spec/**/*.*', watched: true, included: false, served: true },
+			'spec/bundles/webpack2.spec.build.js',
+			'spec/bundles/systemjs.spec.build.js',
+			{ pattern: 'spec/**/*.*', watched: false, included: false, served: true },
 			{ pattern: 'jspm_packages/**/*.*', watched: false, included: false, served: true },
-			{ pattern: 'lib/**/*.*', watched: true, included: false, served: true },
+			{ pattern: 'lib/**/*.*', watched: false, included: false, served: true },
 		],
 
 

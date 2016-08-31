@@ -1,4 +1,3 @@
-const appLocation = `/base/spec/child-apps/unmount-times-out-dies/unmount-times-out-dies.app.js`;
 const activeHash = `#unmount-times-out-dies`;
 
 export default function() {
@@ -6,14 +5,14 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication(appLocation, location => location.hash === activeHash);
+			singleSpa.declareChildApplication('./unmount-times-out-dies.app.js', () => System.import('./unmount-times-out-dies.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {
 			location.hash = activeHash;
 
 			System
-			.import(appLocation)
+			.import('./unmount-times-out-dies.app.js')
 			.then(app => childApp = app)
 			.then(app => app.reset())
 			.then(done)
@@ -26,8 +25,8 @@ export default function() {
 			.then(() => {
 				expect(childApp.numBootstraps()).toEqual(1);
 				expect(childApp.numMounts()).toEqual(1);
-				expect(singleSpa.getMountedApps()).toEqual([appLocation]);
-				expect(singleSpa.getAppStatus(appLocation)).toEqual('MOUNTED');
+				expect(singleSpa.getMountedApps()).toEqual(['./unmount-times-out-dies.app.js']);
+				expect(singleSpa.getAppStatus('./unmount-times-out-dies.app.js')).toEqual('MOUNTED');
 
 				location.hash = '#not-unmount-times-out';
 				singleSpa
@@ -35,7 +34,7 @@ export default function() {
 				.then(() => {
 					expect(childApp.numUnmounts()).toEqual(1);
 					expect(singleSpa.getMountedApps()).toEqual([]);
-					expect(singleSpa.getAppStatus(appLocation)).toEqual('SKIP_BECAUSE_BROKEN');
+					expect(singleSpa.getAppStatus('./unmount-times-out-dies.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 					done();
 				})
 				.catch(ex => {

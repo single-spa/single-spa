@@ -53,6 +53,6 @@ export function notSkipped(item) {
 	return item !== SKIP_BECAUSE_BROKEN && (!item || item.status !== SKIP_BECAUSE_BROKEN);
 }
 
-export function toLocation(app) {
-	return app.appLocation;
+export function toName(app) {
+	return app.name;
 }

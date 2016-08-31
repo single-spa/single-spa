@@ -1,4 +1,3 @@
-const appLocation = `/base/spec/child-apps/mount-times-out/mount-times-out.app.js`;
 const activeHash = `#mount-times-out`;
 
 export default function() {
@@ -6,14 +5,14 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication(appLocation, location => location.hash === activeHash);
+			singleSpa.declareChildApplication('./mount-times-out.app.js', () => System.import('./mount-times-out.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {
 			location.hash = activeHash;
 
 			System
-			.import(appLocation)
+			.import('./mount-times-out.app.js')
 			.then(app => childApp = app)
 			.then(app => app.reset())
 			.then(done)
@@ -26,8 +25,8 @@ export default function() {
 			.then(() => {
 				expect(childApp.bootstraps()).toEqual(1);
 				expect(childApp.mounts()).toEqual(1);
-				expect(singleSpa.getMountedApps()).toEqual([appLocation]);
-				expect(singleSpa.getAppStatus(appLocation)).toEqual('MOUNTED');
+				expect(singleSpa.getMountedApps()).toEqual(['./mount-times-out.app.js']);
+				expect(singleSpa.getAppStatus('./mount-times-out.app.js')).toEqual('MOUNTED');
 				done();
 			})
 			.catch(ex => {

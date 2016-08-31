@@ -10,7 +10,7 @@ export async function toBootstrapPromise(app) {
 	app.status = BOOTSTRAPPING;
 
 	try {
-		await reasonableTime(app.bootstrap(), `Bootstrapping app '${app.appLocation}'`, app.timeouts.bootstrap);
+		await reasonableTime(app.bootstrap(), `Bootstrapping app '${app.name}'`, app.timeouts.bootstrap);
 		app.status = NOT_MOUNTED;
 	} catch(err) {
 		app.status = SKIP_BECAUSE_BROKEN;

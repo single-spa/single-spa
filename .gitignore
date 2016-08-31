@@ -7,3 +7,5 @@ coverage/
 dist/
 *.build.js
 *.build.js.map
+*.build.spec.js
+*.build.spec.js.map

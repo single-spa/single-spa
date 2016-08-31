@@ -17,10 +17,24 @@ import multipleLifecycleFunctions from 'spec/child-apps/multiple-lifecycle-funct
 import unmountRejects from 'spec/child-apps/unmount-rejects/unmount-rejects.spec.js';
 import unmountTimesOut from 'spec/child-apps/unmount-times-out/unmount-times-out.spec.js';
 import unmountTimesOutDies from 'spec/child-apps/unmount-times-out-dies/unmount-times-out-dies.spec.js';
+import usesLoader from 'spec/child-apps/uses-loader/uses-loader.spec.js';
 import navigateToUrlTests from 'spec/apis/navigate-to-url.spec.js';
 
 describe("SystemJS loader :", () => {
 	beforeAll(done => {
+		const ogSystemNormalize = System.normalize;
+
+		System.normalize = function(name, ...rest) {
+			if (typeof name === 'string' && name.indexOf('./') === 0 && name.lastIndexOf('.app.js') === name.length - '.app.js'.length) {
+				/* This is a bit of hackery to get the System.imports in the specs to resolve properly
+				 * even though they have weird paths so that they're compatible with webpack
+				 */
+				name = `/base/spec/child-apps/${name.slice(2, name.length - '.app.js'.length)}/${name.slice(2)}`;
+			}
+
+			return ogSystemNormalize.call(this, name, ...rest);
+		}
+
 		resetSingleSpa()
 		.then(() => {
 			singleSpa.setLoader(SystemJS);
@@ -53,5 +67,6 @@ describe("SystemJS loader :", () => {
 		unmountRejects();
 		unmountTimesOut();
 		unmountTimesOutDies();
+		usesLoader();
 	});
 });

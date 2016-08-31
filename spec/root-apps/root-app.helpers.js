@@ -1,4 +1,5 @@
 export function resetSingleSpa() {
+	window.SINGLE_SPA_TESTING = true;
 	delete window.singleSpa;
 	const singleSpaScriptTag = document.getElementById("single-spa-distributable");
 	if (singleSpaScriptTag) {

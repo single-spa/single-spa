@@ -1,4 +1,3 @@
-import { Loader } from 'src/loader.js';
 import { NOT_BOOTSTRAPPED, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN, NOT_LOADED } from '../child-app.helpers.js';
 import { ensureValidAppTimeouts } from '../timeouts.js';
 import { handleChildAppError } from '../child-app-errors.js';
@@ -14,7 +13,7 @@ export async function toLoadPromise(app) {
 	let appOpts;
 
 	try {
-		appOpts = await Loader.import(app.appLocation);
+		appOpts = await app.loadImpl();
 	} catch(err) {
 		handleChildAppError(err, app);
 		app.status = SKIP_BECAUSE_BROKEN;
@@ -46,9 +45,9 @@ export async function toLoadPromise(app) {
 	}
 
 	app.status = NOT_BOOTSTRAPPED;
-	app.bootstrap = flattenFnArray(appOpts.bootstrap, `App '${app.appLocation}' bootstrap function`);
-	app.mount = flattenFnArray(appOpts.mount, `App '${app.appLocation}' mount function`);
-	app.unmount = flattenFnArray(appOpts.unmount, `App '${app.appLocation}' unmount function`);
+	app.bootstrap = flattenFnArray(appOpts.bootstrap, `App '${app.name}' bootstrap function`);
+	app.mount = flattenFnArray(appOpts.mount, `App '${app.name}' mount function`);
+	app.unmount = flattenFnArray(appOpts.unmount, `App '${app.name}' unmount function`);
 	app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
 
 	return app;

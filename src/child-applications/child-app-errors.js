@@ -11,7 +11,7 @@ export function handleChildAppError(err, childApp) {
 }
 
 function transformErr(ogErr, childApp) {
-	const errPrefix = `'${childApp.appLocation}' died in status ${childApp.status}: `;
+	const errPrefix = `'${childApp.name}' died in status ${childApp.status}: `;
 
 	let result;
 
@@ -19,7 +19,7 @@ function transformErr(ogErr, childApp) {
 		ogErr.message = errPrefix + ogErr.message;
 		result = ogErr;
 	} else {
-		console.warn(`While ${childApp.status}, '${childApp.appLocation}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
+		console.warn(`While ${childApp.status}, '${childApp.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
 		try {
 			result = new Error(errPrefix + JSON.stringify(ogErr));
 		} catch(err) {
