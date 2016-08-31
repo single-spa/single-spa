@@ -33,7 +33,7 @@ export function declareChildApplication(appLocation, arg1, arg2) {
 		activeWhen = arg2;
 	}
 	if (typeof activeWhen !== 'function')
-		throw new Error(`The second argument must be a function 'activeWhen'`);
+		throw new Error(`The activeWhen argument must be a function`);
 
 	childApps.push({
 		appLocation,
