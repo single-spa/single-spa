@@ -56,7 +56,7 @@ Create the root application (see [docs](/docs/root-application.md) for more deta
 ```js
 // src/main.js
 import { declareChildApplication, start } from "single-spa";
-declareChildApplication('/apps/app1/app1.js', () => System.import('/apps/app1/app1.js'), () => window.location.hash === '');
+declareChildApplication('app1', () => System.import('/apps/app1.js'), () => window.location.hash === '');
 start()
 ```
 
@@ -64,7 +64,7 @@ Create the child application (see [docs](/docs/child-applications.md) for more d
 ```js
 document.getElementById('main-content').textContent += "App1 is loaded.";
 
-// apps/app1/app1.js
+// apps/app1.js
 export function bootstrap() {
   return new Promise((resolve, reject) => {
     document.getElementById('main-content').textContent += "App1 is bootstrapped.";

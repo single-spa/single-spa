@@ -45,9 +45,9 @@ export async function toLoadPromise(app) {
 	}
 
 	app.status = NOT_BOOTSTRAPPED;
-	app.bootstrap = flattenFnArray(appOpts.bootstrap, `App '${app.appLocation}' bootstrap function`);
-	app.mount = flattenFnArray(appOpts.mount, `App '${app.appLocation}' mount function`);
-	app.unmount = flattenFnArray(appOpts.unmount, `App '${app.appLocation}' unmount function`);
+	app.bootstrap = flattenFnArray(appOpts.bootstrap, `App '${app.name}' bootstrap function`);
+	app.mount = flattenFnArray(appOpts.mount, `App '${app.name}' mount function`);
+	app.unmount = flattenFnArray(appOpts.unmount, `App '${app.name}' unmount function`);
 	app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
 
 	return app;

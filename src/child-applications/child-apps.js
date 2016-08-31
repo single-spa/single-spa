@@ -1,32 +1,32 @@
 import { Loader } from '../loader.js';
 import { ensureJQuerySupport } from '../jquery-support.js';
-import { isActive, isLoaded, isntLoaded, toLocation, NOT_LOADED, shouldBeActive, shouldntBeActive, isntActive, notSkipped } from './child-app.helpers.js';
+import { isActive, isLoaded, isntLoaded, toName, NOT_LOADED, shouldBeActive, shouldntBeActive, isntActive, notSkipped } from './child-app.helpers.js';
 import { reroute } from 'src/navigation/reroute.js';
 import { find } from 'src/utils/find.js';
 
 const childApps = [];
 
 export function getMountedApps() {
-	return childApps.filter(isActive).map(toLocation);
+	return childApps.filter(isActive).map(toName);
 }
 
 export function getAppStatus(appName) {
-	const app = find(childApps, app => app.appLocation === appName);
+	const app = find(childApps, app => app.name === appName);
 	return app ? app.status : null;
 }
 
-export function declareChildApplication(appLocation, arg1, arg2) {
-	if (typeof appLocation !== 'string' || appLocation.length === 0)
-		throw new Error(`The first argument must be a non-empty string 'appLocation'`);
-	if (childApps[appLocation])
-		throw new Error(`There is already an app declared at location ${appLocation}`);
+export function declareChildApplication(appName, arg1, arg2) {
+	if (typeof appName !== 'string' || appName.length === 0)
+		throw new Error(`The first argument must be a non-empty string 'appName'`);
+	if (childApps[appName])
+		throw new Error(`There is already an app declared with name ${appName}`);
 
 	let loadImpl, activeWhen;
 	if (!arg2) {
 		if (!Loader) {
 			throw new Error(`You cannot declare a single-spa child application without either providing a way to load the application or a Loader. See https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-api.md#declarechildapplication`);
 		}
-		loadImpl = () => Loader.import(appLocation);
+		loadImpl = () => Loader.import(appName);
 		activeWhen = arg1;
 	} else {
 		loadImpl = arg1;
@@ -36,7 +36,7 @@ export function declareChildApplication(appLocation, arg1, arg2) {
 		throw new Error(`The activeWhen argument must be a function`);
 
 	childApps.push({
-		appLocation,
+		name: appName,
 		loadImpl,
 		activeWhen,
 		status: NOT_LOADED,
