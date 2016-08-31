@@ -41,7 +41,7 @@ export const bootstrap = [
 			resolve();
 		});
 	},
-]
+];
 
 export const mount = [
 	function mount1() {
@@ -72,7 +72,7 @@ export const mount = [
 			resolve();
 		});
 	},
-]
+];
 
 export const unmount = [
 	function unmount1() {
@@ -103,7 +103,7 @@ export const unmount = [
 			resolve();
 		});
 	},
-]
+];
 
 export function reset() {
 	_bootstrapsCalledOutOfOrder = _mountsCalledOutOfOrder = _unmountsCalledOutOfOrder = undefined;

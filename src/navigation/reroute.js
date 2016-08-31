@@ -2,7 +2,7 @@ import CustomEvent from 'custom-event';
 import { isStarted } from 'src/start.js';
 import { toLoadPromise } from 'src/child-applications/lifecycles/load.js';
 import { toBootstrapPromise } from 'src/child-applications/lifecycles/bootstrap.js';
-import { toMountPromise} from 'src/child-applications/lifecycles/mount.js';
+import { toMountPromise } from 'src/child-applications/lifecycles/mount.js';
 import { toUnmountPromise } from 'src/child-applications/lifecycles/unmount.js';
 import { getMountedApps, getAppsToLoad, getAppsToUnmount, getAppsToMount } from 'src/child-applications/child-apps.js';
 import { notSkipped } from 'src/child-applications/child-app.helpers.js';
@@ -72,7 +72,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 
 		/* These are the apps that are already bootstrapped and just need
 		 * to be mounted. They each wait for all unmounting apps to finish up
-		 * before unmounting.
+		 * before they mount.
 		 */
 		const mountPromises = getAppsToMount()
 			.filter(appToMount => appsToLoad.indexOf(appToMount) < 0)
@@ -113,10 +113,10 @@ export function reroute(pendingPromises = [], eventArguments) {
 
 		pendingPromises.forEach(promise => promise.resolve(returnValue));
 
-		/* Setting this allows for subsequent calls to reroute() to actually do perform
+		/* Setting this allows for subsequent calls to reroute() to actually perform
 		 * a reroute instead of just getting queued behind the current reroute call.
 		 * We want to do this after the mounting/unmounting is done but before we
-		 * return from this async function.
+		 * resolve the promise for the `reroute` async function.
 		 */
 		appChangeUnderway = false;
 

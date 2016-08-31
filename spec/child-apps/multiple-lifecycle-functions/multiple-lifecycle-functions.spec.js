@@ -1,4 +1,3 @@
-const appLocation = `/base/spec/child-apps/multiple-lifecycle-functions/multiple-lifecycle-functions.app.js`;
 const activeHash = `#multiple-lifecycle-functions`;
 
 export default function() {
@@ -6,14 +5,14 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication(appLocation, location => location.hash === activeHash);
+			singleSpa.declareChildApplication('./multiple-lifecycle-functions.app.js', () => System.import('./multiple-lifecycle-functions.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {
 			location.hash = activeHash;
 
 			System
-			.import(appLocation)
+			.import('./multiple-lifecycle-functions.app.js')
 			.then(app => childApp = app)
 			.then(app => app.reset())
 			.then(done)

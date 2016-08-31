@@ -1,4 +1,3 @@
-const appLocation = `/base/spec/child-apps/invalid-no-bootstrap/invalid-no-bootstrap.app.js`;
 const activeHash = `#invalid-no-bootstrap`;
 
 export default function() {
@@ -6,14 +5,14 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication(appLocation, location => location.hash === activeHash);
+			singleSpa.declareChildApplication('./invalid-no-bootstrap.app.js', () => System.import('./invalid-no-bootstrap.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {
 			location.hash = activeHash;
 
 			System
-			.import(appLocation)
+			.import('./invalid-no-bootstrap.app.js')
 			.then(app => childApp = app)
 			.then(app => app.reset())
 			.then(done)
@@ -26,7 +25,7 @@ export default function() {
 			.then(() => {
 				expect(childApp.isMounted()).toEqual(false);
 				expect(singleSpa.getMountedApps()).toEqual([]);
-				expect(singleSpa.getAppStatus(appLocation)).toEqual('SKIP_BECAUSE_BROKEN');
+				expect(singleSpa.getAppStatus('./invalid-no-bootstrap.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 				done();
 			})
 			.catch(ex => {

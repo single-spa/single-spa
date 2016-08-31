@@ -1,18 +1,16 @@
-const appLocation = `/base/spec/child-apps/happy-basic/happy-basic.app.js`;
-
 export default function() {
 	describe(`happy-basic`, () => {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication(appLocation, location => location.hash === "#happy-basic");
+			singleSpa.declareChildApplication('./happy-basic.app.js', () => System.import('./happy-basic.app.js'), location => location.hash === "#happy-basic");
 		});
 
 		beforeEach(done => {
 			location.hash = '#happy-basic';
 
 			System
-			.import(appLocation)
+			.import('./happy-basic.app.js')
 			.then(app => childApp = app)
 			.then(app => app.reset())
 			.then(done)
@@ -30,7 +28,7 @@ export default function() {
 			.then(() => {
 				expect(childApp.wasBootstrapped()).toEqual(true);
 				expect(childApp.isMounted()).toEqual(true);
-				expect(singleSpa.getMountedApps()).toEqual([appLocation]);
+				expect(singleSpa.getMountedApps()).toEqual(['./happy-basic.app.js']);
 
 				location.hash = '#not-happy-basic';
 

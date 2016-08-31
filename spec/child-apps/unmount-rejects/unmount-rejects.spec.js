@@ -1,4 +1,3 @@
-const appLocation = `/base/spec/child-apps/unmount-rejects/unmount-rejects.app.js`;
 const activeHash = `#unmount-rejects`;
 
 export default function() {
@@ -6,14 +5,14 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication(appLocation, location => location.hash === activeHash);
+			singleSpa.declareChildApplication('./unmount-rejects.app.js', () => System.import('./unmount-rejects.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {
 			location.hash = activeHash;
 
 			System
-			.import(appLocation)
+			.import('./unmount-rejects.app.js')
 			.then(app => childApp = app)
 			.then(app => app.reset())
 			.then(done)
@@ -27,8 +26,8 @@ export default function() {
 				expect(childApp.numBootstraps()).toEqual(1);
 				expect(childApp.numMounts()).toEqual(1);
 				expect(childApp.numUnmounts()).toEqual(0);
-				expect(singleSpa.getMountedApps()).toEqual([appLocation]);
-				expect(singleSpa.getAppStatus(appLocation)).toEqual('MOUNTED');
+				expect(singleSpa.getMountedApps()).toEqual(['./unmount-rejects.app.js']);
+				expect(singleSpa.getAppStatus('./unmount-rejects.app.js')).toEqual('MOUNTED');
 
 				location.hash = '#not-unmount-rejects';
 				singleSpa
@@ -36,7 +35,7 @@ export default function() {
 				.then(() => {
 					expect(childApp.numUnmounts()).toEqual(1);
 					expect(singleSpa.getMountedApps()).toEqual([]);
-					expect(singleSpa.getAppStatus(appLocation)).toEqual('SKIP_BECAUSE_BROKEN');
+					expect(singleSpa.getAppStatus('./unmount-rejects.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 
 					location.hash = '#unmount-rejects';
 					singleSpa
@@ -45,7 +44,7 @@ export default function() {
 						// it shouldn't be mounted again
 						expect(childApp.numMounts()).toEqual(1);
 						expect(singleSpa.getMountedApps()).toEqual([]);
-						expect(singleSpa.getAppStatus(appLocation)).toEqual('SKIP_BECAUSE_BROKEN');
+						expect(singleSpa.getAppStatus('./unmount-rejects.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 
 						done();
 					})

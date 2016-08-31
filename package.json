@@ -8,11 +8,10 @@
     "build": "./bin/build-code",
     "watch": "./bin/build-code -dw",
     "build:test": "./bin/build-tests",
-    "build:test:watch": "./bin/build-tests -dw",
     "prepublish": "npm run build",
     "clean": "rm -rf lib",
     "test": "npm run build:test && npm run build && karma start --single-run",
-    "test:watch": "npm run build:test && npm run build && concurrently 'npm run build:test:watch' 'npm run watch' 'karma start'",
+    "test:debug": "npm run build:test && npm run build && karma start",
     "test:travis": "npm run build:test && npm run build && karma start karma-saucelabs.conf.js --single-run",
     "build:canopy": "npm run build && rm -rf ../spalpatine/jspm_packages/npm/single-spa@3.0.4 && rsync -av . ../spalpatine/jspm_packages/npm/single-spa@3.0.4 --exclude node_modules --exclude .git --exclude --spec --exclude examples --exclude jspm_packages --exclude spec --exclude docs && cd ../spalpatine && npm run build-common-deps && cd ../single-spa"
   },
@@ -23,21 +22,22 @@
     "application",
     "spa",
     "multiple",
-    "lifecycle",
-    "systemjs",
-    "jspm"
+    "lifecycle"
   ],
   "author": "Joel Denning",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-preset-latest": "^6.14.0",
     "concurrently": "^2.2.0",
     "jasmine": "^2.4.1",
-    "jspm": "^0.17.0-beta.25",
+    "jspm": "^0.17.0-beta.28",
     "karma": "^1.1.2",
     "karma-chrome-launcher": "^1.0.1",
     "karma-jasmine": "^1.0.2",
-    "karma-sauce-launcher": "^1.0.0"
+    "karma-sauce-launcher": "^1.0.0",
+    "webpack": "^2.1.0-beta.21"
   },
   "ignore": [
     "examples"

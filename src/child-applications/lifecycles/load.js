@@ -1,4 +1,3 @@
-import { Loader } from 'src/loader.js';
 import { NOT_BOOTSTRAPPED, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN, NOT_LOADED } from '../child-app.helpers.js';
 import { ensureValidAppTimeouts } from '../timeouts.js';
 import { handleChildAppError } from '../child-app-errors.js';
@@ -14,7 +13,7 @@ export async function toLoadPromise(app) {
 	let appOpts;
 
 	try {
-		appOpts = await Loader.import(app.appLocation);
+		appOpts = await app.loadImpl();
 	} catch(err) {
 		handleChildAppError(err, app);
 		app.status = SKIP_BECAUSE_BROKEN;

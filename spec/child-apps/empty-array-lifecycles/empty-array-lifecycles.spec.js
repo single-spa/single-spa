@@ -1,18 +1,16 @@
-const appLocation = `/base/spec/child-apps/empty-array-lifecycles/empty-array-lifecycles.app.js`;
-
 export default function() {
 	describe(`empty-array-lifecycles`, () => {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication(appLocation, location => location.hash === "#empty-array-lifecycles");
+			singleSpa.declareChildApplication('./empty-array-lifecycles.app.js', () => System.import('./empty-array-lifecycles.app.js'), location => location.hash === "#empty-array-lifecycles");
 		});
 
 		beforeEach(done => {
 			location.hash = '#empty-array-lifecycles';
 
 			System
-			.import(appLocation)
+			.import('./empty-array-lifecycles.app.js')
 			.then(app => childApp = app)
 			.then(done)
 			.catch(err => {throw err})
@@ -22,7 +20,7 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(singleSpa.getMountedApps()).toEqual([appLocation]);
+				expect(singleSpa.getMountedApps()).toEqual(['./empty-array-lifecycles.app.js']);
 
 				location.hash = '#not-empty-array-lifecycles';
 

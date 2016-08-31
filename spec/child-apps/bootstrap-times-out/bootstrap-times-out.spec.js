@@ -1,18 +1,16 @@
-const appLocation = `/base/spec/child-apps/bootstrap-times-out/bootstrap-times-out.app.js`;
-
 export default function() {
 	describe(`bootstrap-times-out`, () => {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication(appLocation, location => location.hash === "#bootstrap-times-out");
+			singleSpa.declareChildApplication('./bootstrap-times-out.app.js', () => System.import('./bootstrap-times-out.app.js'), location => location.hash === "#bootstrap-times-out");
 		});
 
 		beforeEach(done => {
 			location.hash = '#bootstrap-times-out';
 
 			System
-			.import(appLocation)
+			.import('./bootstrap-times-out.app.js')
 			.then(app => childApp = app)
 			.then(app => app.reset())
 			.then(done)
@@ -25,8 +23,8 @@ export default function() {
 			.then(() => {
 				expect(childApp.wasBootstrapped()).toEqual(true);
 				expect(childApp.wasMounted()).toEqual(true);
-				expect(singleSpa.getMountedApps()).toEqual([appLocation]);
-				expect(singleSpa.getAppStatus(appLocation)).toEqual(singleSpa.MOUNTED);
+				expect(singleSpa.getMountedApps()).toEqual(['./bootstrap-times-out.app.js']);
+				expect(singleSpa.getAppStatus('./bootstrap-times-out.app.js')).toEqual(singleSpa.MOUNTED);
 				done();
 			})
 			.catch(ex => {

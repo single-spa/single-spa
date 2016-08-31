@@ -1,18 +1,16 @@
-const appLocation = `/base/spec/child-apps/bootstrap-times-out-dies/bootstrap-times-out-dies.app.js`;
-
 export default function() {
 	describe(`bootstrap-times-out-dies`, () => {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication(appLocation, location => location.hash === "#bootstrap-times-out-dies");
+			singleSpa.declareChildApplication('./bootstrap-times-out-dies.app.js', () => System.import('./bootstrap-times-out-dies.app.js'), location => location.hash === "#bootstrap-times-out-dies");
 		});
 
 		beforeEach(done => {
 			location.hash = '#bootstrap-times-out-dies';
 
 			System
-			.import(appLocation)
+			.import('./bootstrap-times-out-dies.app.js')
 			.then(app => childApp = app)
 			.then(app => app.reset())
 			.then(done)
@@ -26,7 +24,7 @@ export default function() {
 				expect(childApp.wasBootstrapped()).toEqual(true);
 				expect(childApp.wasMounted()).toEqual(false);
 				expect(singleSpa.getMountedApps()).toEqual([]);
-				expect(singleSpa.getAppStatus(appLocation)).toEqual('SKIP_BECAUSE_BROKEN');
+				expect(singleSpa.getAppStatus('./bootstrap-times-out-dies.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 				done();
 			})
 			.catch(ex => {
