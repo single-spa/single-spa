@@ -39,7 +39,7 @@ module.exports = function(config) {
 		sauceLabs: {
 			testName: "single-spa tests",
 			// username: 'joeldenning',
-			// accessKey: 'put-key-here'
+			// accessKey: 'access-key'
 		},
 
 		customLaunchers: customLaunchers,

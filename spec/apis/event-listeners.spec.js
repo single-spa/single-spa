@@ -16,7 +16,10 @@ export function notStartedEventListeners() {
 			window.location.hash = '#/a-new-hash';
 			setTimeout(() => {
 				expect(hashchangeCalled).toBe(true);
-				expect(popstateCalled).toBe(true);
+				// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
+				if (isntIEOrEdge()) {
+					expect(popstateCalled).toBe(true);
+				}
 				done();
 			}, 20);
 		});
@@ -46,7 +49,10 @@ export function yesStartedEventListeners() {
 			window.location.hash = '#/a-hash-single-spa-is-started';
 			setTimeout(() => {
 				expect(hashchangeCalled).toBe(true);
-				expect(popstateCalled).toBe(true);
+				// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
+				if (isntIEOrEdge()) {
+					expect(popstateCalled).toBe(true);
+				}
 				done();
 			}, 20);
 		});
@@ -66,4 +72,8 @@ function ensureCleanSlate(done) {
 		fail(err);
 		done();
 	});
+}
+
+function isntIEOrEdge() {
+	return !(/MSIE 10/i.test(navigator.userAgent)) && !(/MSIE 9/.test(navigator.userAgent)) && !(/Edge\/\d./i.test(navigator.userAgent));
 }
