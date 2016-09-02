@@ -19,9 +19,10 @@ import unmountTimesOut from 'spec/child-apps/unmount-times-out/unmount-times-out
 import unmountTimesOutDies from 'spec/child-apps/unmount-times-out-dies/unmount-times-out-dies.spec.js';
 import usesLoader from 'spec/child-apps/uses-loader/uses-loader.spec.js';
 import navigateToUrlTests from 'spec/apis/navigate-to-url.spec.js';
+import { notStartedEventListeners, yesStartedEventListeners } from 'spec/apis/event-listeners.spec.js';
 
 describe("SystemJS loader :", () => {
-	beforeAll(done => {
+	beforeAll(() => {
 		const ogSystemNormalize = System.normalize;
 
 		System.normalize = function(name, ...rest) {
@@ -34,39 +35,57 @@ describe("SystemJS loader :", () => {
 
 			return ogSystemNormalize.call(this, name, ...rest);
 		}
-
-		resetSingleSpa()
-		.then(() => {
-			singleSpa.setLoader(SystemJS);
-			singleSpa.start();
-			done();
-		})
-		.catch(err => {throw err})
-	})
-
-	describe('apis :', () => {
-		navigateToUrlTests();
 	});
 
-	describe('child apps :', () => {
-		bootstrapRejectsApp();
-		bootstrapTimesOutApp();
-		bootstrapTimesOutDies();
-		emptyArrayLifecycles();
-		happyBasic();
-		invalidBootstrap();
-		invalidMount();
-		invalidNoBootstrap();
-		invalidNoMount();
-		invalidNoUnmount();
-		invalidUnmount();
-		mountRejects();
-		mountTimesOut();
-		mountTimesOutDies();
-		multipleLifecycleFunctions();
-		unmountRejects();
-		unmountTimesOut();
-		unmountTimesOutDies();
-		usesLoader();
+	describe(`single-spa started :`, () => {
+		beforeAll(done => {
+			resetSingleSpa()
+			.then(() => {
+				singleSpa.setLoader(SystemJS)
+				singleSpa.start();
+				done();
+			})
+			.catch(err => {throw err})
+		})
+
+		describe('child apps :', () => {
+			bootstrapRejectsApp();
+			bootstrapTimesOutApp();
+			bootstrapTimesOutDies();
+			emptyArrayLifecycles();
+			happyBasic();
+			invalidBootstrap();
+			invalidMount();
+			invalidNoBootstrap();
+			invalidNoMount();
+			invalidNoUnmount();
+			invalidUnmount();
+			mountRejects();
+			mountTimesOut();
+			mountTimesOutDies();
+			multipleLifecycleFunctions();
+			unmountRejects();
+			unmountTimesOut();
+			unmountTimesOutDies();
+			usesLoader();
+		});
+
+		describe(`apis :`, () => {
+			yesStartedEventListeners();
+		});
+	});
+
+	describe(`single-spa not started`, () => {
+		beforeAll(done => {
+
+			resetSingleSpa()
+			.then(done)
+			.catch(err => {throw err})
+		})
+
+		describe('apis :', () => {
+			navigateToUrlTests();
+			notStartedEventListeners();
+		});
 	});
 });

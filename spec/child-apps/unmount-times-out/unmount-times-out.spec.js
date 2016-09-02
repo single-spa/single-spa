@@ -2,7 +2,7 @@ const activeHash = `#unmount-times-out`;
 
 export default function() {
 	describe(`unmount-times-out app`, () => {
-		let childApp;
+		let childApp, ogJasmineTimeout;
 
 		beforeAll(() => {
 			singleSpa.declareChildApplication('./unmount-times-out.app.js', () => System.import('./unmount-times-out.app.js'), location => location.hash === activeHash);
@@ -11,6 +11,12 @@ export default function() {
 		beforeEach(done => {
 			location.hash = activeHash;
 
+			/* See http://jasmine.github.io/2.1/introduction.html#section-Asynchronous_Support.
+			 * Sometimes saucelabs is so slow on this test that jasmine times out
+			 */
+			ogJasmineTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+			jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+
 			System
 			.import('./unmount-times-out.app.js')
 			.then(app => childApp = app)
@@ -18,6 +24,10 @@ export default function() {
 			.then(done)
 			.catch(err => {throw err})
 		})
+
+		afterEach(() => {
+			jasmine.DEFAULT_TIMEOUT_INTERVAL = ogJasmineTimeout;
+		});
 
 		it(`is just waited for if dieOnTimeout is false`, (done) => {
 			singleSpa

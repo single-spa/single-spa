@@ -16,6 +16,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 			peopleWaitingOnAppChange.push({
 				resolve,
 				reject,
+				eventArguments,
 			});
 		});
 	}
@@ -39,7 +40,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 		try {
 			await Promise.all(loadPromises);
 		} catch(err) {
-			callCapturedEventListeners(eventArguments);
+			callAllEventListeners();
 			throw err;
 		}
 
@@ -88,7 +89,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 		try {
 			await Promise.all(unmountPromises);
 		} catch(err) {
-			callCapturedEventListeners(eventArguments);
+			callAllEventListeners();
 			throw err;
 		}
 
@@ -96,7 +97,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 		 * events (like hashchange or popstate) should have been cleaned up. So it's safe
 		 * to let the remaining captured event listeners to handle about the DOM event.
 		 */
-		callCapturedEventListeners(eventArguments);
+		callAllEventListeners();
 
 		try {
 			await Promise.all(loadThenMountPromises.concat(mountPromises));
@@ -111,6 +112,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 	function finishUpAndReturn() {
 		const returnValue = getMountedApps();
 
+		callAllEventListeners();
 		pendingPromises.forEach(promise => promise.resolve(returnValue));
 
 		/* Setting this allows for subsequent calls to reroute() to actually perform
@@ -128,13 +130,29 @@ export function reroute(pendingPromises = [], eventArguments) {
 			peopleWaitingOnAppChange = [];
 			reroute(nextPendingPromises);
 		} else {
-			if (!wasNoOp) {
-				window.dispatchEvent(new CustomEvent("single-spa:app-change"));
-			}
+			setTimeout(() => {
+				if (!wasNoOp) {
+					window.dispatchEvent(new CustomEvent("single-spa:app-change"));
+				}
 
-			window.dispatchEvent(new CustomEvent("single-spa:routing-event"));
+				window.dispatchEvent(new CustomEvent("single-spa:routing-event"));
+			});
 		}
 
 		return returnValue;
+	}
+
+	/* We need to call all event listeners that have been delayed because they were
+	 * waiting on single-spa. This includes haschange and popstate events for both
+	 * the current run of performAppChanges(), but also all of the queued event listeners.
+	 * We want to call the listeners in the same order as if they had not been delayed by
+	 * single-spa, which means queued ones first and then the most recent one.
+	 */
+	function callAllEventListeners() {
+		pendingPromises.forEach(pendingPromise => {
+			callCapturedEventListeners(pendingPromise.eventArguments);
+		});
+
+		callCapturedEventListeners(eventArguments);
 	}
 }
