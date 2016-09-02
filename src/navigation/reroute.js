@@ -115,7 +115,6 @@ export function reroute(pendingPromises = [], eventArguments) {
 		callAllEventListeners();
 		pendingPromises.forEach(promise => promise.resolve(returnValue));
 
-
 		/* Setting this allows for subsequent calls to reroute() to actually perform
 		 * a reroute instead of just getting queued behind the current reroute call.
 		 * We want to do this after the mounting/unmounting is done but before we
