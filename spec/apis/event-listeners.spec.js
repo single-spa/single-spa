@@ -75,5 +75,5 @@ function ensureCleanSlate(done) {
 }
 
 function isntIEOrEdge() {
-	return !(/MSIE 10/i.test(navigator.userAgent)) && !(/MSIE 9/.test(navigator.userAgent)) && !(/Edge\/\d./i.test(navigator.userAgent));
+	return navigator.userAgent.indexOf('MSIE') < 0 && !(/Trident.*rv[ :]*11\./.test(navigator.userAgent)) && !(/Edge\/\d./i.test(navigator.userAgent));
 }
