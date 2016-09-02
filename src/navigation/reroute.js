@@ -131,11 +131,13 @@ export function reroute(pendingPromises = [], eventArguments) {
 			peopleWaitingOnAppChange = [];
 			reroute(nextPendingPromises);
 		} else {
-			if (!wasNoOp) {
-				window.dispatchEvent(new CustomEvent("single-spa:app-change"));
-			}
+			setTimeout(() => {
+				if (!wasNoOp) {
+					window.dispatchEvent(new CustomEvent("single-spa:app-change"));
+				}
 
-			window.dispatchEvent(new CustomEvent("single-spa:routing-event"));
+				window.dispatchEvent(new CustomEvent("single-spa:routing-event"));
+			});
 		}
 
 		return returnValue;

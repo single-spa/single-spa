@@ -18,7 +18,7 @@ export function notStartedEventListeners() {
 				expect(hashchangeCalled).toBe(true);
 				expect(popstateCalled).toBe(true);
 				done();
-			});
+			}, 20);
 		});
 	});
 }
@@ -48,7 +48,7 @@ export function yesStartedEventListeners() {
 				expect(hashchangeCalled).toBe(true);
 				expect(popstateCalled).toBe(true);
 				done();
-			});
+			}, 20);
 		});
 	});
 }
