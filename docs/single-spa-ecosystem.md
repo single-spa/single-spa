@@ -4,7 +4,7 @@ great projects that make things better.
 
 ## Help for frameworks
 There are a growing number of projects that help you bootstrap, mount,
-and unmount applications written with popular frameworks. Feel free
+and unmount your applications that are written with popular frameworks. Feel free
 to contribute to this list with your own project:
 
 - [single-spa-angular1](https://github.com/CanopyTax/single-spa-angular1)
@@ -70,7 +70,7 @@ function app2InPromise() {
 	return new Promise((resolve, reject) => {
 		require.ensure(['./app-2.js'], require => {
 			try {
-				resolve(require(app2));
+				resolve(require('./app-2.js'));
 			} catch(err) {
 				reject(err);
 			}

@@ -2,10 +2,11 @@
 
 If you're interested in migrating existing SPAs into a single-spa, you'll
 need to do three things:
+
 1. Create a [root application](/docs/root-application.md)
 1. [Convert your SPA or SPAs to be child applications](#converting-spas-into-child-applications)
 1. Adjust your html file so that your root application is the new boss in town.
-   See [docs](/docs/root-application#indexhtml-file)
+   See [docs](/docs/root-application.md#indexhtml-file).
 
 ## Converting SPAs into child applications
 Your existing SPAs, whether they be Angular, React, or something else, probably are
