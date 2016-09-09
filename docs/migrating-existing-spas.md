@@ -23,7 +23,7 @@ docs before reinventing the wheel yourself. After that, you'll have to make sure
 SPA can clean up its DOM, DOM event listeners (all of them, but *especially* hashchange and popstate),
 and memory.
 
-### (2) Getting the CSS, fonts, <script> dependencies to work
+### (2) Getting the CSS, fonts, `<script>` dependencies to work
 Since existing SPAs are used to having an index.html file for their css, fonts,
 third party script-tags, etc., it's likely that you'll have to do some work
 to make sure all of those keep on working when your SPA becomes an html-less [child

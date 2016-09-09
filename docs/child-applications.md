@@ -1,11 +1,11 @@
 # Child applications
 
 A single-spa child application is everything that a normal SPA is, except that it doesn't have an HTML page.
-In a single-spa world, your app contains many child applications, where each has its own framework.
+In a single-spa world, your SPA contains many child applications, where each has its own framework.
 Child applications have their own client-side routing and their own frameworks/libraries.
 They render their own html and have full freedom to do whatever they want, whenever they are *mounted*.
-The concept of being *mounted* refers to whether a child application's
-[activity function](/docs/root-application.md#activity-function) returns a truthy value at any given time.
+The concept of being *mounted* refers to whether a child application is putting content on the DOM or not.
+What determines if a child application is mounted is its [activity function](/docs/root-application.md#activity-function).
 Whenever a child application is *not mounted*, it should remain completely dormant until mounted.
 
 ## Creating a child application
@@ -39,7 +39,7 @@ is available for many popular technologies. See [the ecosystem docs](/docs/singl
 
 ### load
 Although this is not a lifecycle function at all, `load` is an important part of any child application's
-lifecycle. If child applications are lazily loaded, this refers to when the code for a child application
+lifecycle. When child applications are being lazily loaded, this refers to when the code for a child application
 is fetched from the server and executed. This will happen once the child application's [activity function](/docs/root-application.md#activity-function)
 returns a truthy value for the first time. It is best practice to do as little as possible / nothing at all
 during `load`, but instead to wait until the bootstrap lifecycle function to do anything.

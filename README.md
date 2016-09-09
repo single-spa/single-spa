@@ -5,16 +5,20 @@
 Combine multiple SPAs into one SPA by implementing lifecycle functions. This allows you to:
 - [Use multiple frameworks on the same page](/docs/single-spa-ecosystem.md#help-for-frameworks) [without refreshing the page](/docs/child-applications.md)
   (React, Angular 1, Angular 2, Ember, or whatever you're using)
-- Write code using a new framework, without rewriting your app
-- [Lazy load code for improved initial load time](/docs/child-applications.md#load).
-
-single-spa works in Chrome, Firefox, Safari, IE11, and Edge.
+- Write code using a new framework, without rewriting your existing app
+- Lazy load code for improved initial load time.
 
 ## Architectural Overview
+single-spa takes inspiration from React component lifecycles by applying lifecycles to entire applications.
+It started out of a desire to use React + react-router instead of being forever stuck with our Angular 1 + ui-router application, 
+but now single-spa has grown to now support almost any framework coexisting with any other. Since Javascript is notorious for the short-life of its
+many frameworks, we decided to make it easy to use whichever frameworks you want.
+
 Apps built with single-spa are made up of the following pieces:
 
 1. An html file
-1. Many [child applications](/docs/child-applications), each of which is almost like an entirely distinct SPA. Child applications respond to url routing events and must know how to bootstrap, mount, and unmount themselves from the DOM.
+1. Many [child applications](/docs/child-applications.md), each of which is sort of like a distinct SPA. Child applications respond to url routing events
+   and must know how to bootstrap, mount, and unmount themselves from the DOM.
    For example, your React or Angular applications are child applications which are either active or dormant. When active, they listen to url routing events
    and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
 1. A [root application](/docs/root-application.md) where child applications are registered. Each child application is registered with three things:
@@ -25,13 +29,18 @@ Apps built with single-spa are made up of the following pieces:
 ## How hard will it be to use single-spa?
 single-spa works with es5, es6+, typescript, webpack, systemjs, gulp, grunt, bower, or really anything build system you can think of. You can npm
 install it, jspm install it, or even just use a `<script>` tag if you prefer. If you're not starting your application from scratch, you'll have to [migrate
-your app](/docs/migrating-existing-spas.md) to become a single-spa child application.
+your SPA](/docs/migrating-existing-spas.md) to become a single-spa child application.
+
+single-spa works in Chrome, Firefox, Safari, IE11, and Edge.
+
+## Isn't single-spa sort of a redundant name?
+Yep
 
 ## Documentation
-Extensive documentation is found in the [docs](/docs) directory.
+See the [docs](/docs).
 
 ## Simple Usage
-*Note*: this example uses [jspm](https://github.com/jspm/jspm-cli), but checkout the [build systems documentation](/docs/single-spa-ecosystem.md#help-with-frameworks) to see how
+*Note*: this example uses [jspm](https://github.com/jspm/jspm-cli), but check out the [ecosystem documentation](/docs/single-spa-ecosystem.md#help-for-frameworks) to see how
 to set everything up with webpack or other build systems.
 ```bash
 npm install -g jspm@beta
