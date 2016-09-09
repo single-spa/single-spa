@@ -43,6 +43,29 @@ or `null` (when the app doesn't exist). The string status is one of the followin
 - `SKIP_BECAUSE_BROKEN`: the app threw an error during load, bootstrap, mount, or unmount and has been
    siloed because it is misbehaving. Other apps may continue on normally, but this one will be skipped.
 
+## routing event
+single-spa fires an event `single-spa:routing-event` on the window every time that a routing event has occurred in which
+single-spa verified that all apps were correctly loaded, bootstrapped, mounted, and unmounted.
+This event will get fired after each hashchange, popstate, or triggerAppChange, even if no changes
+to child applications were necessary. Sample usage of this event might look like this:
+```js
+window.addEventListener('single-spa:routing-event', () => {
+	console.log('routing event occurred!');
+})
+```
+
+## app-change event
+single-spa fires an event `single-spa:app-change` on the window every time that one or more apps were loaded, bootstrapped,
+mounted, or unmounted. It is similar to `single-spa:routing-event` except that it will not fire unless
+one or more apps were actually loaded, bootstrapped, mounted, or unmounted. A hashchange, popstate, or triggerAppChange
+that does not result in one of those changes will not cause the event to be fired.
+Sample usage of this event might look like this:
+```js
+window.addEventListener('single-spa:app-change', () => {
+	console.log(singleSpa.getMountedApps())
+})
+```
+
 ## ensureJQuerySupport
 `ensureJQuerySupport(jQuery)`: Since jquery does event delegation, single-spa
 has to specifically monkey patch each version of jQuery that you're using. single-spa tries to do
