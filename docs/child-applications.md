@@ -1,7 +1,7 @@
 # Child applications
 
 A single-spa child application is everything that a normal SPA is, except that it doesn't have an HTML page.
-In a single-spa world, your app might contain many child applications, each with their own framework.
+In a single-spa world, your app contains many child applications, where each has its own framework.
 Child applications have their own client-side routing and their own frameworks/libraries.
 They render their own html and have full freedom to do whatever they want, whenever they are *mounted*.
 The concept of being *mounted* refers to whether a child application's
@@ -16,10 +16,10 @@ Once registered, the child application must correctly implement **all** of the f
 inside of its main entry point.
 
 ## Child application lifecycle
-During the course of a single-spa app, child applications are loaded, initialized, mounted, and remounted.
+During the course of a single-spa app, child applications are loaded, initialized (bootstrapped), mounted, and unmounted.
 single-spa provides hooks into the latter three lifecycle events via lifecycle functions. In order to
-hook into the `load` lifecycle, simply put code into the application that is run without a function being
-called.
+hook into the `load` lifecycle, simply put code into the application that is run before the `bootstrap` lifecycle
+is called.
 
 A lifecycle function is a function or array of functions that single-spa will call on a child application.
 Lifecycle functions are exported from the main entry point of a child application.
@@ -35,13 +35,12 @@ Notes:
 
 ### Lifecycle middleware
 Middleware that helps implement lifecycle functions for specific frameworks, libraries, and applications
-is available for many popular technologies. See [middleware docs](/docs/single-spa-ecosystem.md) for details.
+is available for many popular technologies. See [the ecosystem docs](/docs/single-spa-ecosystem.md) for details.
 
 ### load
 Although this is not a lifecycle function at all, `load` is an important part of any child application's
-lifecycle. It refers to when the code for a child application is fetched from the server and executed.
-The code for a child application is *always* lazy loaded by single-spa and will only be fetched from
-the server once the child application's [activity function](/docs/root-application.md#activity-function)
+lifecycle. If child applications are lazily loaded, this refers to when the code for a child application
+is fetched from the server and executed. This will happen once the child application's [activity function](/docs/root-application.md#activity-function)
 returns a truthy value for the first time. It is best practice to do as little as possible / nothing at all
 during `load`, but instead to wait until the bootstrap lifecycle function to do anything.
 If you need to do something during `load`, simply put the code into a child application's main entry point,
@@ -50,11 +49,11 @@ but not inside of an exported function.
 For example:
 ```js
 console.log("The child application has been loaded!");
-require('./path-to-some-file-i-want-to-execute');
+System.import('./path-to-some-file-i-want-to-execute');
 
-export function bootstrap() {...}
-export function mount() {...}
-export function unmount() {...}
+export async function bootstrap() {...}
+export async function mount() {...}
+export async function unmount() {...}
 ```
 
 ### bootstrap

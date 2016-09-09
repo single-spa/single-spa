@@ -1,19 +1,13 @@
 # single-spa API
 The single-spa library does not `export default`, but instead exports named functions and variables.
 
-## setLoader
-`setLoader(Loader)` sets the javascript [loader](https://whatwg.github.io/loader/) that will be used by single-spa.
-A loader must implement `Loader.import(...).then(...).catch(...)`, and the most commonly used loader is
-[SystemJS](https://github.com/systemjs/systemjs). This API should be called **before** any `declareChildApplication`
-calls are made.
-
 ## start
 `start()` is a function that must be called by your root application. Before `start` is called, child
 applications will be loaded, but will never be bootstrapped, mounted or unmounted.
 
 ## declareChildApplication
-`declareChildApplication(name, activeWhen)` is the most important api and the only api that is required to be
-used in order for single-spa to work. It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
+`declareChildApplication(name, activeWhen)` is the most important api your root application will use.
+It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
 
 ## triggerAppChange
 `triggerAppChange()` takes in no arguments and returns a Promise that will resolve/reject when all apps that
@@ -50,7 +44,7 @@ or `null` (when the app doesn't exist). The string status is one of the followin
    siloed because it is misbehaving. Other apps may continue on normally, but this one will be skipped.
 
 ## ensureJQuerySupport
-`ensureJQuerySupport(jQuery)`: Since jquery does some weird things with event listeners, single-spa
+`ensureJQuerySupport(jQuery)`: Since jquery does event delegation, single-spa
 has to specifically monkey patch each version of jQuery that you're using. single-spa tries to do
 this automatically as much as possible for looking for window.jQuery or window.$, but if you want
 to give your version of jQuery to single-spa manually, call ensureJQuerySupport(jQuery). The
@@ -83,3 +77,11 @@ nothing more than some warnings in the console up until `millis` is reached.
 
 If `dieOnTimeout` is true, child applications that are slowing things down will be siloed into a SKIP_BECAUSE_BROKEN
 status where they will never again be given the chance to break everything.
+
+## setLoader (deprecated)
+`setLoader(Loader)` sets the javascript [loader](https://whatwg.github.io/loader/) that will be used by single-spa.
+A loader must implement `Loader.import(...).then(...).catch(...)`, and the most commonly used loader is
+[SystemJS](https://github.com/systemjs/systemjs). This API should be called **before** any `declareChildApplication`
+calls are made. Once called, you may omit the [loading function](/docs/root-application.md#loading-function) argument when
+calling `declareChildApplication` and single-spa will assume that a child application may be loaded with
+`Loader.import(childAppName).then(childApp => ...)`
