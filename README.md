@@ -2,33 +2,45 @@
 [![npm version](https://img.shields.io/npm/v/single-spa.svg?style=flat-square)](https://www.npmjs.org/package/single-spa)
 [![Build Status](https://img.shields.io/travis/CanopyTax/single-spa.svg?style=flat-square)](https://travis-ci.org/CanopyTax/single-spa)
 
-Combine multiple SPAs into one SPA by implementing lifecycle functions. Allows you to:
-- [Trade off between frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) [without refreshing the page](/docs/child-applications.md)
+Combine multiple SPAs into one SPA by implementing lifecycle functions. This allows you to:
+- [Use multiple frameworks on the same page](/docs/single-spa-ecosystem.md#help-for-frameworks) [without refreshing the page](/docs/child-applications.md)
   (React, Angular 1, Angular 2, Ember, or whatever you're using)
-- [Lazy load code for improved initial load time](/docs/child-applications.md#load). This is baked in and requires no configuration.
-- [Ensure that no single part of the app can break everything](/docs/application-blast-radius.md).
+- Write code using a new framework, without rewriting your existing app
+- Lazy load code for improved initial load time.
+
+## Architectural Overview
+Single-spa takes inspiration from React component lifecycles by applying lifecycles to entire applications.
+It started out of a desire to use React + react-router instead of being forever stuck with our Angular 1 + ui-router application, 
+but now single-spa supports almost any framework coexisting with any other. Since Javascript is notorious for the short-life of its
+many frameworks, we decided to make it easy to use whichever frameworks you want.
+
+Apps built with single-spa are made up of the following pieces:
+
+1. Many [child applications](/docs/child-applications.md), each of which can be a distinct SPA. Child applications respond to url routing events
+   and must know how to bootstrap, mount, and unmount themselves from the DOM.
+   For example, your React or Angular applications are child applications which are either active or dormant. When active, they listen to url routing events
+   and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
+1. A [root application](/docs/root-application.md) where child applications are registered. Each child application is registered with three things:
+  1. A name
+  1. A function to load the child application's code
+  1. A function that determines when the child application is active/dormant.
+
+## How hard will it be to use single-spa?
+single-spa works with es5, es6+, typescript, webpack, systemjs, gulp, grunt, bower, or really anything build system you can think of. You can npm
+install it, jspm install it, or even just use a `<script>` tag if you prefer. If you're not starting your application from scratch, you'll have to [migrate
+your SPA](/docs/migrating-existing-spas.md) to become a single-spa child application.
 
 single-spa works in Chrome, Firefox, Safari, IE11, and Edge.
 
-## Architectural Overview
-Apps built with single-spa are made up of the following pieces:
-
-1. An index.html file
-1. A root application, in which child applications are registered. In order to register a child application, two things must be provided:
-  1. The url to the application
-  1. A function that determines if the application is active
-1. Many child applications, each of which is like an SPA itself. Child applications respond to url routing events and must know how to bootstrap, mount, and unmount themselves from the DOM.
-
-## Prerequistes
-In order to use single-spa, you must be using a javascript [loader](https://github.com/whatwg/loader). Since loaders are not yet supported natively by browsers, you'll have to use a polyfill, such as [SystemJS](https://github.com/systemjs/systemjs).
-If you're using a bundler (such as webpack or browserify) instead of a loader, or if you're using a non-standard loader (such as requirejs), check out [the migration guide](/docs/migrating-existing-spas.md)
-to see your options.
+## Isn't single-spa sort of a redundant name?
+Yep
 
 ## Documentation
-See the [docs](/docs) directory.
+See the [docs](/docs).
 
 ## Simple Usage
-*Note*: this example uses [jspm](https://github.com/jspm/jspm-cli), since it's the easiest way to set up a loader. However, jspm and systemjs are not required.
+*Note*: this example uses [jspm](https://github.com/jspm/jspm-cli), but check out the [ecosystem documentation](/docs/single-spa-ecosystem.md#help-for-frameworks) to see how
+to set everything up with webpack or other build systems.
 ```bash
 npm install -g jspm@beta
 jspm init
