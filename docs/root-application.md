@@ -17,7 +17,7 @@ Example:
 ```js
 <html>
   <body>
-    <script src="/path-to-root-application.md"></script>
+    <script src="/path-to-root-application.js"></script>
   </body>
 </html>
 ```

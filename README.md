@@ -9,15 +9,14 @@ Combine multiple SPAs into one SPA by implementing lifecycle functions. This all
 - Lazy load code for improved initial load time.
 
 ## Architectural Overview
-single-spa takes inspiration from React component lifecycles by applying lifecycles to entire applications.
+Single-spa takes inspiration from React component lifecycles by applying lifecycles to entire applications.
 It started out of a desire to use React + react-router instead of being forever stuck with our Angular 1 + ui-router application, 
-but now single-spa has grown to now support almost any framework coexisting with any other. Since Javascript is notorious for the short-life of its
+but now single-spa supports almost any framework coexisting with any other. Since Javascript is notorious for the short-life of its
 many frameworks, we decided to make it easy to use whichever frameworks you want.
 
 Apps built with single-spa are made up of the following pieces:
 
-1. An html file
-1. Many [child applications](/docs/child-applications.md), each of which is sort of like a distinct SPA. Child applications respond to url routing events
+1. Many [child applications](/docs/child-applications.md), each of which can be a distinct SPA. Child applications respond to url routing events
    and must know how to bootstrap, mount, and unmount themselves from the DOM.
    For example, your React or Angular applications are child applications which are either active or dormant. When active, they listen to url routing events
    and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
@@ -78,16 +77,25 @@ Create the child application (see [docs](/docs/child-applications.md) for more d
 document.getElementById('main-content').textContent += "App1 is loaded.";
 
 // apps/app1.js
-export async function bootstrap() {
-  document.getElementById('main-content').textContent += "App1 is bootstrapped.";
+export function bootstrap() {
+  return new Promise((resolve, reject) => {
+    document.getElementById('main-content').textContent += "App1 is bootstrapped.";
+    resolve();
+  });
 }
 
 export async function mount() {
-  document.getElementById('main-content').textContent += "App1 is mounted!";
+  return new Promise((resolve, reject) => {
+    document.getElementById('main-content').textContent += "App1 is mounted!";
+    resolve();
+  });
 }
 
 export async function unmount() {
-  document.getElementById('main-content').textContent = "";
+  return new Promise((resolve, reject) => {
+    document.getElementById('main-content').textContent = "";
+    resolve();
+  });
 }
 ```
 

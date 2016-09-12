@@ -19,8 +19,8 @@ lifecycle functions.
 ### (1) Implementing lifecycle functions
 See [the child application lifecycle docs](/docs/child-applications.md) to see what you need to do.
 The hardest part will almost certainly be the `unmount` lifecycle, since most SPAs aren't accustomed
-to going dormant and being unmounted. When implementing your lifecycle functions, first check out the [ecosystem](/docs/single-spa-ecosystem.md)
-docs before reinventing the wheel yourself. After that, you'll have to make sure that your
+to going dormant and unmounting themselves from the DOM. When implementing your lifecycle functions, first check out the [ecosystem](/docs/single-spa-ecosystem.md)
+docs before reinventing the wheel yourself. If that doesn't have everything you need, you'll have to make sure that your
 SPA can clean up its DOM, DOM event listeners (all of them, but *especially* hashchange and popstate),
 and memory.
 
