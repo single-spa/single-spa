@@ -84,14 +84,14 @@ export function bootstrap() {
   });
 }
 
-export async function mount() {
+export function mount() {
   return new Promise((resolve, reject) => {
     document.getElementById('main-content').textContent += "App1 is mounted!";
     resolve();
   });
 }
 
-export async function unmount() {
+export function unmount() {
   return new Promise((resolve, reject) => {
     document.getElementById('main-content').textContent = "";
     resolve();

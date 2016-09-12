@@ -35,19 +35,22 @@ In order to declare a child application, call the `declareChildApplication(name,
 ```js
 import { declareChildApplication } from 'single-spa';
 
-declareChildApplication("app1", () => System.import("src/app1/main.js"), function() {
+declareChildApplication("childApplicationName", loadingFunction, activityFunction;
+
+function loadingFunction() {
+  return System.import("src/app1/main.js");
+}
+
+function activityFunction() {
   return window.location.hash.indexOf("#/app1/") === 0;
-});
-declareChildApplication("app2", () => System.import("src/app2/main.js"), function() {
-  return window.location.hash.indexOf("#/app2/") === 0;
-});
+}
 ```
 
-### Path to child application
+### Child application name
 The first argument to `declareChildApplication` must be a string name.
 
 ### Loading function
-The second argument to `declareChildApplication` must be a function that returns a promise (or an "async function").
+The second argument to `declareChildApplication` must be a function that returns a promise (or an ["async function"](https://ponyfoo.com/articles/understanding-javascript-async-await)).
 The function will be called with no arguments when it's time to load the child application for the first time. The returned
 promise must be resolved with the child application. The most common implementation of a loading function is a System.import call:
 `() => System.import('/path/to/child-application.js')`
