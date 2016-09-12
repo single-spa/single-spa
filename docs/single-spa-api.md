@@ -3,15 +3,19 @@ The single-spa library does not `export default`, but instead exports named func
 
 ## start
 `start()` is a function that must be called by your root application. Before `start` is called, child
-applications will be loaded, but will never be bootstrapped, mounted or unmounted.
+applications will be loaded, but will never be bootstrapped, mounted or unmounted. The reason for `start`
+is to give you control over the performance of your SPA. For example, you may want to declare child applications
+immediately (to start downloading the code for the active ones), but not actually mount the child applications
+until an initial AJAX request (maybe to get information about the logged in user) has been completed. In that case,
+the best performance is achieved by calling `declareChildApplication` immediately, but calling `start` after
+the AJAX request is completed.
 
 ## declareChildApplication
 `declareChildApplication(name, activeWhen)` is the most important api your root application will use.
 It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
 
 ## triggerAppChange
-`triggerAppChange()` takes in no arguments and returns a Promise that will resolve/reject when all apps that
-should be mounted are mounted, etc.
+`triggerAppChange()` takes in no arguments and returns a Promise that will resolve/reject when all apps have mounted.
 
 ## navigateToUrl
 `navigateToUrl(obj)` takes in one optional argument and returns no value. It is a utility function that
