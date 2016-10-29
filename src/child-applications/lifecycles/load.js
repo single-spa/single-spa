@@ -73,7 +73,7 @@ function flattenFnArray(fns, description) {
 
 			function waitForPromises(index) {
 				const promise = fns[index]();
-				if (!(promise instanceof Promise)) {
+				if (!promise || typeof promise.then !== 'function' || typeof promise.catch !== 'function') {
 					reject(`${description} at index ${index} did not return a promise`);
 				} else {
 					promise

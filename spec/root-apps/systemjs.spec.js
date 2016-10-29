@@ -19,6 +19,7 @@ import unmountTimesOut from 'spec/child-apps/unmount-times-out/unmount-times-out
 import unmountTimesOutDies from 'spec/child-apps/unmount-times-out-dies/unmount-times-out-dies.spec.js';
 import usesLoader from 'spec/child-apps/uses-loader/uses-loader.spec.js';
 import navigateToUrlTests from 'spec/apis/navigate-to-url.spec.js';
+import returnsNonNativePromise from 'spec/child-apps/returns-non-native-promise/returns-non-native-promise.spec.js';
 import { notStartedEventListeners, yesStartedEventListeners } from 'spec/apis/event-listeners.spec.js';
 
 describe("SystemJS loader :", () => {
@@ -68,6 +69,7 @@ describe("SystemJS loader :", () => {
 			unmountTimesOut();
 			unmountTimesOutDies();
 			usesLoader();
+			returnsNonNativePromise();
 		});
 
 		describe(`apis :`, () => {

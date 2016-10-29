@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-jspm build \
+./node_modules/jspm/jspm.js build \
 	single-spa \
 	lib/single-spa.js \
 	--format umd \
