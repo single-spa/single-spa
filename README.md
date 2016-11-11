@@ -8,6 +8,9 @@ Combine multiple SPAs into one SPA by implementing lifecycle functions. This all
 - Write code using a new framework, without rewriting your existing app
 - Lazy load code for improved initial load time.
 
+## Demo and examples
+A [live demo](https://single-spa.surge.sh) is available and the source code for that demo is available in the [single-spa-examples](https://github.com/CanopyTax/single-spa-examples) repository.
+
 ## Architectural Overview
 Single-spa takes inspiration from React component lifecycles by applying lifecycles to entire applications.
 It started out of a desire to use React + react-router instead of being forever stuck with our Angular 1 + ui-router application, 
