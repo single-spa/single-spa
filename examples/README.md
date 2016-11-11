@@ -1,3 +1,2 @@
 # Examples
-There is [a whole repository](https://github.com/joeldenning/single-spa-examples) dedicated to examples. However, those examples
-are not yet up-to-date with single-spa@2.x's api. Contributions are welcome to that project in the meantime.
+There is [a github repository](https://github.com/CanopyTax/single-spa-examples) dedicated to examples and also a [live demo](https://single-spa.surge.sh).
