@@ -1,6 +1,8 @@
 export function handleChildAppError(err, childApp) {
 	const transformedErr = transformErr(err, childApp);
 
+	window.dispatchEvent(new CustomEvent("single-spa:application-broken", {detail: {appName: childApp.name}}));
+
 	if (window.SINGLE_SPA_TESTING) {
 		console.error(transformedErr);
 	} else {

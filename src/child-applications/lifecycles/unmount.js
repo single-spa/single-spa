@@ -6,7 +6,7 @@ export async function toUnmountPromise(app) {
 	if (app.status !== MOUNTED) {
 		return app;
 	}
-	app.status = UNMOUNTING
+	app.status = UNMOUNTING;
 
 	try {
 		await reasonableTime(app.unmount(), `Unmounting application ${app.name}'`, app.timeouts.unmount);
