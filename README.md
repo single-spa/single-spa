@@ -39,7 +39,7 @@ single-spa works in Chrome, Firefox, Safari, IE11, and Edge.
 Yep
 
 ## Documentation
-See the [docs](/docs).
+See the [docs](/docs). If you're looking for help with specific frameworks or build systems (React, Angular, Webpack, etc), check out the [ecosystem wiki](https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-ecosystem.md)
 
 ## Simple Usage
 *Note*: this example uses [jspm](https://github.com/jspm/jspm-cli), but check out the [ecosystem documentation](/docs/single-spa-ecosystem.md#help-for-frameworks) to see how
