@@ -8,8 +8,8 @@ and unmount your applications that are written with popular frameworks. Feel fre
 to contribute to this list with your own project:
 
 - [single-spa-angular1](https://github.com/CanopyTax/single-spa-angular1)
-- [single-spa-react](https://github.com/CanopyTax/single-spa-react) (no special
-  configuration for react-router is needed)
+- [single-spa-react](https://github.com/CanopyTax/single-spa-react)
+- [single-spa-angular2](https://github.com/CanopyTax/single-spa-angular2)
 
 ## SystemJS
 Since SystemJS is a Promise-based [loader](https://whatwg.github.io/loader), the way to
