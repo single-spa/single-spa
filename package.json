@@ -1,9 +1,9 @@
-{
-  "name": "single-spa",
+{  "name": "single-spa",
   "version": "3.2.1",
   "description": "Multiple applications, one page",
   "main": "lib/single-spa.js",
   "scripts": {
+    "jspm-install": "jspm install",
     "build": "./bin/build-code",
     "watch": "./bin/build-code -dw",
     "build:test": "./bin/build-tests",
