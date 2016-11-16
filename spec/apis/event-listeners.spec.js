@@ -20,11 +20,11 @@ export function notStartedEventListeners() {
 			window.location.hash = '#/a-new-hash';
 
 			function checkTestComplete() {
-				if (isntIEOrEdge()) {
-					if (hashchangeCalled && popstateCalled) {
-						done();
-					}
-				} else {
+				if (isIE()) {
+					// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
+					done(); // popstate isn't ever going to be called
+				} else if (hashchangeCalled && popstateCalled) {
+					// Wait for both hashchange and popstate events
 					done();
 				}
 			}
@@ -57,11 +57,11 @@ export function yesStartedEventListeners() {
 			window.location.hash = '#/a-hash-single-spa-is-started';
 
 			function checkTestComplete() {
-				if (isntIEOrEdge()) {
-					if (hashchangeCalled && popstateCalled) {
-						done();
-					}
-				} else {
+				if (isIE()) {
+					// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
+					done(); // popstate isn't ever going to be called
+				} else if (hashchangeCalled && popstateCalled) {
+					// Wait for both hashchange and popstate events
 					done();
 				}
 			}
@@ -84,6 +84,6 @@ function ensureCleanSlate(done) {
 	});
 }
 
-function isntIEOrEdge() {
-	return navigator.userAgent.indexOf('MSIE') < 0 && !(/Trident.*rv[ :]*11\./.test(navigator.userAgent)) && !(/Edge\/\d./i.test(navigator.userAgent));
+function isIE() {
+	return /Trident.*rv[ :]*11\./.test(navigator.userAgent);
 }
