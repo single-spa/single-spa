@@ -20,7 +20,7 @@ export function notStartedEventListeners() {
 			window.location.hash = '#/a-new-hash';
 
 			function checkTestComplete() {
-				if (isntIEOrEdge) {
+				if (isntIEOrEdge()) {
 					if (hashchangeCalled && popstateCalled) {
 						done();
 					}
@@ -57,7 +57,7 @@ export function yesStartedEventListeners() {
 			window.location.hash = '#/a-hash-single-spa-is-started';
 
 			function checkTestComplete() {
-				if (isntIEOrEdge) {
+				if (isntIEOrEdge()) {
 					if (hashchangeCalled && popstateCalled) {
 						done();
 					}
