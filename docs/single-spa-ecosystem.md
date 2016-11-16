@@ -10,6 +10,7 @@ to contribute to this list with your own project:
 - [single-spa-angular1](https://github.com/CanopyTax/single-spa-angular1)
 - [single-spa-react](https://github.com/CanopyTax/single-spa-react)
 - [single-spa-angular2](https://github.com/CanopyTax/single-spa-angular2)
+- [single-spa-vue](https://github.com/CanopyTax/single-spa-vue)
 
 ## SystemJS
 Since SystemJS is a Promise-based [loader](https://whatwg.github.io/loader), the way to
