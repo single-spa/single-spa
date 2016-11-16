@@ -18,14 +18,6 @@ export function notStartedEventListeners() {
 			});
 
 			window.location.hash = '#/a-new-hash';
-			setTimeout(() => {
-				expect(hashchangeCalled).toBe(true);
-				// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
-				if (isntIEOrEdge()) {
-					expect(popstateCalled).toBe(true);
-				}
-				done();
-			}, 20);
 
 			function checkTestComplete() {
 				if (isntIEOrEdge) {
