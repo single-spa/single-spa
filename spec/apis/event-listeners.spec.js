@@ -7,21 +7,27 @@ export function notStartedEventListeners() {
 			window.addEventListener("hashchange", () => {
 				if (window.location.hash === '#/a-new-hash')
 					hashchangeCalled = true;
+
+				checkTestComplete();
 			});
 			window.addEventListener("popstate", () => {
 				if (window.location.hash === '#/a-new-hash')
 					popstateCalled = true;
+
+				checkTestComplete();
 			});
 
 			window.location.hash = '#/a-new-hash';
-			setTimeout(() => {
-				expect(hashchangeCalled).toBe(true);
-				// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
-				if (isntIEOrEdge()) {
-					expect(popstateCalled).toBe(true);
+
+			function checkTestComplete() {
+				if (isIE()) {
+					// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
+					done(); // popstate isn't ever going to be called
+				} else if (hashchangeCalled && popstateCalled) {
+					// Wait for both hashchange and popstate events
+					done();
 				}
-				done();
-			}, 20);
+			}
 		});
 	});
 }
@@ -35,9 +41,11 @@ export function yesStartedEventListeners() {
 
 			window.addEventListener("hashchange", () => {
 				hashchangeCalled = true;
+				checkTestComplete();
 			});
 			window.addEventListener("popstate", () => {
 				popstateCalled = true;
+				checkTestComplete();
 			});
 
 			/* This will first trigger a PopStateEvent, and then a HashChangeEvent. The
@@ -47,14 +55,16 @@ export function yesStartedEventListeners() {
 			 * why this test is necessary.
 			 */
 			window.location.hash = '#/a-hash-single-spa-is-started';
-			setTimeout(() => {
-				expect(hashchangeCalled).toBe(true);
-				// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
-				if (isntIEOrEdge()) {
-					expect(popstateCalled).toBe(true);
+
+			function checkTestComplete() {
+				if (isIE()) {
+					// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
+					done(); // popstate isn't ever going to be called
+				} else if (hashchangeCalled && popstateCalled) {
+					// Wait for both hashchange and popstate events
+					done();
 				}
-				done();
-			}, 20);
+			}
 		});
 	});
 }
@@ -74,6 +84,6 @@ function ensureCleanSlate(done) {
 	});
 }
 
-function isntIEOrEdge() {
-	return navigator.userAgent.indexOf('MSIE') < 0 && !(/Trident.*rv[ :]*11\./.test(navigator.userAgent)) && !(/Edge\/\d./i.test(navigator.userAgent));
+function isIE() {
+	return /Trident.*rv[ :]*11\./.test(navigator.userAgent);
 }
