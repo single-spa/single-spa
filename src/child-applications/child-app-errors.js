@@ -1,3 +1,5 @@
+import CustomEvent from 'custom-event';
+
 export function handleChildAppError(err, childApp) {
 	const transformedErr = transformErr(err, childApp);
 
