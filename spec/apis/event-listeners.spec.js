@@ -7,10 +7,14 @@ export function notStartedEventListeners() {
 			window.addEventListener("hashchange", () => {
 				if (window.location.hash === '#/a-new-hash')
 					hashchangeCalled = true;
+
+				checkTestComplete();
 			});
 			window.addEventListener("popstate", () => {
 				if (window.location.hash === '#/a-new-hash')
 					popstateCalled = true;
+
+				checkTestComplete();
 			});
 
 			window.location.hash = '#/a-new-hash';
@@ -22,6 +26,16 @@ export function notStartedEventListeners() {
 				}
 				done();
 			}, 20);
+
+			function checkTestComplete() {
+				if (isntIEOrEdge) {
+					if (hashchangeCalled && popstateCalled) {
+						done();
+					}
+				} else {
+					done();
+				}
+			}
 		});
 	});
 }
@@ -35,9 +49,11 @@ export function yesStartedEventListeners() {
 
 			window.addEventListener("hashchange", () => {
 				hashchangeCalled = true;
+				checkTestComplete();
 			});
 			window.addEventListener("popstate", () => {
 				popstateCalled = true;
+				checkTestComplete();
 			});
 
 			/* This will first trigger a PopStateEvent, and then a HashChangeEvent. The
@@ -47,14 +63,16 @@ export function yesStartedEventListeners() {
 			 * why this test is necessary.
 			 */
 			window.location.hash = '#/a-hash-single-spa-is-started';
-			setTimeout(() => {
-				expect(hashchangeCalled).toBe(true);
-				// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
-				if (isntIEOrEdge()) {
-					expect(popstateCalled).toBe(true);
+
+			function checkTestComplete() {
+				if (isntIEOrEdge) {
+					if (hashchangeCalled && popstateCalled) {
+						done();
+					}
+				} else {
+					done();
 				}
-				done();
-			}, 20);
+			}
 		});
 	});
 }
