@@ -13,7 +13,12 @@ export async function toLoadPromise(app) {
 	let appOpts;
 
 	try {
-		appOpts = await app.loadImpl();
+		const loadPromise = app.loadImpl();
+		if (!smellsLikeAPromise(loadPromise)) {
+			// The name of the child app will be prepended to this error message inside of the handleChildAppError function
+			throw new Error(`single-spa loading function did not return a promise. Check the second argument to declareChildApplication('${app.name}', loadingFunction, activityFunction)`);
+		}
+		appOpts = await loadPromise;
 	} catch(err) {
 		handleChildAppError(err, app);
 		app.status = SKIP_BECAUSE_BROKEN;
@@ -73,7 +78,7 @@ function flattenFnArray(fns, description) {
 
 			function waitForPromises(index) {
 				const promise = fns[index]();
-				if (!promise || typeof promise.then !== 'function' || typeof promise.catch !== 'function') {
+				if (!smellsLikeAPromise(promise)) {
 					reject(`${description} at index ${index} did not return a promise`);
 				} else {
 					promise
@@ -89,4 +94,8 @@ function flattenFnArray(fns, description) {
 			}
 		});
 	}
+}
+
+function smellsLikeAPromise(promise) {
+	return promise && typeof promise.then === 'function' && typeof promise.catch === 'function';
 }
