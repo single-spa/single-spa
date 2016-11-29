@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
 	entry: [
@@ -32,6 +33,10 @@ module.exports = {
 		new webpack.optimize.UglifyJsPlugin({
 			compress: true,
 			test: /\.js($|\?)/i,
+			sourceMap: true,
 		}),
+		new CleanWebpackPlugin(['lib'], {
+			verbose: true,
+		})
 	],
 }
