@@ -3,7 +3,7 @@ import CustomEvent from 'custom-event';
 export function handleChildAppError(err, childApp) {
 	const transformedErr = transformErr(err, childApp);
 
-	window.dispatchEvent(new CustomEvent("single-spa:application-broken", {detail: {appName: childApp.name}}));
+	window.dispatchEvent(new CustomEvent("single-spa:application-broken", {detail: {appName: childApp.name, err: transformedErr}}));
 
 	if (window.SINGLE_SPA_TESTING) {
 		console.error(transformedErr);
