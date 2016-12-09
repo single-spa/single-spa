@@ -5,7 +5,7 @@ import { toBootstrapPromise } from 'src/child-applications/lifecycles/bootstrap.
 import { toMountPromise } from 'src/child-applications/lifecycles/mount.js';
 import { toUnmountPromise } from 'src/child-applications/lifecycles/unmount.js';
 import { getMountedApps, getAppsToLoad, getAppsToUnmount, getAppsToMount } from 'src/child-applications/child-apps.js';
-import { notSkipped, isntActive } from 'src/child-applications/child-app.helpers.js';
+import { notSkipped } from 'src/child-applications/child-app.helpers.js';
 import { callCapturedEventListeners } from './navigation-events.js';
 import { getAppsToUnload, toUnloadPromise } from 'src/child-applications/lifecycles/unload.js';
 

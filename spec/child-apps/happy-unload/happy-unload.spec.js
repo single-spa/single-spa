@@ -164,5 +164,56 @@ export default function() {
 				});
 			});
 		});
+
+		it(`resolves the promise for all callers to unloadChildApplication when the app is unloaded`, done => {
+			window.location.hash = activeHash;
+
+			let firstCallerResolved = false, secondCallerResolved = false;
+
+			singleSpa
+			.triggerAppChange()
+			.then(() => {
+				expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
+				expect(childApp.getNumBootstrapCalls()).toBe(1);
+				expect(childApp.getNumMountCalls()).toBe(1);
+				expect(childApp.getNumUnmountCalls()).toBe(0);
+				expect(childApp.getNumUnloadCalls()).toBe(0);
+			})
+			.then(() => {
+				// First caller to unloadChildApplication wants to waitForUnmount
+				singleSpa
+				.unloadChildApplication('./happy-unload.app.js', {waitForUnmount: true})
+				.then(() => {
+					firstCallerResolved = true;
+					if (secondCallerResolved) {
+						// Both callers had their promises resolved!
+						done();
+					}
+				})
+				.catch(err => {
+					fail(err);
+					done();
+				});
+
+				// Second caller to unloadChildApplication doesn't want to waitForUnmount
+				singleSpa
+				.unloadChildApplication('./happy-unload.app.js', {waitForUnmount: false})
+				.then(() => {
+					secondCallerResolved = true;
+					if (firstCallerResolved) {
+						// Both callers had their promises resolved!
+						done();
+					}
+				})
+				.catch(err => {
+					fail(err);
+					done();
+				})
+			})
+			.catch(err => {
+				fail(err);
+				done();
+			});
+		});
 	});
 }

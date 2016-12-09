@@ -80,32 +80,51 @@ export function unloadChildApplication(appName, opts={waitForUnmount: false}) {
 		throw new Error(`Could not unload child application '${appName}' because no such application has been declared`);
 	}
 
+	const appUnloadInfo = getAppUnloadInfo(app.name);
 	if (opts && opts.waitForUnmount) {
-		const appUnloadInfo = getAppUnloadInfo(app.name);
+		// We need to wait for unmount before unloading the app
+
 		if (appUnloadInfo) {
+			// Someone else is already waiting for this, too
 			return appUnloadInfo.promise;
 		} else {
+			// We're the first ones wanting the app to be resolved.
 			const promise = new Promise((resolve, reject) => {
-				addAppToUnload(app, promise, resolve, reject);
+				addAppToUnload(app, () => promise, resolve, reject);
 			});
 			return promise;
 		}
 	} else {
-		const promise = new Promise((resolve, reject) => {
-			addAppToUnload(app, promise, resolve, reject);
+		/* We should unmount the app, unload it, and remount it immediately.
+		 */
 
-			toUnmountPromise(app)
-				.then(toUnloadPromise)
-				.then(() => {
-					resolve()
-					setTimeout(() => {
-						// reroute, but the unload promise is done
-						reroute()
-					});
-				})
-				.catch(reject);
-		});
+		let resultPromise;
 
-		return promise;
+		if (appUnloadInfo) {
+			// Someone else is already waiting for this app to unload
+			resultPromise = appUnloadInfo.promise;
+			immediatelyUnloadApp(app, appUnloadInfo.resolve, appUnloadInfo.reject);
+		} else {
+			// We're the first ones wanting the app to be resolved.
+			resultPromise = new Promise((resolve, reject) => {
+				addAppToUnload(app, () => resultPromise, resolve, reject);
+				immediatelyUnloadApp(app, resolve, reject);
+			});
+		}
+
+		return resultPromise;
 	}
+}
+
+function immediatelyUnloadApp(app, resolve, reject) {
+	toUnmountPromise(app)
+		.then(toUnloadPromise)
+		.then(() => {
+			resolve()
+			setTimeout(() => {
+				// reroute, but the unload promise is done
+				reroute()
+			});
+		})
+		.catch(reject);
 }
