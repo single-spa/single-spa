@@ -30,11 +30,6 @@ module.exports = {
 		],
 	},
 	plugins: [
-		new webpack.optimize.UglifyJsPlugin({
-			compress: true,
-			test: /\.js($|\?)/i,
-			sourceMap: true,
-		}),
 		new CleanWebpackPlugin(['lib'], {
 			verbose: true,
 		})

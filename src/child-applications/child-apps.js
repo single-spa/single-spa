@@ -3,6 +3,8 @@ import { ensureJQuerySupport } from '../jquery-support.js';
 import { isActive, isLoaded, isntLoaded, toName, NOT_LOADED, shouldBeActive, shouldntBeActive, isntActive, notSkipped } from './child-app.helpers.js';
 import { reroute } from 'src/navigation/reroute.js';
 import { find } from 'src/utils/find.js';
+import { toUnmountPromise } from 'src/child-applications/lifecycles/unmount.js';
+import { toUnloadPromise, getAppUnloadInfo, addAppToUnload } from 'src/child-applications/lifecycles/unload.js';
 
 const childApps = [];
 
@@ -67,4 +69,43 @@ export function getAppsToMount() {
 		.filter(notSkipped)
 		.filter(isntActive)
 		.filter(isLoaded)
+}
+
+export function unloadChildApplication(appName, opts={waitForUnmount: false}) {
+	if (typeof appName !== 'string') {
+		throw new Error(`unloadChildApplication requires a string 'appName'`);
+	}
+	const app = find(childApps, childApp => childApp.name === appName);
+	if (!app) {
+		throw new Error(`Could not unload child application '${appName}' because no such application has been declared`);
+	}
+
+	if (opts && opts.waitForUnmount) {
+		const appUnloadInfo = getAppUnloadInfo(app.name);
+		if (appUnloadInfo) {
+			return appUnloadInfo.promise;
+		} else {
+			const promise = new Promise((resolve, reject) => {
+				addAppToUnload(app, promise, resolve, reject);
+			});
+			return promise;
+		}
+	} else {
+		const promise = new Promise((resolve, reject) => {
+			addAppToUnload(app, promise, resolve, reject);
+
+			toUnmountPromise(app)
+				.then(toUnloadPromise)
+				.then(() => {
+					resolve()
+					setTimeout(() => {
+						// reroute, but the unload promise is done
+						reroute()
+					});
+				})
+				.catch(reject);
+		});
+
+		return promise;
+	}
 }

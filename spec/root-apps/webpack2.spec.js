@@ -19,6 +19,8 @@ import unmountTimesOutDies from '../child-apps/unmount-times-out-dies/unmount-ti
 import unmountTimesOut from '../child-apps/unmount-times-out/unmount-times-out.spec.js';
 import returnsNonNativePromise from '../child-apps/returns-non-native-promise/returns-non-native-promise.spec.js';
 import invalidLoadFunction from '../child-apps/invalid-load-function/invalid-load-function.spec.js';
+import happyUnload from '../child-apps/happy-unload/happy-unload.spec.js';
+import invalidUnload from '../child-apps/invalid-unload/invalid-unload.spec.js';
 
 describe('webpack2 loader', () => {
 	beforeAll(done => {
@@ -53,6 +55,8 @@ describe('webpack2 loader', () => {
 		unmountTimesOut();
 		returnsNonNativePromise();
 		invalidLoadFunction();
+		happyUnload();
+		invalidUnload();
 	});
 });
 

@@ -5,14 +5,15 @@
   "main": "lib/single-spa.js",
   "scripts": {
     "jspm-install": "jspm install",
-    "build": "./bin/build-code",
+    "build": "./bin/build-code -p",
+    "build:dev": "./bin/build-code",
     "watch": "./bin/build-code -w",
     "build:test": "./bin/build-tests",
     "prepublish": "npm run build",
     "clean": "rm -rf lib",
-    "test": "npm run build:test && npm run build && karma start --single-run",
-    "test:debug": "npm run build:test && npm run build && karma start",
-    "test:travis": "npm run build:test && npm run build && karma start karma-saucelabs.conf.js --single-run"
+    "test": "npm run build:test && npm run build:dev && karma start --single-run",
+    "test:debug": "npm run build:test && npm run build:dev && karma start",
+    "test:travis": "npm run build:test && npm run build:dev && karma start karma-saucelabs.conf.js --single-run"
   },
   "repository": "https://github.com/CanopyTax/single-spa",
   "keywords": [

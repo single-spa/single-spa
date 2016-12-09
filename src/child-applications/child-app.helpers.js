@@ -9,6 +9,7 @@ export const NOT_MOUNTED = 'NOT_MOUNTED';
 export const MOUNTING = 'MOUNTING';
 export const MOUNTED = 'MOUNTED';
 export const UNMOUNTING = 'UNMOUNTING';
+export const UNLOADING = 'UNLOADING';
 export const SKIP_BECAUSE_BROKEN = 'SKIP_BECAUSE_BROKEN';
 
 export function isActive(app) {
