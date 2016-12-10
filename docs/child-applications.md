@@ -16,17 +16,15 @@ Once registered, the child application must correctly implement **all** of the f
 inside of its main entry point.
 
 ## Child application lifecycle
-During the course of a single-spa app, child applications are loaded, initialized (bootstrapped), mounted, and unmounted.
-single-spa provides hooks into the latter three lifecycle events via lifecycle functions. In order to
-hook into the `load` lifecycle, simply put code into the application that is run before the `bootstrap` lifecycle
-is called.
+During the course of a single-spa app, child applications are loaded, initialized (bootstrapped), mounted, unmounted, and unloaded.
+single-spa provides hooks into each phase via `lifecycles`.
 
 A lifecycle function is a function or array of functions that single-spa will call on a child application.
 Lifecycle functions are exported from the main entry point of a child application.
 
 Notes:
 - Lifecycle functions are not called with any arguments.
-- All lifecycle functions currently must be implemented by every child application.
+- Implementing `bootstrap`, `mount`, and `unmount` is required. But implementing `unload` is optional.
 - Each lifecycle function must either return a `Promise` or be an `async function`.
 - If an array of functions is exported (instead of just one function), the functions will be called
   one-after-the-other, waiting for the resolution of one function's promise before calling the next.
@@ -38,8 +36,7 @@ Middleware that helps implement lifecycle functions for specific frameworks, lib
 is available for many popular technologies. See [the ecosystem docs](/docs/single-spa-ecosystem.md) for details.
 
 ### load
-Although this is not a lifecycle function at all, `load` is an important part of any child application's
-lifecycle. When child applications are being lazily loaded, this refers to when the code for a child application
+When child applications are being lazily loaded, this refers to when the code for a child application
 is fetched from the server and executed. This will happen once the child application's [activity function](/docs/root-application.md#activity-function)
 returns a truthy value for the first time. It is best practice to do as little as possible / nothing at all
 during `load`, but instead to wait until the bootstrap lifecycle function to do anything.
@@ -57,7 +54,7 @@ export async function unmount() {...}
 ```
 
 ### bootstrap
-This lifecycle function will be called exactly once, right before the child application is
+This lifecycle function will be called once, right before the child application is
 mounted for the first time.
 
 ```js
@@ -143,6 +140,41 @@ export const unmount = [
 ];
 ```
 
+### unload
+The `unload` lifecycle is an optionally implemented lifecycle function. It will be called whenever an application should be
+`unloaded`. This will not ever happen unless someone calls the [`unloadChildApplication`](/docs/single-spa-api.md#unloadChildApplication) API.
+If a child application does not implement the unload lifecycle, then it assumed that unloading the app is a no-op.
+
+The purpose of the `unload` lifecycle is to perform logic right before a single-spa application is unloaded. Once
+the application is unloaded, the application status will be NOT_LOADED and the application will be re-bootstrapped.
+
+The motivation for `unload` was to implement the hot-loading of entire child applications, but it is useful in other
+scenarios as well when you want to perform some logic before an application is re-bootstrapped.
+
+```js
+export function unload() {
+  return new Promise((resolve, reject) => {
+    console.log('unloading');
+    resolve();
+  })
+}
+```
+
+```js
+export const unload = [
+  function firstThing() {
+    return new Promise((resolve, reject) => {
+      resolve();
+    })
+  },
+  function secondThing() {
+    return new Promise((resolve, reject) => {
+      resolve();
+    })
+  }
+];
+```
+
 ## Timeouts
 By default, child applications obey the [global dieOnTimeout configuration](/docs/single-spa-api.md#dieontimeout),
 but can override that behavior for their specific application. This is done by exporting a `timeouts` object
@@ -167,6 +199,10 @@ export const timeouts = {
   unmount: {
     millis: 5000,
     dieOnTimeout: true,
+  },
+  unload: {
+    millis: 5000,
+	dieOnTimeout: true,
   },
 };
 ```

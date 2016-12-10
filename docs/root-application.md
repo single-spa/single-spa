@@ -68,8 +68,5 @@ single-spa will call each child application's activity function under the follow
 
 ## Two child applications simultaneously??
 Yep, it's possible. And it's actually not that scary if you do it right. And once you do,
-it's really really powerful. One approach to do it is to designate one `<div id="main-content">` for the main
-content and then have other divs for navbars, menus, etc. Then choose to have
-only one main content application child application at a time, but many navbar/menu child application active
-simultaneously. Content applications would put their html into `#main-content`, and then clear out all DOM elements
-from that div when unmounting.
+it's really really powerful. One approach to do this is to create a `<div id="app-name"></div>` for each app,
+so that they never try to modify the same DOM at the same time.
