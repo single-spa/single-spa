@@ -142,14 +142,14 @@ export const unmount = [
 
 ### unload
 The `unload` lifecycle is an optionally implemented lifecycle function. It will be called whenever an application should be
-`unloaded`. This will not ever happen unless someone calls the [`unloadChildApplication`](/docs/single-spa-api.md#unloadChildApplication) API.
+`unloaded`. This will not ever happen unless someone calls the [`unloadChildApplication`](/docs/single-spa-api.md#unloadchildapplication) API.
 If a child application does not implement the unload lifecycle, then it assumed that unloading the app is a no-op.
 
 The purpose of the `unload` lifecycle is to perform logic right before a single-spa application is unloaded. Once
 the application is unloaded, the application status will be NOT_LOADED and the application will be re-bootstrapped.
 
 The motivation for `unload` was to implement the hot-loading of entire child applications, but it is useful in other
-scenarios as well when you want to perform some logic before an application is re-bootstrapped.
+scenarios as well when you want to re-bootstrap applications, but perform some logic before applications are re-bootstrapped.
 
 ```js
 export function unload() {
