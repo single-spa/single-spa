@@ -57,7 +57,7 @@ export default function() {
 				});
 			});
 
-			it(`unloads an app that isn't mounted, and then keeps it in NOT_LOADED status`, done => {
+			it(`unloads an app that isn't loaded, and then keeps it in NOT_LOADED status`, done => {
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
@@ -94,6 +94,80 @@ export default function() {
 					expect(childApp.getNumMountCalls()).toBe(1);
 					expect(childApp.getNumUnmountCalls()).toBe(1);
 					expect(childApp.getNumUnloadCalls()).toBe(1);
+					done();
+				})
+				.catch(err => {
+					fail(err);
+					done();
+				});
+			});
+
+			it(`is a no-op if the app is NOT_LOADED when you call unloadChildApplication on it`, done => {
+				singleSpa
+				.triggerAppChange()
+				.then(() => {
+					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
+					expect(childApp.getNumBootstrapCalls()).toBe(0);
+					expect(childApp.getNumMountCalls()).toBe(0);
+					expect(childApp.getNumUnmountCalls()).toBe(0);
+					expect(childApp.getNumUnloadCalls()).toBe(0);
+				})
+				.then(() => singleSpa.unloadChildApplication('./happy-unload.app.js'))
+				.then(() => {
+					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
+					expect(childApp.getNumBootstrapCalls()).toBe(0);
+					expect(childApp.getNumMountCalls()).toBe(0);
+					expect(childApp.getNumUnmountCalls()).toBe(0);
+					expect(childApp.getNumUnloadCalls()).toBe(0);
+
+					done();
+				})
+				.catch(err => {
+					fail(err);
+					done();
+				});
+			});
+
+			it(`immediately unloads apps in NOT_MOUNTED status, and then puts them into NOT_LOADED status (ready for next time they are activated)`, done => {
+				window.location.hash = activeHash;
+
+				singleSpa
+				.triggerAppChange()
+				.then(() => {
+					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
+					expect(childApp.getNumBootstrapCalls()).toBe(1);
+					expect(childApp.getNumMountCalls()).toBe(1);
+					expect(childApp.getNumUnmountCalls()).toBe(0);
+					expect(childApp.getNumUnloadCalls()).toBe(0);
+
+					window.location.hash = '#';
+					return singleSpa.triggerAppChange();
+				})
+				.then(() => {
+					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_MOUNTED');
+					expect(childApp.getNumBootstrapCalls()).toBe(1);
+					expect(childApp.getNumMountCalls()).toBe(1);
+					expect(childApp.getNumUnmountCalls()).toBe(1);
+					expect(childApp.getNumUnloadCalls()).toBe(0);
+					return singleSpa.unloadChildApplication('./happy-unload.app.js');
+				})
+				.then(() => {
+					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
+					expect(childApp.getNumBootstrapCalls()).toBe(1);
+					expect(childApp.getNumMountCalls()).toBe(1);
+					expect(childApp.getNumUnmountCalls()).toBe(1);
+					expect(childApp.getNumUnloadCalls()).toBe(1);
+
+					window.location.hash = activeHash;
+					return singleSpa.triggerAppChange();
+				})
+				.then(() => {
+					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
+					expect(childApp.getNumBootstrapCalls()).toBe(2);
+					expect(childApp.getNumMountCalls()).toBe(2);
+					expect(childApp.getNumUnmountCalls()).toBe(1);
+					expect(childApp.getNumUnloadCalls()).toBe(1);
+
 					done();
 				})
 				.catch(err => {
