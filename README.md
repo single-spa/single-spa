@@ -7,6 +7,7 @@ Combine multiple SPAs into one SPA by implementing lifecycle functions. This all
   (React, Angular 1, Angular 2, Ember, or whatever you're using)
 - Write code using a new framework, without rewriting your existing app
 - Lazy load code for improved initial load time.
+- Hot load entire chunks of your overall application (instead of individual files).
 
 ## Demo and examples
 A [live demo](https://single-spa.surge.sh) is available and the source code for that demo is available in the [single-spa-examples](https://github.com/CanopyTax/single-spa-examples) repository.

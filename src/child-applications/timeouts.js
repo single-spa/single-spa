@@ -11,6 +11,10 @@ const globalTimeoutConfig = {
 		millis: 3000,
 		dieOnTimeout: false,
 	},
+	unload: {
+		millis: 3000,
+		dieOnTimeout: false,
+	},
 };
 
 export function setBootstrapMaxTime(time, dieOnTimeout = false) {
@@ -41,6 +45,17 @@ export function setUnmountMaxTime(time, dieOnTimeout = false) {
 	}
 
 	globalTimeoutConfig.unmount = {
+		millis: time,
+		dieOnTimeout,
+	};
+}
+
+export function setUnloadMaxTime(time, dieOnTimeout = false) {
+	if (typeof time !== 'number' || time <= 0) {
+		throw new Error(`unload max time must be a positive integer number of milliseconds`);
+	}
+
+	globalTimeoutConfig.unload = {
 		millis: time,
 		dieOnTimeout,
 	};

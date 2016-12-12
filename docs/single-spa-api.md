@@ -37,15 +37,46 @@ as defined in the call to `declareChildApplication`.
 `getAppStatus(appName)` takes in one string parameter and returns either a string (when the app exists)
 or `null` (when the app doesn't exist). The string status is one of the following:
 
-- `NOT_BOOTSTRAPPED`: this app's source code isn't even loaded yet.
-- `LOADING_SOURCE_CODE`: this app's source code is being fetched.
+- `NOT_LOADED`: the app has been registered with single-spa, but the app itself has not yet been loaded.
+- `LOADING_SOURCE_CODE`: the app's source code is being fetched.
+- `NOT_BOOTSTRAPPED`: the app has been loaded, but not yet bootstrapped.
 - `BOOTSTRAPPING`: the `bootstrap` lifecycle function has been called, but has not yet finished.
 - `NOT_MOUNTED`: the app has been loaded and bootstrapped, but is not currently mounted.
 - `MOUNTING`: the app is being mounted, but has not finished.
 - `MOUNTED`: the app is currently active and is mounted to the DOM.
 - `UNMOUNTING`: the app is currently being unmounted, but has not yet finished.
+- `UNLOADING`: the app is currently being unloaded, but has not yet finished.
 - `SKIP_BECAUSE_BROKEN`: the app threw an error during load, bootstrap, mount, or unmount and has been
    siloed because it is misbehaving. Other apps may continue on normally, but this one will be skipped.
+
+## unloadChildApplication
+`unloadChildApplication(appName, opts)` takes in a string parameter `appName` and (optionally) an `opts` object. It returns
+a promise that is resolved when the child application has been successfully resolved. The `opts` parameter is an object with the
+following property:
+- `waitForUnmount`: a boolean that decides when to unload the application. Defaults to false.
+
+Examples:
+```js
+unloadChildApplication('app1', {waitForUnmount: false});
+unloadChildApplication('app1'); // This is the same as providing `{waitForUnmount: false}`
+
+unloadChildApplication('app1', {waitForUnmount: true});
+```
+
+The purpose of unloading a child application is to set it back to to a NOT_LOADED status, which means that
+it will be re-bootstrapped the next time it needs to mount. The motivation for this was to allow for
+the hot-reloading of entire child applications, but `unload` can be useful whenever you want to re-bootstrap
+your application.
+
+Single-spa performs the following steps when unloadChildApplication is called.
+1. Call the [unload lifecyle](/docs/child-applications.md#unload) on the child application that is being unloaded.
+2. Set the app status to NOT_LOADED
+3. Trigger a reroute, during which single-spa will potentially mount the application that was just unloaded.
+
+Because a child application might be mounted when `unloadChildApplication` is called, you can specify whether you want to immediately
+unload or if you want to wait until the application is no longer mounted. This is done with the `waitForUnmount` option. If `false`,
+single-spa immediately unloads the specified child application even if the app is currently mounted. If `true`, single-spa will unload
+the child application as soon as it is safe to do so (when the app status is not `MOUNTED`).
 
 ## routing event
 single-spa fires an event `single-spa:routing-event` on the window every time that a routing event has occurred in which

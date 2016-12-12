@@ -7,6 +7,7 @@ import { toUnmountPromise } from 'src/child-applications/lifecycles/unmount.js';
 import { getMountedApps, getAppsToLoad, getAppsToUnmount, getAppsToMount } from 'src/child-applications/child-apps.js';
 import { notSkipped } from 'src/child-applications/child-app.helpers.js';
 import { callCapturedEventListeners } from './navigation-events.js';
+import { getAppsToUnload, toUnloadPromise } from 'src/child-applications/lifecycles/unload.js';
 
 let appChangeUnderway = false, peopleWaitingOnAppChange = [];
 
@@ -48,11 +49,18 @@ export function reroute(pendingPromises = [], eventArguments) {
 	}
 
 	async function performAppChanges() {
-		const unmountPromises = getAppsToUnmount().map(toUnmountPromise);
-		if (unmountPromises.length > 0) {
+		const unloadPromises = getAppsToUnload().map(toUnloadPromise);
+
+		const unmountUnloadPromises = getAppsToUnmount()
+			.map(toUnmountPromise)
+			.map(unmountPromise => unmountPromise.then(toUnloadPromise));
+
+		const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
+		if (allUnmountPromises.length > 0) {
 			wasNoOp = false;
 		}
-		const unmountAllPromise = Promise.all(unmountPromises);
+
+		const unmountAllPromise = Promise.all(allUnmountPromises);
 
 		const appsToLoad = getAppsToLoad();
 
@@ -87,7 +95,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 		}
 
 		try {
-			await Promise.all(unmountPromises);
+			await unmountAllPromise;
 		} catch(err) {
 			callAllEventListeners();
 			throw err;
@@ -106,13 +114,15 @@ export function reroute(pendingPromises = [], eventArguments) {
 			throw err;
 		}
 
-		return finishUpAndReturn();
+		return finishUpAndReturn(false);
 	}
 
-	function finishUpAndReturn() {
+	function finishUpAndReturn(callEventListeners=true) {
 		const returnValue = getMountedApps();
 
-		callAllEventListeners();
+		if (callEventListeners) {
+			callAllEventListeners();
+		}
 		pendingPromises.forEach(promise => promise.resolve(returnValue));
 
 		/* Setting this allows for subsequent calls to reroute() to actually perform

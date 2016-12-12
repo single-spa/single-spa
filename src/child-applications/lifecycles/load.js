@@ -53,6 +53,7 @@ export async function toLoadPromise(app) {
 	app.bootstrap = flattenFnArray(appOpts.bootstrap, `App '${app.name}' bootstrap function`);
 	app.mount = flattenFnArray(appOpts.mount, `App '${app.name}' mount function`);
 	app.unmount = flattenFnArray(appOpts.unmount, `App '${app.name}' unmount function`);
+	app.unload = flattenFnArray(appOpts.unload || [], `App '${app.name}' unload function`);
 	app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
 
 	return app;
