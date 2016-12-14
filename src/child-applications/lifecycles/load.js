@@ -13,7 +13,7 @@ export async function toLoadPromise(app) {
 	let appOpts;
 
 	try {
-		const loadPromise = app.loadImpl();
+		const loadPromise = app.loadImpl({childAppName: app.name});
 		if (!smellsLikeAPromise(loadPromise)) {
 			// The name of the child app will be prepended to this error message inside of the handleChildAppError function
 			throw new Error(`single-spa loading function did not return a promise. Check the second argument to declareChildApplication('${app.name}', loadingFunction, activityFunction)`);
@@ -73,12 +73,12 @@ function flattenFnArray(fns, description) {
 		fns = [() => Promise.resolve()];
 	}
 
-	return function() {
+	return function(props) {
 		return new Promise((resolve, reject) => {
 			waitForPromises(0);
 
 			function waitForPromises(index) {
-				const promise = fns[index]();
+				const promise = fns[index](props);
 				if (!smellsLikeAPromise(promise)) {
 					reject(`${description} at index ${index} did not return a promise`);
 				} else {

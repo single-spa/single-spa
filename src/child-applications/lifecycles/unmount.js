@@ -9,7 +9,7 @@ export async function toUnmountPromise(app) {
 	app.status = UNMOUNTING;
 
 	try {
-		await reasonableTime(app.unmount(), `Unmounting application ${app.name}'`, app.timeouts.unmount);
+		await reasonableTime(app.unmount({childAppName: app.name}), `Unmounting application ${app.name}'`, app.timeouts.unmount);
 		app.status = NOT_MOUNTED;
 	} catch (err) {
 		handleChildAppError(err, app);
