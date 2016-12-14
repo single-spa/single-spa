@@ -91,12 +91,21 @@ window.addEventListener('single-spa:routing-event', () => {
 
 ## app-change event
 single-spa fires an event `single-spa:app-change` on the window every time that one or more apps were loaded, bootstrapped,
-mounted, or unmounted. It is similar to `single-spa:routing-event` except that it will not fire unless
+mounted, unmounted, or unloaded. It is similar to `single-spa:routing-event` except that it will not fire unless
 one or more apps were actually loaded, bootstrapped, mounted, or unmounted. A hashchange, popstate, or triggerAppChange
 that does not result in one of those changes will not cause the event to be fired.
 Sample usage of this event might look like this:
 ```js
 window.addEventListener('single-spa:app-change', () => {
+	console.log(singleSpa.getMountedApps())
+})
+```
+
+## no-app-change event
+When no apps were loaded, bootstrapped, mounted, unmounted, or unloaded, single-spa fires a `single-spa:no-app-change` event.
+This is the converse of the `single-spa:app-change` event -- only one will be fired for each routing event.
+```js
+window.addEventListener('single-spa:no-app-change', () => {
 	console.log(singleSpa.getMountedApps())
 })
 ```

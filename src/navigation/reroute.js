@@ -141,7 +141,9 @@ export function reroute(pendingPromises = [], eventArguments) {
 			reroute(nextPendingPromises);
 		} else {
 			setTimeout(() => {
-				if (!wasNoOp) {
+				if (wasNoOp) {
+					window.dispatchEvent(new CustomEvent("single-spa:no-app-change"));
+				} else {
 					window.dispatchEvent(new CustomEvent("single-spa:app-change"));
 				}
 
