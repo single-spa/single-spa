@@ -25,7 +25,7 @@ export async function toUnloadPromise(app) {
 
 	try {
 		app.status = UNLOADING;
-		await reasonableTime(app.unload(), `Unloading application '${app.name}'`, app.timeouts.unload);
+		await reasonableTime(app.unload({childAppName: app.name}), `Unloading application '${app.name}'`, app.timeouts.unload);
 	} catch (err) {
 		handleChildAppError(err, app);
 		app.status = SKIP_BECAUSE_BROKEN;

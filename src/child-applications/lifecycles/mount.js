@@ -7,7 +7,7 @@ export async function toMountPromise(app) {
 		return app;
 	}
 	try {
-		await reasonableTime(app.mount(), `Mounting application '${app.name}'`, app.timeouts.mount);
+		await reasonableTime(app.mount({childAppName: app.name}), `Mounting application '${app.name}'`, app.timeouts.mount);
 		app.status = MOUNTED;
 	} catch (err) {
 		handleChildAppError(err, app);

@@ -23,6 +23,7 @@ import returnsNonNativePromise from 'spec/child-apps/returns-non-native-promise/
 import invalidLoadFunction from 'spec/child-apps/invalid-load-function/invalid-load-function.spec.js';
 import happyUnload from 'spec/child-apps/happy-unload/happy-unload.spec.js';
 import invalidUnload from 'spec/child-apps/invalid-unload/invalid-unload.spec.js';
+import lifecyleProps from 'spec/child-apps/lifecycle-props/lifecycle-props.spec.js';
 import { notStartedEventListeners, yesStartedEventListeners } from 'spec/apis/event-listeners.spec.js';
 
 describe("SystemJS loader :", () => {
@@ -76,6 +77,7 @@ describe("SystemJS loader :", () => {
 			invalidLoadFunction();
 			happyUnload();
 			invalidUnload();
+			lifecyleProps();
 		});
 
 		describe(`apis :`, () => {

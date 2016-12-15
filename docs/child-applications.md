@@ -23,7 +23,7 @@ A lifecycle function is a function or array of functions that single-spa will ca
 Lifecycle functions are exported from the main entry point of a child application.
 
 Notes:
-- Lifecycle functions are not called with any arguments.
+- Lifecycle functions are called with a `props` argument, which is an object with a `childAppName` string.
 - Implementing `bootstrap`, `mount`, and `unmount` is required. But implementing `unload` is optional.
 - Each lifecycle function must either return a `Promise` or be an `async function`.
 - If an array of functions is exported (instead of just one function), the functions will be called
@@ -48,9 +48,9 @@ For example:
 console.log("The child application has been loaded!");
 System.import('./path-to-some-file-i-want-to-execute');
 
-export async function bootstrap() {...}
-export async function mount() {...}
-export async function unmount() {...}
+export async function bootstrap(props) {...}
+export async function mount(props) {...}
+export async function unmount(props) {...}
 ```
 
 ### bootstrap
@@ -58,7 +58,7 @@ This lifecycle function will be called once, right before the child application 
 mounted for the first time.
 
 ```js
-export function bootstrap() {
+export function bootstrap(props) {
   return new Promise((resolve, reject) => {
     resolve();
   })
@@ -67,12 +67,12 @@ export function bootstrap() {
 
 ```js
 export const bootstrap = [
-  function firstThing() {
+  function firstThing(props) {
     return new Promise((resolve, reject) => {
       resolve();
     })
   },
-  function secondThing() {
+  function secondThing(props) {
     return new Promise((resolve, reject) => {
       resolve();
     })
@@ -89,7 +89,7 @@ events (such as `hashchange` and `popstate`) will **not** trigger more calls to 
 instead should be handled by the childl application itself.
 
 ```js
-export function mount() {
+export function mount(props) {
   return new Promise((resolve, reject) => {
     resolve();
   })
@@ -98,12 +98,12 @@ export function mount() {
 
 ```js
 export const mount = [
-  function firstThing() {
+  function firstThing(props) {
     return new Promise((resolve, reject) => {
       resolve();
     })
   },
-  function secondThing() {
+  function secondThing(props) {
     return new Promise((resolve, reject) => {
       resolve();
     })
@@ -118,7 +118,7 @@ called, this function should clean up all DOM elements, DOM event listeners, lea
 observable subscriptions, etc. that were created at any point when the child application was mounted.
 
 ```js
-export function unmount() {
+export function unmount(props) {
   return new Promise((resolve, reject) => {
     resolve();
   })
@@ -127,12 +127,12 @@ export function unmount() {
 
 ```js
 export const unmount = [
-  function firstThing() {
+  function firstThing(props) {
     return new Promise((resolve, reject) => {
       resolve();
     })
   },
-  function secondThing() {
+  function secondThing(props) {
     return new Promise((resolve, reject) => {
       resolve();
     })
@@ -152,7 +152,7 @@ The motivation for `unload` was to implement the hot-loading of entire child app
 scenarios as well when you want to re-bootstrap applications, but perform some logic before applications are re-bootstrapped.
 
 ```js
-export function unload() {
+export function unload(props) {
   return new Promise((resolve, reject) => {
     console.log('unloading');
     resolve();
@@ -162,12 +162,12 @@ export function unload() {
 
 ```js
 export const unload = [
-  function firstThing() {
+  function firstThing(props) {
     return new Promise((resolve, reject) => {
       resolve();
     })
   },
-  function secondThing() {
+  function secondThing(props) {
     return new Promise((resolve, reject) => {
       resolve();
     })
@@ -183,9 +183,9 @@ from the main entry point of the child application. Example:
 ```js
 // app-1.main-entry.js
 
-export function bootstrap() {...}
-export function mount() {...}
-export function unmount() {...}
+export function bootstrap(props) {...}
+export function mount(props) {...}
+export function unmount(props) {...}
 
 export const timeouts = {
   bootstrap: {

@@ -21,6 +21,7 @@ import returnsNonNativePromise from '../child-apps/returns-non-native-promise/re
 import invalidLoadFunction from '../child-apps/invalid-load-function/invalid-load-function.spec.js';
 import happyUnload from '../child-apps/happy-unload/happy-unload.spec.js';
 import invalidUnload from '../child-apps/invalid-unload/invalid-unload.spec.js';
+import lifecyleProps from '../child-apps/lifecycle-props/lifecycle-props.spec.js';
 
 describe('webpack2 loader', () => {
 	beforeAll(done => {
@@ -57,6 +58,7 @@ describe('webpack2 loader', () => {
 		invalidLoadFunction();
 		happyUnload();
 		invalidUnload();
+		lifecyleProps();
 	});
 });
 
