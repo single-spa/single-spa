@@ -39,7 +39,7 @@ export default function singleSpaEventsApi() {
 				.triggerAppChange() // start with a clean slate (no previous tests doing anything)
 				.then(() => {
 					window.addEventListener("single-spa:routing-event", finishTest);
-					window.location.hash = `#/push-state-called`;
+					window.history.pushState({}, null, `#/push-state-called`);
 
 					function finishTest() {
 						window.removeEventListener("single-spa:routing-event", finishTest);
