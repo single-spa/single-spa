@@ -4,7 +4,7 @@ The single-spa library does not `export default`, but instead exports named func
 ## start
 `start()` is a function that must be called by your root application. Before `start` is called, child
 applications will be loaded, but will never be bootstrapped, mounted or unmounted. The reason for `start`
-is to give you control over the performance of your SPA. For example, you may want to declare child applications
+is to give you control over the performance of your single page application. For example, you may want to declare child applications
 immediately (to start downloading the code for the active ones), but not actually mount the child applications
 until an initial AJAX request (maybe to get information about the logged in user) has been completed. In that case,
 the best performance is achieved by calling `declareChildApplication` immediately, but calling `start` after

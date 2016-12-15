@@ -11,3 +11,11 @@ export function start() {
 export function isStarted() {
 	return started;
 }
+
+const startWarningDelay = 3000;
+
+setTimeout(() => {
+	if (!started) {
+		console.warn(`singleSpa.start() has not been called, ${startWarningDelay}ms after single-spa was loaded. Before start() is called, child apps can be declared and loaded, but not bootstrapped or mounted. See https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-api.md#start`);
+	}
+}, startWarningDelay)

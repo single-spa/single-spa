@@ -22,6 +22,26 @@ Example:
 </html>
 ```
 
+## Calling singleSpa.start()
+The [`start()` api](/docs/single-spa-api.md#start) **must** be called by your root application in order for child
+applications to actually be mounted. Before `start` is called, child applications will be loaded, but not bootstrapped/mounted/unmounted.
+The reason for `start` is to give you control over the performance. For example, you may want to declare child applications
+immediately (to start downloading the code for the active ones), but not actually mount the child applications
+until an initial AJAX request (maybe to get information about the logged in user) has been completed. In that case,
+the best performance is achieved by calling `declareChildApplication` immediately, but calling `start` after
+the AJAX request is completed.
+
+```js
+import { start } from 'single-spa';
+
+/* Calling start before declaring child apps means that single-spa can immediately mount apps, without
+ * waiting for any initial setup of the single page app.
+ */
+start();
+
+// Declare child applications....
+```
+
 ## Declaring child applications
 
 Declaring a [child application](/docs/child-applications.md) is registering it with single-spa so that it will be loaded,
@@ -33,9 +53,10 @@ and unmounted according to their own activity functions.
 In order to declare a child application, call the `declareChildApplication(name, howToLoad, activityFunction)` api. Example:
 
 ```js
-import { declareChildApplication } from 'single-spa';
+import { declareChildApplication, start } from 'single-spa';
 
 declareChildApplication("childApplicationName", loadingFunction, activityFunction;
+start();
 
 function loadingFunction() {
   return System.import("src/app1/main.js");
