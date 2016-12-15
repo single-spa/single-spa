@@ -125,6 +125,20 @@ export function reroute(pendingPromises = [], eventArguments) {
 		}
 		pendingPromises.forEach(promise => promise.resolve(returnValue));
 
+		try {
+			const appChangeEventName = wasNoOp ? "single-spa:no-app-change": "single-spa:app-change";
+			window.dispatchEvent(new CustomEvent(appChangeEventName));
+			window.dispatchEvent(new CustomEvent("single-spa:routing-event"));
+		} catch (err) {
+			/* We use a setTimeout because if someone else's event handler throws an error, single-spa
+			 * needs to carry on. If a listener to the event throws an error, it's their own fault, not
+			 * single-spa's.
+			 */
+			setTimeout(() => {
+				throw err;
+			});
+		}
+
 		/* Setting this allows for subsequent calls to reroute() to actually perform
 		 * a reroute instead of just getting queued behind the current reroute call.
 		 * We want to do this after the mounting/unmounting is done but before we
@@ -139,14 +153,6 @@ export function reroute(pendingPromises = [], eventArguments) {
 			const nextPendingPromises = peopleWaitingOnAppChange;
 			peopleWaitingOnAppChange = [];
 			reroute(nextPendingPromises);
-		} else {
-			setTimeout(() => {
-				if (!wasNoOp) {
-					window.dispatchEvent(new CustomEvent("single-spa:app-change"));
-				}
-
-				window.dispatchEvent(new CustomEvent("single-spa:routing-event"));
-			});
 		}
 
 		return returnValue;

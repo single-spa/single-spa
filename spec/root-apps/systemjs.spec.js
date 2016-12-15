@@ -25,6 +25,7 @@ import happyUnload from 'spec/child-apps/happy-unload/happy-unload.spec.js';
 import invalidUnload from 'spec/child-apps/invalid-unload/invalid-unload.spec.js';
 import lifecyleProps from 'spec/child-apps/lifecycle-props/lifecycle-props.spec.js';
 import { notStartedEventListeners, yesStartedEventListeners } from 'spec/apis/event-listeners.spec.js';
+import eventsApi from 'spec/apis/single-spa-events-api.spec.js';
 
 describe("SystemJS loader :", () => {
 	beforeAll(() => {
@@ -82,6 +83,7 @@ describe("SystemJS loader :", () => {
 
 		describe(`apis :`, () => {
 			yesStartedEventListeners();
+			eventsApi();
 		});
 	});
 

@@ -17,10 +17,8 @@ export async function unmount() {
 	numUnmountCalls++;
 }
 export function unload() {
-	return new Promise((resolve, reject) => {
-		numUnloadCalls++;
-		setTimeout(resolve, 200);
-	});
+	numUnloadCalls++;
+	return Promise.resolve();
 }
 export function getNumBootstrapCalls() {
 	return numBootstrapCalls;
