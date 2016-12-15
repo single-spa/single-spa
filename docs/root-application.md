@@ -25,7 +25,7 @@ Example:
 ## Calling singleSpa.start()
 The [`start()` api](/docs/single-spa-api.md#start) **must** be called by your root application in order for child
 applications to actually be mounted. Before `start` is called, child applications will be loaded, but not bootstrapped/mounted/unmounted.
-The reason for `start` is to give you control over the performance. For example, you may want to declare child applications
+The reason for `start` is to give you control over performance. For example, you may want to declare child applications
 immediately (to start downloading the code for the active ones), but not actually mount the child applications
 until an initial AJAX request (maybe to get information about the logged in user) has been completed. In that case,
 the best performance is achieved by calling `declareChildApplication` immediately, but calling `start` after
