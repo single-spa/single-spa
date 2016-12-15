@@ -12,7 +12,7 @@ export function isStarted() {
 	return started;
 }
 
-const startWarningDelay = 3000;
+const startWarningDelay = 5000;
 
 setTimeout(() => {
 	if (!started) {
