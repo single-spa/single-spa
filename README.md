@@ -44,6 +44,8 @@ Yep
 ## Documentation
 See the [docs](/docs). If you're looking for help with specific frameworks or build systems (React, Angular, Webpack, etc), check out the [ecosystem wiki](https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-ecosystem.md)
 
+Also, check out [this step by step guide](https://medium.com/@joeldenning/a-step-by-step-guide-to-single-spa-abbbcb1bedc6).
+
 ## Simple Usage
 *Note*: this example uses [jspm](https://github.com/jspm/jspm-cli), but check out the [ecosystem documentation](/docs/single-spa-ecosystem.md#help-for-frameworks) to see how
 to set everything up with webpack or other build systems.
