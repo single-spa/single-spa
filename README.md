@@ -2,6 +2,8 @@
 [![npm version](https://img.shields.io/npm/v/single-spa.svg?style=flat-square)](https://www.npmjs.org/package/single-spa)
 [![Build Status](https://img.shields.io/travis/CanopyTax/single-spa.svg?style=flat-square)](https://travis-ci.org/CanopyTax/single-spa)
 
+**A javascript metaframework**
+
 Combine multiple SPAs into one SPA by implementing lifecycle functions. This allows you to:
 - [Use multiple frameworks on the same page](/docs/single-spa-ecosystem.md#help-for-frameworks) [without refreshing the page](/docs/child-applications.md)
   (React, Angular 1, Angular 2, Ember, or whatever you're using)
