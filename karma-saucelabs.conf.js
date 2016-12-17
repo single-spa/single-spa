@@ -18,13 +18,13 @@ var customLaunchers = {
 		platform: 'Windows 8.1',
 		version: '11',
 	},
-	sl_ios_safari: {
+	sl_ios_safari_9: {
 		base: 'SauceLabs',
 		browserName: 'safari',
 		platform: 'OS X 10.11',
 		version: '9.0',
 	},
-	sl_ios_safari: {
+	sl_ios_safari_10: {
 		base: 'SauceLabs',
 		browserName: 'safari',
 		platform: 'OS X 10.11',
