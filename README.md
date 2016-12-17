@@ -2,6 +2,8 @@
 [![npm version](https://img.shields.io/npm/v/single-spa.svg?style=flat-square)](https://www.npmjs.org/package/single-spa)
 [![Build Status](https://img.shields.io/travis/CanopyTax/single-spa.svg?style=flat-square)](https://travis-ci.org/CanopyTax/single-spa)
 
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/joeldenning.svg)](https://saucelabs.com/u/joeldenning)
+
 **A javascript metaframework**
 
 Combine multiple SPAs into one SPA by implementing lifecycle functions. This allows you to:
