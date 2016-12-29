@@ -66,6 +66,35 @@ export function yesStartedEventListeners() {
 				}
 			}
 		});
+
+		/* This regression tests a bug fix. The bug was that single-spa used to removeEventListener by checking if functions' toString() resulted in the
+		 * same string. In (at least) Chrome, this is problematic because you whenever you do fn.bind(null), the fn.toString() turns into
+		 * `function() { [native code] }`. So if you have multiple hashchange/popstate listeners that are bound functions, then when you call removeEventListener
+		 * on one of the bound functions, it will remove all of the bound functions so that they are no longer listening to the hashchange or popstate events.
+		 *
+		 * This test ensures that single-spa is checking triple equals equality instead of string equality when comparing functions to removeEventListener
+		 */
+		it(`window.removeEventListener only removes exactly one event listener, which must === the originally added listener. Even if the listener is a bound function`, done => {
+			const boundListener1 = listener1.bind(null);
+			const boundListener2 = listener2.bind(null);
+
+			window.addEventListener('hashchange', boundListener1);
+			window.addEventListener('hashchange', boundListener2);
+
+			window.removeEventListener('hashchange', boundListener1);
+
+			// This should trigger listener2 to be called
+			window.location.hash = `#/nowhere`;
+
+			function listener1() {
+				fail("listener1 should not be called, since it was removed");
+			}
+
+			function listener2() {
+				window.removeEventListener('hashchange', boundListener2); // cleanup after ourselves
+				done();
+			}
+		});
 	});
 }
 
