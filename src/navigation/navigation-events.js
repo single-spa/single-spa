@@ -81,7 +81,7 @@ window.addEventListener = function(eventName, fn) {
 window.removeEventListener = function(eventName, listenerFn) {
 	if (typeof listenerFn === 'function') {
 		if (routingEventsListeningTo.indexOf(eventName) >= 0) {
-			capturedEventListeners[eventName] = capturedEventListeners[eventName].filter(fn => fn.toString() !== listenerFn.toString());
+			capturedEventListeners[eventName] = capturedEventListeners[eventName].filter(fn => fn !== listenerFn);
 			return;
 		}
 	}
