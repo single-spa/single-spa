@@ -91,6 +91,7 @@ export function yesStartedEventListeners() {
 			}
 
 			function listener2() {
+				window.removeEventListener('hashchange', boundListener2); // cleanup after ourselves
 				done();
 			}
 		});
