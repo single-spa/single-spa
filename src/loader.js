@@ -5,4 +5,5 @@ export function setLoader(loader) {
 		throw new Error(`'loader' is not a real loader. Must have an import function that returns a Promise`);
 	}
 	Loader = loader;
+	console.error("Warning: singleSpa.setLoader is deprecated. Please declare apps with a loading function instead. See https://github.com/CanopyTax/single-spa/blob/master/docs/root-application.md#loading-function");
 }
