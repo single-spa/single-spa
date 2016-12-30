@@ -20,7 +20,13 @@ function transformErr(ogErr, childApp) {
 	let result;
 
 	if (ogErr instanceof Error) {
-		ogErr.message = errPrefix + ogErr.message;
+		try {
+			ogErr.message = errPrefix + ogErr.message;
+		} catch(err) {
+			/* Some errors have read-only message properties, in which case there is nothing
+			 * that we can do.
+			 */
+		}
 		result = ogErr;
 	} else {
 		console.warn(`While ${childApp.status}, '${childApp.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
