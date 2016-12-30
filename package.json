@@ -26,9 +26,7 @@
   ],
   "author": "Joel Denning",
   "license": "MIT",
-  "dependencies": {
-    "custom-event": "^1.0.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.14.0",
     "babel-loader": "^6.2.5",
@@ -37,6 +35,7 @@
     "babel-preset-latest": "^6.14.0",
     "clean-webpack-plugin": "^0.1.14",
     "concurrently": "^2.2.0",
+    "custom-event": "^1.0.1",
     "jasmine": "^2.4.1",
     "jspm": "^0.17.0-beta.28",
     "karma": "^1.1.2",
@@ -74,7 +73,7 @@
       "fs": "jspm-nodelibs-fs@^0.2.0",
       "os": "jspm-nodelibs-os@^0.2.0",
       "path": "jspm-nodelibs-path@^0.2.0",
-      "process": "jspm-nodelibs-process@^0.2.0",
+      "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
       "stream": "jspm-nodelibs-stream@^0.2.0",
       "string_decoder": "jspm-nodelibs-string_decoder@^0.2.0",
       "util": "jspm-nodelibs-util@^0.2.0",
