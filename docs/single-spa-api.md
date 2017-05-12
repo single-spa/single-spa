@@ -129,7 +129,6 @@ window.addEventListener('single-spa:first-mount', () => {
 });
 ```
 
-
 ## ensureJQuerySupport
 `ensureJQuerySupport(jQuery)`: Since jquery does event delegation, single-spa
 has to specifically monkey patch each version of jQuery that you're using. single-spa tries to do
