@@ -124,7 +124,7 @@ window.addEventListener('single-spa:before-first-mount', () => {
 Right after the first time that any app is mounted, single-spa fires a `single-spa:first-mount` event. This event will only get fired once, ever.
 It does *not* get fired for each app's first mount, but rather for the first time that any of the apps is mounted.
 ```js
-window.addEventListener('single-spa:before-first-mount', () => {
+window.addEventListener('single-spa:first-mount', () => {
 	console.log('Suggested use case: log the time it took before the user sees any of the apps mounted');
 });
 ```
