@@ -1,6 +1,7 @@
 import { NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN } from '../child-app.helpers.js';
 import { handleChildAppError } from '../child-app-errors.js';
 import { reasonableTime } from '../timeouts.js';
+import CustomEvent from 'custom-event';
 
 let beforeFirstMountFired = false;
 let firstMountFired = false;
