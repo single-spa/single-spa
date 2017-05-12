@@ -1,3 +1,5 @@
+import {resetSingleSpa} from '../root-apps/root-app.helpers.js';
+
 export default function singleSpaEventsApi() {
 	const dummyApp = {
 		bootstrap() {return Promise.resolve()},
@@ -161,5 +163,84 @@ export default function singleSpaEventsApi() {
 				});
 			});
 		});
-	})
+	});
+
+	describe(`single-spa:first-mount events`, () => {
+		beforeEach(done => {
+			resetSingleSpa()
+				.then(() => window.location.hash = '#/')
+				.then(() => singleSpa.triggerAppChange())
+				.then(() => singleSpa.start())
+				.then(done)
+				.catch(err => {
+					fail(err);
+					done();
+				});
+		});
+
+		it(`fires first-mount exactly once when the first app is mounted`, done => {
+			singleSpa.declareChildApplication('firstMount', () => Promise.resolve(dummyApp), () => {
+				return window.location.hash.indexOf('#/firstMount') === 0;
+			});
+			let numEventsFired = 0;
+
+			window.addEventListener('single-spa:first-mount', () => {
+				numEventsFired++;
+			});
+
+			window.location.hash = `#/firstMount`;
+
+			singleSpa
+				.triggerAppChange()
+				.then(() => {
+					// Unmount
+					window.location.hash = `#/`;
+					return singleSpa.triggerAppChange();
+				})
+				.then(() => {
+					// Remount (shouldn't trigger an event)
+					window.location.hash = `#/firstMount`;
+					return singleSpa.triggerAppChange();
+				})
+				.then(() => {
+					expect(numEventsFired).toBe(1);
+					done();
+				})
+				.catch(err => {
+					fail(err);
+					done();
+				});
+		});
+
+		it(`fires before-first-mount exactly once before the first mount is fired`, done => {
+			singleSpa.declareChildApplication('beforeFirstMount', () => Promise.resolve(dummyApp), () => {
+				return window.location.hash.indexOf('#/beforeFirstMount') === 0;
+			});
+
+			let firstMountFired = false, beforeFirstMountFired = false;
+
+			window.addEventListener('single-spa:first-mount', () => {
+				firstMountFired = true;
+			});
+
+			window.addEventListener('single-spa:before-first-mount', () => {
+				expect(firstMountFired).toBe(false);
+				beforeFirstMountFired = true;
+			});
+
+			window.location.hash = `#/beforeFirstMount`;
+
+			singleSpa
+				.triggerAppChange()
+				.then(() => {
+					expect(beforeFirstMountFired).toBe(true);
+					expect(firstMountFired).toBe(true);
+					done();
+				})
+				.catch(err => {
+					fail(err);
+					done();
+				});
+		});
+	});
 }
