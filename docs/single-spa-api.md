@@ -110,6 +110,26 @@ window.addEventListener('single-spa:no-app-change', () => {
 })
 ```
 
+## before-first-mount
+Right before the first time that any app is mounted, single-spa fires a `single-spa:before-first-mount` event. This will happen
+after the app is already loaded, but before it is mounted. This event will only get fired once, ever. It does *not* get fired for each
+app's first mount, but rather for the first time that any of the apps is mounted.
+```js
+window.addEventListener('single-spa:before-first-mount', () => {
+	console.log('Suggested use case: remove a loader bar that the user is seeing right before the first app will be mounted');
+});
+```
+
+## first-mount
+Right after the first time that any app is mounted, single-spa fires a `single-spa:first-mount` event. This event will only get fired once, ever.
+It does *not* get fired for each app's first mount, but rather for the first time that any of the apps is mounted.
+```js
+window.addEventListener('single-spa:before-first-mount', () => {
+	console.log('Suggested use case: log the time it took before the user sees any of the apps mounted');
+});
+```
+
+
 ## ensureJQuerySupport
 `ensureJQuerySupport(jQuery)`: Since jquery does event delegation, single-spa
 has to specifically monkey patch each version of jQuery that you're using. single-spa tries to do
