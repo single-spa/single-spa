@@ -32,17 +32,17 @@ function activeWhen() {
 }
 ```
 
-## Webpack 2
-With webpack 2, we can take advantage of it's support for [code splitting with System.import](https://webpack.github.io/docs/code-splitting.html)
+## Webpack 2+
+With webpack 2+, we can take advantage of it's support for [code splitting with import()](https://webpack.js.org/guides/code-splitting/)
 in order to easily lazy-load child applications when they are needed. When registering
 child applications from inside of your root application, try the following for your
 [loading functions](/docs/root-application.md#loading-function).
 ```js
 import { declareChildApplication } from 'single-spa';
 
-declareChildApplication('app-name', () => System.import('./my-child-app.js'), activeWhen);
+declareChildApplication('app-name', () => import('./my-child-app.js'), activeWhen);
 // Or es5 version:
-// declareChildApplication('app-name', function() { return System.import('./my-child-app.js') }, activeWhen)
+// declareChildApplication('app-name', function() { return import('./my-child-app.js') }, activeWhen)
 
 function activeWhen() {
 	return window.location.hash.indexOf('#/my-child-app') === 0;
