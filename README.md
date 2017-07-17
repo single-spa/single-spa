@@ -7,7 +7,7 @@
 **A javascript metaframework**
 
 Combine multiple SPAs into one SPA by implementing lifecycle functions. This allows you to:
-- [Use multiple frameworks on the same page](/docs/single-spa-ecosystem.md#help-for-frameworks) [without refreshing the page](/docs/child-applications.md)
+- [Use multiple frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) on the same page [without refreshing the page](/docs/child-applications.md)
   (React, Angular 1, Angular 2, Ember, or whatever you're using)
 - Write code using a new framework, without rewriting your existing app
 - Lazy load code for improved initial load time.
@@ -28,10 +28,10 @@ Apps built with single-spa are made up of the following pieces:
    and must know how to bootstrap, mount, and unmount themselves from the DOM.
    For example, your React or Angular applications are child applications which are either active or dormant. When active, they listen to url routing events
    and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
-1. A [root application](/docs/root-application.md) where child applications are registered. Each child application is registered with three things:
-  1. A name
-  1. A function to load the child application's code
-  1. A function that determines when the child application is active/dormant.
+2. A [root application](/docs/root-application.md) where child applications are registered. Each child application is registered with three things:
+    1. A name
+    2. A function to load the child application's code
+    3. A function that determines when the child application is active/dormant.
 
 ## How hard will it be to use single-spa?
 single-spa works with es5, es6+, typescript, webpack, systemjs, gulp, grunt, bower, or really anything build system you can think of. You can npm
