@@ -7,7 +7,7 @@
 **A javascript metaframework**
 
 Build micro frontends that coexist and can each be written with their own framework. This allows you to:
-- [Use multiple frameworks on the same page](/docs/single-spa-ecosystem.md#help-for-frameworks) [without refreshing the page](/docs/child-applications.md)
+- [Use multiple frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) on the same page [without refreshing the page](/docs/child-applications.md)
   ([React](https://github.com/CanopyTax/single-spa-react), [Angular 1](https://github.com/CanopyTax/single-spa-angular1), [Angular 2](https://github.com/CanopyTax/single-spa-angular2), [Ember](https://github.com/CanopyTax/single-spa-ember), or whatever you're using)
 - Write code using a new framework, without rewriting your existing app
 - Lazy load code for improved initial load time.
@@ -31,10 +31,10 @@ Apps built with single-spa are made up of the following pieces:
 	 together and do not each have their own html page.
    For example, your React or Angular applications are child applications which are either active or dormant. When active, they listen to url routing events
    and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
-1. A [root application](/docs/root-application.md). The root application is the html page, plus the javascript that registers child applications with single-spa. Each child application is registered with three things:
+2. A [root application](/docs/root-application.md). The root application is the html page, plus the javascript that registers child applications with single-spa. Each child application is registered with three things:
   1. A name
-  1. A function to load the child application's code
-  1. A function that determines when the child application is active/dormant.
+  2. A function to load the child application's code
+  3. A function that determines when the child application is active/dormant.
 
 ## How hard will it be to use single-spa?
 single-spa works with es5, es6+, typescript, webpack, systemjs, gulp, grunt, bower, ember-cli, or really anything build system you can think of. You can npm

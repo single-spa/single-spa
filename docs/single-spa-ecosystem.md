@@ -35,7 +35,7 @@ Since SystemJS is a Promise-based [loader](https://whatwg.github.io/loader), the
 lazy load your child applications is straightforward:
 
 ```js
-import { declareChildApplication } from 'single-spa';
+import {declareChildApplication} from 'single-spa';
 
 // Import the child application with a SystemJS.import call
 declareChildApplication('app-name-1', () => SystemJS.import('./my-child-app.js'), activeWhen);
@@ -53,7 +53,7 @@ With webpack 1, there is no support for Promise-based code splitting. Instead, w
 a require.ensure in a Promise, or just give up on lazy loading completely.
 
 ```js
-import { declareChildApplication } from 'single-spa';
+import {declareChildApplication} from 'single-spa';
 import app1 from './app1'; // Not lazy loading with code splitting :(
 
 // Giving up on lazy loading and code splitting :(
