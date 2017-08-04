@@ -16,11 +16,11 @@ Once registered, the child application must correctly implement **all** of the f
 inside of its main entry point.
 
 ## Child application lifecycle
-During the course of a single-spa app, child applications are loaded, initialized (bootstrapped), mounted, unmounted, and unloaded.
+During the course of a single-spa page, child applications are loaded, initialized (bootstrapped), mounted, unmounted, and unloaded.
 single-spa provides hooks into each phase via `lifecycles`.
 
 A lifecycle function is a function or array of functions that single-spa will call on a child application.
-Lifecycle functions are exported from the main entry point of a child application.
+Single-spa calls these by finding exported functions from the child application's main file.
 
 Notes:
 - Lifecycle functions are called with a `props` argument, which is an object with a `childAppName` string.
@@ -46,7 +46,6 @@ but not inside of an exported function.
 For example:
 ```js
 console.log("The child application has been loaded!");
-System.import('./path-to-some-file-i-want-to-execute');
 
 export async function bootstrap(props) {...}
 export async function mount(props) {...}
@@ -59,25 +58,13 @@ mounted for the first time.
 
 ```js
 export function bootstrap(props) {
-  return new Promise((resolve, reject) => {
-    resolve();
-  })
+	return Promise
+		.resolve()
+		.then(() => {
+			// This is where you do one-time initialization
+			console.log('bootstrapped!')
+		});
 }
-```
-
-```js
-export const bootstrap = [
-  function firstThing(props) {
-    return new Promise((resolve, reject) => {
-      resolve();
-    })
-  },
-  function secondThing(props) {
-    return new Promise((resolve, reject) => {
-      resolve();
-    })
-  }
-];
 ```
 
 ### mount
@@ -90,25 +77,13 @@ instead should be handled by the childl application itself.
 
 ```js
 export function mount(props) {
-  return new Promise((resolve, reject) => {
-    resolve();
-  })
+	return Promise
+		.resolve()
+		.then(() => {
+			// This is where you tell a framework (e.g., React) to render some ui to the dom
+			console.log('mounted!')
+		});
 }
-```
-
-```js
-export const mount = [
-  function firstThing(props) {
-    return new Promise((resolve, reject) => {
-      resolve();
-    })
-  },
-  function secondThing(props) {
-    return new Promise((resolve, reject) => {
-      resolve();
-    })
-  }
-];
 ```
 
 ### unmount
@@ -119,25 +94,13 @@ observable subscriptions, etc. that were created at any point when the child app
 
 ```js
 export function unmount(props) {
-  return new Promise((resolve, reject) => {
-    resolve();
-  })
+	return Promise
+		.resolve()
+		.then(() => {
+			// This is where you tell a framework (e.g., React) to unrender some ui from the dom
+			console.log('unmounted!');
+		});
 }
-```
-
-```js
-export const unmount = [
-  function firstThing(props) {
-    return new Promise((resolve, reject) => {
-      resolve();
-    })
-  },
-  function secondThing(props) {
-    return new Promise((resolve, reject) => {
-      resolve();
-    })
-  }
-];
 ```
 
 ### unload
@@ -153,26 +116,13 @@ scenarios as well when you want to re-bootstrap applications, but perform some l
 
 ```js
 export function unload(props) {
-  return new Promise((resolve, reject) => {
-    console.log('unloading');
-    resolve();
-  })
+	return Promise
+		.resolve()
+		.then(() => {
+			// This is where you would normally do whatever it is you need to hot reload the code.
+			console.log('unloaded!');
+		});
 }
-```
-
-```js
-export const unload = [
-  function firstThing(props) {
-    return new Promise((resolve, reject) => {
-      resolve();
-    })
-  },
-  function secondThing(props) {
-    return new Promise((resolve, reject) => {
-      resolve();
-    })
-  }
-];
 ```
 
 ## Timeouts
