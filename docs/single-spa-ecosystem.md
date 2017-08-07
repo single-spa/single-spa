@@ -10,7 +10,7 @@ to contribute to this list with your own project:
 - [single-spa-react](https://github.com/CanopyTax/single-spa-react)
 - [single-spa-angular2](https://github.com/CanopyTax/single-spa-angular2)
 - [single-spa-vue](https://github.com/CanopyTax/single-spa-vue)
-- [single-spa-ember](https://github.com/CanopyTax/single-spa-vue)
+- [single-spa-ember](https://github.com/CanopyTax/single-spa-ember)
 - [single-spa-preact](https://github.com/CanopyTax/single-spa-preact)
 - [single-spa-inferno](https://github.com/CanopyTax/single-spa-inferno)
 - [single-spa-svelte](https://github.com/CanopyTax/single-spa-svelte)
