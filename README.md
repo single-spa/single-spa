@@ -16,7 +16,7 @@ Build micro frontends that coexist and can each be written with their own framew
 ## Demo and examples
 A [live demo](https://single-spa.surge.sh) is available and the source code for that demo is available in the [single-spa-examples](https://github.com/CanopyTax/single-spa-examples) repository.
 
-Also, you can check out [a simple webpack starter project](https://github.com/joeldenning/simple-single-spa-webpack-example) which is simpler and hopefully to get started with.
+Also, you can check out [a simple webpack starter project](https://github.com/joeldenning/simple-single-spa-webpack-example) which is simpler and hopefully easier to get started with.
 
 ## Architectural Overview
 Single-spa takes inspiration from React component lifecycles by applying lifecycles to entire applications.
