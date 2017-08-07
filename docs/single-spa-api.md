@@ -1,5 +1,16 @@
 # single-spa API
 The single-spa library does not `export default`, but instead exports named functions and variables.
+What this means is you can use the api in two ways:
+
+```js
+import * as singleSpa from 'single-spa';
+// OR
+import {declareChildApplication, start} from 'single-spa';
+```
+
+## declareChildApplication
+`declareChildApplication(name, activeWhen)` is the most important api your root application will use.
+It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
 
 ## start
 `start()` is a function that must be called by your root application. Before `start` is called, child
@@ -9,10 +20,6 @@ immediately (to start downloading the code for the active ones), but not actuall
 until an initial AJAX request (maybe to get information about the logged in user) has been completed. In that case,
 the best performance is achieved by calling `declareChildApplication` immediately, but calling `start` after
 the AJAX request is completed.
-
-## declareChildApplication
-`declareChildApplication(name, activeWhen)` is the most important api your root application will use.
-It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
 
 ## triggerAppChange
 `triggerAppChange()` takes in no arguments and returns a Promise that will resolve/reject when all apps have mounted.
@@ -27,7 +34,7 @@ allows for easy url navigation between child applications, without needing to de
 - a DOMEvent object for a click event on a DOMElement that has an `href` attribute
   (ideal for the `<a onclick="singleSpaNavigate"></a>` use case).
 
-This function is exposed onto the window as `window.singleSpaNavigate`, for convenience.
+This function is exposed onto the window as `window.singleSpaNavigate`, for convenience and use inside of `<button onclick="singleSpaNavigate('url')">` or `<a href="/url" onclick="singleSpaNavigate">`
 
 ## getMountedApps
 `getMountedApps()` returns an array of strings, where each string is the name of the child application,
