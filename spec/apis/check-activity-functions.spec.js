@@ -47,9 +47,9 @@ export default function checkActivityFunctionsApi() {
 }
 
 function activityFunction1 (location) {
-	return location.includes('one')
+	return location.indexOf('one') !== -1
 }
 
 function activityFunction2 (location) {
-	return location.includes('two')
+	return location.indexOf('two') !== -1
 }
