@@ -85,6 +85,11 @@ unload or if you want to wait until the application is no longer mounted. This i
 single-spa immediately unloads the specified child application even if the app is currently mounted. If `true`, single-spa will unload
 the child application as soon as it is safe to do so (when the app status is not `MOUNTED`).
 
+## checkActivityFunctions
+`checkActivityFunctions(mockLocation)` takes in a string parameter `mockWindowLocation`. It returns an array of
+`childApplicationName` strings. This API isn't used by the library internally. It's meant to support future use cases
+and tests.
+
 ## routing event
 single-spa fires an event `single-spa:routing-event` on the window every time that a routing event has occurred in which
 single-spa verified that all apps were correctly loaded, bootstrapped, mounted, and unmounted.
