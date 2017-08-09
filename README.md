@@ -54,10 +54,9 @@ Also, check out [this step by step guide](https://medium.com/@joeldenning/a-step
 ## Simple Usage
 For a full example, check out [this simple webpack example](https://github.com/joeldenning/simple-single-spa-webpack-example).
 
-To create a single-spa application, you will need to do two things:
-1. Create a root application. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/root-application.md) for more detail.
+To create a single-spa application, you will need to do three things:
 
-The html file:
+1. Create an html file:
 ```html
 <html>
 <body>
@@ -66,7 +65,8 @@ The html file:
 </html>
 ```
 
-The js file:
+2. Create a root application. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/root-application.md) for more detail.
+
 ```js
 // root-application.js
 import * as singleSpa from 'single-spa';
@@ -88,7 +88,7 @@ singleSpa.declareChildApplication(appName, loadingFunction, activityFunction);
 singleSpa.start();
 ```
 
-2. Create a child application. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/child-applications.md) for more detail.
+3. Create a child application. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/child-applications.md) for more detail.
 ```js
 //app1.js
 
