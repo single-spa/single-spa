@@ -32,24 +32,33 @@ export default function checkActivityFunctionsApi() {
 		})
 
 		it(`returns 'test1' when the locationContains 'one'`, () => {
-			expect(singleSpa.checkActivityFunctions('google.com/one')).toEqual(['test1'])
+			const wLocation = mockWindowLocation('google.com/one')
+			expect(singleSpa.checkActivityFunctions(wLocation)).toEqual(['test1'])
 		})
 
 		it(`returns 'test2' when the locationContains 'two'`, () => {
-			expect(singleSpa.checkActivityFunctions('something.com/two')).toEqual(['test2'])
+			const wLocation = mockWindowLocation('google.com/two')
+			expect(singleSpa.checkActivityFunctions(wLocation)).toEqual(['test2'])
 		})
 
 		it(`returns both when the locationContains both`, () => {
-			expect(singleSpa.checkActivityFunctions('something.com/two/one')).toEqual(['test1', 'test2'])
+			const wLocation = mockWindowLocation('something.com/two/one')
+			expect(singleSpa.checkActivityFunctions(wLocation)).toEqual(['test1', 'test2'])
 		})
 	})
 
 }
 
 function activityFunction1 (location) {
-	return location.indexOf('one') !== -1
+	return location.href.indexOf('one') !== -1
 }
 
 function activityFunction2 (location) {
-	return location.indexOf('two') !== -1
+	return location.href.indexOf('two') !== -1
+}
+
+function mockWindowLocation (url) {
+	return {
+		href: url
+	}
 }
