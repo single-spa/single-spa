@@ -56,9 +56,9 @@ promise must be resolved with the child application. The most common implementat
 `() => System.import('/path/to/child-application.js')`
 
 ### Activity function
-The third argument to `declareChildApplication` must be a function that takes in no arguments and returns a truthy
+The third argument to `declareChildApplication` must be a pure function, the function is provided `window.location` as the first argument, and returns a truthy
 value whenever the child application should be active. Most commonly, the activity function determines if a child application
-is active by looking at `window.location`.
+is active by looking at `window.location`/the first param.
 
 Another way of looking at this is that single-spa is a top-level router that has a lot of child applications that have their own sub-router.
 
@@ -66,6 +66,7 @@ single-spa will call each child application's activity function under the follow
 - `hashchange` or `popstate` event
 - `pushState` or `replaceState` is called
 - [`triggerAppChange`](/docs/single-spa-api.md#triggerappchange) api is called on single-spa
+- Whenever the `checkActivityFunctions` method is called
 
 ## Calling singleSpa.start()
 The [`start()` api](/docs/single-spa-api.md#start) **must** be called by your root application in order for child

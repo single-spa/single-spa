@@ -26,6 +26,7 @@ import invalidUnload from 'spec/child-apps/invalid-unload/invalid-unload.spec.js
 import lifecyleProps from 'spec/child-apps/lifecycle-props/lifecycle-props.spec.js';
 import { notStartedEventListeners, yesStartedEventListeners } from 'spec/apis/event-listeners.spec.js';
 import eventsApi from 'spec/apis/single-spa-events-api.spec.js';
+import checkActivityFunctionsApi from 'spec/apis/check-activity-functions.spec.js';
 
 describe("SystemJS loader :", () => {
 	beforeAll(() => {
@@ -96,6 +97,7 @@ describe("SystemJS loader :", () => {
 		})
 
 		describe('apis :', () => {
+			checkActivityFunctionsApi();
 			navigateToUrlTests();
 			notStartedEventListeners();
 		});

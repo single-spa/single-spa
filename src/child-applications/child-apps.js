@@ -49,6 +49,16 @@ export function declareChildApplication(appName, arg1, arg2) {
 	reroute();
 }
 
+export function checkActivityFunctions(location) {
+	const activeApps = []
+	for (let i = 0; i < childApps.length; i++) {
+		if (childApps[i].activeWhen(location)) {
+			activeApps.push(childApps[i].name)
+		}
+	}
+	return activeApps
+}
+
 export function getAppsToLoad() {
 	return childApps
 		.filter(shouldBeActive)
