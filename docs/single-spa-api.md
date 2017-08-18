@@ -1,5 +1,16 @@
 # single-spa API
 The single-spa library does not `export default`, but instead exports named functions and variables.
+What this means is you can use the api in two ways:
+
+```js
+import * as singleSpa from 'single-spa';
+// OR
+import {declareChildApplication, start} from 'single-spa';
+```
+
+## declareChildApplication
+`declareChildApplication(name, activeWhen)` is the most important api your root application will use.
+It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
 
 ## start
 `start()` is a function that must be called by your root application. Before `start` is called, child
@@ -9,10 +20,6 @@ immediately (to start downloading the code for the active ones), but not actuall
 until an initial AJAX request (maybe to get information about the logged in user) has been completed. In that case,
 the best performance is achieved by calling `declareChildApplication` immediately, but calling `start` after
 the AJAX request is completed.
-
-## declareChildApplication
-`declareChildApplication(name, activeWhen)` is the most important api your root application will use.
-It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
 
 ## triggerAppChange
 `triggerAppChange()` takes in no arguments and returns a Promise that will resolve/reject when all apps have mounted.
@@ -27,7 +34,7 @@ allows for easy url navigation between child applications, without needing to de
 - a DOMEvent object for a click event on a DOMElement that has an `href` attribute
   (ideal for the `<a onclick="singleSpaNavigate"></a>` use case).
 
-This function is exposed onto the window as `window.singleSpaNavigate`, for convenience.
+This function is exposed onto the window as `window.singleSpaNavigate`, for convenience and use inside of `<button onclick="singleSpaNavigate('url')">` or `<a href="/url" onclick="singleSpaNavigate">`
 
 ## getMountedApps
 `getMountedApps()` returns an array of strings, where each string is the name of the child application,
@@ -78,6 +85,10 @@ unload or if you want to wait until the application is no longer mounted. This i
 single-spa immediately unloads the specified child application even if the app is currently mounted. If `true`, single-spa will unload
 the child application as soon as it is safe to do so (when the app status is not `MOUNTED`).
 
+## checkActivityFunctions
+`checkActivityFunctions(mockWindowLocation)` takes in a mock of the `window.location`. It returns an array of
+`childApplicationName` strings. This API will call every child app's activity function with the provided mockWindowLocation
+
 ## routing event
 single-spa fires an event `single-spa:routing-event` on the window every time that a routing event has occurred in which
 single-spa verified that all apps were correctly loaded, bootstrapped, mounted, and unmounted.
@@ -108,6 +119,25 @@ This is the converse of the `single-spa:app-change` event -- only one will be fi
 window.addEventListener('single-spa:no-app-change', () => {
 	console.log(singleSpa.getMountedApps())
 })
+```
+
+## before-first-mount
+Right before the first time that any app is mounted, single-spa fires a `single-spa:before-first-mount` event. This will happen
+after the app is already loaded, but before it is mounted. This event will only get fired once, ever. It does *not* get fired for each
+app's first mount, but rather for the first time that any of the apps is mounted.
+```js
+window.addEventListener('single-spa:before-first-mount', () => {
+	console.log('Suggested use case: remove a loader bar that the user is seeing right before the first app will be mounted');
+});
+```
+
+## first-mount
+Right after the first time that any app is mounted, single-spa fires a `single-spa:first-mount` event. This event will only get fired once, ever.
+It does *not* get fired for each app's first mount, but rather for the first time that any of the apps is mounted.
+```js
+window.addEventListener('single-spa:first-mount', () => {
+	console.log('Suggested use case: log the time it took before the user sees any of the apps mounted');
+});
 ```
 
 ## ensureJQuerySupport

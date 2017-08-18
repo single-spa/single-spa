@@ -10,36 +10,14 @@ a child application.
 
 ## Index.html file
 The main thing that you should be doing in your html file is executing your root application. For your
-use case, this could mean something like `<script src="/my-root-application"></script>` or maybe
-`System.import('my-root-application')`.
-
+use case, this could mean something like `<script src="/root-application.js"></script>`.
 Example:
 ```js
 <html>
   <body>
-    <script src="/path-to-root-application.js"></script>
+    <script src="/root-application.js"></script>
   </body>
 </html>
-```
-
-## Calling singleSpa.start()
-The [`start()` api](/docs/single-spa-api.md#start) **must** be called by your root application in order for child
-applications to actually be mounted. Before `start` is called, child applications will be loaded, but not bootstrapped/mounted/unmounted.
-The reason for `start` is to give you control over performance. For example, you may want to declare child applications
-immediately (to start downloading the code for the active ones), but not actually mount the child applications
-until an initial AJAX request (maybe to get information about the logged in user) has been completed. In that case,
-the best performance is achieved by calling `declareChildApplication` immediately, but calling `start` after
-the AJAX request is completed.
-
-```js
-import { start } from 'single-spa';
-
-/* Calling start before declaring child apps means that single-spa can immediately mount apps, without
- * waiting for any initial setup of the single page app.
- */
-start();
-
-// Declare child applications....
 ```
 
 ## Declaring child applications
@@ -53,6 +31,7 @@ and unmounted according to their own activity functions.
 In order to declare a child application, call the `declareChildApplication(name, howToLoad, activityFunction)` api. Example:
 
 ```js
+// root-application.js
 import { declareChildApplication, start } from 'single-spa';
 
 declareChildApplication("childApplicationName", loadingFunction, activityFunction;
@@ -77,15 +56,38 @@ promise must be resolved with the child application. The most common implementat
 `() => System.import('/path/to/child-application.js')`
 
 ### Activity function
-The third argument to `declareChildApplication` must be a function that takes in no arguments and returns a truthy
+The third argument to `declareChildApplication` must be a pure function, the function is provided `window.location` as the first argument, and returns a truthy
 value whenever the child application should be active. Most commonly, the activity function determines if a child application
-is active by looking at `window.location`. When this is done, single-spa as a whole is acting as a high-level router
-that is framework agnostic.
+is active by looking at `window.location`/the first param.
+
+Another way of looking at this is that single-spa is a top-level router that has a lot of child applications that have their own sub-router.
 
 single-spa will call each child application's activity function under the following scenarios:
 - `hashchange` or `popstate` event
 - `pushState` or `replaceState` is called
 - [`triggerAppChange`](/docs/single-spa-api.md#triggerappchange) api is called on single-spa
+- Whenever the `checkActivityFunctions` method is called
+
+## Calling singleSpa.start()
+The [`start()` api](/docs/single-spa-api.md#start) **must** be called by your root application in order for child
+applications to actually be mounted. Before `start` is called, child applications will be loaded, but not bootstrapped/mounted/unmounted.
+The reason for `start` is to give you control over performance. For example, you may want to declare child applications
+immediately (to start downloading the code for the active ones), but not actually mount the child applications
+until an initial AJAX request (maybe to get information about the logged in user) has been completed. In that case,
+the best performance is achieved by calling `declareChildApplication` immediately, but calling `start` after
+the AJAX request is completed.
+
+```js
+//root-application.js
+import { start } from 'single-spa';
+
+/* Calling start before declaring child apps means that single-spa can immediately mount apps, without
+ * waiting for any initial setup of the single page app.
+ */
+start();
+
+// Declare child applications....
+```
 
 ## Two child applications simultaneously??
 Yep, it's possible. And it's actually not that scary if you do it right. And once you do,
