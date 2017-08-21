@@ -94,7 +94,7 @@ singleSpa.start();
 
 let domEl;
 
-export function bootstrap() {
+export function bootstrap(props) {
 	return Promise
 		.resolve()
 		.then(() => {
@@ -104,7 +104,7 @@ export function bootstrap() {
 		});
 }
 
-export function mount() {
+export function mount(props) {
 	return Promise
 		.resolve()
 		.then(() => {
@@ -113,7 +113,7 @@ export function mount() {
 		});
 }
 
-export function unmount() {
+export function unmount(props) {
 	return Promise
 		.resolve()
 		.then(() => {
