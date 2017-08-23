@@ -40,6 +40,9 @@ This function is exposed onto the window as `window.singleSpaNavigate`, for conv
 `getMountedApps()` returns an array of strings, where each string is the name of the child application,
 as defined in the call to `declareChildApplication`.
 
+## getAppNames
+`getAppNames()` returns an array of strings, where each string is the name of the child application. NOTE: this returns all declared child applications regardless of app status.
+
 ## getAppStatus
 `getAppStatus(appName)` takes in one string parameter and returns either a string (when the app exists)
 or `null` (when the app doesn't exist). The string status is one of the following:
