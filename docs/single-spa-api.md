@@ -92,6 +92,16 @@ the child application as soon as it is safe to do so (when the app status is not
 `checkActivityFunctions(mockWindowLocation)` takes in a mock of the `window.location`. It returns an array of
 `childApplicationName` strings. This API will call every child app's activity function with the provided mockWindowLocation
 
+## before routing event
+single-spa fires an event `single-spa:before-routing-event` on the window every time before a routing event occurs.
+This event will get fired after each hashchange, popstate, or triggerAppChange, even if no changes
+to child applications were necessary. Sample usage of this event might look like this:
+```js
+window.addEventListener('single-spa:before-routing-event', () => {
+		console.log('before routing event occurred!');
+		})
+```
+
 ## routing event
 single-spa fires an event `single-spa:routing-event` on the window every time that a routing event has occurred in which
 single-spa verified that all apps were correctly loaded, bootstrapped, mounted, and unmounted.

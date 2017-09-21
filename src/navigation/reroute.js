@@ -49,6 +49,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 	}
 
 	async function performAppChanges() {
+		window.dispatchEvent(new CustomEvent("single-spa:before-routing-event"));
 		const unloadPromises = getAppsToUnload().map(toUnloadPromise);
 
 		const unmountUnloadPromises = getAppsToUnmount()
