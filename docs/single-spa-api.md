@@ -98,8 +98,8 @@ This event will get fired after each hashchange, popstate, or triggerAppChange, 
 to child applications were necessary. Sample usage of this event might look like this:
 ```js
 window.addEventListener('single-spa:before-routing-event', () => {
-		console.log('before routing event occurred!');
-		})
+	console.log('before routing event occurred!');
+})
 ```
 
 ## routing event
