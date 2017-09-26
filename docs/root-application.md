@@ -34,15 +34,15 @@ In order to declare a child application, call the `declareChildApplication(name,
 // root-application.js
 import { declareChildApplication, start } from 'single-spa';
 
-declareChildApplication("childApplicationName", loadingFunction, activityFunction;
+declareChildApplication("childApplicationName", loadingFunction, activityFunction);
 start();
 
 function loadingFunction() {
   return import("src/app1/main.js");
 }
 
-function activityFunction() {
-  return window.location.hash.indexOf("#/app1/") === 0;
+function activityFunction(location) {
+  return location.hash.indexOf("#/app1/") === 0;
 }
 ```
 
