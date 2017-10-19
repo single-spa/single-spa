@@ -66,13 +66,11 @@ export default function() {
 			expectPathAndHashToEqual('somethinger#b/my-route');
 		});
 
-		it(`should call push state when the origin's don't match, since single spa never wants to refresh the page`, function() {
-			try {
-				singleSpa.navigateToUrl('https://other-app.com/something#b/my-route');
-				fail("The browser should have thrown an error when pushState was called for a different origin than the one you're on");
-			} catch(err) {
-				//expected
-			}
+		it(`should reload the page to a new url when the origin's don't match, since that's the only way to navigate to a different domain/origin`, function() {
+			const url = 'https://other-app.com/something#b/my-route';
+			const opts = {isTestingEnv: true};
+			const returnValue = singleSpa.navigateToUrl(url, opts);
+			expect(returnValue).toEqual({wouldHaveReloadedThePage: true})
 		});
 
 		it(`should call push state when the url has no hash`, function() {
