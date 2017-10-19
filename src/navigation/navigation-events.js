@@ -13,7 +13,7 @@ const capturedEventListeners = {
 
 export const routingEventsListeningTo = ['hashchange', 'popstate'];
 
-export function navigateToUrl(obj) {
+export function navigateToUrl(obj, opts={}) {
 	let url;
 	if (typeof obj === 'string') {
 		url = obj ;
@@ -31,7 +31,13 @@ export function navigateToUrl(obj) {
 
 	if (url.indexOf('#') === 0) {
 		window.location.hash = '#' + destination.anchor;
-	} else if (!isSamePath(destination.path, current.path) || (current.host !== destination.host && destination.host)) {
+	} else if (current.host !== destination.host && destination.host) {
+		if (opts.isTestingEnv) {
+			return {wouldHaveReloadedThePage: true};
+		} else {
+			window.location.href = url;
+		}
+	} else if (!isSamePath(destination.path, current.path)) {
 		// different path or a different host
 		window.history.pushState(null, null, url);
 	} else {
