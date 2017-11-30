@@ -125,3 +125,8 @@ export function unmount(props) {
 
 ## API
 See [single-spa api](/docs/single-spa-api.md) and [child application api](/docs/child-applications.md#child-application-lifecycle).
+
+## Who's Using This?
+Please submit a P.R. to this section if you start using single-spa.
+
+- [CanopyTax](www.canopytax.com)
