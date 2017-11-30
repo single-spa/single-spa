@@ -129,4 +129,4 @@ See [single-spa api](/docs/single-spa-api.md) and [child application api](/docs/
 ## Who's Using This?
 Please submit a P.R. to this section if you start using single-spa.
 
-- [CanopyTax](www.canopytax.com)
+- [CanopyTax](https://www.canopytax.com)
