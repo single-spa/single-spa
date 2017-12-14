@@ -5,7 +5,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./uses-loader.app.js', location => location.hash === activeHash);
+			singleSpa.registerApplication('./uses-loader.app.js', location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {

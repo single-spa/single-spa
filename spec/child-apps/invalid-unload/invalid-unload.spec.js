@@ -5,7 +5,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./invalid-unload.app.js', () => System.import('./invalid-unload.app.js'), location => location.hash === activeHash);
+			singleSpa.registerApplication('./invalid-unload.app.js', () => System.import('./invalid-unload.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {

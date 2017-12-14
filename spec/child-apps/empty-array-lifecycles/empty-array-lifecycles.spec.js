@@ -3,7 +3,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./empty-array-lifecycles.app.js', () => System.import('./empty-array-lifecycles.app.js'), location => location.hash === "#empty-array-lifecycles");
+			singleSpa.registerApplication('./empty-array-lifecycles.app.js', () => System.import('./empty-array-lifecycles.app.js'), location => location.hash === "#empty-array-lifecycles");
 		});
 
 		beforeEach(done => {

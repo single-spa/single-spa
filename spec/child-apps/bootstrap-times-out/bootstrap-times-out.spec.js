@@ -3,7 +3,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./bootstrap-times-out.app.js', () => System.import('./bootstrap-times-out.app.js'), location => location.hash === "#bootstrap-times-out");
+			singleSpa.registerApplication('./bootstrap-times-out.app.js', () => System.import('./bootstrap-times-out.app.js'), location => location.hash === "#bootstrap-times-out");
 		});
 
 		beforeEach(done => {

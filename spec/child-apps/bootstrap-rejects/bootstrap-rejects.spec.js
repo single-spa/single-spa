@@ -3,7 +3,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./bootstrap-rejects.app.js', () => System.import('./bootstrap-rejects.app.js'), location => location.hash === "#bootstrap-rejects");
+			singleSpa.registerApplication('./bootstrap-rejects.app.js', () => System.import('./bootstrap-rejects.app.js'), location => location.hash === "#bootstrap-rejects");
 		});
 
 		beforeEach(done => {

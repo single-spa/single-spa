@@ -3,7 +3,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./returns-non-native-promise.app.js', () => System.import('./returns-non-native-promise.app.js'), location => location.hash === "#returns-non-native-promise");
+			singleSpa.registerApplication('./returns-non-native-promise.app.js', () => System.import('./returns-non-native-promise.app.js'), location => location.hash === "#returns-non-native-promise");
 		});
 
 		beforeEach(done => {

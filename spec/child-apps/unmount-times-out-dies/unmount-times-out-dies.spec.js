@@ -5,7 +5,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./unmount-times-out-dies.app.js', () => System.import('./unmount-times-out-dies.app.js'), location => location.hash === activeHash);
+			singleSpa.registerApplication('./unmount-times-out-dies.app.js', () => System.import('./unmount-times-out-dies.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {

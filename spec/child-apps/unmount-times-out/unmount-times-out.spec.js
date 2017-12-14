@@ -5,7 +5,7 @@ export default function() {
 		let childApp, ogJasmineTimeout;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./unmount-times-out.app.js', () => System.import('./unmount-times-out.app.js'), location => location.hash === activeHash);
+			singleSpa.registerApplication('./unmount-times-out.app.js', () => System.import('./unmount-times-out.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {

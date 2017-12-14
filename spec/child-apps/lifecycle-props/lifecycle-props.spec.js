@@ -6,7 +6,7 @@ export default function() {
 
 		beforeAll(() => {
 			console.log('declaring child app')
-			singleSpa.declareChildApplication('lifecycle-props', () => System.import('./lifecycle-props.app.js'), location => location.hash === activeHash);
+			singleSpa.registerApplication('lifecycle-props', () => System.import('./lifecycle-props.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {

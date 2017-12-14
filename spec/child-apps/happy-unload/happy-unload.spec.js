@@ -5,7 +5,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./happy-unload.app.js', () => System.import('./happy-unload.app.js'), location => location.hash === activeHash);
+			singleSpa.registerApplication('./happy-unload.app.js', () => System.import('./happy-unload.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {

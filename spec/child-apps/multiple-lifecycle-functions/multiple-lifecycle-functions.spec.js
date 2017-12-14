@@ -5,7 +5,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./multiple-lifecycle-functions.app.js', () => System.import('./multiple-lifecycle-functions.app.js'), location => location.hash === activeHash);
+			singleSpa.registerApplication('./multiple-lifecycle-functions.app.js', () => System.import('./multiple-lifecycle-functions.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {

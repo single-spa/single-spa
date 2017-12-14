@@ -5,7 +5,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./invalid-no-mount.app.js', System.import('./invalid-no-mount.app.js'), location => location.hash === activeHash);
+			singleSpa.registerApplication('./invalid-no-mount.app.js', System.import('./invalid-no-mount.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {

@@ -5,7 +5,7 @@ export default function() {
 		let childApp;
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('./invalid-bootstrap.app.js', () => System.import('./invalid-bootstrap.app.js'), location => location.hash === activeHash);
+			singleSpa.registerApplication('./invalid-bootstrap.app.js', () => System.import('./invalid-bootstrap.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {
