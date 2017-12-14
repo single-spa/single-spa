@@ -24,10 +24,10 @@ registered applications from inside of your root application, try the following 
 ```js
 import {registerApplication} from 'single-spa';
 
-registerApplication('app-name', () => import('./my-child-app.js'), activeWhen);
+registerApplication('app-name', () => import('./my-app.js'), activeWhen);
 
 function activeWhen() {
-	return window.location.hash.indexOf('#/my-child-app') === 0;
+	return window.location.hash.indexOf('#/my-app') === 0;
 }
 ```
 
@@ -39,13 +39,13 @@ lazy load your registered applications is straightforward:
 import {registerApplication} from 'single-spa';
 
 // Import the registered application with a SystemJS.import call
-registerApplication('app-name-1', () => SystemJS.import('./my-child-app.js'), activeWhen);
+registerApplication('app-name-1', () => SystemJS.import('./my-app.js'), activeWhen);
 
 // Alternatively, use the more out-of-date System.import (instead of SystemJS.import)
-registerApplication('app-name-2', () => System.import('./my-other-child-app.js'), activeWhen);
+registerApplication('app-name-2', () => System.import('./my-other-app.js'), activeWhen);
 
 function activeWhen() {
-	return window.location.hash.indexOf('#/my-child-app') === 0;
+	return window.location.hash.indexOf('#/my-app') === 0;
 }
 ```
 
@@ -82,6 +82,6 @@ function app2InPromise() {
 }	
 
 function activeWhen() {
-	return window.location.hash.indexOf('#/my-child-app') === 0;
+	return window.location.hash.indexOf('#/my-app') === 0;
 }
 ```

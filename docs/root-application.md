@@ -1,6 +1,6 @@
 # Root application
 The single-spa root application consists of all code that is not part of a
-[registered application](/docs/child-applications.md). Ideally, this only includes an html file
+[registered application](/docs/applications.md). Ideally, this only includes an html file
 and a javascript file that declares single-spa registered applications. It is best practice to keep your
 root application as small as possible and to simply defer to single-spa to manage
 all of the registered applications. The root application should not be doing client-side html
@@ -22,7 +22,7 @@ Example:
 
 ## Declaring registered applications
 
-Declaring a [registered application](/docs/child-applications.md) is registering it with single-spa so that it will be loaded,
+Declaring a [registered application](/docs/applications.md) is registering it with single-spa so that it will be loaded,
 initialized, mounted, and unmounted at the right times. Declaration most commonly occurs inside of the root application, but
 does not have to. Note that if a registered application is declared from within another registered application, that no hierarchy
 will be maintained between the registered applications. Instead, the registered applications will be siblings and will be mounted
@@ -34,7 +34,7 @@ In order to declare a registered application, call the `registerApplication(name
 // root-application.js
 import { registerApplication, start } from 'single-spa';
 
-registerApplication("childApplicationName", loadingFunction, activityFunction);
+registerApplication("applicationName", loadingFunction, activityFunction);
 start();
 
 function loadingFunction() {
@@ -53,7 +53,7 @@ The first argument to `registerApplication` must be a string name.
 The second argument to `registerApplication` must be a function that returns a promise (or an ["async function"](https://ponyfoo.com/articles/understanding-javascript-async-await)).
 The function will be called with no arguments when it's time to load the registered application for the first time. The returned
 promise must be resolved with the registered application. The most common implementation of a loading function is an import call:
-`() => import('/path/to/child-application.js')`
+`() => import('/path/to/application.js')`
 
 ### Activity function
 The third argument to `registerApplication` must be a pure function, the function is provided `window.location` as the first argument, and returns a truthy
@@ -69,7 +69,7 @@ single-spa will call each registered application's activity function under the f
 - Whenever the `checkActivityFunctions` method is called
 
 ## Calling singleSpa.start()
-The [`start()` api](/docs/single-spa-api.md#start) **must** be called by your root application in order for child
+The [`start()` api](/docs/single-spa-api.md#start) **must** be called by your root application in order for 
 applications to actually be mounted. Before `start` is called, registered applications will be loaded, but not bootstrapped/mounted/unmounted.
 The reason for `start` is to give you control over performance. For example, you may want to declare registered applications
 immediately (to start downloading the code for the active ones), but not actually mount the registered applications
@@ -81,7 +81,7 @@ the AJAX request is completed.
 //root-application.js
 import { start } from 'single-spa';
 
-/* Calling start before declaring child apps means that single-spa can immediately mount apps, without
+/* Calling start before registering apps means that single-spa can immediately mount apps, without
  * waiting for any initial setup of the single page app.
  */
 start();

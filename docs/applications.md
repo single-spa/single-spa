@@ -11,7 +11,7 @@ Whenever a registered application is *not mounted*, it should remain completely 
 ## Creating a registered application
 
 To create a registered application, first
-[register the application with single-spa](/docs/root-application.md#declaring-child-applications).
+[register the application with single-spa](/docs/root-application.md#registering-applications).
 Once registered, the registered application must correctly implement **all** of the following lifecycle functions
 inside of its main entry point.
 
@@ -23,7 +23,7 @@ A lifecycle function is a function or array of functions that single-spa will ca
 Single-spa calls these by finding exported functions from the registered application's main file.
 
 Notes:
-- Lifecycle functions are called with a `props` argument, which is an object with a `childAppName` string.
+- Lifecycle functions are called with a `props` argument, which is an object with a `appName` string.
 - Implementing `bootstrap`, `mount`, and `unmount` is required. But implementing `unload` is optional.
 - Each lifecycle function must either return a `Promise` or be an `async function`.
 - If an array of functions is exported (instead of just one function), the functions will be called
@@ -105,7 +105,7 @@ export function unmount(props) {
 
 ### unload
 The `unload` lifecycle is an optionally implemented lifecycle function. It will be called whenever an application should be
-`unloaded`. This will not ever happen unless someone calls the [`unloadChildApplication`](/docs/single-spa-api.md#unloadchildapplication) API.
+`unloaded`. This will not ever happen unless someone calls the [`unloadApplication`](/docs/single-spa-api.md#unloadchildapplication) API.
 If a registered application does not implement the unload lifecycle, then it assumed that unloading the app is a no-op.
 
 The purpose of the `unload` lifecycle is to perform logic right before a single-spa application is unloaded. Once

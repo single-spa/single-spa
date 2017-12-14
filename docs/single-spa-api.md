@@ -10,10 +10,10 @@ import {registerApplication, start} from 'single-spa';
 
 ## registerApplication
 `registerApplication(name, activeWhen)` is the most important api your root application will use.
-It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
+It is described in detail inside of the [root-application.md docs](/docs/root-application.md#registering-applications)
 
 ## start
-`start()` is a function that must be called by your root application. Before `start` is called, child
+`start()` is a function that must be called by your root application. Before `start` is called, 
 applications will be loaded, but will never be bootstrapped, mounted or unmounted. The reason for `start`
 is to give you control over the performance of your single page application. For example, you may want to declare registered applications
 immediately (to start downloading the code for the active ones), but not actually mount the registered applications
@@ -59,18 +59,18 @@ or `null` (when the app doesn't exist). The string status is one of the followin
 - `SKIP_BECAUSE_BROKEN`: the app threw an error during load, bootstrap, mount, or unmount and has been
    siloed because it is misbehaving. Other apps may continue on normally, but this one will be skipped.
 
-## unloadChildApplication
-`unloadChildApplication(appName, opts)` takes in a string parameter `appName` and (optionally) an `opts` object. It returns
+## unloadApplication
+`unloadApplication(appName, opts)` takes in a string parameter `appName` and (optionally) an `opts` object. It returns
 a promise that is resolved when the registered application has been successfully resolved. The `opts` parameter is an object with the
 following property:
 - `waitForUnmount`: a boolean that decides when to unload the application. Defaults to false.
 
 Examples:
 ```js
-unloadChildApplication('app1', {waitForUnmount: false});
-unloadChildApplication('app1'); // This is the same as providing `{waitForUnmount: false}`
+unloadApplication('app1', {waitForUnmount: false});
+unloadApplication('app1'); // This is the same as providing `{waitForUnmount: false}`
 
-unloadChildApplication('app1', {waitForUnmount: true});
+unloadApplication('app1', {waitForUnmount: true});
 ```
 
 The purpose of unloading a registered application is to set it back to to a NOT_LOADED status, which means that
@@ -78,19 +78,19 @@ it will be re-bootstrapped the next time it needs to mount. The motivation for t
 the hot-reloading of entire registered applications, but `unload` can be useful whenever you want to re-bootstrap
 your application.
 
-Single-spa performs the following steps when unloadChildApplication is called.
-1. Call the [unload lifecyle](/docs/child-applications.md#unload) on the registered application that is being unloaded.
+Single-spa performs the following steps when unloadApplication is called.
+1. Call the [unload lifecyle](/docs/applications.md#unload) on the registered application that is being unloaded.
 2. Set the app status to NOT_LOADED
 3. Trigger a reroute, during which single-spa will potentially mount the application that was just unloaded.
 
-Because a registered application might be mounted when `unloadChildApplication` is called, you can specify whether you want to immediately
+Because a registered application might be mounted when `unloadApplication` is called, you can specify whether you want to immediately
 unload or if you want to wait until the application is no longer mounted. This is done with the `waitForUnmount` option. If `false`,
 single-spa immediately unloads the specified registered application even if the app is currently mounted. If `true`, single-spa will unload
 the registered application as soon as it is safe to do so (when the app status is not `MOUNTED`).
 
 ## checkActivityFunctions
 `checkActivityFunctions(mockWindowLocation)` takes in a mock of the `window.location`. It returns an array of
-`childApplicationName` strings. This API will call every child app's activity function with the provided mockWindowLocation
+`applicationName` strings. This API will call every child app's activity function with the provided mockWindowLocation
 
 ## before routing event
 single-spa fires an event `single-spa:before-routing-event` on the window every time before a routing event occurs.
@@ -179,7 +179,7 @@ See dieOnTimeout section below for details.
 `dieOnTimeout` refers to configuration of what should happen when registered applications take longer than expected
 to load, bootstrap, mount, or unmount. There is both a global configuration applicable to all registered applications, and also
 the ability for each registered application to override this behavior for itself. See [registered application configuration
-for timeouts](/docs/child-applications.md#timeouts) for details on registered application overrides of the global
+for timeouts](/docs/applications.md#timeouts) for details on registered application overrides of the global
 behavior.
 
 If `dieOnTimeout` is false (which is the default), registered applications that are slowing things down will cause
@@ -194,4 +194,4 @@ A loader must implement `Loader.import(...).then(...).catch(...)`, and the most 
 [SystemJS](https://github.com/systemjs/systemjs). This API should be called **before** any `registerApplication`
 calls are made. Once called, you may omit the [loading function](/docs/root-application.md#loading-function) argument when
 calling `registerApplication` and single-spa will assume that a registered application may be loaded with
-`Loader.import(childAppName).then(childApp => ...)`
+`Loader.import(appName).then(app => ...)`
