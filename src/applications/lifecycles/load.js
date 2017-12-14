@@ -15,7 +15,7 @@ export async function toLoadPromise(app) {
 	try {
 		const loadPromise = app.loadImpl({appName: app.name});
 		if (!smellsLikeAPromise(loadPromise)) {
-			// The name of the child app will be prepended to this error message inside of the handleChildAppError function
+			// The name of the app will be prepended to this error message inside of the handleAppError function
 			throw new Error(`single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`);
 		}
 		appOpts = await loadPromise;

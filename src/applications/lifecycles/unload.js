@@ -17,7 +17,7 @@ export async function toUnloadPromise(app) {
 	}
 
 	if (app.status === UNLOADING) {
-		/* Both unloadChildApplication and reroute want to unload this app.
+		/* Both unloadApplication and reroute want to unload this app.
 		 * It only needs to be done once, though.
 		 */
 		await unloadInfo.promise;
@@ -31,7 +31,7 @@ export async function toUnloadPromise(app) {
 	}
 	
 	if (!unloadInfo) {
-		/* No one has called unloadChildApplication for this app,
+		/* No one has called unloadApplication for this app,
 		 */
 		return app;
 	}
@@ -60,7 +60,7 @@ function finishUnloadingApp(app, unloadInfo) {
 
 	app.status = NOT_LOADED;
 
-	/* resolve the promise of whoever called unloadChildApplication.
+	/* resolve the promise of whoever called unloadApplication.
 	 * This should be done after all other cleanup/bookkeeping
 	 */
 	unloadInfo.resolve();
