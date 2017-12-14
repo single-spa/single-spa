@@ -21,7 +21,7 @@ export function getAppStatus(appName) {
 	return app ? app.status : null;
 }
 
-export function declareApplication(appName, arg1, arg2) {
+export function registerApplication(appName, arg1, arg2) {
 	if (typeof appName !== 'string' || appName.length === 0)
 		throw new Error(`The first argument must be a non-empty string 'appName'`);
 	if (apps[appName])
@@ -30,7 +30,7 @@ export function declareApplication(appName, arg1, arg2) {
 	let loadImpl, activeWhen;
 	if (!arg2) {
 		if (!Loader) {
-			throw new Error(`You cannot declare a single-spa child application without either providing a way to load the application or a Loader. See https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-api.md#declarechildapplication`);
+			throw new Error(`You cannot declare a single-spa application without either providing a way to load the application or a Loader. See https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-api.md#declareApplication`);
 		}
 		loadImpl = () => Loader.import(appName);
 		activeWhen = arg1;
