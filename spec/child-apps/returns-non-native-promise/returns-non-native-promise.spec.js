@@ -1,6 +1,6 @@
 export default function() {
 	describe(`returns-non-native-promise`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./returns-non-native-promise.app.js', () => System.import('./returns-non-native-promise.app.js'), location => location.hash === "#returns-non-native-promise");
@@ -11,14 +11,14 @@ export default function() {
 
 			System
 			.import('./returns-non-native-promise.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
 		});
 
 		it(`goes through the whole lifecycle successfully`, done => {
-			expect(childApp.wasMounted()).toEqual(false);
+			expect(myApp.wasMounted()).toEqual(false);
 			expect(singleSpa.getMountedApps()).toEqual([]);
 
 			location.hash = '#returns-non-native-promise';
@@ -26,8 +26,8 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.wasBootstrapped()).toEqual(true);
-				expect(childApp.wasMounted()).toEqual(true);
+				expect(myApp.wasBootstrapped()).toEqual(true);
+				expect(myApp.wasMounted()).toEqual(true);
 				expect(singleSpa.getMountedApps()).toEqual(['./returns-non-native-promise.app.js']);
 
 				location.hash = '#something-else';
@@ -35,8 +35,8 @@ export default function() {
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
-					expect(childApp.wasBootstrapped()).toEqual(true);
-					expect(childApp.wasUnmounted()).toEqual(true);
+					expect(myApp.wasBootstrapped()).toEqual(true);
+					expect(myApp.wasUnmounted()).toEqual(true);
 					expect(singleSpa.getMountedApps()).toEqual([]);
 					done();
 				})

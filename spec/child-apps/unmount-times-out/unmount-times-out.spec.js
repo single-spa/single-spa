@@ -2,7 +2,7 @@ const activeHash = `#unmount-times-out`;
 
 export default function() {
 	describe(`unmount-times-out app`, () => {
-		let childApp, ogJasmineTimeout;
+		let myApp, ogJasmineTimeout;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./unmount-times-out.app.js', () => System.import('./unmount-times-out.app.js'), location => location.hash === activeHash);
@@ -19,7 +19,7 @@ export default function() {
 
 			System
 			.import('./unmount-times-out.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
@@ -33,8 +33,8 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.numBootstraps()).toEqual(1);
-				expect(childApp.numMounts()).toEqual(1);
+				expect(myApp.numBootstraps()).toEqual(1);
+				expect(myApp.numMounts()).toEqual(1);
 				expect(singleSpa.getMountedApps()).toEqual(['./unmount-times-out.app.js']);
 				expect(singleSpa.getAppStatus('./unmount-times-out.app.js')).toEqual('MOUNTED');
 
@@ -42,7 +42,7 @@ export default function() {
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
-					expect(childApp.numUnmounts()).toEqual(1);
+					expect(myApp.numUnmounts()).toEqual(1);
 					expect(singleSpa.getMountedApps()).toEqual([]);
 					expect(singleSpa.getAppStatus('./unmount-times-out.app.js')).toEqual('NOT_MOUNTED');
 					done();

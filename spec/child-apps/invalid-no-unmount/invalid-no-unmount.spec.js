@@ -2,7 +2,7 @@ const activeHash = `#invalid-no-unmount`;
 
 export default function() {
 	describe(`invalid-no-unmount app`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./invalid-no-unmount.app.js', () => System.import('./invalid-no-unmount.app.js'), location => location.hash === activeHash);
@@ -13,7 +13,7 @@ export default function() {
 
 			System
 			.import('./invalid-no-unmount.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
@@ -23,8 +23,8 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.isBootstrapped()).toEqual(false);
-				expect(childApp.isMounted()).toEqual(false);
+				expect(myApp.isBootstrapped()).toEqual(false);
+				expect(myApp.isMounted()).toEqual(false);
 				expect(singleSpa.getMountedApps()).toEqual([]);
 				expect(singleSpa.getAppStatus('./invalid-no-unmount.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 				done();

@@ -2,7 +2,7 @@ const activeHash = `#invalid-unload`;
 
 export default function() {
 	describe(`invalid-unload app :`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./invalid-unload.app.js', () => System.import('./invalid-unload.app.js'), location => location.hash === activeHash);
@@ -13,10 +13,10 @@ export default function() {
 
 			System
 			.import('./invalid-unload.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(() => singleSpa.unloadApplication('./invalid-unload.app.js'))
 			.then(() => singleSpa.triggerAppChange())
-			.then(() => childApp.reset())
+			.then(() => myApp.reset())
 			.then(done)
 			.catch(err => console.error(err))
 		});

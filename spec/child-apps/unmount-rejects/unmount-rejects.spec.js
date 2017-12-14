@@ -2,7 +2,7 @@ const activeHash = `#unmount-rejects`;
 
 export default function() {
 	describe(`mount-rejects app`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./unmount-rejects.app.js', () => System.import('./unmount-rejects.app.js'), location => location.hash === activeHash);
@@ -13,7 +13,7 @@ export default function() {
 
 			System
 			.import('./unmount-rejects.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
@@ -23,9 +23,9 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.numBootstraps()).toEqual(1);
-				expect(childApp.numMounts()).toEqual(1);
-				expect(childApp.numUnmounts()).toEqual(0);
+				expect(myApp.numBootstraps()).toEqual(1);
+				expect(myApp.numMounts()).toEqual(1);
+				expect(myApp.numUnmounts()).toEqual(0);
 				expect(singleSpa.getMountedApps()).toEqual(['./unmount-rejects.app.js']);
 				expect(singleSpa.getAppStatus('./unmount-rejects.app.js')).toEqual('MOUNTED');
 
@@ -33,7 +33,7 @@ export default function() {
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
-					expect(childApp.numUnmounts()).toEqual(1);
+					expect(myApp.numUnmounts()).toEqual(1);
 					expect(singleSpa.getMountedApps()).toEqual([]);
 					expect(singleSpa.getAppStatus('./unmount-rejects.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 
@@ -42,7 +42,7 @@ export default function() {
 					.triggerAppChange()
 					.then(() => {
 						// it shouldn't be mounted again
-						expect(childApp.numMounts()).toEqual(1);
+						expect(myApp.numMounts()).toEqual(1);
 						expect(singleSpa.getMountedApps()).toEqual([]);
 						expect(singleSpa.getAppStatus('./unmount-rejects.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 

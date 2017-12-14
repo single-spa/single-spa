@@ -2,7 +2,7 @@ const activeHash = `#invalid-unmount`;
 
 export default function() {
 	describe(`invalid-unmount app`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./invalid-unmount.app.js', () => System.import('./invalid-unmount.app.js'), location => location.hash === activeHash);
@@ -13,7 +13,7 @@ export default function() {
 
 			System
 			.import('./invalid-unmount.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
@@ -23,8 +23,8 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.numBootstraps()).toEqual(1);
-				expect(childApp.numMounts()).toEqual(1);
+				expect(myApp.numBootstraps()).toEqual(1);
+				expect(myApp.numMounts()).toEqual(1);
 				expect(singleSpa.getMountedApps()).toEqual(['./invalid-unmount.app.js']);
 				expect(singleSpa.getAppStatus('./invalid-unmount.app.js')).toEqual('MOUNTED');
 
@@ -33,9 +33,9 @@ export default function() {
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
-					expect(childApp.numBootstraps()).toEqual(1);
-					expect(childApp.numMounts()).toEqual(1);
-					expect(childApp.numUnmounts()).toEqual(1);
+					expect(myApp.numBootstraps()).toEqual(1);
+					expect(myApp.numMounts()).toEqual(1);
+					expect(myApp.numUnmounts()).toEqual(1);
 					expect(singleSpa.getMountedApps()).toEqual([]);
 					expect(singleSpa.getAppStatus('./invalid-unmount.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 
@@ -44,9 +44,9 @@ export default function() {
 					singleSpa
 					.triggerAppChange()
 					.then(() => {
-						expect(childApp.numBootstraps()).toEqual(1);
-						expect(childApp.numMounts()).toEqual(1); // hasn't increased
-						expect(childApp.numUnmounts()).toEqual(1);
+						expect(myApp.numBootstraps()).toEqual(1);
+						expect(myApp.numMounts()).toEqual(1); // hasn't increased
+						expect(myApp.numUnmounts()).toEqual(1);
 						expect(singleSpa.getMountedApps()).toEqual([]);
 						expect(singleSpa.getAppStatus('./invalid-unmount.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 						done();

@@ -2,7 +2,7 @@ const activeHash = `#mount-times-out-dies`;
 
 export default function() {
 	describe(`mount-times-out-dies app`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./mount-times-out-dies.app.js', () => System.import('./mount-times-out-dies.app.js'), location => location.hash === activeHash);
@@ -13,7 +13,7 @@ export default function() {
 
 			System
 			.import('./mount-times-out-dies.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
@@ -23,8 +23,8 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.bootstraps()).toEqual(1);
-				expect(childApp.mounts()).toEqual(1);
+				expect(myApp.bootstraps()).toEqual(1);
+				expect(myApp.mounts()).toEqual(1);
 				expect(singleSpa.getMountedApps()).toEqual([]);
 				expect(singleSpa.getAppStatus('./mount-times-out-dies.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 				done();

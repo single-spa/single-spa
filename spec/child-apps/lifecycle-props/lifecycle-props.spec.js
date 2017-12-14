@@ -2,17 +2,16 @@ const activeHash = `#lifecycle-props`;
 
 export default function() {
 	describe(`lifecycle-props app`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
-			console.log('declaring child app')
 			singleSpa.registerApplication('lifecycle-props', () => System.import('./lifecycle-props.app.js'), location => location.hash === activeHash);
 		});
 
 		beforeEach(done => {
 			System
 			.import('./lifecycle-props.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {
@@ -36,10 +35,10 @@ export default function() {
 				return singleSpa.unloadApplication('lifecycle-props');
 			})
 			.then(() => {
-				expect(childApp.getBootstrapProps()).toEqual({appName: 'lifecycle-props'});
-				expect(childApp.getMountProps()).toEqual({appName: 'lifecycle-props'});
-				expect(childApp.getUnmountProps()).toEqual({appName: 'lifecycle-props'});
-				expect(childApp.getUnloadProps()).toEqual({appName: 'lifecycle-props'});
+				expect(myApp.getBootstrapProps()).toEqual({appName: 'lifecycle-props'});
+				expect(myApp.getMountProps()).toEqual({appName: 'lifecycle-props'});
+				expect(myApp.getUnmountProps()).toEqual({appName: 'lifecycle-props'});
+				expect(myApp.getUnloadProps()).toEqual({appName: 'lifecycle-props'});
 
 				done();
 			})

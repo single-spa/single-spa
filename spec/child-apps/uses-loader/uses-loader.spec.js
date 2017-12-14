@@ -2,7 +2,7 @@ const activeHash = `#uses-loader`;
 
 export default function() {
 	describe(`uses-loader app`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./uses-loader.app.js', location => location.hash === activeHash);
@@ -13,7 +13,7 @@ export default function() {
 
 			System
 			.import('./uses-loader.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
@@ -23,9 +23,9 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.bootstrapWasCalled()).toBe(true);
-				expect(childApp.mountWasCalled()).toBe(true);
-				expect(childApp.unmountWasCalled()).toBe(false);
+				expect(myApp.bootstrapWasCalled()).toBe(true);
+				expect(myApp.mountWasCalled()).toBe(true);
+				expect(myApp.unmountWasCalled()).toBe(false);
 				expect(singleSpa.getAppStatus('./uses-loader.app.js')).toEqual(singleSpa.MOUNTED);
 				done();
 			})
