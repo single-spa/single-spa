@@ -2,7 +2,7 @@ const activeHash = `#invalid-bootstrap`;
 
 export default function() {
 	describe(`invalid-bootstrap app`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./invalid-bootstrap.app.js', () => System.import('./invalid-bootstrap.app.js'), location => location.hash === activeHash);
@@ -13,7 +13,7 @@ export default function() {
 
 			System
 			.import('./invalid-bootstrap.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
@@ -23,8 +23,8 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.mountWasCalled()).toEqual(false);
-				expect(childApp.unmountWasCalled()).toEqual(false);
+				expect(myApp.mountWasCalled()).toEqual(false);
+				expect(myApp.unmountWasCalled()).toEqual(false);
 				expect(singleSpa.getMountedApps()).toEqual([]);
 				expect(singleSpa.getAppStatus('./invalid-bootstrap.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 				done();

@@ -1,6 +1,6 @@
 export default function() {
 	describe(`empty-array-lifecycles`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./empty-array-lifecycles.app.js', () => System.import('./empty-array-lifecycles.app.js'), location => location.hash === "#empty-array-lifecycles");
@@ -11,7 +11,7 @@ export default function() {
 
 			System
 			.import('./empty-array-lifecycles.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(done)
 			.catch(err => {throw err})
 		})

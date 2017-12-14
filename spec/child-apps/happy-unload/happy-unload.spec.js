@@ -2,7 +2,7 @@ const activeHash = `#happy-unload`;
 
 export default function() {
 	describe(`happy-unload app :`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./happy-unload.app.js', () => System.import('./happy-unload.app.js'), location => location.hash === activeHash);
@@ -13,10 +13,10 @@ export default function() {
 
 			System
 			.import('./happy-unload.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(() => singleSpa.unloadApplication('./happy-unload.app.js'))
 			.then(() => singleSpa.triggerAppChange())
-			.then(() => childApp.reset())
+			.then(() => myApp.reset())
 			.then(done)
 			.catch(err => console.error(err))
 		})
@@ -29,26 +29,26 @@ export default function() {
 				.triggerAppChange()
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(0);
-					expect(childApp.getNumUnloadCalls()).toBe(0);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(0);
+					expect(myApp.getNumUnloadCalls()).toBe(0);
 					return singleSpa.unloadApplication('./happy-unload.app.js');
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(1);
-					expect(childApp.getNumUnloadCalls()).toBe(1);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(1);
+					expect(myApp.getNumUnloadCalls()).toBe(1);
 					return singleSpa.triggerAppChange();
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
-					expect(childApp.getNumBootstrapCalls()).toBe(2);
-					expect(childApp.getNumMountCalls()).toBe(2);
-					expect(childApp.getNumUnmountCalls()).toBe(1);
-					expect(childApp.getNumUnloadCalls()).toBe(1);
+					expect(myApp.getNumBootstrapCalls()).toBe(2);
+					expect(myApp.getNumMountCalls()).toBe(2);
+					expect(myApp.getNumUnmountCalls()).toBe(1);
+					expect(myApp.getNumUnloadCalls()).toBe(1);
 					done();
 				})
 				.catch(ex => {
@@ -62,38 +62,38 @@ export default function() {
 				.triggerAppChange()
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
-					expect(childApp.getNumBootstrapCalls()).toBe(0);
-					expect(childApp.getNumMountCalls()).toBe(0);
-					expect(childApp.getNumUnmountCalls()).toBe(0);
-					expect(childApp.getNumUnloadCalls()).toBe(0);
+					expect(myApp.getNumBootstrapCalls()).toBe(0);
+					expect(myApp.getNumMountCalls()).toBe(0);
+					expect(myApp.getNumUnmountCalls()).toBe(0);
+					expect(myApp.getNumUnloadCalls()).toBe(0);
 
 					window.location.hash = activeHash;
 					return singleSpa.triggerAppChange()
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(0);
-					expect(childApp.getNumUnloadCalls()).toBe(0);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(0);
+					expect(myApp.getNumUnloadCalls()).toBe(0);
 
 					window.location.hash = '#';
 					return singleSpa.triggerAppChange();
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_MOUNTED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(1);
-					expect(childApp.getNumUnloadCalls()).toBe(0);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(1);
+					expect(myApp.getNumUnloadCalls()).toBe(0);
 					return singleSpa.unloadApplication('./happy-unload.app.js');
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(1);
-					expect(childApp.getNumUnloadCalls()).toBe(1);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(1);
+					expect(myApp.getNumUnloadCalls()).toBe(1);
 					done();
 				})
 				.catch(err => {
@@ -107,18 +107,18 @@ export default function() {
 				.triggerAppChange()
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
-					expect(childApp.getNumBootstrapCalls()).toBe(0);
-					expect(childApp.getNumMountCalls()).toBe(0);
-					expect(childApp.getNumUnmountCalls()).toBe(0);
-					expect(childApp.getNumUnloadCalls()).toBe(0);
+					expect(myApp.getNumBootstrapCalls()).toBe(0);
+					expect(myApp.getNumMountCalls()).toBe(0);
+					expect(myApp.getNumUnmountCalls()).toBe(0);
+					expect(myApp.getNumUnloadCalls()).toBe(0);
 				})
 				.then(() => singleSpa.unloadApplication('./happy-unload.app.js'))
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
-					expect(childApp.getNumBootstrapCalls()).toBe(0);
-					expect(childApp.getNumMountCalls()).toBe(0);
-					expect(childApp.getNumUnmountCalls()).toBe(0);
-					expect(childApp.getNumUnloadCalls()).toBe(0);
+					expect(myApp.getNumBootstrapCalls()).toBe(0);
+					expect(myApp.getNumMountCalls()).toBe(0);
+					expect(myApp.getNumUnmountCalls()).toBe(0);
+					expect(myApp.getNumUnloadCalls()).toBe(0);
 
 					done();
 				})
@@ -135,38 +135,38 @@ export default function() {
 				.triggerAppChange()
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(0);
-					expect(childApp.getNumUnloadCalls()).toBe(0);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(0);
+					expect(myApp.getNumUnloadCalls()).toBe(0);
 
 					window.location.hash = '#';
 					return singleSpa.triggerAppChange();
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_MOUNTED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(1);
-					expect(childApp.getNumUnloadCalls()).toBe(0);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(1);
+					expect(myApp.getNumUnloadCalls()).toBe(0);
 					return singleSpa.unloadApplication('./happy-unload.app.js');
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(1);
-					expect(childApp.getNumUnloadCalls()).toBe(1);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(1);
+					expect(myApp.getNumUnloadCalls()).toBe(1);
 
 					window.location.hash = activeHash;
 					return singleSpa.triggerAppChange();
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
-					expect(childApp.getNumBootstrapCalls()).toBe(2);
-					expect(childApp.getNumMountCalls()).toBe(2);
-					expect(childApp.getNumUnmountCalls()).toBe(1);
-					expect(childApp.getNumUnloadCalls()).toBe(1);
+					expect(myApp.getNumBootstrapCalls()).toBe(2);
+					expect(myApp.getNumMountCalls()).toBe(2);
+					expect(myApp.getNumUnmountCalls()).toBe(1);
+					expect(myApp.getNumUnloadCalls()).toBe(1);
 
 					done();
 				})
@@ -185,10 +185,10 @@ export default function() {
 				.triggerAppChange()
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(0);
-					expect(childApp.getNumUnloadCalls()).toBe(0);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(0);
+					expect(myApp.getNumUnloadCalls()).toBe(0);
 
 					singleSpa
 					.unloadApplication('./happy-unload.app.js', {waitForUnmount: true})
@@ -198,10 +198,10 @@ export default function() {
 						 */
 						expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
 
-						expect(childApp.getNumBootstrapCalls()).toBe(1);
-						expect(childApp.getNumMountCalls()).toBe(1);
-						expect(childApp.getNumUnmountCalls()).toBe(1);
-						expect(childApp.getNumUnloadCalls()).toBe(1);
+						expect(myApp.getNumBootstrapCalls()).toBe(1);
+						expect(myApp.getNumMountCalls()).toBe(1);
+						expect(myApp.getNumUnmountCalls()).toBe(1);
+						expect(myApp.getNumUnloadCalls()).toBe(1);
 					})
 					.catch(err => {
 						fail(err);
@@ -216,20 +216,20 @@ export default function() {
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(0);
-					expect(childApp.getNumUnloadCalls()).toBe(0);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(0);
+					expect(myApp.getNumUnloadCalls()).toBe(0);
 
 					window.location.hash = `#`;
 					return singleSpa.triggerAppChange();
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
-					expect(childApp.getNumBootstrapCalls()).toBe(1);
-					expect(childApp.getNumMountCalls()).toBe(1);
-					expect(childApp.getNumUnmountCalls()).toBe(1);
-					expect(childApp.getNumUnloadCalls()).toBe(1);
+					expect(myApp.getNumBootstrapCalls()).toBe(1);
+					expect(myApp.getNumMountCalls()).toBe(1);
+					expect(myApp.getNumUnmountCalls()).toBe(1);
+					expect(myApp.getNumUnloadCalls()).toBe(1);
 					done();
 				})
 				.catch(err => {
@@ -248,10 +248,10 @@ export default function() {
 			.triggerAppChange()
 			.then(() => {
 				expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('MOUNTED');
-				expect(childApp.getNumBootstrapCalls()).toBe(1);
-				expect(childApp.getNumMountCalls()).toBe(1);
-				expect(childApp.getNumUnmountCalls()).toBe(0);
-				expect(childApp.getNumUnloadCalls()).toBe(0);
+				expect(myApp.getNumBootstrapCalls()).toBe(1);
+				expect(myApp.getNumMountCalls()).toBe(1);
+				expect(myApp.getNumUnmountCalls()).toBe(0);
+				expect(myApp.getNumUnloadCalls()).toBe(0);
 			})
 			.then(() => {
 				// First caller to unloadApplication wants to waitForUnmount

@@ -1,6 +1,6 @@
 export default function() {
 	describe(`bootstrap-times-out`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./bootstrap-times-out.app.js', () => System.import('./bootstrap-times-out.app.js'), location => location.hash === "#bootstrap-times-out");
@@ -11,7 +11,7 @@ export default function() {
 
 			System
 			.import('./bootstrap-times-out.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
@@ -21,8 +21,8 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.wasBootstrapped()).toEqual(true);
-				expect(childApp.wasMounted()).toEqual(true);
+				expect(myApp.wasBootstrapped()).toEqual(true);
+				expect(myApp.wasMounted()).toEqual(true);
 				expect(singleSpa.getMountedApps()).toEqual(['./bootstrap-times-out.app.js']);
 				expect(singleSpa.getAppStatus('./bootstrap-times-out.app.js')).toEqual(singleSpa.MOUNTED);
 				done();

@@ -1,6 +1,6 @@
 export default function() {
 	describe(`happy-basic`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./happy-basic.app.js', () => System.import('./happy-basic.app.js'), location => location.hash === "#happy-basic");
@@ -11,14 +11,14 @@ export default function() {
 
 			System
 			.import('./happy-basic.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
 		})
 
 		it(`goes through the whole lifecycle successfully`, (done) => {
-			expect(childApp.isMounted()).toEqual(false);
+			expect(myApp.isMounted()).toEqual(false);
 			expect(singleSpa.getMountedApps()).toEqual([]);
 
 			location.hash = 'happy-basic';
@@ -26,8 +26,8 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.wasBootstrapped()).toEqual(true);
-				expect(childApp.isMounted()).toEqual(true);
+				expect(myApp.wasBootstrapped()).toEqual(true);
+				expect(myApp.isMounted()).toEqual(true);
 				expect(singleSpa.getMountedApps()).toEqual(['./happy-basic.app.js']);
 
 				location.hash = '#not-happy-basic';
@@ -35,8 +35,8 @@ export default function() {
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
-					expect(childApp.wasBootstrapped()).toEqual(true);
-					expect(childApp.isMounted()).toEqual(false);
+					expect(myApp.wasBootstrapped()).toEqual(true);
+					expect(myApp.isMounted()).toEqual(false);
 					expect(singleSpa.getMountedApps()).toEqual([]);
 					done();
 				})

@@ -2,7 +2,7 @@ const activeHash = `#invalid-mount`;
 
 export default function() {
 	describe(`invalid-mount app`, () => {
-		let childApp;
+		let myApp;
 
 		beforeAll(() => {
 			singleSpa.registerApplication('./invalid-mount.app.js', () => System.import('./invalid-mount.app.js'), location => location.hash === activeHash);
@@ -13,7 +13,7 @@ export default function() {
 
 			System
 			.import('./invalid-mount.app.js')
-			.then(app => childApp = app)
+			.then(app => myApp = app)
 			.then(app => app.reset())
 			.then(done)
 			.catch(err => {throw err})
@@ -23,8 +23,8 @@ export default function() {
 			singleSpa
 			.triggerAppChange()
 			.then(() => {
-				expect(childApp.wasBootstrapped()).toEqual(true);
-				expect(childApp.wasMounted()).toEqual(true);
+				expect(myApp.wasBootstrapped()).toEqual(true);
+				expect(myApp.wasMounted()).toEqual(true);
 				expect(singleSpa.getMountedApps()).toEqual([]);
 				expect(singleSpa.getAppStatus('./invalid-mount.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 
@@ -33,7 +33,7 @@ export default function() {
 				.triggerAppChange()
 				.then(() => {
 					// doesn't get unmounted because it's in a broken state.
-					expect(childApp.wasUnmounted()).toEqual(false);
+					expect(myApp.wasUnmounted()).toEqual(false);
 					expect(singleSpa.getMountedApps()).toEqual([]);
 					expect(singleSpa.getAppStatus('./invalid-mount.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 					done();
