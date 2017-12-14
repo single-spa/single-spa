@@ -12,6 +12,10 @@ export function getMountedApps() {
 	return childApps.filter(isActive).map(toName);
 }
 
+export function getAppNames() {
+	return childApps.map(toName);
+}
+
 export function getAppStatus(appName) {
 	const app = find(childApps, app => app.name === appName);
 	return app ? app.status : null;

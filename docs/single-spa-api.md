@@ -40,6 +40,9 @@ This function is exposed onto the window as `window.singleSpaNavigate`, for conv
 `getMountedApps()` returns an array of strings, where each string is the name of the child application,
 as defined in the call to `declareChildApplication`.
 
+## getAppNames
+`getAppNames()` returns an array of strings, where each string is the name of the child application. NOTE: this returns all declared child applications regardless of app status.
+
 ## getAppStatus
 `getAppStatus(appName)` takes in one string parameter and returns either a string (when the app exists)
 or `null` (when the app doesn't exist). The string status is one of the following:
@@ -88,6 +91,16 @@ the child application as soon as it is safe to do so (when the app status is not
 ## checkActivityFunctions
 `checkActivityFunctions(mockWindowLocation)` takes in a mock of the `window.location`. It returns an array of
 `childApplicationName` strings. This API will call every child app's activity function with the provided mockWindowLocation
+
+## before routing event
+single-spa fires an event `single-spa:before-routing-event` on the window every time before a routing event occurs.
+This event will get fired after each hashchange, popstate, or triggerAppChange, even if no changes
+to child applications were necessary. Sample usage of this event might look like this:
+```js
+window.addEventListener('single-spa:before-routing-event', () => {
+	console.log('before routing event occurred!');
+})
+```
 
 ## routing event
 single-spa fires an event `single-spa:routing-event` on the window every time that a routing event has occurred in which

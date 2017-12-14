@@ -1,6 +1,6 @@
 # single-spa
 [![npm version](https://img.shields.io/npm/v/single-spa.svg?style=flat-square)](https://www.npmjs.org/package/single-spa)
-[![Build Status](https://img.shields.io/travis/CanopyTax/single-spa.svg?style=flat-square)](https://travis-ci.org/CanopyTax/single-spa)
+[![Build Status](https://img.shields.io/travis/CanopyTax/single-spa/master.svg?style=flat-square)](https://travis-ci.org/CanopyTax/single-spa)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/joeldenning.svg)](https://saucelabs.com/u/joeldenning)
 
@@ -94,7 +94,7 @@ singleSpa.start();
 
 let domEl;
 
-export function bootstrap() {
+export function bootstrap(props) {
 	return Promise
 		.resolve()
 		.then(() => {
@@ -104,7 +104,7 @@ export function bootstrap() {
 		});
 }
 
-export function mount() {
+export function mount(props) {
 	return Promise
 		.resolve()
 		.then(() => {
@@ -113,7 +113,7 @@ export function mount() {
 		});
 }
 
-export function unmount() {
+export function unmount(props) {
 	return Promise
 		.resolve()
 		.then(() => {
@@ -125,3 +125,8 @@ export function unmount() {
 
 ## API
 See [single-spa api](/docs/single-spa-api.md) and [child application api](/docs/child-applications.md#child-application-lifecycle).
+
+## Who's Using This?
+Please submit a P.R. to this section if you start using single-spa.
+
+- [CanopyTax](https://www.canopytax.com)
