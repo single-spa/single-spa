@@ -5,20 +5,20 @@ What this means is you can use the api in two ways:
 ```js
 import * as singleSpa from 'single-spa';
 // OR
-import {declareChildApplication, start} from 'single-spa';
+import {registerApplication, start} from 'single-spa';
 ```
 
-## declareChildApplication
-`declareChildApplication(name, activeWhen)` is the most important api your root application will use.
+## registerApplication
+`registerApplication(name, activeWhen)` is the most important api your root application will use.
 It is described in detail inside of the [root-application.md docs](/docs/root-application.md#declaring-child-applications)
 
 ## start
 `start()` is a function that must be called by your root application. Before `start` is called, child
 applications will be loaded, but will never be bootstrapped, mounted or unmounted. The reason for `start`
-is to give you control over the performance of your single page application. For example, you may want to declare child applications
-immediately (to start downloading the code for the active ones), but not actually mount the child applications
+is to give you control over the performance of your single page application. For example, you may want to declare registered applications
+immediately (to start downloading the code for the active ones), but not actually mount the registered applications
 until an initial AJAX request (maybe to get information about the logged in user) has been completed. In that case,
-the best performance is achieved by calling `declareChildApplication` immediately, but calling `start` after
+the best performance is achieved by calling `registerApplication` immediately, but calling `start` after
 the AJAX request is completed.
 
 ## triggerAppChange
@@ -26,7 +26,7 @@ the AJAX request is completed.
 
 ## navigateToUrl
 `navigateToUrl(obj)` takes in one optional argument and returns no value. It is a utility function that
-allows for easy url navigation between child applications, without needing to deal with `event.preventDefault()`,
+allows for easy url navigation between registered applications, without needing to deal with `event.preventDefault()`,
 `pushState`, `triggerAppChange()`, etc. It can be called with one of the following:
 
 - a string parameter `url`
@@ -37,11 +37,11 @@ allows for easy url navigation between child applications, without needing to de
 This function is exposed onto the window as `window.singleSpaNavigate`, for convenience and use inside of `<button onclick="singleSpaNavigate('url')">` or `<a href="/url" onclick="singleSpaNavigate">`
 
 ## getMountedApps
-`getMountedApps()` returns an array of strings, where each string is the name of the child application,
-as defined in the call to `declareChildApplication`.
+`getMountedApps()` returns an array of strings, where each string is the name of the registered application,
+as defined in the call to `registerApplication`.
 
 ## getAppNames
-`getAppNames()` returns an array of strings, where each string is the name of the child application. NOTE: this returns all declared child applications regardless of app status.
+`getAppNames()` returns an array of strings, where each string is the name of the registered application. NOTE: this returns all declared registered applications regardless of app status.
 
 ## getAppStatus
 `getAppStatus(appName)` takes in one string parameter and returns either a string (when the app exists)
@@ -61,7 +61,7 @@ or `null` (when the app doesn't exist). The string status is one of the followin
 
 ## unloadChildApplication
 `unloadChildApplication(appName, opts)` takes in a string parameter `appName` and (optionally) an `opts` object. It returns
-a promise that is resolved when the child application has been successfully resolved. The `opts` parameter is an object with the
+a promise that is resolved when the registered application has been successfully resolved. The `opts` parameter is an object with the
 following property:
 - `waitForUnmount`: a boolean that decides when to unload the application. Defaults to false.
 
@@ -73,20 +73,20 @@ unloadChildApplication('app1'); // This is the same as providing `{waitForUnmoun
 unloadChildApplication('app1', {waitForUnmount: true});
 ```
 
-The purpose of unloading a child application is to set it back to to a NOT_LOADED status, which means that
+The purpose of unloading a registered application is to set it back to to a NOT_LOADED status, which means that
 it will be re-bootstrapped the next time it needs to mount. The motivation for this was to allow for
-the hot-reloading of entire child applications, but `unload` can be useful whenever you want to re-bootstrap
+the hot-reloading of entire registered applications, but `unload` can be useful whenever you want to re-bootstrap
 your application.
 
 Single-spa performs the following steps when unloadChildApplication is called.
-1. Call the [unload lifecyle](/docs/child-applications.md#unload) on the child application that is being unloaded.
+1. Call the [unload lifecyle](/docs/child-applications.md#unload) on the registered application that is being unloaded.
 2. Set the app status to NOT_LOADED
 3. Trigger a reroute, during which single-spa will potentially mount the application that was just unloaded.
 
-Because a child application might be mounted when `unloadChildApplication` is called, you can specify whether you want to immediately
+Because a registered application might be mounted when `unloadChildApplication` is called, you can specify whether you want to immediately
 unload or if you want to wait until the application is no longer mounted. This is done with the `waitForUnmount` option. If `false`,
-single-spa immediately unloads the specified child application even if the app is currently mounted. If `true`, single-spa will unload
-the child application as soon as it is safe to do so (when the app status is not `MOUNTED`).
+single-spa immediately unloads the specified registered application even if the app is currently mounted. If `true`, single-spa will unload
+the registered application as soon as it is safe to do so (when the app status is not `MOUNTED`).
 
 ## checkActivityFunctions
 `checkActivityFunctions(mockWindowLocation)` takes in a mock of the `window.location`. It returns an array of
@@ -95,7 +95,7 @@ the child application as soon as it is safe to do so (when the app status is not
 ## before routing event
 single-spa fires an event `single-spa:before-routing-event` on the window every time before a routing event occurs.
 This event will get fired after each hashchange, popstate, or triggerAppChange, even if no changes
-to child applications were necessary. Sample usage of this event might look like this:
+to registered applications were necessary. Sample usage of this event might look like this:
 ```js
 window.addEventListener('single-spa:before-routing-event', () => {
 	console.log('before routing event occurred!');
@@ -106,7 +106,7 @@ window.addEventListener('single-spa:before-routing-event', () => {
 single-spa fires an event `single-spa:routing-event` on the window every time that a routing event has occurred in which
 single-spa verified that all apps were correctly loaded, bootstrapped, mounted, and unmounted.
 This event will get fired after each hashchange, popstate, or triggerAppChange, even if no changes
-to child applications were necessary. Sample usage of this event might look like this:
+to registered applications were necessary. Sample usage of this event might look like this:
 ```js
 window.addEventListener('single-spa:routing-event', () => {
 	console.log('routing event occurred!');
@@ -176,22 +176,22 @@ that defaults to false. It sets the global configuration for unmount timeouts an
 See dieOnTimeout section below for details.
 
 ## dieOnTimeout
-`dieOnTimeout` refers to configuration of what should happen when child applications take longer than expected
-to load, bootstrap, mount, or unmount. There is both a global configuration applicable to all child applications, and also
-the ability for each child application to override this behavior for itself. See [child application configuration
-for timeouts](/docs/child-applications.md#timeouts) for details on child application overrides of the global
+`dieOnTimeout` refers to configuration of what should happen when registered applications take longer than expected
+to load, bootstrap, mount, or unmount. There is both a global configuration applicable to all registered applications, and also
+the ability for each registered application to override this behavior for itself. See [registered application configuration
+for timeouts](/docs/child-applications.md#timeouts) for details on registered application overrides of the global
 behavior.
 
-If `dieOnTimeout` is false (which is the default), child applications that are slowing things down will cause
+If `dieOnTimeout` is false (which is the default), registered applications that are slowing things down will cause
 nothing more than some warnings in the console up until `millis` is reached.
 
-If `dieOnTimeout` is true, child applications that are slowing things down will be siloed into a SKIP_BECAUSE_BROKEN
+If `dieOnTimeout` is true, registered applications that are slowing things down will be siloed into a SKIP_BECAUSE_BROKEN
 status where they will never again be given the chance to break everything.
 
 ## setLoader (deprecated)
 `setLoader(Loader)` sets the javascript [loader](https://whatwg.github.io/loader/) that will be used by single-spa.
 A loader must implement `Loader.import(...).then(...).catch(...)`, and the most commonly used loader is
-[SystemJS](https://github.com/systemjs/systemjs). This API should be called **before** any `declareChildApplication`
+[SystemJS](https://github.com/systemjs/systemjs). This API should be called **before** any `registerApplication`
 calls are made. Once called, you may omit the [loading function](/docs/root-application.md#loading-function) argument when
-calling `declareChildApplication` and single-spa will assume that a child application may be loaded with
+calling `registerApplication` and single-spa will assume that a registered application may be loaded with
 `Loader.import(childAppName).then(childApp => ...)`
