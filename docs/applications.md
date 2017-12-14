@@ -73,7 +73,7 @@ This lifecycle function will be called whenever the registered application is no
 called, this function should look at the URL to determine the active route and then create
 DOM elements, DOM event listeners, etc. to render content to the user. Any subsequent routing
 events (such as `hashchange` and `popstate`) will **not** trigger more calls to `mount`, but
-instead should be handled by the childl application itself.
+instead should be handled by the application itself.
 
 ```js
 export function mount(props) {
@@ -105,7 +105,7 @@ export function unmount(props) {
 
 ### unload
 The `unload` lifecycle is an optionally implemented lifecycle function. It will be called whenever an application should be
-`unloaded`. This will not ever happen unless someone calls the [`unloadApplication`](/docs/single-spa-api.md#unloadchildapplication) API.
+`unloaded`. This will not ever happen unless someone calls the [`unloadApplication`](/docs/single-spa-api.md#unload-application) API.
 If a registered application does not implement the unload lifecycle, then it assumed that unloading the app is a no-op.
 
 The purpose of the `unload` lifecycle is to perform logic right before a single-spa application is unloaded. Once

@@ -90,7 +90,7 @@ the registered application as soon as it is safe to do so (when the app status i
 
 ## checkActivityFunctions
 `checkActivityFunctions(mockWindowLocation)` takes in a mock of the `window.location`. It returns an array of
-`applicationName` strings. This API will call every child app's activity function with the provided mockWindowLocation
+`applicationName` strings. This API will call every app's activity function with the provided mockWindowLocation
 
 ## before routing event
 single-spa fires an event `single-spa:before-routing-event` on the window every time before a routing event occurs.
