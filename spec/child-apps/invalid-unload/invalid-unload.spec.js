@@ -14,26 +14,26 @@ export default function() {
 			System
 			.import('./invalid-unload.app.js')
 			.then(app => childApp = app)
-			.then(() => singleSpa.unloadChildApplication('./invalid-unload.app.js'))
+			.then(() => singleSpa.unloadApplication('./invalid-unload.app.js'))
 			.then(() => singleSpa.triggerAppChange())
 			.then(() => childApp.reset())
 			.then(done)
 			.catch(err => console.error(err))
 		});
 
-		it(`throws an error if you call unloadChildApplication incorrectly`, () => {
+		it(`throws an error if you call unloadApplication incorrectly`, () => {
 			try {
 				// The parameters are in the reverse order
-				singleSpa.unloadChildApplication({waitForUnmount}, './invalid-unload.app.js');
-				fail("Calling unloadChildApplication with incorrect params should throw");
+				singleSpa.unloadApplication({waitForUnmount}, './invalid-unload.app.js');
+				fail("Calling unloadApplication with incorrect params should throw");
 			} catch(err) {
 				// expected
 			}
 
 			try {
 				// Trying to unload an app that doesn't exist
-				singleSpa.unloadChildApplication("App that doesn't exist");
-				fail("Calling unloadChildApplication on non-existent app should throw");
+				singleSpa.unloadApplication("App that doesn't exist");
+				fail("Calling unloadApplication on non-existent app should throw");
 			} catch(err) {
 				// expected
 			}
@@ -44,10 +44,10 @@ export default function() {
 			singleSpa.triggerAppChange().then(() => {
 				// The unload lifecycle hasn't been called yet, so single-spa doesn't know it is a bad impl yet.
 				expect(singleSpa.getAppStatus('./invalid-unload.app.js')).toBe('MOUNTED');
-				return singleSpa.unloadChildApplication('./invalid-unload.app.js');
+				return singleSpa.unloadApplication('./invalid-unload.app.js');
 			})
 			.then(() => {
-				fail(`unloadChildApplication() should have rejected the promise it returned because the app has a bad implementation of the unload lifecycle`);
+				fail(`unloadApplication() should have rejected the promise it returned because the app has a bad implementation of the unload lifecycle`);
 				done();
 			})
 			.catch(err => {

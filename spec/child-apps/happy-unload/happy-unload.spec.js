@@ -14,7 +14,7 @@ export default function() {
 			System
 			.import('./happy-unload.app.js')
 			.then(app => childApp = app)
-			.then(() => singleSpa.unloadChildApplication('./happy-unload.app.js'))
+			.then(() => singleSpa.unloadApplication('./happy-unload.app.js'))
 			.then(() => singleSpa.triggerAppChange())
 			.then(() => childApp.reset())
 			.then(done)
@@ -33,7 +33,7 @@ export default function() {
 					expect(childApp.getNumMountCalls()).toBe(1);
 					expect(childApp.getNumUnmountCalls()).toBe(0);
 					expect(childApp.getNumUnloadCalls()).toBe(0);
-					return singleSpa.unloadChildApplication('./happy-unload.app.js');
+					return singleSpa.unloadApplication('./happy-unload.app.js');
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
@@ -86,7 +86,7 @@ export default function() {
 					expect(childApp.getNumMountCalls()).toBe(1);
 					expect(childApp.getNumUnmountCalls()).toBe(1);
 					expect(childApp.getNumUnloadCalls()).toBe(0);
-					return singleSpa.unloadChildApplication('./happy-unload.app.js');
+					return singleSpa.unloadApplication('./happy-unload.app.js');
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
@@ -102,7 +102,7 @@ export default function() {
 				});
 			});
 
-			it(`is a no-op if the app is NOT_LOADED when you call unloadChildApplication on it`, done => {
+			it(`is a no-op if the app is NOT_LOADED when you call unloadApplication on it`, done => {
 				singleSpa
 				.triggerAppChange()
 				.then(() => {
@@ -112,7 +112,7 @@ export default function() {
 					expect(childApp.getNumUnmountCalls()).toBe(0);
 					expect(childApp.getNumUnloadCalls()).toBe(0);
 				})
-				.then(() => singleSpa.unloadChildApplication('./happy-unload.app.js'))
+				.then(() => singleSpa.unloadApplication('./happy-unload.app.js'))
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
 					expect(childApp.getNumBootstrapCalls()).toBe(0);
@@ -149,7 +149,7 @@ export default function() {
 					expect(childApp.getNumMountCalls()).toBe(1);
 					expect(childApp.getNumUnmountCalls()).toBe(1);
 					expect(childApp.getNumUnloadCalls()).toBe(0);
-					return singleSpa.unloadChildApplication('./happy-unload.app.js');
+					return singleSpa.unloadApplication('./happy-unload.app.js');
 				})
 				.then(() => {
 					expect(singleSpa.getAppStatus('./happy-unload.app.js')).toEqual('NOT_LOADED');
@@ -191,7 +191,7 @@ export default function() {
 					expect(childApp.getNumUnloadCalls()).toBe(0);
 
 					singleSpa
-					.unloadChildApplication('./happy-unload.app.js', {waitForUnmount: true})
+					.unloadApplication('./happy-unload.app.js', {waitForUnmount: true})
 					.then(() => {
 						/* This will get called only once the app is unloaded. And it will not
 						 * wait for the app to get remounted before it is called.
@@ -208,7 +208,7 @@ export default function() {
 						done();
 					})
 
-					/* Triggering an app change after calling unloadChildApplication will
+					/* Triggering an app change after calling unloadApplication will
 					 * not cause the app to unload, since it is still mounted and we set
 					 * waitForUnmount: true.
 					 */
@@ -239,7 +239,7 @@ export default function() {
 			});
 		});
 
-		it(`resolves the promise for all callers to unloadChildApplication when the app is unloaded`, done => {
+		it(`resolves the promise for all callers to unloadApplication when the app is unloaded`, done => {
 			window.location.hash = activeHash;
 
 			let firstCallerResolved = false, secondCallerResolved = false;
@@ -254,9 +254,9 @@ export default function() {
 				expect(childApp.getNumUnloadCalls()).toBe(0);
 			})
 			.then(() => {
-				// First caller to unloadChildApplication wants to waitForUnmount
+				// First caller to unloadApplication wants to waitForUnmount
 				singleSpa
-				.unloadChildApplication('./happy-unload.app.js', {waitForUnmount: true})
+				.unloadApplication('./happy-unload.app.js', {waitForUnmount: true})
 				.then(() => {
 					firstCallerResolved = true;
 					if (secondCallerResolved) {
@@ -269,9 +269,9 @@ export default function() {
 					done();
 				});
 
-				// Second caller to unloadChildApplication doesn't want to waitForUnmount
+				// Second caller to unloadApplication doesn't want to waitForUnmount
 				singleSpa
-				.unloadChildApplication('./happy-unload.app.js', {waitForUnmount: false})
+				.unloadApplication('./happy-unload.app.js', {waitForUnmount: false})
 				.then(() => {
 					secondCallerResolved = true;
 					if (firstCallerResolved) {

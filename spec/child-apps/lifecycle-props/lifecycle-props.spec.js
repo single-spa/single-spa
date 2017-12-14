@@ -33,7 +33,7 @@ export default function() {
 				return singleSpa.triggerAppChange();
 			})
 			.then(() => {
-				return singleSpa.unloadChildApplication('lifecycle-props');
+				return singleSpa.unloadApplication('lifecycle-props');
 			})
 			.then(() => {
 				expect(childApp.getBootstrapProps()).toEqual({childAppName: 'lifecycle-props'});
