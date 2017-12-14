@@ -49,7 +49,14 @@ export function reroute(pendingPromises = [], eventArguments) {
 	}
 
 	async function performAppChanges() {
-		window.dispatchEvent(new CustomEvent("single-spa:before-routing-event"));
+
+		let myCE
+		if (eventArguments && eventArguments[0]) {
+			myCE = {
+				detail: eventArguments[0]
+			}
+		}
+		window.dispatchEvent(new CustomEvent("single-spa:before-routing-event", myCE));
 		const unloadPromises = getAppsToUnload().map(toUnloadPromise);
 
 		const unmountUnloadPromises = getAppsToUnmount()
