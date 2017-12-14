@@ -1,13 +1,13 @@
 import CustomEvent from 'custom-event';
 import { isStarted } from 'src/start.js';
-import { toLoadPromise } from 'src/child-applications/lifecycles/load.js';
-import { toBootstrapPromise } from 'src/child-applications/lifecycles/bootstrap.js';
-import { toMountPromise } from 'src/child-applications/lifecycles/mount.js';
-import { toUnmountPromise } from 'src/child-applications/lifecycles/unmount.js';
-import { getMountedApps, getAppsToLoad, getAppsToUnmount, getAppsToMount } from 'src/child-applications/child-apps.js';
-import { notSkipped } from 'src/child-applications/child-app.helpers.js';
+import { toLoadPromise } from 'src/applications/lifecycles/load.js';
+import { toBootstrapPromise } from 'src/applications/lifecycles/bootstrap.js';
+import { toMountPromise } from 'src/applications/lifecycles/mount.js';
+import { toUnmountPromise } from 'src/applications/lifecycles/unmount.js';
+import { getMountedApps, getAppsToLoad, getAppsToUnmount, getAppsToMount } from 'src/applications/apps.js';
+import { notSkipped } from 'src/applications/app.helpers.js';
 import { callCapturedEventListeners } from './navigation-events.js';
-import { getAppsToUnload, toUnloadPromise } from 'src/child-applications/lifecycles/unload.js';
+import { getAppsToUnload, toUnloadPromise } from 'src/applications/lifecycles/unload.js';
 
 let appChangeUnderway = false, peopleWaitingOnAppChange = [];
 

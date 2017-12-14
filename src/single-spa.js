@@ -1,7 +1,7 @@
 export { start } from './start.js';
 export { ensureJQuerySupport } from './jquery-support.js';
-export { setBootstrapMaxTime, setMountMaxTime, setUnmountMaxTime, setUnloadMaxTime } from './child-applications/timeouts.js';
-export { declareChildApplication, getMountedApps, getAppStatus, unloadChildApplication, checkActivityFunctions, getAppNames } from './child-applications/child-apps.js';
+export { setBootstrapMaxTime, setMountMaxTime, setUnmountMaxTime, setUnloadMaxTime } from './applications/timeouts.js';
+export { declareChildApplication, getMountedApps, getAppStatus, unloadApplication, checkActivityFunctions, getAppNames } from './applications/apps.js';
 export { navigateToUrl } from './navigation/navigation-events.js';
 export { reroute as triggerAppChange } from './navigation/reroute.js';
 export { setLoader } from './loader.js';
@@ -16,4 +16,4 @@ export {
 	MOUNTED,
 	UNMOUNTING,
 	SKIP_BECAUSE_BROKEN,
-} from './child-applications/child-app.helpers.js';
+} from './applications/app.helpers.js';

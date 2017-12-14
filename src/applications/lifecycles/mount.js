@@ -1,5 +1,5 @@
-import { NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN } from '../child-app.helpers.js';
-import { handleChildAppError } from '../child-app-errors.js';
+import { NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN } from '../app.helpers.js';
+import { handleAppError } from '../app-errors.js';
 import { reasonableTime } from '../timeouts.js';
 import CustomEvent from 'custom-event';
 
@@ -17,10 +17,10 @@ export async function toMountPromise(app) {
 	}
 
 	try {
-		await reasonableTime(app.mount({childAppName: app.name}), `Mounting application '${app.name}'`, app.timeouts.mount);
+		await reasonableTime(app.mount({appName: app.name}), `Mounting application '${app.name}'`, app.timeouts.mount);
 		app.status = MOUNTED;
 	} catch (err) {
-		handleChildAppError(err, app);
+		handleAppError(err, app);
 		app.status = SKIP_BECAUSE_BROKEN;
 	}
 

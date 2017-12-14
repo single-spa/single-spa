@@ -1,4 +1,4 @@
-import { handleChildAppError } from './child-app-errors.js';
+import { handleAppError } from './app-errors.js';
 
 // App statuses
 export const NOT_LOADED = 'NOT_LOADED';
@@ -32,7 +32,7 @@ export function shouldBeActive(app) {
 	try {
 		return app.activeWhen(window.location);
 	} catch (err) {
-		handleChildAppError(err, app);
+		handleAppError(err, app);
 		app.status = SKIP_BECAUSE_BROKEN;
 	}
 }
@@ -41,7 +41,7 @@ export function shouldntBeActive(app) {
 	try {
 		return !app.activeWhen(window.location);
 	} catch (err) {
-		handleChildAppError(err, app);
+		handleAppError(err, app);
 		app.status = SKIP_BECAUSE_BROKEN;
 	}
 }

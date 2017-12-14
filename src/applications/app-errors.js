@@ -1,9 +1,9 @@
 import CustomEvent from 'custom-event';
 
-export function handleChildAppError(err, childApp) {
-	const transformedErr = transformErr(err, childApp);
+export function handleAppError(err, app) {
+	const transformedErr = transformErr(err, app);
 
-	window.dispatchEvent(new CustomEvent("single-spa:application-broken", {detail: {appName: childApp.name, err: transformedErr}}));
+	window.dispatchEvent(new CustomEvent("single-spa:application-broken", {detail: {appName: app.name, err: transformedErr}}));
 
 	if (window.SINGLE_SPA_TESTING) {
 		console.error(transformedErr);
@@ -14,8 +14,8 @@ export function handleChildAppError(err, childApp) {
 	}
 }
 
-function transformErr(ogErr, childApp) {
-	const errPrefix = `'${childApp.name}' died in status ${childApp.status}: `;
+function transformErr(ogErr, app) {
+	const errPrefix = `'${app.name}' died in status ${app.status}: `;
 
 	let result;
 
@@ -29,7 +29,7 @@ function transformErr(ogErr, childApp) {
 		}
 		result = ogErr;
 	} else {
-		console.warn(`While ${childApp.status}, '${childApp.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
+		console.warn(`While ${app.status}, '${app.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
 		try {
 			result = new Error(errPrefix + JSON.stringify(ogErr));
 		} catch(err) {

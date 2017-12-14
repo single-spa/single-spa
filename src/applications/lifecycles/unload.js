@@ -1,7 +1,7 @@
-import { NOT_MOUNTED, UNLOADING, NOT_LOADED, SKIP_BECAUSE_BROKEN } from '../child-app.helpers.js';
-import { handleChildAppError } from '../child-app-errors.js';
+import { NOT_MOUNTED, UNLOADING, NOT_LOADED, SKIP_BECAUSE_BROKEN } from '../app.helpers.js';
+import { handleAppError } from '../app-errors.js';
 import { reasonableTime } from '../timeouts.js';
-import { isntActive } from '../child-app.helpers.js';
+import { isntActive } from '../app.helpers.js';
 
 const appsToUnload = {};
 
@@ -38,7 +38,7 @@ export async function toUnloadPromise(app) {
 
 	try {
 		app.status = UNLOADING;
-		await reasonableTime(app.unload({childAppName: app.name}), `Unloading application '${app.name}'`, app.timeouts.unload);
+		await reasonableTime(app.unload({appName: app.name}), `Unloading application '${app.name}'`, app.timeouts.unload);
 	} catch (err) {
 		errorUnloadingApp(app, unloadInfo, err);
 		return app;
@@ -75,7 +75,7 @@ function errorUnloadingApp(app, unloadInfo, err) {
 	delete app.unmount;
 	delete app.unload;
 
-	handleChildAppError(err, app);
+	handleAppError(err, app);
 	app.status = SKIP_BECAUSE_BROKEN;
 	unloadInfo.reject(err);
 }

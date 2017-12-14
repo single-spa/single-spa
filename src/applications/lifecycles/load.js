@@ -1,6 +1,6 @@
-import { NOT_BOOTSTRAPPED, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN, NOT_LOADED } from '../child-app.helpers.js';
+import { NOT_BOOTSTRAPPED, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN, NOT_LOADED } from '../app.helpers.js';
 import { ensureValidAppTimeouts } from '../timeouts.js';
-import { handleChildAppError } from '../child-app-errors.js';
+import { handleAppError } from '../app-errors.js';
 import { find } from 'src/utils/find.js';
 
 export async function toLoadPromise(app) {
@@ -13,14 +13,14 @@ export async function toLoadPromise(app) {
 	let appOpts;
 
 	try {
-		const loadPromise = app.loadImpl({childAppName: app.name});
+		const loadPromise = app.loadImpl({appName: app.name});
 		if (!smellsLikeAPromise(loadPromise)) {
 			// The name of the child app will be prepended to this error message inside of the handleChildAppError function
 			throw new Error(`single-spa loading function did not return a promise. Check the second argument to declareChildApplication('${app.name}', loadingFunction, activityFunction)`);
 		}
 		appOpts = await loadPromise;
 	} catch(err) {
-		handleChildAppError(err, app);
+		handleAppError(err, app);
 		app.status = SKIP_BECAUSE_BROKEN;
 		return app;
 	}
@@ -44,7 +44,7 @@ export async function toLoadPromise(app) {
 	}
 
 	if (validationErrMessage) {
-		handleChildAppError(validationErrMessage, app);
+		handleAppError(validationErrMessage, app);
 		app.status = SKIP_BECAUSE_BROKEN;
 		return app;
 	}
