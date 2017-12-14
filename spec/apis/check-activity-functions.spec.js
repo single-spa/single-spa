@@ -22,8 +22,8 @@ export default function checkActivityFunctionsApi() {
 	describe(`checkActivityFunctionsApi`, () => {
 
 		beforeAll(() => {
-			singleSpa.declareChildApplication('test1', () => Promise.resolve(dummyApp1), activityFunctions[1])
-			singleSpa.declareChildApplication('test2', () => Promise.resolve(dummyApp2), activityFunctions[2])
+			singleSpa.registerApplication('test1', () => Promise.resolve(dummyApp1), activityFunctions[1])
+			singleSpa.registerApplication('test2', () => Promise.resolve(dummyApp2), activityFunctions[2])
 		})
 
 		beforeEach(() => {
