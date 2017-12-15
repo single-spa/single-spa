@@ -3,10 +3,10 @@
 If you're interested in migrating existing SPAs into a single-spa, you'll
 need to do three things:
 
-1. Create a [root application](/docs/root-application.md)
+1. Create a [root application](/docs/single-spa-config.md)
 1. [Convert your SPA or SPAs to be registered applications](#converting-spas-into-applications)
 1. Adjust your html file so that your root application is the new boss in town.
-   See [docs](/docs/root-application.md#indexhtml-file).
+   See [docs](/docs/single-spa-config.md#indexhtml-file).
 
 ## Converting SPAs into registered applications
 Your existing SPAs, whether they be Angular, React, or something else, probably are
@@ -30,4 +30,4 @@ third party script-tags, etc., it's likely that you'll have to do some work
 to make sure all of those keep on working when your SPA becomes an html-less [
 application](/docs/applications.md). It is best to try to put all that
 you can into the javascript bundle, but your escape hatch is to put the things
-you need into your [root application](/docs/root-application.md).
+you need into your [root application](/docs/single-spa-config.md).

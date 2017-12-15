@@ -20,7 +20,7 @@ to contribute to this list with your own project:
 With webpack 2+, we can take advantage of its support for [code splitting](https://webpack.js.org/guides/code-splitting/) with [import()](https://webpack.js.org/api/module-methods/#import)
 in order to easily lazy-load registered applications when they are needed. When registering
 registered applications from inside of your root application, try the following for your
-[loading functions](/docs/root-application.md#loading-function).
+[loading functions](/docs/single-spa-config.md#loading-function).
 ```js
 import {registerApplication} from 'single-spa';
 

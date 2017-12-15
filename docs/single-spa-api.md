@@ -10,7 +10,7 @@ import {registerApplication, start} from 'single-spa';
 
 ## registerApplication
 `registerApplication(name, activeWhen)` is the most important api your root application will use.
-It is described in detail inside of the [root-application.md docs](/docs/root-application.md#registering-applications)
+It is described in detail inside of the [single-spa-config.md docs](/docs/single-spa-config.md#registering-applications)
 
 ## start
 `start()` is a function that must be called by your root application. Before `start` is called, 
@@ -192,6 +192,6 @@ status where they will never again be given the chance to break everything.
 `setLoader(Loader)` sets the javascript [loader](https://whatwg.github.io/loader/) that will be used by single-spa.
 A loader must implement `Loader.import(...).then(...).catch(...)`, and the most commonly used loader is
 [SystemJS](https://github.com/systemjs/systemjs). This API should be called **before** any `registerApplication`
-calls are made. Once called, you may omit the [loading function](/docs/root-application.md#loading-function) argument when
+calls are made. Once called, you may omit the [loading function](/docs/single-spa-config.md#loading-function) argument when
 calling `registerApplication` and single-spa will assume that a registered application may be loaded with
 `Loader.import(appName).then(app => ...)`

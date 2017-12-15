@@ -5,13 +5,13 @@ In a single-spa world, your SPA contains many registered applications, where eac
 registered applications have their own client-side routing and their own frameworks/libraries.
 They render their own html and have full freedom to do whatever they want, whenever they are *mounted*.
 The concept of being *mounted* refers to whether a registered application is putting content on the DOM or not.
-What determines if a registered application is mounted is its [activity function](/docs/root-application.md#activity-function).
+What determines if a registered application is mounted is its [activity function](/docs/single-spa-config.md#activity-function).
 Whenever a registered application is *not mounted*, it should remain completely dormant until mounted.
 
 ## Creating a registered application
 
 To create a registered application, first
-[register the application with single-spa](/docs/root-application.md#registering-applications).
+[register the application with single-spa](/docs/single-spa-config.md#registering-applications).
 Once registered, the registered application must correctly implement **all** of the following lifecycle functions
 inside of its main entry point.
 
@@ -37,7 +37,7 @@ is available for many popular technologies. See [the ecosystem docs](/docs/singl
 
 ### load
 When registered applications are being lazily loaded, this refers to when the code for a registered application
-is fetched from the server and executed. This will happen once the registered application's [activity function](/docs/root-application.md#activity-function)
+is fetched from the server and executed. This will happen once the registered application's [activity function](/docs/single-spa-config.md#activity-function)
 returns a truthy value for the first time. It is best practice to do as little as possible / nothing at all
 during `load`, but instead to wait until the bootstrap lifecycle function to do anything.
 If you need to do something during `load`, simply put the code into a registered application's main entry point,
@@ -69,7 +69,7 @@ export function bootstrap(props) {
 
 ### mount
 This lifecycle function will be called whenever the registered application is not mounted, but its
-[activity function](/docs/root-application.md#activity-function) returns a truthy value. When
+[activity function](/docs/single-spa-config.md#activity-function) returns a truthy value. When
 called, this function should look at the URL to determine the active route and then create
 DOM elements, DOM event listeners, etc. to render content to the user. Any subsequent routing
 events (such as `hashchange` and `popstate`) will **not** trigger more calls to `mount`, but
@@ -88,7 +88,7 @@ export function mount(props) {
 
 ### unmount
 This lifecycle function will be called whenever the registered application is mounted, but its
-[activity function](/docs/root-application.md#activity-function) returns a falsy value. When
+[activity function](/docs/single-spa-config.md#activity-function) returns a falsy value. When
 called, this function should clean up all DOM elements, DOM event listeners, leaked memory, globals,
 observable subscriptions, etc. that were created at any point when the registered application was mounted.
 
