@@ -1,15 +1,15 @@
-# Root application
-The single-spa root application consists of all code that is not part of a
+# single spa config
+The single-spa single spa config consists of all code that is not part of a
 [registered application](/docs/applications.md). Ideally, this only includes an html file
 and a javascript file that declares single-spa registered applications. It is best practice to keep your
-root application as small as possible and to simply defer to single-spa to manage
-all of the registered applications. The root application should not be doing client-side html
+single spa config as small as possible and to simply defer to single-spa to manage
+all of the registered applications. The single spa config should not be doing client-side html
 rendering nor should it be responding to routing events such as `hashchange` or `popstate`.
 Instead, all of that functionality should be taken care of either by single-spa itself or by
 a registered application.
 
 ## Index.html file
-The main thing that you should be doing in your html file is executing your root application. For your
+The main thing that you should be doing in your html file is executing your single spa config. For your
 use case, this could mean something like `<script src="/single-spa-config.js"></script>`.
 Example:
 ```js
@@ -23,7 +23,7 @@ Example:
 ## Declaring registered applications
 
 Declaring a [registered application](/docs/applications.md) is registering it with single-spa so that it will be loaded,
-initialized, mounted, and unmounted at the right times. Declaration most commonly occurs inside of the root application, but
+initialized, mounted, and unmounted at the right times. Declaration most commonly occurs inside of the single spa config, but
 does not have to. Note that if a registered application is declared from within another registered application, that no hierarchy
 will be maintained between the registered applications. Instead, the registered applications will be siblings and will be mounted
 and unmounted according to their own activity functions.
@@ -69,7 +69,7 @@ single-spa will call each registered application's activity function under the f
 - Whenever the `checkActivityFunctions` method is called
 
 ## Calling singleSpa.start()
-The [`start()` api](/docs/single-spa-api.md#start) **must** be called by your root application in order for 
+The [`start()` api](/docs/single-spa-api.md#start) **must** be called by your single spa config in order for 
 applications to actually be mounted. Before `start` is called, registered applications will be loaded, but not bootstrapped/mounted/unmounted.
 The reason for `start` is to give you control over performance. For example, you may want to declare registered applications
 immediately (to start downloading the code for the active ones), but not actually mount the registered applications
