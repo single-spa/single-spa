@@ -68,7 +68,7 @@ To create a single-spa application, you will need to do three things:
 2. Create a single-spa-config. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-config.md) for more detail.
 
 ```js
-// root-application.js
+// single-spa-config.js
 import * as singleSpa from 'single-spa';
 
 const appName = 'app1';
