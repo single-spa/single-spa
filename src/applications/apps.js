@@ -90,7 +90,7 @@ export function getAppsToMount() {
 		.filter(isLoaded)
 }
 
-export unloadChildApplication(appName, opts) {
+export function unloadChildApplication(appName, opts) {
   console.warn('unloadChildApplication is deprecated and will be removed in the next major version, use "unloadApplication" instead')
   return unloadApplication(appName, opts)
 }
