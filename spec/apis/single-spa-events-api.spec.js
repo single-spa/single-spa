@@ -10,7 +10,7 @@ export default function singleSpaEventsApi() {
 
 	describe(`events api :`, () => {
 		beforeAll(() => {
-			singleSpa.declareChildApplication('russell', () => Promise.resolve(dummyApp), () => window.location.hash.indexOf("#/russell") === 0);
+			singleSpa.registerApplication('russell', () => Promise.resolve(dummyApp), () => window.location.hash.indexOf("#/russell") === 0);
 		});
 
 		describe(`single-spa:routing-event`, () => {
@@ -179,7 +179,7 @@ export default function singleSpaEventsApi() {
 		});
 
 		it(`fires first-mount exactly once when the first app is mounted`, done => {
-			singleSpa.declareChildApplication('firstMount', () => Promise.resolve(dummyApp), () => {
+			singleSpa.registerApplication('firstMount', () => Promise.resolve(dummyApp), () => {
 				return window.location.hash.indexOf('#/firstMount') === 0;
 			});
 			let numEventsFired = 0;
@@ -213,7 +213,7 @@ export default function singleSpaEventsApi() {
 		});
 
 		it(`fires before-first-mount exactly once before the first mount is fired`, done => {
-			singleSpa.declareChildApplication('beforeFirstMount', () => Promise.resolve(dummyApp), () => {
+			singleSpa.registerApplication('beforeFirstMount', () => Promise.resolve(dummyApp), () => {
 				return window.location.hash.indexOf('#/beforeFirstMount') === 0;
 			});
 
