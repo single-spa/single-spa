@@ -2,8 +2,8 @@ import { reroute } from './reroute.js';
 import { find } from 'src/utils/find.js';
 
 /* We capture navigation event listeners so that we can make sure
- * that child application navigation listeners are not called until
- * single-spa has ensured that the correct child applications are
+ * that application navigation listeners are not called until
+ * single-spa has ensured that the correct applications are
  * unmounted and mounted.
  */
 const capturedEventListeners = {

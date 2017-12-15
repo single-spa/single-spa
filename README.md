@@ -7,7 +7,7 @@
 **A javascript metaframework**
 
 Build micro frontends that coexist and can each be written with their own framework. This allows you to:
-- [Use multiple frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) on the same page [without refreshing the page](/docs/child-applications.md)
+- [Use multiple frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) on the same page [without refreshing the page](/docs/applications.md)
   ([React](https://github.com/CanopyTax/single-spa-react), [AngularJS](https://github.com/CanopyTax/single-spa-angular1), [Angular](https://github.com/CanopyTax/single-spa-angular2), [Ember](https://github.com/CanopyTax/single-spa-ember), or whatever you're using)
 - Write code using a new framework, without rewriting your existing app
 - Lazy load code for improved initial load time.
@@ -26,20 +26,20 @@ many frameworks, we decided to make it easy to use whichever frameworks you want
 
 Apps built with single-spa are made up of the following pieces:
 
-1. Many [child applications](/docs/child-applications.md), each of which is sort of like an entire SPA itself. Child applications respond to url routing events
-   and must know how to bootstrap, mount, and unmount themselves from the DOM. The main difference between an SPA and a child application is that child applications must coexist
+1. Many [applications](/docs/applications.md), each of which is sort of like an entire SPA itself. applications respond to url routing events
+   and must know how to bootstrap, mount, and unmount themselves from the DOM. The main difference between an SPA and a application is that applications must coexist
 	 together and do not each have their own html page.
-   For example, your React or Angular applications are child applications which are either active or dormant. When active, they listen to url routing events
+   For example, your React or Angular applications are applications which are either active or dormant. When active, they listen to url routing events
    and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
-2. A [root application](/docs/root-application.md). The root application is the html page, plus the javascript that registers child applications with single-spa. Each child application is registered with three things:
+2. A [root application](/docs/root-application.md). The root application is the html page, plus the javascript that registers applications with single-spa. Each application is registered with three things:
     1. A name
-    2. A function to load the child application's code
-    3. A function that determines when the child application is active/dormant.
+    2. A function to load the application's code
+    3. A function that determines when the application is active/dormant.
 
 ## How hard will it be to use single-spa?
 single-spa works with es5, es6+, typescript, webpack, systemjs, gulp, grunt, bower, ember-cli, or really anything build system you can think of. You can npm
 install it, jspm install it, or even just use a `<script>` tag if you prefer. If you're not starting your application from scratch, you'll have to [migrate
-your SPA](/docs/migrating-existing-spas.md) to become a single-spa child application.
+your SPA](/docs/migrating-existing-spas.md) to become a single-spa application.
 
 single-spa works in Chrome, Firefox, Safari, IE11, and Edge.
 
@@ -73,22 +73,22 @@ import * as singleSpa from 'single-spa';
 
 const appName = 'app1';
 
-/* The loading function is a function that returns a promise that resolves with the javascript child application module.
- * The purpose of it is to facilitate lazy loading -- single-spa will not download the code for a child application until it needs to.
+/* The loading function is a function that returns a promise that resolves with the javascript application module.
+ * The purpose of it is to facilitate lazy loading -- single-spa will not download the code for a application until it needs to.
  * In this example, import() is supported in webpack and returns a Promise, but single-spa works with any loading function that returns a Promise.
  */
 const loadingFunction = () => import('./app1/app1.js');
 
-/* Single-spa does some top-level routing to determine which child application is active for any url. You can implement this routing any way you'd like.
+/* Single-spa does some top-level routing to determine which application is active for any url. You can implement this routing any way you'd like.
  * One useful convention might be to prefix the url with the name of the app that is active, to keep your top-level routing simple.
  */
 const activityFunction = location => location.hash.startsWith('#/app1');
 
-singleSpa.declareChildApplication(appName, loadingFunction, activityFunction);
+singleSpa.registerApplication(appName, loadingFunction, activityFunction);
 singleSpa.start();
 ```
 
-3. Create a child application. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/child-applications.md) for more detail.
+3. Create a application. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/applications.md) for more detail.
 ```js
 //app1.js
 
@@ -124,7 +124,7 @@ export function unmount(props) {
 ```
 
 ## API
-See [single-spa api](/docs/single-spa-api.md) and [child application api](/docs/child-applications.md#child-application-lifecycle).
+See [single-spa api](/docs/single-spa-api.md) and [application api](/docs/applications.md#application-lifecycle).
 
 ## Who's Using This?
 Please submit a P.R. to this section if you start using single-spa.
