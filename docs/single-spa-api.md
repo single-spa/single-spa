@@ -12,6 +12,9 @@ import {registerApplication, start} from 'single-spa';
 `registerApplication(name, activeWhen)` is the most important api your root application will use.
 It is described in detail inside of the [root-application.md docs](/docs/root-application.md#registering-applications)
 
+## declareChildApplication
+`declareChildApplication` is deprecated use `registerApplication` instead
+
 ## start
 `start()` is a function that must be called by your root application. Before `start` is called, 
 applications will be loaded, but will never be bootstrapped, mounted or unmounted. The reason for `start`
@@ -87,6 +90,9 @@ Because a registered application might be mounted when `unloadApplication` is ca
 unload or if you want to wait until the application is no longer mounted. This is done with the `waitForUnmount` option. If `false`,
 single-spa immediately unloads the specified registered application even if the app is currently mounted. If `true`, single-spa will unload
 the registered application as soon as it is safe to do so (when the app status is not `MOUNTED`).
+
+## unloadChildApplication
+`unloadChildApplication` is deprecated use `unloadApplication` instead
 
 ## checkActivityFunctions
 `checkActivityFunctions(mockWindowLocation)` takes in a mock of the `window.location`. It returns an array of
