@@ -31,7 +31,7 @@ Apps built with single-spa are made up of the following pieces:
 	 together and do not each have their own html page.
    For example, your React or Angular applications are applications which are either active or dormant. When active, they listen to url routing events
    and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
-2. A [root application](/docs/root-application.md). The root application is the html page, plus the javascript that registers applications with single-spa. Each application is registered with three things:
+2. A [single-spa-config](/docs/single-spa-config.md). The single-spa-config is the html page, plus the javascript that registers applications with single-spa. Each application is registered with three things:
     1. A name
     2. A function to load the application's code
     3. A function that determines when the application is active/dormant.
@@ -60,15 +60,15 @@ To create a single-spa application, you will need to do three things:
 ```html
 <html>
 <body>
-	<script src="root-application.js"></script>
+	<script src="single-spa-config.js"></script>
 </body>
 </html>
 ```
 
-2. Create a root application. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/root-application.md) for more detail.
+2. Create a single-spa-config. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-config.md) for more detail.
 
 ```js
-// root-application.js
+// single-spa-config.js
 import * as singleSpa from 'single-spa';
 
 const appName = 'app1';
