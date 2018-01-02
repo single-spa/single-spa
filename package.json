@@ -42,6 +42,7 @@
     "karma-chrome-launcher": "^2.1.1",
     "karma-jasmine": "^1.0.2",
     "karma-sauce-launcher": "^1.0.0",
+    "uglifyjs-webpack-plugin": "^1.1.5",
     "webpack": "^2.5.1"
   },
   "ignore": [
