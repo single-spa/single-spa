@@ -1,6 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var CleanWebpackPlugin = require('clean-webpack-plugin');
+var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
 	entry: [
@@ -13,7 +14,9 @@ module.exports = {
 		libraryTarget: 'umd',
 		umdNamedDefine: true,
 	},
+
 	devtool: 'source-map',
+
 	resolve: {
 		modules: [
 			"node_modules",
@@ -30,6 +33,10 @@ module.exports = {
 		],
 	},
 	plugins: [
+		new UglifyJSPlugin({
+			sourceMap: true
+		}),
+
 		new CleanWebpackPlugin(['lib'], {
 			verbose: true,
 		})
