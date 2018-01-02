@@ -43,7 +43,7 @@
     "karma-jasmine": "^1.0.2",
     "karma-sauce-launcher": "^1.0.0",
     "uglifyjs-webpack-plugin": "^1.1.5",
-    "webpack": "^2.5.1"
+    "webpack": "^3.0.0"
   },
   "ignore": [
     "examples"
