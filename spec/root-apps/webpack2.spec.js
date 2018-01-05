@@ -24,41 +24,41 @@ import invalidUnload from '../apps/invalid-unload/invalid-unload.spec.js';
 import lifecyleProps from '../apps/lifecycle-props/lifecycle-props.spec.js';
 
 describe('webpack2 loader', () => {
-	beforeAll(done => {
-		resetSingleSpa()
-		.then(() => {
-			singleSpa.start();
-			done();
-		})
-		.catch(err => {
-			fail(err);
-			done();
-		});
-	});
+  beforeAll(done => {
+    resetSingleSpa()
+    .then(() => {
+      singleSpa.start();
+      done();
+    })
+    .catch(err => {
+      fail(err);
+      done();
+    });
+  });
 
-	describe('apps :', () => {
-		bootstrapRejects();
-		bootstrapTimesOutDies();
-		bootstrapTimesOut();
-		emptyArrayLifecycles();
-		happyBasic();
-		invalidBootstrap();
-		invalidMount();
-		invalidNoBootstrap();
-		invalidNoMount();
-		invalidNoUnmount();
-		invalidUnmount();
-		mountRejects();
-		mountTimesOut();
-		multipleLifecycleFunctions();
-		unmountRejects();
-		unmountTimesOutDies();
-		unmountTimesOut();
-		returnsNonNativePromise();
-		invalidLoadFunction();
-		happyUnload();
-		invalidUnload();
-		lifecyleProps();
-	});
+  describe('apps :', () => {
+    bootstrapRejects();
+    bootstrapTimesOutDies();
+    bootstrapTimesOut();
+    emptyArrayLifecycles();
+    happyBasic();
+    invalidBootstrap();
+    invalidMount();
+    invalidNoBootstrap();
+    invalidNoMount();
+    invalidNoUnmount();
+    invalidUnmount();
+    mountRejects();
+    mountTimesOut();
+    multipleLifecycleFunctions();
+    unmountRejects();
+    unmountTimesOutDies();
+    unmountTimesOut();
+    returnsNonNativePromise();
+    invalidLoadFunction();
+    happyUnload();
+    invalidUnload();
+    lifecyleProps();
+  });
 });
 

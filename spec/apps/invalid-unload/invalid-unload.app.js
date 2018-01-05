@@ -1,35 +1,35 @@
 let numBootstrapCalls = 0, numMountCalls = 0, numUnloadCalls = 0, numUnmountCalls = 0;
 
 export function reset() {
-	numBootstrapCalls = 0;
-	numMountCalls = 0;
-	numUnloadCalls = 0;
-	numUnmountCalls = 0;
+  numBootstrapCalls = 0;
+  numMountCalls = 0;
+  numUnloadCalls = 0;
+  numUnmountCalls = 0;
 }
 
 export async function bootstrap() {
-	numBootstrapCalls++;
+  numBootstrapCalls++;
 }
 export async function mount() {
-	numMountCalls++;
+  numMountCalls++;
 }
 export async function unmount() {
-	numUnmountCalls++;
+  numUnmountCalls++;
 }
 export function unload() {
-	numUnloadCalls++;
-	// Doesn't return anything, which is invalid. Needs to return a promise.
+  numUnloadCalls++;
+  // Doesn't return anything, which is invalid. Needs to return a promise.
 }
 export function getNumBootstrapCalls() {
-	return numBootstrapCalls;
+  return numBootstrapCalls;
 }
 export function getNumMountCalls() {
-	return numMountCalls;
+  return numMountCalls;
 }
 export function getNumUnloadCalls() {
-	return numUnloadCalls;
+  return numUnloadCalls;
 }
 
 export function getNumUnmountCalls() {
-	return numUnmountCalls;
+  return numUnmountCalls;
 }
