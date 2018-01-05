@@ -40,7 +40,11 @@ export function registerApplication(appName, arg1, arg2) {
 		loadImpl = () => Loader.import(appName);
 		activeWhen = arg1;
 	} else {
-		loadImpl = arg1;
+    if (typeof arg1 !== 'function') {
+      loadImpl = () => Promise.resolve(arg1)
+    } else {
+      loadImpl = arg1;
+    }
 		activeWhen = arg2;
 	}
 	if (typeof activeWhen !== 'function')

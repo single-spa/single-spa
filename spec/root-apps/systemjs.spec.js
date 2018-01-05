@@ -20,6 +20,7 @@ import unmountTimesOutDies from 'spec/apps/unmount-times-out-dies/unmount-times-
 import usesLoader from 'spec/apps/uses-loader/uses-loader.spec.js';
 import navigateToUrlTests from 'spec/apis/navigate-to-url.spec.js';
 import returnsNonNativePromise from 'spec/apps/returns-non-native-promise/returns-non-native-promise.spec.js';
+import registerWithObject from 'spec/apps/register-with-object/register-with-object.spec.js'
 import invalidLoadFunction from 'spec/apps/invalid-load-function/invalid-load-function.spec.js';
 import happyUnload from 'spec/apps/happy-unload/happy-unload.spec.js';
 import invalidUnload from 'spec/apps/invalid-unload/invalid-unload.spec.js';
@@ -80,6 +81,7 @@ describe("SystemJS loader :", () => {
 			happyUnload();
 			invalidUnload();
 			lifecyleProps();
+      registerWithObject();
 		});
 
 		describe(`apis :`, () => {
