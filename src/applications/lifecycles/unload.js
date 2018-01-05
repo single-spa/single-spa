@@ -1,7 +1,6 @@
-import { NOT_MOUNTED, UNLOADING, NOT_LOADED, SKIP_BECAUSE_BROKEN } from '../app.helpers.js';
+import { NOT_MOUNTED, UNLOADING, NOT_LOADED, SKIP_BECAUSE_BROKEN, isntActive } from '../app.helpers.js';
 import { handleAppError } from '../app-errors.js';
 import { reasonableTime } from '../timeouts.js';
-import { isntActive } from '../app.helpers.js';
 
 const appsToUnload = {};
 
@@ -29,7 +28,7 @@ export async function toUnloadPromise(app) {
      */
     return app;
   }
-  
+
   if (!unloadInfo) {
     /* No one has called unloadApplication for this app,
      */
