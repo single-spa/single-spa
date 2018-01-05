@@ -30,78 +30,78 @@ import eventsApi from 'spec/apis/single-spa-events-api.spec.js';
 import checkActivityFunctionsApi from 'spec/apis/check-activity-functions.spec.js';
 
 describe("SystemJS loader :", () => {
-	beforeAll(() => {
-		const ogSystemNormalize = System.normalize;
+  beforeAll(() => {
+    const ogSystemNormalize = System.normalize;
 
-		System.normalize = function(name, ...rest) {
-			if (typeof name === 'string' && name.indexOf('./') === 0 && name.lastIndexOf('.app.js') === name.length - '.app.js'.length) {
-				/* This is a bit of hackery to get the System.imports in the specs to resolve properly
-				 * even though they have weird paths so that they're compatible with webpack
-				 */
-				name = `/base/spec/apps/${name.slice(2, name.length - '.app.js'.length)}/${name.slice(2)}`;
-			}
+    System.normalize = function(name, ...rest) {
+      if (typeof name === 'string' && name.indexOf('./') === 0 && name.lastIndexOf('.app.js') === name.length - '.app.js'.length) {
+        /* This is a bit of hackery to get the System.imports in the specs to resolve properly
+         * even though they have weird paths so that they're compatible with webpack
+         */
+        name = `/base/spec/apps/${name.slice(2, name.length - '.app.js'.length)}/${name.slice(2)}`;
+      }
 
-			return ogSystemNormalize.call(this, name, ...rest);
-		}
-	});
+      return ogSystemNormalize.call(this, name, ...rest);
+    }
+  });
 
-	describe(`single-spa started :`, () => {
-		beforeAll(done => {
-			resetSingleSpa()
-			.then(() => {
-				singleSpa.setLoader(SystemJS)
-				singleSpa.start();
-				done();
-			})
-			.catch(err => {throw err})
-		})
+  describe(`single-spa started :`, () => {
+    beforeAll(done => {
+      resetSingleSpa()
+      .then(() => {
+        singleSpa.setLoader(SystemJS)
+        singleSpa.start();
+        done();
+      })
+      .catch(err => {throw err})
+    })
 
-		describe('apps :', () => {
-			bootstrapRejectsApp();
-			bootstrapTimesOutApp();
-			bootstrapTimesOutDies();
-			emptyArrayLifecycles();
-			happyBasic();
-			invalidBootstrap();
-			invalidMount();
-			invalidNoBootstrap();
-			invalidNoMount();
-			invalidNoUnmount();
-			invalidUnmount();
-			mountRejects();
-			mountTimesOut();
-			mountTimesOutDies();
-			multipleLifecycleFunctions();
-			unmountRejects();
-			unmountTimesOut();
-			unmountTimesOutDies();
-			usesLoader();
-			returnsNonNativePromise();
-			invalidLoadFunction();
-			happyUnload();
-			invalidUnload();
-			lifecyleProps();
+    describe('apps :', () => {
+      bootstrapRejectsApp();
+      bootstrapTimesOutApp();
+      bootstrapTimesOutDies();
+      emptyArrayLifecycles();
+      happyBasic();
+      invalidBootstrap();
+      invalidMount();
+      invalidNoBootstrap();
+      invalidNoMount();
+      invalidNoUnmount();
+      invalidUnmount();
+      mountRejects();
+      mountTimesOut();
+      mountTimesOutDies();
+      multipleLifecycleFunctions();
+      unmountRejects();
+      unmountTimesOut();
+      unmountTimesOutDies();
+      usesLoader();
+      returnsNonNativePromise();
+      invalidLoadFunction();
+      happyUnload();
+      invalidUnload();
+      lifecyleProps();
       registerWithObject();
-		});
+    });
 
-		describe(`apis :`, () => {
-			yesStartedEventListeners();
-			eventsApi();
-		});
-	});
+    describe(`apis :`, () => {
+      yesStartedEventListeners();
+      eventsApi();
+    });
+  });
 
-	describe(`single-spa not started`, () => {
-		beforeAll(done => {
+  describe(`single-spa not started`, () => {
+    beforeAll(done => {
 
-			resetSingleSpa()
-			.then(done)
-			.catch(err => {throw err})
-		})
+      resetSingleSpa()
+      .then(done)
+      .catch(err => {throw err})
+    })
 
-		describe('apis :', () => {
-			checkActivityFunctionsApi();
-			navigateToUrlTests();
-			notStartedEventListeners();
-		});
-	});
+    describe('apis :', () => {
+      checkActivityFunctionsApi();
+      navigateToUrlTests();
+      notStartedEventListeners();
+    });
+  });
 });

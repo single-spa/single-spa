@@ -1,42 +1,42 @@
 let bootstrapProps, mountProps, unmountProps, unloadProps;
 
 export function bootstrap(props) {
-	bootstrapProps = props;
-	return Promise.resolve();
+  bootstrapProps = props;
+  return Promise.resolve();
 }
 
 export function mount(props) {
-	mountProps = props;
-	return Promise.resolve();
+  mountProps = props;
+  return Promise.resolve();
 }
 
 export function unmount(props) {
-	unmountProps = props;
-	return Promise.resolve();
+  unmountProps = props;
+  return Promise.resolve();
 }
 
 export function unload(props) {
-	unloadProps = props;
-	return Promise.resolve();
+  unloadProps = props;
+  return Promise.resolve();
 }
 
 export function getBootstrapProps() {
-	return bootstrapProps;
+  return bootstrapProps;
 }
 
 export function getMountProps() {
-	return mountProps;
+  return mountProps;
 }
 
 export function getUnmountProps() {
-	return unmountProps;
+  return unmountProps;
 }
 
 export function getUnloadProps() {
-	return unloadProps;
+  return unloadProps;
 }
 
 export function reset() {
-	console.log('resetting')
-	bootstrapProps = mountProps = unmountProps = unloadProps = null;
+  console.log('resetting')
+  bootstrapProps = mountProps = unmountProps = unloadProps = null;
 }
