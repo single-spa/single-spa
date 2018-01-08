@@ -1,4 +1,6 @@
 # single-spa
+
+[![Join the chat at https://gitter.im/single-spa/Lobby](https://badges.gitter.im/single-spa/Lobby.svg)](https://gitter.im/single-spa/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![npm version](https://img.shields.io/npm/v/single-spa.svg?style=flat-square)](https://www.npmjs.org/package/single-spa)
 [![Build Status](https://img.shields.io/travis/CanopyTax/single-spa/master.svg?style=flat-square)](https://travis-ci.org/CanopyTax/single-spa)
 
