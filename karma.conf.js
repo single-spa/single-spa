@@ -2,78 +2,78 @@
 // Generated on Wed Aug 10 2016 16:23:13 GMT-0600 (MDT)
 
 module.exports = function(config) {
-	config.set({
+  config.set({
 
-		// base path that will be used to resolve all patterns (eg. files, exclude)
-		basePath: '',
-
-
-		// frameworks to use
-		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ['jasmine'],
+    // base path that will be used to resolve all patterns (eg. files, exclude)
+    basePath: '',
 
 
-		// list of files / patterns to load in the browser
-		files: [
-			'jspm_packages/system-polyfills.js',
-			'jspm_packages/system.src.js',
-			'jspm.config.js',
-			'spec/bundles/webpack2.spec.build.js',
-			'spec/bundles/systemjs.spec.build.js',
-			{ pattern: 'spec/**/*.*', watched: false, included: false, served: true },
-			{ pattern: 'jspm_packages/**/*.*', watched: false, included: false, served: true },
-			{ pattern: 'lib/**/*.*', watched: false, included: false, served: true },
-		],
+    // frameworks to use
+    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
+    frameworks: ['jasmine'],
 
 
-		// list of files to exclude
-		exclude: [
-		],
+    // list of files / patterns to load in the browser
+    files: [
+      'jspm_packages/system-polyfills.js',
+      'jspm_packages/system.src.js',
+      'jspm.config.js',
+      'spec/bundles/webpack2.spec.build.js',
+      'spec/bundles/systemjs.spec.build.js',
+      { pattern: 'spec/**/*.*', watched: false, included: false, served: true },
+      { pattern: 'jspm_packages/**/*.*', watched: false, included: false, served: true },
+      { pattern: 'lib/**/*.*', watched: false, included: false, served: true },
+    ],
 
 
-		// preprocess matching files before serving them to the browser
-		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-		preprocessors: {
-		},
-
-		// test results reporter to use
-		// possible values: 'dots', 'progress'
-		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: ['progress'],
+    // list of files to exclude
+    exclude: [
+    ],
 
 
-		// web server port
-		port: 9876,
+    // preprocess matching files before serving them to the browser
+    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+    preprocessors: {
+    },
+
+    // test results reporter to use
+    // possible values: 'dots', 'progress'
+    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+    reporters: ['progress'],
 
 
-		// enable / disable colors in the output (reporters and logs)
-		colors: true,
+    // web server port
+    port: 9876,
 
 
-		// level of logging
-		// possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-		logLevel: config.LOG_INFO,
+    // enable / disable colors in the output (reporters and logs)
+    colors: true,
 
 
-		// enable / disable watching file and executing tests whenever any file changes
-		autoWatch: true,
+    // level of logging
+    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    logLevel: config.LOG_INFO,
 
 
-		// start these browsers
-		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-		browsers: ['Chrome'],
+    // enable / disable watching file and executing tests whenever any file changes
+    autoWatch: true,
 
 
-		// Continuous Integration mode
-		// if true, Karma captures browsers, runs the tests and exits
-		singleRun: false,
+    // start these browsers
+    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+    browsers: ['Chrome'],
 
-		// Concurrency level
-		// how many browser should be started simultaneous
-		concurrency: Infinity,
 
-		proxies: {
-			'/path-browserify': 'http://localhost:9876/base/node_modules/path-browserify/index.js'
-		},
-	})
+    // Continuous Integration mode
+    // if true, Karma captures browsers, runs the tests and exits
+    singleRun: false,
+
+    // Concurrency level
+    // how many browser should be started simultaneous
+    concurrency: Infinity,
+
+    proxies: {
+      '/path-browserify': 'http://localhost:9876/base/node_modules/path-browserify/index.js'
+    },
+  })
 }
