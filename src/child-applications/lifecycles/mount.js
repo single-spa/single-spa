@@ -6,28 +6,34 @@ import CustomEvent from 'custom-event';
 let beforeFirstMountFired = false;
 let firstMountFired = false;
 
-export async function toMountPromise(app) {
-	if (app.status !== NOT_MOUNTED) {
-		return app;
-	}
+export function toMountPromise(app) {
+	return Promise
+		.resolve()
+		.then(() => {
+			if (app.status !== NOT_MOUNTED) {
+				return app;
+			}
 
-	if (!beforeFirstMountFired) {
-		window.dispatchEvent(new CustomEvent('single-spa:before-first-mount'));
-		beforeFirstMountFired = true;
-	}
+			if (!beforeFirstMountFired) {
+				window.dispatchEvent(new CustomEvent('single-spa:before-first-mount'));
+				beforeFirstMountFired = true;
+			}
 
-	try {
-		await reasonableTime(app.mount({childAppName: app.name}), `Mounting application '${app.name}'`, app.timeouts.mount);
-		app.status = MOUNTED;
-	} catch (err) {
-		handleChildAppError(err, app);
-		app.status = SKIP_BECAUSE_BROKEN;
-	}
+			return reasonableTime(app.mount({childAppName: app.name}), `Mounting application '${app.name}'`, app.timeouts.mount);
+		})
+		.then(() => {
+			app.status = MOUNTED;
+			return app;
+		})
+		.catch(err => {
+			handleChildAppError(err, app);
+			app.status = SKIP_BECAUSE_BROKEN;
 
-	if (!firstMountFired) {
-		window.dispatchEvent(new CustomEvent('single-spa:first-mount'));
-		firstMountFired = true;
-	}
+			if (!firstMountFired) {
+				window.dispatchEvent(new CustomEvent('single-spa:first-mount'));
+				firstMountFired = true;
+			}
 
-	return app;
+			return app;
+		})
 }

@@ -54,7 +54,9 @@
   "jspm": {
     "name": "single-spa",
     "main": "lib/single-spa.js",
-    "dependencies": {},
+    "dependencies": {
+      "custom-event": "^1.0.1"
+    },
     "devDependencies": {
       "babel-preset-es0015": "babel-preset-es2015@^6.13.2",
       "babel-preset-stage-1": "^6.13.0",
