@@ -49,7 +49,24 @@ function activityFunction(location) {
 ### Application name
 The first argument to `registerApplication` must be a string name.
 
-### Loading function
+### Loading Function or Application
+The second argument to `registerApplication` must be either a function that returns a promise [loading function](/docs/single-spa-config.md#loading-function) or the resolved Application.
+
+#### Application as second argument
+Optionally for the second argument you can use the resolved Application, consisting of an object with the lifecycle methods.
+This allows you import the Application from another file or define applications inline in your single-spa-config
+
+```js
+const application = {
+  bootstrap: () => Promise.resolve(), //bootstrap function
+  mount: () => Promise.resolve(), //mount function
+  unmount: () => Promise.resolve(), //unmount function
+}
+registerApplication('applicatonName', application, activityFunction)
+
+```
+
+#### Loading function
 The second argument to `registerApplication` must be a function that returns a promise (or an ["async function"](https://ponyfoo.com/articles/understanding-javascript-async-await)).
 The function will be called with no arguments when it's time to load the application for the first time. The returned
 promise must be resolved with the application. The most common implementation of a loading function is an import call:

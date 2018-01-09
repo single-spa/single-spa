@@ -9,7 +9,7 @@ import {registerApplication, start} from 'single-spa';
 ```
 
 ## registerApplication
-`registerApplication(name, activeWhen)` is the most important api your single spa config will use.
+`registerApplication(name, whereToGetApplication, activeWhen)` is the most important api your single spa config will use.
 It is described in detail inside of the [single-spa-config.md docs](/docs/single-spa-config.md#registering-applications)
 
 ## declareChildApplication
