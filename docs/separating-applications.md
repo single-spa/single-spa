@@ -1,15 +1,15 @@
 # Separating out applications
 
 In a large, microserviced system, your root single-spa configuration and each of the applications
-should probably have its own git repository. To do so in a javascript project isn't necessarily clear,
-so some options are listed below
+should probably have its own git repository. How to do that in a javascript project isn't necessarily clear,
+so some options are listed below.
 
 Since Single-spa is a framework that helps with organizational scaling, it is
 important to figure out how to split out and separate applications from each other
 so that developers and teams can work on the applications without stepping on each others' toes.
 
 Most interpretations of microservice architecture encourage separate code repositories, builds, and
-deployments. Although the **single-spa does not solve how code is hosted, built, or deployed**,
+deployments. Although **single-spa does not solve how code is hosted, built, or deployed**,
 these are relevant to many users of single-spa, so some strategies for doing so are discussed here.
 
 #### Option 1: One code repo, one build
@@ -61,6 +61,6 @@ Changing which javascript file is loaded for each child application can be done 
 #### Comparison
 |                | Separate code repositories | Separate builds | Separate deployments | Difficulty to set up
 | -------------- | -------------------------- | --------------- | -------------------- | --------------------
-| Monorepo       |                            |                 |                      |           1
-| NPM modules    |            [x]             |       [x]       |                      |           2
-| Module loading |            [x]             |       [x]       |          [x]         |           3
+| Monorepo       |                            |                 |                      |        Easy
+| NPM modules    |            [x]             |       [x]       |                      |       Medium
+| Module loading |            [x]             |       [x]       |          [x]         |        Hard
