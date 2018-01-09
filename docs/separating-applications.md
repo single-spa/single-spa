@@ -59,7 +59,7 @@ Changing which javascript file is loaded for each child application can be done 
    from dynamic urls.
 
 #### Comparison
-|                | Separate code repositories | Separate builds | Separate deployments | Time to set up
+|                | Separate code repositories | Separate builds | Separate deployments | Difficulty to set up
 | -------------- | -------------------------- | --------------- | -------------------- | --------------------
 | Monorepo       |                            |                 |                      |           1
 | NPM modules    |            [x]             |       [x]       |                      |           2
