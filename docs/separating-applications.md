@@ -61,6 +61,6 @@ Changing which javascript file is loaded for each child application can be done 
 #### Comparison
 |                | Separate code repositories | Separate builds | Separate deployments | Difficulty to set up
 | -------------- | -------------------------- | --------------- | -------------------- | --------------------
-| Monorepo       |                            |                 |                      |        Easy
+| One code repo  |                            |                 |                      |        Easy
 | NPM modules    |            [x]             |       [x]       |                      |       Medium
 | Module loading |            [x]             |       [x]       |          [x]         |        Hard
