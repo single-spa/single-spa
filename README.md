@@ -13,7 +13,6 @@ Build micro frontends that coexist and can each be written with their own framew
   ([React](https://github.com/CanopyTax/single-spa-react), [AngularJS](https://github.com/CanopyTax/single-spa-angular1), [Angular](https://github.com/CanopyTax/single-spa-angular2), [Ember](https://github.com/CanopyTax/single-spa-ember), or whatever you're using)
 - Write code using a new framework, without rewriting your existing app
 - Lazy load code for improved initial load time.
-- Hot reload entire chunks of your overall application (instead of individual files).
 
 ## Demo and examples
 A [live demo](https://single-spa.surge.sh) is available and the source code for that demo is available in the [single-spa-examples](https://github.com/CanopyTax/single-spa-examples) repository.
@@ -124,6 +123,9 @@ export function unmount(props) {
 		})
 }
 ```
+
+## Project roadmap
+We're trying out github's Projects feature ([here](https://github.com/CanopyTax/single-spa/projects)) and are keeping it up-to-date with the fancy things in the works for single-spa.
 
 ## API
 See [single-spa api](/docs/single-spa-api.md) and [child application api](/docs/child-applications.md#child-application-lifecycle).
