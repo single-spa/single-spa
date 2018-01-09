@@ -61,6 +61,6 @@ Changing which javascript file is loaded for each child application can be done 
 #### Comparison
 |                | Separate code repositories | Separate builds | Separate deployments | Time to set up
 | -------------- | -------------------------- | --------------- | -------------------- | --------------------
-| Monorepo       |            []              |       []        |          []          |           1
-| NPM modules    |            [x]             |       [x]       |          []          |           2
+| Monorepo       |                            |                 |                      |           1
+| NPM modules    |            [x]             |       [x]       |                      |           2
 | Module loading |            [x]             |       [x]       |          [x]         |           3
