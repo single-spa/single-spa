@@ -134,3 +134,4 @@ See [single-spa api](/docs/single-spa-api.md) and [child application api](/docs/
 Please submit a P.R. to this section if you start using single-spa.
 
 - [CanopyTax](https://www.canopytax.com)
+- [Dealer Socket](https://dealersocket.com/)
