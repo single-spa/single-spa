@@ -6,7 +6,9 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/joeldenning.svg)](https://saucelabs.com/u/joeldenning)
 
-**A javascript metaframework**
+[Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/enQtMjk3OTcwNTM2OTAyLTM5ZmZkZWJjYjNiMWNmZWU0M2NjOWRmYzNiNDQ2OWQxNjUwZGY3N2UyNTU5NWYzMTkxMzIzNmQwOWZiZDBiZTQ)
+
+## A javascript metaframework
 
 Build micro frontends that coexist and can each be written with their own framework. This allows you to:
 - [Use multiple frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) on the same page [without refreshing the page](/docs/child-applications.md)
