@@ -6,7 +6,7 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/joeldenning.svg)](https://saucelabs.com/u/joeldenning)
 
-[Chat with us on Slack](https://join.slack.com/t/single-spa/shared_invite/enQtMjk3OTcwNTM2OTAyLTM5ZmZkZWJjYjNiMWNmZWU0M2NjOWRmYzNiNDQ2OWQxNjUwZGY3N2UyNTU5NWYzMTkxMzIzNmQwOWZiZDBiZTQ)
+[Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/enQtMjk3OTcwNTM2OTAyLTM5ZmZkZWJjYjNiMWNmZWU0M2NjOWRmYzNiNDQ2OWQxNjUwZGY3N2UyNTU5NWYzMTkxMzIzNmQwOWZiZDBiZTQ)
 
 **A javascript metaframework**
 
