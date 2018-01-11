@@ -1,4 +1,4 @@
-# single-spa ecosystem
+# Single-spa ecosystem
 The single-spa ecosystem is quickly growing to support as many frameworks and build tools as possible.
 
 ## Help for frameworks

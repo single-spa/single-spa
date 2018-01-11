@@ -1,4 +1,4 @@
-# single spa config
+# Single spa config
 The single spa config consists of all code that is not part of a
 [registered application](/docs/applications.md). Ideally, this only includes an html file
 and a javascript file that registers single-spa applications. It is best practice to keep your
