@@ -22,26 +22,19 @@ Also, you can check out [a simple webpack starter project](https://github.com/jo
 
 ## Architectural Overview
 Single-spa takes inspiration from React component lifecycles by applying lifecycles to entire applications.
-It started out of a desire to use React + react-router instead of being forever stuck with our AngularJS + ui-router application, 
-but now single-spa supports almost any framework coexisting with any other. Since Javascript is notorious for the short-life of its
-many frameworks, we decided to make it easy to use whichever frameworks you want.
+It started out of a desire to use React + react-router instead of being forever stuck with our AngularJS + ui-router application, but now single-spa supports almost any framework coexisting with any other. Since Javascript is notorious for the short-life of its many frameworks, we decided to make it easy to use whichever frameworks you want.
 
 Apps built with single-spa are made up of the following pieces:
 
-1. Many [applications](/docs/applications.md), each of which is sort of like an entire SPA itself. applications respond to url routing events
-   and must know how to bootstrap, mount, and unmount themselves from the DOM. The main difference between an SPA and a application is that applications must coexist
-	 together and do not each have their own html page.
-   For example, your React or Angular applications are applications which are either active or dormant. When active, they listen to url routing events
-   and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
+1. Many [applications](/docs/applications.md), each of which is sort of like an entire SPA itself. Applications respond to url routing events and must know how to bootstrap, mount, and unmount themselves from the DOM. The main difference between a SPA and an application is that applications must coexist together and do not each have their own html page.
+   For example, your React or Angular applications are applications which are either active or dormant. When active, they listen to url routing events and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
 2. A [single-spa-config](/docs/single-spa-config.md). The single-spa-config is the html page, plus the javascript that registers applications with single-spa. Each application is registered with three things:
     1. A name
     2. A function to load the application's code
     3. A function that determines when the application is active/dormant.
 
 ## How hard will it be to use single-spa?
-single-spa works with es5, es6+, typescript, webpack, systemjs, gulp, grunt, bower, ember-cli, or really anything build system you can think of. You can npm
-install it, jspm install it, or even just use a `<script>` tag if you prefer. If you're not starting your application from scratch, you'll have to [migrate
-your SPA](/docs/migrating-existing-spas.md) to become a single-spa application.
+single-spa works with es5, es6+, typescript, webpack, systemjs, gulp, grunt, bower, ember-cli, or really anything build system you can think of. You can npm install it, jspm install it, or even just use a `<script>` tag if you prefer. If you're not starting your application from scratch, you'll have to [migrate your SPA](/docs/migrating-existing-spas.md) to become a single-spa application.
 
 single-spa works in Chrome, Firefox, Safari, IE11, and Edge.
 
@@ -90,7 +83,7 @@ singleSpa.registerApplication(appName, loadingFunction, activityFunction);
 singleSpa.start();
 ```
 
-3. Create a application. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/applications.md) for more detail.
+3. Create an application. Check out the [docs](https://github.com/CanopyTax/single-spa/blob/master/docs/applications.md) for more detail.
 ```js
 //app1.js
 
