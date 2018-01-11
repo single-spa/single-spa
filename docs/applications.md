@@ -1,4 +1,4 @@
-# registered applications
+# Registered applications
 
 A single-spa registered application is everything that a normal SPA is, except that it doesn't have an HTML page.
 In a single-spa world, your SPA contains many registered applications, where each has its own framework.
@@ -15,7 +15,7 @@ To create a registered application, first
 Once registered, the registered application must correctly implement **all** of the following lifecycle functions
 inside of its main entry point.
 
-## registered application lifecycle
+## Registered application lifecycle
 During the course of a single-spa page, registered applications are loaded, initialized (bootstrapped), mounted, unmounted, and unloaded.
 single-spa provides hooks into each phase via `lifecycles`.
 
@@ -35,7 +35,7 @@ Notes:
 Middleware that helps implement lifecycle functions for specific frameworks, libraries, and applications
 is available for many popular technologies. See [the ecosystem docs](/docs/single-spa-ecosystem.md) for details.
 
-### load
+### Load
 When registered applications are being lazily loaded, this refers to when the code for a registered application
 is fetched from the server and executed. This will happen once the registered application's [activity function](/docs/single-spa-config.md#activity-function)
 returns a truthy value for the first time. It is best practice to do as little as possible / nothing at all
@@ -52,7 +52,7 @@ export async function mount(props) {...}
 export async function unmount(props) {...}
 ```
 
-### bootstrap
+### Bootstrap
 This lifecycle function will be called once, right before the registered application is
 mounted for the first time.
 
@@ -67,7 +67,7 @@ export function bootstrap(props) {
 }
 ```
 
-### mount
+### Mount
 This lifecycle function will be called whenever the registered application is not mounted, but its
 [activity function](/docs/single-spa-config.md#activity-function) returns a truthy value. When
 called, this function should look at the URL to determine the active route and then create
@@ -86,7 +86,7 @@ export function mount(props) {
 }
 ```
 
-### unmount
+### Unmount
 This lifecycle function will be called whenever the registered application is mounted, but its
 [activity function](/docs/single-spa-config.md#activity-function) returns a falsy value. When
 called, this function should clean up all DOM elements, DOM event listeners, leaked memory, globals,
@@ -103,7 +103,7 @@ export function unmount(props) {
 }
 ```
 
-### unload
+### Unload
 The `unload` lifecycle is an optionally implemented lifecycle function. It will be called whenever an application should be
 `unloaded`. This will not ever happen unless someone calls the [`unloadApplication`](/docs/single-spa-api.md#unload-application) API.
 If a registered application does not implement the unload lifecycle, then it assumed that unloading the app is a no-op.
