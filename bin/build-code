@@ -1,5 +1,5 @@
 #!/bin/bash -e
 
 ./node_modules/webpack/bin/webpack.js \
-	--config webpack.config.js \
-	"$@"
+  --config webpack.config.js \
+  "$@"
