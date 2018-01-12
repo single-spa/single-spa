@@ -26,7 +26,7 @@ export function declareChildApplication(appName, arg1, arg2) {
   return registerApplication(appName, arg1, arg2)
 }
 
-export function registerApplication(appName, arg1, arg2) {
+export function registerApplication(appName, arg1, arg2, customProps) {
   if (typeof appName !== 'string' || appName.length === 0)
     throw new Error(`The first argument must be a non-empty string 'appName'`);
   if (apps[appName])
@@ -50,12 +50,18 @@ export function registerApplication(appName, arg1, arg2) {
   if (typeof activeWhen !== 'function')
     throw new Error(`The activeWhen argument must be a function`);
 
-  apps.push({
-    name: appName,
-    loadImpl,
-    activeWhen,
-    status: NOT_LOADED,
-  });
+  const app = {
+      name: appName,
+      loadImpl,
+      activeWhen,
+      status: NOT_LOADED,
+  };
+
+  if (customProps) {
+      app.customProps = customProps;
+  }
+
+  apps.push(app);
 
   ensureJQuerySupport();
 

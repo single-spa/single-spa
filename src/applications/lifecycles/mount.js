@@ -1,4 +1,4 @@
-import { NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN } from '../app.helpers.js';
+import { NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN, getAppProps } from '../app.helpers.js';
 import { handleAppError } from '../app-errors.js';
 import { reasonableTime } from '../timeouts.js';
 import CustomEvent from 'custom-event';
@@ -17,7 +17,7 @@ export async function toMountPromise(app) {
   }
 
   try {
-    await reasonableTime(app.mount({appName: app.name}), `Mounting application '${app.name}'`, app.timeouts.mount);
+    await reasonableTime(app.mount(getAppProps(app)), `Mounting application '${app.name}'`, app.timeouts.mount);
     app.status = MOUNTED;
   } catch (err) {
     handleAppError(err, app);

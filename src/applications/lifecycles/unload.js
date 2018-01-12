@@ -1,4 +1,4 @@
-import { NOT_MOUNTED, UNLOADING, NOT_LOADED, SKIP_BECAUSE_BROKEN, isntActive } from '../app.helpers.js';
+import { NOT_MOUNTED, UNLOADING, NOT_LOADED, SKIP_BECAUSE_BROKEN, isntActive, getAppProps } from '../app.helpers.js';
 import { handleAppError } from '../app-errors.js';
 import { reasonableTime } from '../timeouts.js';
 
@@ -37,7 +37,7 @@ export async function toUnloadPromise(app) {
 
   try {
     app.status = UNLOADING;
-    await reasonableTime(app.unload({appName: app.name}), `Unloading application '${app.name}'`, app.timeouts.unload);
+    await reasonableTime(app.unload(getAppProps(app)), `Unloading application '${app.name}'`, app.timeouts.unload);
   } catch (err) {
     errorUnloadingApp(app, unloadInfo, err);
     return app;
