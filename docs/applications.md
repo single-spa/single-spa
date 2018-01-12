@@ -156,3 +156,8 @@ export const timeouts = {
   },
 };
 ```
+
+## Transitioning between applications
+If you find yourself wanting to add transitions as applications are mounted and unmounted, then you'll probably want to tie into the `bootstrap`, `mount`, and `unmount` lifecycle methods.  [This repo](https://github.com/frehner/singlespa-transitions) is a small proof-of-concept of how you can tie into these lifecycle methods to add transitions as your apps mount and unmount.
+
+Transitions for pages within a mounted application can be handled entirely by the application itself, for example using [react-transition-group](https://github.com/reactjs/react-transition-group) for React-based projects.
