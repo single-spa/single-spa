@@ -4,7 +4,7 @@ In a large, microserviced system, your root single-spa configuration and each of
 should probably have its own git repository. How to do that in a javascript project isn't necessarily clear,
 so some options are listed below.
 
-Since Single-spa is a framework that helps with organizational scaling, it is
+Since single-spa is a framework that helps with organizational scaling, it is
 important to figure out how to split out and separate applications from each other
 so that developers and teams can work on the applications without stepping on each others' toes.
 
@@ -59,8 +59,8 @@ Changing which javascript file is loaded for each child application can be done 
    from dynamic urls.
 
 #### Comparison
-|                | Separate code repositories | Separate builds | Separate deployments | Difficulty to set up
-| -------------- | -------------------------- | --------------- | -------------------- | --------------------
-| One code repo  |                            |                 |                      |        Easy
-| NPM modules    |            [x]             |       [x]       |                      |       Medium
-| Module loading |            [x]             |       [x]       |          [x]         |        Hard
+|                | Separate code repositories | Separate builds | Separate deployments | Difficulty to set up | Example repo |
+| -------------- | -------------------------- | --------------- | -------------------- | -------------------- | ------------ |
+| One code repo  |                            |                 |                      |        Easy          | [simple-webpack-example](https://github.com/joeldenning/simple-single-spa-webpack-example) and [single-spa-examples](https://github.com/CanopyTax/single-spa-examples) |
+| NPM modules    |            [x]             |       [x]       |                      |       Medium         | (No example repo, yet -- contributions accepted!) |
+| Module loading |            [x]             |       [x]       |          [x]         |        Hard          | [single-spa-portal-example](https://github.com/me-12/single-spa-portal-example) |
