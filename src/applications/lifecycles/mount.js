@@ -7,9 +7,9 @@ import { getProps } from './prop.helpers.js';
 let beforeFirstMountFired = false;
 let firstMountFired = false;
 
-export async function toMountPromise(app) {
-  if (app.status !== NOT_MOUNTED) {
-    return app;
+export async function toMountPromise(appOrParcel) {
+  if (appOrParcel.status !== NOT_MOUNTED) {
+    return appOrParcel;
   }
 
   if (!beforeFirstMountFired) {
@@ -18,11 +18,11 @@ export async function toMountPromise(app) {
   }
 
   try {
-    await reasonableTime(app.mount(getProps(app)), `Mounting application '${app.name}'`, app.timeouts.mount);
-    app.status = MOUNTED;
+    await reasonableTime(appOrParcel.mount(getProps(appOrParcel)), `Mounting application '${appOrParcel.name}'`, appOrParcel.timeouts.mount);
+    appOrParcel.status = MOUNTED;
   } catch (err) {
-    handleAppError(err, app);
-    app.status = SKIP_BECAUSE_BROKEN;
+    handleAppError(err, appOrParcel);
+    appOrParcel.status = SKIP_BECAUSE_BROKEN;
   }
 
   if (!firstMountFired) {
@@ -30,5 +30,5 @@ export async function toMountPromise(app) {
     firstMountFired = true;
   }
 
-  return app;
+  return appOrParcel;
 }
