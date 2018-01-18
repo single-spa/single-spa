@@ -2,6 +2,7 @@ import { NOT_BOOTSTRAPPED, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN, NOT_LOADED 
 import { ensureValidAppTimeouts } from '../timeouts.js';
 import { handleAppError } from '../app-errors.js';
 import { find } from 'src/utils/find.js';
+import { flattenFnArray, smellsLikeAPromise, validLifecycleFn } from './lifecycle.helpers.js';
 
 export async function toLoadPromise(app) {
   if (app.status !== NOT_LOADED) {
@@ -57,46 +58,4 @@ export async function toLoadPromise(app) {
   app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
 
   return app;
-}
-
-function validLifecycleFn(fn) {
-  return fn && (typeof fn === 'function' || isArrayOfFns(fn));
-
-  function isArrayOfFns(arr) {
-    return Array.isArray(arr) && !find(arr, item => typeof item !== 'function');
-  }
-}
-
-function flattenFnArray(fns, description) {
-  fns = Array.isArray(fns) ? fns : [fns];
-  if (fns.length === 0) {
-    fns = [() => Promise.resolve()];
-  }
-
-  return function(props) {
-    return new Promise((resolve, reject) => {
-      waitForPromises(0);
-
-      function waitForPromises(index) {
-        const promise = fns[index](props);
-        if (!smellsLikeAPromise(promise)) {
-          reject(`${description} at index ${index} did not return a promise`);
-        } else {
-          promise
-            .then(() => {
-              if (index === fns.length - 1) {
-                resolve();
-              } else {
-                waitForPromises(index + 1);
-              }
-            })
-            .catch(reject);
-        }
-      }
-    });
-  }
-}
-
-function smellsLikeAPromise(promise) {
-  return promise && typeof promise.then === 'function' && typeof promise.catch === 'function';
 }

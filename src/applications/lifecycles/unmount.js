@@ -1,20 +1,25 @@
 import { UNMOUNTING, NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN } from '../app.helpers.js';
 import { handleAppError } from '../app-errors.js';
 import { reasonableTime } from '../timeouts.js';
+import { getProps } from './prop.helpers.js';
 
-export async function toUnmountPromise(app) {
-  if (app.status !== MOUNTED) {
-    return app;
+export async function toUnmountPromise(appOrParcel) {
+  if (appOrParcel.status !== MOUNTED) {
+    return appOrParcel;
   }
-  app.status = UNMOUNTING;
+  appOrParcel.status = UNMOUNTING;
+
+  const unmountChildrenParcels = Object.keys(appOrParcel.parcels)
+    .map(parcelId => appOrParcel.parcels[parcelId].unmountThisParcel());
 
   try {
-    await reasonableTime(app.unmount({appName: app.name}), `Unmounting application ${app.name}'`, app.timeouts.unmount);
-    app.status = NOT_MOUNTED;
+    await Promise.all(unmountChildrenParcels);
+    await reasonableTime(appOrParcel.unmount(getProps(appOrParcel)), `Unmounting application ${appOrParcel.name}'`, appOrParcel.timeouts.unmount);
+    appOrParcel.status = NOT_MOUNTED;
   } catch (err) {
-    handleAppError(err, app);
-    app.status = SKIP_BECAUSE_BROKEN;
+    handleAppError(err, appOrParcel);
+    appOrParcel.status = SKIP_BECAUSE_BROKEN;
   }
 
-  return app;
+  return appOrParcel;
 }

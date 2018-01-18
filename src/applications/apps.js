@@ -55,6 +55,7 @@ export function registerApplication(appName, arg1, arg2) {
     loadImpl,
     activeWhen,
     status: NOT_LOADED,
+    parcels: {},
   });
 
   ensureJQuerySupport();

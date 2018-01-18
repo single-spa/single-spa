@@ -23,7 +23,7 @@ A lifecycle function is a function or array of functions that single-spa will ca
 Single-spa calls these by finding exported functions from the registered application's main file.
 
 Notes:
-- Lifecycle functions are called with a `props` argument, which is an object with a `appName` string.
+- Lifecycle functions are called with a `props` argument, which is an object with an `appName` string.
 - Implementing `bootstrap`, `mount`, and `unmount` is required. But implementing `unload` is optional.
 - Each lifecycle function must either return a `Promise` or be an `async function`.
 - If an array of functions is exported (instead of just one function), the functions will be called
