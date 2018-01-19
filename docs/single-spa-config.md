@@ -42,7 +42,7 @@ function loadingFunction() {
 }
 
 function activityFunction(location) {
-  return location.hash.indexOf("#/app1/") === 0;
+  return location.path.indexOf("/app1/") === 0;
 }
 ```
 

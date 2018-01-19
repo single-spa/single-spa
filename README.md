@@ -27,7 +27,7 @@ It started out of a desire to use React + react-router instead of being forever 
 Apps built with single-spa are made up of the following pieces:
 
 1. Many [applications](/docs/applications.md), each of which is sort of like an entire SPA itself. Applications respond to url routing events and must know how to bootstrap, mount, and unmount themselves from the DOM. The main difference between a SPA and an application is that applications must coexist together and do not each have their own html page.
-   For example, your React or Angular applications are applications which are either active or dormant. When active, they listen to url routing events and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
+  For example, your React or Angular applications are applications which are either active or dormant. When active, they listen to url routing events and put content on the DOM. When dormant, they do not listen to url routing events and are totally removed from the DOM.
 2. A [single-spa-config](/docs/single-spa-config.md). The single-spa-config is the html page, plus the javascript that registers applications with single-spa. Each application is registered with three things:
     1. A name
     2. A function to load the application's code
@@ -77,7 +77,7 @@ const loadingFunction = () => import('./app1/app1.js');
 /* Single-spa does some top-level routing to determine which application is active for any url. You can implement this routing any way you'd like.
  * One useful convention might be to prefix the url with the name of the app that is active, to keep your top-level routing simple.
  */
-const activityFunction = location => location.hash.startsWith('#/app1');
+const activityFunction = location => location.path.startsWith('/app1');
 
 singleSpa.registerApplication(appName, loadingFunction, activityFunction);
 singleSpa.start();
