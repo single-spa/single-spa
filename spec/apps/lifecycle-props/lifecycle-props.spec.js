@@ -34,10 +34,10 @@ export default function() {
         return singleSpa.unloadApplication('lifecycle-props');
       })
       .then(() => {
-        expect(myApp.getBootstrapProps()).toEqual({appName: 'lifecycle-props'});
-        expect(myApp.getMountProps()).toEqual({appName: 'lifecycle-props'});
-        expect(myApp.getUnmountProps()).toEqual({appName: 'lifecycle-props'});
-        expect(myApp.getUnloadProps()).toEqual({appName: 'lifecycle-props'});
+        expect(myApp.getBootstrapProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
+        expect(myApp.getMountProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
+        expect(myApp.getUnmountProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
+        expect(myApp.getUnloadProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
 
         done();
       })
