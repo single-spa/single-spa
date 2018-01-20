@@ -59,11 +59,8 @@ export function toName(app) {
 }
 
 export function getAppProps(app) {
-    const props = {appName: app.name};
-
-    if (app.customProps) {
-        props.customProps = app.customProps;
-    }
-
-    return props;
+  return {
+    appName: app.name,
+    customProps: app.customProps
+  };
 }
