@@ -57,3 +57,10 @@ export function notSkipped(item) {
 export function toName(app) {
   return app.name;
 }
+
+export function getAppProps(app) {
+  return {
+    appName: app.name,
+    customProps: app.customProps
+  };
+}
