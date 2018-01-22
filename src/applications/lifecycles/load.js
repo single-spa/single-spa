@@ -3,6 +3,7 @@ import { ensureValidAppTimeouts } from '../timeouts.js';
 import { handleAppError } from '../app-errors.js';
 import { find } from 'src/utils/find.js';
 import { flattenFnArray, smellsLikeAPromise, validLifecycleFn } from './lifecycle.helpers.js';
+import { getProps } from './prop.helpers.js';
 
 export async function toLoadPromise(app) {
   if (app.status !== NOT_LOADED) {
@@ -14,7 +15,7 @@ export async function toLoadPromise(app) {
   let appOpts;
 
   try {
-    const loadPromise = app.loadImpl({appName: app.name});
+    const loadPromise = app.loadImpl(getProps(app));
     if (!smellsLikeAPromise(loadPromise)) {
       // The name of the app will be prepended to this error message inside of the handleAppError function
       throw new Error(`single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`);

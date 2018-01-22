@@ -27,7 +27,7 @@ import {registerApplication} from 'single-spa';
 registerApplication('app-name', () => import('./my-app.js'), activeWhen);
 
 function activeWhen() {
-	return window.location.hash.indexOf('#/my-app') === 0;
+	return window.location.pathname.indexOf('/my-app') === 0;
 }
 ```
 
@@ -45,7 +45,7 @@ registerApplication('app-name-1', () => SystemJS.import('./my-app.js'), activeWh
 registerApplication('app-name-2', () => System.import('./my-other-app.js'), activeWhen);
 
 function activeWhen() {
-	return window.location.hash.indexOf('#/my-app') === 0;
+	return window.location.pathname.indexOf('/my-app') === 0;
 }
 ```
 
@@ -82,6 +82,6 @@ function app2InPromise() {
 }	
 
 function activeWhen() {
-	return window.location.hash.indexOf('#/my-app') === 0;
+	return window.location.pathname.indexOf('/my-app') === 0;
 }
 ```
