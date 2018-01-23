@@ -12,13 +12,27 @@ export async function toUnmountPromise(appOrParcel) {
   const unmountChildrenParcels = Object.keys(appOrParcel.parcels)
     .map(parcelId => appOrParcel.parcels[parcelId].unmountThisParcel());
 
+  let parcelError;
+
   try {
     await Promise.all(unmountChildrenParcels);
-    await reasonableTime(appOrParcel.unmount(getProps(appOrParcel)), `Unmounting application ${appOrParcel.name}'`, appOrParcel.timeouts.unmount);
-    appOrParcel.status = NOT_MOUNTED;
   } catch (err) {
+    parcelError = err;
     handleAppError(err, appOrParcel);
     appOrParcel.status = SKIP_BECAUSE_BROKEN;
+  } finally {
+    // We always try to unmount the appOrParcel, even if the children parcels failed to unmount.
+    try {
+      await reasonableTime(appOrParcel.unmount(getProps(appOrParcel)), `Unmounting application ${appOrParcel.name}'`, appOrParcel.timeouts.unmount);
+
+      // The appOrParcel needs to stay in a broken status if its children parcels fail to unmount
+      if (!parcelError) {
+        appOrParcel.status = NOT_MOUNTED;
+      }
+    } catch (err) {
+      handleAppError(err, appOrParcel);
+      appOrParcel.status = SKIP_BECAUSE_BROKEN;
+    }
   }
 
   return appOrParcel;

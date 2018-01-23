@@ -28,6 +28,7 @@ import lifecyleProps from 'spec/apps/lifecycle-props/lifecycle-props.spec.js';
 import { notStartedEventListeners, yesStartedEventListeners } from 'spec/apis/event-listeners.spec.js';
 import eventsApi from 'spec/apis/single-spa-events-api.spec.js';
 import checkActivityFunctionsApi from 'spec/apis/check-activity-functions.spec.js';
+import parcelTests from '../parcels/parcels.spec.js';
 
 describe("SystemJS loader :", () => {
   beforeAll(() => {
@@ -83,6 +84,8 @@ describe("SystemJS loader :", () => {
       lifecyleProps();
       registerWithObject();
     });
+
+    parcelTests();
 
     describe(`apis :`, () => {
       yesStartedEventListeners();

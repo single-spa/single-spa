@@ -22,6 +22,7 @@ import invalidLoadFunction from '../apps/invalid-load-function/invalid-load-func
 import happyUnload from '../apps/happy-unload/happy-unload.spec.js';
 import invalidUnload from '../apps/invalid-unload/invalid-unload.spec.js';
 import lifecyleProps from '../apps/lifecycle-props/lifecycle-props.spec.js';
+import parcelTests from '../parcels/parcels.spec.js';
 
 describe('webpack2 loader', () => {
   beforeAll(done => {
@@ -60,5 +61,7 @@ describe('webpack2 loader', () => {
     invalidUnload();
     lifecyleProps();
   });
+
+  parcelTests();
 });
 

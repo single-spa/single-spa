@@ -60,7 +60,7 @@ export function mountParcel(config, customProps) {
     timeouts: ensureValidAppTimeouts(parcel),
     unmountThisParcel() {
       if (parcel.status !== MOUNTED) {
-        throw new Error(`Cannot unmount parcel '${name}' -- it is in a ${parce.status} status`);
+        throw new Error(`Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`);
       }
 
       return toUnmountPromise(parcel)
