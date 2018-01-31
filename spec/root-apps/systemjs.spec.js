@@ -1,4 +1,5 @@
 import { resetSingleSpa } from './root-app.helpers.js';
+import appNames from '../apps/app-names/app-names.spec.js'
 import bootstrapRejectsApp from 'spec/apps/bootstrap-rejects/bootstrap-rejects.spec.js'
 import bootstrapTimesOutApp from 'spec/apps/bootstrap-times-out/bootstrap-times-out.spec.js';
 import bootstrapTimesOutDies from 'spec/apps/bootstrap-times-out-dies/bootstrap-times-out-dies.spec.js';
@@ -28,6 +29,7 @@ import lifecyleProps from 'spec/apps/lifecycle-props/lifecycle-props.spec.js';
 import { notStartedEventListeners, yesStartedEventListeners } from 'spec/apis/event-listeners.spec.js';
 import eventsApi from 'spec/apis/single-spa-events-api.spec.js';
 import checkActivityFunctionsApi from 'spec/apis/check-activity-functions.spec.js';
+import registerApplication from 'spec/apis/register-application.spec.js';
 
 describe("SystemJS loader :", () => {
   beforeAll(() => {
@@ -57,6 +59,7 @@ describe("SystemJS loader :", () => {
     })
 
     describe('apps :', () => {
+      appNames();
       bootstrapRejectsApp();
       bootstrapTimesOutApp();
       bootstrapTimesOutDies();
@@ -102,6 +105,7 @@ describe("SystemJS loader :", () => {
       checkActivityFunctionsApi();
       navigateToUrlTests();
       notStartedEventListeners();
+      registerApplication();
     });
   });
 });
