@@ -1,4 +1,5 @@
 import { resetSingleSpa } from './root-app.helpers.js';
+import appNames from '../apps/app-names/app-names.spec.js'
 import bootstrapRejectsApp from 'spec/apps/bootstrap-rejects/bootstrap-rejects.spec.js'
 import bootstrapTimesOutApp from 'spec/apps/bootstrap-times-out/bootstrap-times-out.spec.js';
 import bootstrapTimesOutDies from 'spec/apps/bootstrap-times-out-dies/bootstrap-times-out-dies.spec.js';
@@ -57,6 +58,7 @@ describe("SystemJS loader :", () => {
     })
 
     describe('apps :', () => {
+      appNames();
       bootstrapRejectsApp();
       bootstrapTimesOutApp();
       bootstrapTimesOutDies();

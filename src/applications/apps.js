@@ -13,7 +13,7 @@ export function getMountedApps() {
 }
 
 export function getAppNames() {
-  return app.map(toName);
+  return apps.map(toName);
 }
 
 export function getAppStatus(appName) {
