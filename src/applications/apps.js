@@ -29,7 +29,7 @@ export function declareChildApplication(appName, arg1, arg2) {
 export function registerApplication(appName, arg1, arg2, customProps = {}) {
   if (typeof appName !== 'string' || appName.length === 0)
     throw new Error(`The first argument must be a non-empty string 'appName'`);
-  if (apps[appName])
+  if (getAppNames().includes(appName))
     throw new Error(`There is already an app declared with name ${appName}`);
   if (typeof customProps !== 'object')
     throw new Error('customProps must be an object');
