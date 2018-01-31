@@ -46,14 +46,14 @@ export default function() {
           return Promise.resolve();
         }
       }
-      singleSpa.registerApplication('./invalid-load-function.app.js', loadFunction, location => location.hash === "#invalid-load-function");
+      singleSpa.registerApplication('./invalid-load-function.app.js 2', loadFunction, location => location.hash === "#invalid-load-function");
 
       let applicationBrokenCalled = false;
       window.addEventListener("single-spa:application-broken", applicationBroken);
 
       function applicationBroken(evt) {
         applicationBrokenCalled = true;
-        expect(evt.detail.appName).toBe('./invalid-load-function.app.js');
+        expect(evt.detail.appName).toBe('./invalid-load-function.app.js 2');
         expect(evt.detail.err.message.indexOf('single-spa loading function did not return a promise. Check the second argument to registerApplication')).toBeGreaterThan(-1);
       }
 
@@ -81,14 +81,14 @@ export default function() {
           catch: 'khalifa',
         };
       }
-      singleSpa.registerApplication('./invalid-load-function.app.js', loadFunction, location => location.hash === "#invalid-load-function");
+      singleSpa.registerApplication('./invalid-load-function.app.js 3', loadFunction, location => location.hash === "#invalid-load-function");
 
       let applicationBrokenCalled = false;
       window.addEventListener("single-spa:application-broken", applicationBroken);
 
       function applicationBroken(evt) {
         applicationBrokenCalled = true;
-        expect(evt.detail.appName).toBe('./invalid-load-function.app.js');
+        expect(evt.detail.appName).toBe('./invalid-load-function.app.js 3');
         expect(evt.detail.err.message.indexOf('single-spa loading function did not return a promise. Check the second argument to registerApplication')).toBeGreaterThan(-1);
       }
 
