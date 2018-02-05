@@ -4,7 +4,7 @@ If you're interested in migrating existing SPAs into a single-spa, you'll
 need to do three things:
 
 1. Create a [single spa config](/docs/single-spa-config.md)
-1. [Convert your SPA or SPAs to be registered applications](#converting-spas-into-applications)
+1. [Convert your SPA or SPAs to be registered applications](#converting-spas-into-registered-applications)
 1. Adjust your html file so that your single spa config is the new boss in town.
    See [docs](/docs/single-spa-config.md#indexhtml-file).
 
