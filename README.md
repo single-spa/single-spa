@@ -129,3 +129,4 @@ Please submit a P.R. to this section if you start using single-spa.
 
 - [CanopyTax](https://www.canopytax.com)
 - [Dealer Socket](https://dealersocket.com/)
+- [Beamery](https://beamery.com/)
