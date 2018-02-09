@@ -50,7 +50,6 @@ describe("SystemJS loader :", () => {
     beforeAll(done => {
       resetSingleSpa()
       .then(() => {
-        singleSpa.setLoader(SystemJS)
         singleSpa.start();
         done();
       })
