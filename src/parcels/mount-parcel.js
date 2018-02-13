@@ -6,6 +6,12 @@ import { toUnmountPromise } from 'src/applications/lifecycles/unmount.js';
 import { ensureValidAppTimeouts } from 'src/applications/timeouts.js';
 
 let parcelCount = 0;
+const rootParcels = {parcels: {}};
+
+// This is a public api, exported to users of single-spa
+export function mountRootParcel() {
+  return mountParcel.apply(rootParcels, arguments);
+}
 
 export function mountParcel(config, customProps) {
   const owningAppOrParcel = this;
@@ -86,7 +92,8 @@ export function mountParcel(config, customProps) {
   owningAppOrParcel.parcels[id] = parcel;
 
   // Start bootstrapping and mounting
-  const bootstrapPromise = toBootstrapPromise(parcel);
+  // The .then() causes the work to be put on the event loop instead of happening immediately
+  const bootstrapPromise = Promise.resolve().then(() => toBootstrapPromise(parcel));
   const mountPromise = bootstrapPromise.then(() => toMountPromise(parcel));
 
   let resolveUnmount, rejectUnmount;
@@ -99,24 +106,35 @@ export function mountParcel(config, customProps) {
   // Return external representation
   return {
     mount() {
-      return Promise
+      return promiseWithoutReturnValue(
+        Promise
         .resolve()
         .then(() => {
           if (parcel.status !== NOT_MOUNTED) {
             throw new Error(`Cannot mount parcel '${name}' -- it is in a ${parcel.status} status`);
           }
 
+          // Add to owning app or parcel
+          owningAppOrParcel.parcels[id] = parcel;
+
           return toMountPromise(parcel);
-        });
+        })
+      )
     },
     unmount() {
-      return parcel.unmountThisParcel();
+      return promiseWithoutReturnValue(
+        parcel.unmountThisParcel()
+      );
     },
     getStatus() {
       return parcel.status;
     },
-    bootstrapPromise,
-    mountPromise,
-    unmountPromise,
+    bootstrapPromise: promiseWithoutReturnValue(bootstrapPromise),
+    mountPromise: promiseWithoutReturnValue(mountPromise),
+    unmountPromise: promiseWithoutReturnValue(unmountPromise),
   };
+}
+
+function promiseWithoutReturnValue(promise) {
+  return promise.then(() => null);
 }

@@ -17,7 +17,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'node_modules/promise-polyfill/dist/polyfill.min.js',
-      'spec/**/*.spec.js',
+      'spec/parcels/**/*.spec.js',
     ],
 
     webpack: {
