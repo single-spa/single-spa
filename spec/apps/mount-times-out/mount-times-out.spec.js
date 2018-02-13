@@ -15,7 +15,7 @@ describe(`mount-times-out app`, () => {
   });
 
   beforeEach(() => {
-    location.hash = activeHash;
+    location.hash = '#'
 
     errs = [];
     singleSpa.addErrorHandler(handleError);
@@ -28,6 +28,8 @@ describe(`mount-times-out app`, () => {
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
   it(`is just waited for if dieOnTimeout is false`, () => {
+    location.hash = activeHash;
+
     return singleSpa
       .triggerAppChange()
       .then(() => {

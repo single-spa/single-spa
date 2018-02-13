@@ -9,7 +9,7 @@ describe(`happy-basic`, () => {
   });
 
   beforeEach(() => {
-    location.hash = '#happy-basic';
+    location.hash = '#';
 
     return import('./happy-basic.app.js')
       .then(app => myApp = app)

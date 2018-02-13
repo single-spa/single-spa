@@ -15,7 +15,7 @@ describe(`invalid-unmount app`, () => {
   });
 
   beforeEach(() => {
-    location.hash = activeHash;
+    location.hash = '#'
 
     errs = [];
     singleSpa.addErrorHandler(handleError);
@@ -30,6 +30,8 @@ describe(`invalid-unmount app`, () => {
   }
 
   it(`is bootstrapped, mounted, and unmounted, but then put in a broken state and never again mounted`, () => {
+    location.hash = activeHash;
+
     return singleSpa
       .triggerAppChange()
       .then(() => {

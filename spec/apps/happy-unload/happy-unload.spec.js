@@ -32,6 +32,7 @@ describe(`happy-unload app :`, () => {
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(0);
           expect(myApp.getNumUnloadCalls()).toBe(0);
+          location.hash = '#';
           return singleSpa.unloadApplication('./happy-unload.app.js');
         })
         .then(() => {
@@ -40,6 +41,10 @@ describe(`happy-unload app :`, () => {
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(1);
           expect(myApp.getNumUnloadCalls()).toBe(1);
+          return singleSpa.triggerAppChange();
+        })
+        .then(() => {
+          window.location.hash = activeHash;
           return singleSpa.triggerAppChange();
         })
         .then(() => {

@@ -13,7 +13,7 @@ describe(`bootstrap-times-out-dies`, () => {
   });
 
   beforeEach(() => {
-    location.hash = '#bootstrap-times-out-dies';
+    location.hash = '#';
 
     errs = [];
     singleSpa.addErrorHandler(handleError);
@@ -28,6 +28,8 @@ describe(`bootstrap-times-out-dies`, () => {
   })
 
   it(`is put into SKIP_BECAUSE_BROKEN if dieOnTimeout is true`, () => {
+    location.hash = '#bootstrap-times-out-dies';
+
     return singleSpa
       .triggerAppChange()
       .then(() => {

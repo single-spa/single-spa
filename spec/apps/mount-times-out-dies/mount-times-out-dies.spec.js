@@ -15,7 +15,7 @@ describe(`mount-times-out-dies app`, () => {
   });
 
   beforeEach(() => {
-    location.hash = activeHash;
+    location.hash = '#';
 
     errs = [];
     singleSpa.addErrorHandler(handleError);
@@ -28,6 +28,8 @@ describe(`mount-times-out-dies app`, () => {
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
   it(`is put into SKIP_BECAUSE_BROKEN if dieOnTimeout is true`, () => {
+    location.hash = activeHash;
+
     return singleSpa
       .triggerAppChange()
       .then(() => {

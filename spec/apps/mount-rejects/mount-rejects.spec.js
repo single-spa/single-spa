@@ -15,7 +15,7 @@ describe(`mount-rejects app`, () => {
   });
 
   beforeEach(() => {
-    location.hash = activeHash;
+    location.hash = `#`;
 
     errs = [];
     singleSpa.addErrorHandler(handleError);
@@ -28,6 +28,8 @@ describe(`mount-rejects app`, () => {
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
   it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN and never unmounts`, () => {
+    location.hash = activeHash;
+
     return singleSpa
       .triggerAppChange()
       .then(() => {
