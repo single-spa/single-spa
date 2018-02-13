@@ -4,3 +4,5 @@ node_js:
 script:
   - yarn lint
   - yarn test:travis
+addons:
+  - sauce_connect: true

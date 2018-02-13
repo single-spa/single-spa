@@ -44,6 +44,7 @@ module.exports = function(config) {
   config.set({
     sauceLabs: {
       testName: "single-spa tests",
+      tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
       // username: 'joeldenning',
       // accessKey: 'access-key'
     },
