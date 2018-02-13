@@ -49,6 +49,7 @@
     "karma-sauce-launcher": "^1.0.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.9",
+    "promise-polyfill": "^7.1.0",
     "webpack": "^3.10.0"
   },
   "ignore": [
