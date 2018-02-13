@@ -37,6 +37,5 @@ export function getUnloadProps() {
 }
 
 export function reset() {
-  console.log('resetting')
   bootstrapProps = mountProps = unmountProps = unloadProps = null;
 }

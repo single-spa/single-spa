@@ -1,7 +1,7 @@
 export function notStartedEventListeners() {
   describe(`event listeners before single-spa is started :`, () => {
     beforeEach(ensureCleanSlate)
-    
+
     it(`calls hashchange and popstate event listeners even when single-spa is not started`, done => {
       let hashchangeCalled = false, popstateCalled = false;
       window.addEventListener("hashchange", () => {
@@ -99,18 +99,14 @@ export function yesStartedEventListeners() {
 }
 
 
-function ensureCleanSlate(done) {
+function ensureCleanSlate() {
   /* First we need to make sure we have a clean slate where single-spa is not queueing up events or app changes.
    * Otherwise, the event listeners might be called because of a different spec that causes hashchange and popstate
    * events
    */
-  singleSpa
-  .triggerAppChange()
-  .then(done)
-  .catch(err => {
-    fail(err);
-    done();
-  });
+  return singleSpa
+    .triggerAppChange()
+    .then(done)
 }
 
 function isIE() {

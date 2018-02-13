@@ -1,26 +1,34 @@
+import * as singleSpa from 'single-spa';
+
 const activeHash = `#unmount-times-out-dies`;
 
-export default function() {
-  describe(`unmount-times-out app`, () => {
-    let myApp;
+describe(`unmount-times-out app`, () => {
+  let myApp, errs;
 
-    beforeAll(() => {
-      singleSpa.registerApplication('./unmount-times-out-dies.app.js', () => System.import('./unmount-times-out-dies.app.js'), location => location.hash === activeHash);
-    });
+  function handleError(err) {
+    errs.push(err);
+  }
 
-    beforeEach(done => {
-      location.hash = activeHash;
+  beforeAll(() => {
+    singleSpa.registerApplication('./unmount-times-out-dies.app.js', () => import('./unmount-times-out-dies.app.js'), location => location.hash === activeHash);
+    singleSpa.start();
+  });
 
-      System
-      .import('./unmount-times-out-dies.app.js')
+  beforeEach(() => {
+    location.hash = activeHash;
+
+    errs = [];
+    singleSpa.addErrorHandler(handleError);
+
+    return import('./unmount-times-out-dies.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
-      .then(done)
-      .catch(err => {throw err})
-    })
+  })
 
-    it(`is put into SKIP_BECAUSE_BROKEN when dieOnTimeout is true`, (done) => {
-      singleSpa
+  afterEach(() => singleSpa.removeErrorHandler(handleError));
+
+  it(`is put into SKIP_BECAUSE_BROKEN when dieOnTimeout is true`, () => {
+    return singleSpa
       .triggerAppChange()
       .then(() => {
         expect(myApp.numBootstraps()).toEqual(1);
@@ -29,23 +37,14 @@ export default function() {
         expect(singleSpa.getAppStatus('./unmount-times-out-dies.app.js')).toEqual('MOUNTED');
 
         location.hash = '#not-unmount-times-out';
-        singleSpa
-        .triggerAppChange()
-        .then(() => {
-          expect(myApp.numUnmounts()).toEqual(1);
-          expect(singleSpa.getMountedApps()).toEqual([]);
-          expect(singleSpa.getAppStatus('./unmount-times-out-dies.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
-          done();
-        })
-        .catch(ex => {
-          fail(ex);
-          done();
-        });
-      })
-      .catch(ex => {
-        fail(ex);
-        done();
+
+        return singleSpa
+          .triggerAppChange()
+          .then(() => {
+            expect(myApp.numUnmounts()).toEqual(1);
+            expect(singleSpa.getMountedApps()).toEqual([]);
+            expect(singleSpa.getAppStatus('./unmount-times-out-dies.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
+          })
       });
-    });
   });
-}
+});

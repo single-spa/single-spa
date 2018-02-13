@@ -1,36 +1,44 @@
+import * as singleSpa from 'single-spa';
+
 const activeHash = `#unmount-times-out`;
 
-export default function() {
-  describe(`unmount-times-out app`, () => {
-    let myApp, ogJasmineTimeout;
+describe(`unmount-times-out app`, () => {
+  let myApp, ogJasmineTimeout, errs;
 
-    beforeAll(() => {
-      singleSpa.registerApplication('./unmount-times-out.app.js', () => System.import('./unmount-times-out.app.js'), location => location.hash === activeHash);
-    });
+  function handleError(err) {
+    errs.push(err);
+  }
 
-    beforeEach(done => {
-      location.hash = activeHash;
+  beforeAll(() => {
+    singleSpa.registerApplication('./unmount-times-out.app.js', () => import('./unmount-times-out.app.js'), location => location.hash === activeHash);
+    singleSpa.start();
+  });
 
-      /* See http://jasmine.github.io/2.1/introduction.html#section-Asynchronous_Support.
-       * Sometimes saucelabs is so slow on this test that jasmine times out
-       */
-      ogJasmineTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-      jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+  beforeEach(() => {
+    location.hash = activeHash;
 
-      System
-      .import('./unmount-times-out.app.js')
+    errs = [];
+    singleSpa.addErrorHandler(handleError);
+
+    /* See http://jasmine.github.io/2.1/introduction.html#section-Asynchronous_Support.
+     * Sometimes saucelabs is so slow on this test that jasmine times out
+     */
+    ogJasmineTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+
+    return import('./unmount-times-out.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
-      .then(done)
-      .catch(err => {throw err})
-    })
+  })
 
-    afterEach(() => {
-      jasmine.DEFAULT_TIMEOUT_INTERVAL = ogJasmineTimeout;
-    });
+  afterEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = ogJasmineTimeout;
+  });
 
-    it(`is just waited for if dieOnTimeout is false`, (done) => {
-      singleSpa
+  afterEach(() => singleSpa.removeErrorHandler(handleError));
+
+  it(`is just waited for if dieOnTimeout is false`, () => {
+    return singleSpa
       .triggerAppChange()
       .then(() => {
         expect(myApp.numBootstraps()).toEqual(1);
@@ -39,23 +47,14 @@ export default function() {
         expect(singleSpa.getAppStatus('./unmount-times-out.app.js')).toEqual('MOUNTED');
 
         location.hash = '#not-unmount-times-out';
-        singleSpa
-        .triggerAppChange()
-        .then(() => {
-          expect(myApp.numUnmounts()).toEqual(1);
-          expect(singleSpa.getMountedApps()).toEqual([]);
-          expect(singleSpa.getAppStatus('./unmount-times-out.app.js')).toEqual('NOT_MOUNTED');
-          done();
-        })
-        .catch(ex => {
-          fail(ex);
-          done();
-        });
+
+        return singleSpa
+          .triggerAppChange()
+          .then(() => {
+            expect(myApp.numUnmounts()).toEqual(1);
+            expect(singleSpa.getMountedApps()).toEqual([]);
+            expect(singleSpa.getAppStatus('./unmount-times-out.app.js')).toEqual('NOT_MOUNTED');
+          })
       })
-      .catch(ex => {
-        fail(ex);
-        done();
-      });
-    });
   });
-}
+});

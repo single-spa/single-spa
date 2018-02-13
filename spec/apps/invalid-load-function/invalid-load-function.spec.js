@@ -1,112 +1,74 @@
-export default function() {
-  describe(`invalid-load-function`, () => {
-    beforeEach(() => {
-      location.hash = "#";
-    });
+import * as singleSpa from 'single-spa';
 
-    afterEach(() => {
-      location.hash = "#";
-    });
+describe(`invalid-load-function`, () => {
+  let errs = [];
 
-    it('Dies if the load function returns nothing', done => {
-      function loadFunction() {
-        // return nothing
-      }
-      singleSpa.registerApplication('./invalid-load-function.app.js', loadFunction, location => location.hash === "#invalid-load-function");
+  function handleError(err) {
+    errs.push(err);
+  }
 
-      let applicationBrokenCalled = false;
-      window.addEventListener("single-spa:application-broken", applicationBroken);
-
-      function applicationBroken(evt) {
-        applicationBrokenCalled = true;
-        expect(evt.detail.appName).toBe('./invalid-load-function.app.js');
-        expect(evt.detail.err.message.indexOf('single-spa loading function did not return a promise. Check the second argument to registerApplication')).toBeGreaterThan(-1);
-      }
-
-      location.hash = "#invalid-load-function";
-
-      singleSpa
-      .triggerAppChange()
-      .then(() => {
-        window.removeEventListener("single-spa:application-broken", applicationBroken);
-        expect(applicationBrokenCalled).toBe(true);
-        expect(singleSpa.getAppStatus('./invalid-load-function.app.js')).toBe(singleSpa.SKIP_BECAUSE_BROKEN);
-        done();
-      })
-      .catch(err => {
-        window.removeEventListener("single-spa:application-broken", applicationBroken);
-        fail(err);
-        done();
-      })
-    });
-
-    it('Dies if the load function returns a function instead of a promise', done => {
-      function loadFunction() {
-        return function() {
-          return Promise.resolve();
-        }
-      }
-      singleSpa.registerApplication('./invalid-load-function.app.js 2', loadFunction, location => location.hash === "#invalid-load-function");
-
-      let applicationBrokenCalled = false;
-      window.addEventListener("single-spa:application-broken", applicationBroken);
-
-      function applicationBroken(evt) {
-        applicationBrokenCalled = true;
-        expect(evt.detail.appName).toBe('./invalid-load-function.app.js 2');
-        expect(evt.detail.err.message.indexOf('single-spa loading function did not return a promise. Check the second argument to registerApplication')).toBeGreaterThan(-1);
-      }
-
-      location.hash = "#invalid-load-function";
-
-      singleSpa
-      .triggerAppChange()
-      .then(() => {
-        window.removeEventListener("single-spa:application-broken", applicationBroken);
-        expect(applicationBrokenCalled).toBe(true);
-        expect(singleSpa.getAppStatus('./invalid-load-function.app.js')).toBe(singleSpa.SKIP_BECAUSE_BROKEN);
-        done();
-      })
-      .catch(err => {
-        window.removeEventListener("single-spa:application-broken", applicationBroken);
-        fail(err);
-        done();
-      })
-    });
-
-    it('Dies if the load function returns a non-thenable object', done => {
-      function loadFunction() {
-        return {
-          things: `that aren't valid`,
-          catch: 'khalifa',
-        };
-      }
-      singleSpa.registerApplication('./invalid-load-function.app.js 3', loadFunction, location => location.hash === "#invalid-load-function");
-
-      let applicationBrokenCalled = false;
-      window.addEventListener("single-spa:application-broken", applicationBroken);
-
-      function applicationBroken(evt) {
-        applicationBrokenCalled = true;
-        expect(evt.detail.appName).toBe('./invalid-load-function.app.js 3');
-        expect(evt.detail.err.message.indexOf('single-spa loading function did not return a promise. Check the second argument to registerApplication')).toBeGreaterThan(-1);
-      }
-
-      location.hash = "#invalid-load-function";
-
-      singleSpa
-      .triggerAppChange()
-      .then(() => {
-        window.removeEventListener("single-spa:application-broken", applicationBroken);
-        expect(applicationBrokenCalled).toBe(true);
-        expect(singleSpa.getAppStatus('./invalid-load-function.app.js')).toBe(singleSpa.SKIP_BECAUSE_BROKEN);
-        done();
-      })
-      .catch(err => {
-        window.removeEventListener("single-spa:application-broken", applicationBroken);
-        fail(err);
-        done();
-      })
-    });
+  beforeEach(() => {
+    location.hash = "#";
+    errs = [];
+    singleSpa.addErrorHandler(handleError);
   });
-}
+
+  afterEach(() => {
+    location.hash = "#";
+    singleSpa.removeErrorHandler(handleError);
+  });
+
+  it('Dies if the load function returns nothing', () => {
+    function loadFunction() {
+      // return nothing
+    }
+    singleSpa.registerApplication('invalid-load-1', loadFunction, location => location.hash === "#invalid-load-function");
+
+    location.hash = "#invalid-load-function";
+
+    return singleSpa
+      .triggerAppChange()
+      .then(() => {
+        expect(errs.length).toBeGreaterThan(0);
+        expect(errs[0].appName).toBe('invalid-load-1');
+        expect(errs[0].message.indexOf('single-spa loading function did not return a promise. Check the second argument to registerApplication')).toBeGreaterThan(-1)
+        expect(singleSpa.getAppStatus('invalid-load-1')).toBe(singleSpa.SKIP_BECAUSE_BROKEN);
+      })
+  });
+
+  it('Dies if the load function returns a function instead of a promise', () => {
+    function loadFunction() {
+      // return nothing
+    }
+    singleSpa.registerApplication('invalid-load-2', loadFunction, location => location.hash === "#invalid-load-function");
+
+    location.hash = "#invalid-load-function";
+
+    return singleSpa
+      .triggerAppChange()
+      .then(() => {
+        expect(errs.length).toBeGreaterThan(0);
+        expect(errs[0].appName).toBe('invalid-load-2');
+        expect(errs[0].message.indexOf('single-spa loading function did not return a promise. Check the second argument to registerApplication')).toBeGreaterThan(-1)
+        expect(singleSpa.getAppStatus('invalid-load-2')).toBe(singleSpa.SKIP_BECAUSE_BROKEN);
+      })
+  });
+
+  it('Dies if the load function returns a non-thenable object', () => {
+    function loadFunction() {
+      // return nothing
+    }
+    singleSpa.registerApplication('invalid-load-3', loadFunction, location => location.hash === "#invalid-load-function");
+
+    location.hash = "#invalid-load-function";
+
+    return singleSpa
+      .triggerAppChange()
+      .then(() => {
+        expect(errs.length).toBeGreaterThan(0);
+        expect(errs[0].appName).toBe('invalid-load-3');
+        expect(errs[0].message.indexOf('single-spa loading function did not return a promise. Check the second argument to registerApplication')).toBeGreaterThan(-1)
+        expect(singleSpa.getAppStatus('invalid-load-3')).toBe(singleSpa.SKIP_BECAUSE_BROKEN);
+      })
+  });
+});
