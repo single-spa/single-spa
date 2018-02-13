@@ -5,12 +5,12 @@ var customLaunchers = {
     base: 'SauceLabs',
     browserName: 'chrome',
     platform: 'Windows 7',
-    version: '52',
+    version: 'latest',
   },
   sl_firefox: {
     base: 'SauceLabs',
     browserName: 'firefox',
-    version: '45',
+    version: 'latest',
   },
   sl_ie_11: {
     base: 'SauceLabs',
@@ -34,6 +34,7 @@ var customLaunchers = {
     base: 'SauceLabs',
     browserName: 'microsoftedge',
     platform: 'Windows 10',
+    version: 'latest',
   },
 };
 
