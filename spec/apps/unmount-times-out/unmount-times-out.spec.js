@@ -15,8 +15,6 @@ describe(`unmount-times-out app`, () => {
   });
 
   beforeEach(() => {
-    location.hash = activeHash;
-
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
@@ -29,6 +27,7 @@ describe(`unmount-times-out app`, () => {
     return import('./unmount-times-out.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
+      .then(() => location.hash = `#`)
   })
 
   afterEach(() => {
@@ -38,6 +37,8 @@ describe(`unmount-times-out app`, () => {
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
   it(`is just waited for if dieOnTimeout is false`, () => {
+    location.hash = activeHash;
+
     return singleSpa
       .triggerAppChange()
       .then(() => {
