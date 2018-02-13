@@ -1,17 +1,40 @@
 import CustomEvent from 'custom-event';
 
+let errorHandlers = []
+
 export function handleAppError(err, app) {
   const transformedErr = transformErr(err, app);
 
-  window.dispatchEvent(new CustomEvent("single-spa:application-broken", {detail: {appName: app.name, err: transformedErr}}));
-
-  if (window.SINGLE_SPA_TESTING) {
-    console.error(transformedErr);
+  if (errorHandlers.length) {
+    errorHandlers.forEach(handler => handler(transformedErr));
   } else {
     setTimeout(() => {
       throw transformedErr;
     });
   }
+}
+
+export function addErrorHandler(handler) {
+  if (typeof handler !== 'function') {
+    throw new Error('a single-spa error handler must be a function');
+  }
+
+  errorHandlers.push(handler);
+}
+
+export function removeErrorHandler(handler) {
+  if (typeof handler !== 'function') {
+    throw new Error('a single-spa error handler must be a function');
+  }
+
+  let removedSomething = false;
+  errorHandlers = errorHandlers.filter(h => {
+    const isHandler = h === handler;
+    removedSomething = removedSomething || isHandler;
+    return !isHandler;
+  })
+
+  return removedSomething;
 }
 
 function transformErr(ogErr, app) {
@@ -37,6 +60,8 @@ function transformErr(ogErr, app) {
       result = ogErr;
     }
   }
+
+  result.appName = app.name;
 
   return result;
 }

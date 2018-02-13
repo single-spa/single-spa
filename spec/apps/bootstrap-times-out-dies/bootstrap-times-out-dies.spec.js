@@ -1,36 +1,43 @@
-export default function() {
-  describe(`bootstrap-times-out-dies`, () => {
-    let myApp;
+import * as singleSpa from 'single-spa'
 
-    beforeAll(() => {
-      singleSpa.registerApplication('./bootstrap-times-out-dies.app.js', () => System.import('./bootstrap-times-out-dies.app.js'), location => location.hash === "#bootstrap-times-out-dies");
-    });
+describe(`bootstrap-times-out-dies`, () => {
+  let myApp, errs = [];
 
-    beforeEach(done => {
-      location.hash = '#bootstrap-times-out-dies';
+  function handleError(err) {
+    errs.push(err)
+  }
 
-      System
-      .import('./bootstrap-times-out-dies.app.js')
+  beforeAll(() => {
+    singleSpa.registerApplication('./bootstrap-times-out-dies.app.js', () => import('./bootstrap-times-out-dies.app.js'), location => location.hash === "#bootstrap-times-out-dies");
+    singleSpa.start();
+  });
+
+  beforeEach(() => {
+    location.hash = '#';
+
+    errs = [];
+    singleSpa.addErrorHandler(handleError);
+
+    return import('./bootstrap-times-out-dies.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
-      .then(done)
-      .catch(err => {throw err})
-    })
+  })
 
-    it(`is put into SKIP_BECAUSE_BROKEN if dieOnTimeout is true`, (done) => {
-      singleSpa
+  afterEach(() => {
+    singleSpa.removeErrorHandler(handleError);
+  })
+
+  it(`is put into SKIP_BECAUSE_BROKEN if dieOnTimeout is true`, () => {
+    location.hash = '#bootstrap-times-out-dies';
+
+    return singleSpa
       .triggerAppChange()
       .then(() => {
         expect(myApp.wasBootstrapped()).toEqual(true);
         expect(myApp.wasMounted()).toEqual(false);
         expect(singleSpa.getMountedApps()).toEqual([]);
         expect(singleSpa.getAppStatus('./bootstrap-times-out-dies.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
-        done();
+        expect(errs.length).toBeGreaterThan(0);
       })
-      .catch(ex => {
-        fail(ex);
-        done();
-      });
-    });
   });
-}
+});

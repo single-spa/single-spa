@@ -98,6 +98,16 @@ the registered application as soon as it is safe to do so (when the app status i
 `checkActivityFunctions(mockWindowLocation)` takes in a mock of the `window.location`. It returns an array of
 `applicationName` strings. This API will call every app's activity function with the provided mockWindowLocation
 
+## addErrorHandler
+`addErrorHandler(fn)` adds a handler that will be called every time an application throws an error during a lifecycle function or an
+activity function. When there are no error handlers, single-spa throws the error to the window, but when there is at least one handler,
+errors will no longer be thrown on the window.
+
+The `fn` must be a function. It will be called with one argument, `err`, which is an Error object that has a `message` and `name` property.
+
+## removeErrorHandler
+`removeErrorHandler(fn)` removes an error handler. Returns true if the error handler was removed, and false if it was not.
+
 ## before routing event
 single-spa fires an event `single-spa:before-routing-event` on the window every time before a routing event occurs.
 This event will get fired after each hashchange, popstate, or triggerAppChange, even if no changes

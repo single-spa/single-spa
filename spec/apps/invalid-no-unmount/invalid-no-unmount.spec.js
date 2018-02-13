@@ -1,38 +1,40 @@
+import * as singleSpa from 'single-spa';
+
 const activeHash = `#invalid-no-unmount`;
 
-export default function() {
-  describe(`invalid-no-unmount app`, () => {
-    let myApp;
+describe(`invalid-no-unmount app`, () => {
+  let myApp, errs = [];
 
-    beforeAll(() => {
-      singleSpa.registerApplication('./invalid-no-unmount.app.js', () => System.import('./invalid-no-unmount.app.js'), location => location.hash === activeHash);
-    });
+  function handleError(err) {
+    errs.push(err);
+  }
 
-    beforeEach(done => {
-      location.hash = activeHash;
+  beforeAll(() => {
+    singleSpa.registerApplication('./invalid-no-unmount.app.js', () => import('./invalid-no-unmount.app.js'), location => location.hash === activeHash);
+    singleSpa.start();
+  });
 
-      System
-      .import('./invalid-no-unmount.app.js')
+  beforeEach(() => {
+    location.hash = activeHash;
+
+    errs = [];
+    singleSpa.addErrorHandler(handleError);
+
+    return import('./invalid-no-unmount.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
-      .then(done)
-      .catch(err => {throw err})
-    })
+  })
 
-    it(`is never bootstrapped`, (done) => {
-      singleSpa
+  afterEach(() => singleSpa.removeErrorHandler(handleError));
+
+  it(`is never bootstrapped`, () => {
+    return singleSpa
       .triggerAppChange()
       .then(() => {
         expect(myApp.isBootstrapped()).toEqual(false);
         expect(myApp.isMounted()).toEqual(false);
         expect(singleSpa.getMountedApps()).toEqual([]);
         expect(singleSpa.getAppStatus('./invalid-no-unmount.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
-        done();
       })
-      .catch(ex => {
-        fail(ex);
-        done();
-      });
-    });
   });
-}
+});

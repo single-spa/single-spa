@@ -1,38 +1,42 @@
+import * as singleSpa from 'single-spa';
+
 const activeHash = `#mount-times-out-dies`;
 
-export default function() {
-  describe(`mount-times-out-dies app`, () => {
-    let myApp;
+describe(`mount-times-out-dies app`, () => {
+  let myApp, errs;
 
-    beforeAll(() => {
-      singleSpa.registerApplication('./mount-times-out-dies.app.js', () => System.import('./mount-times-out-dies.app.js'), location => location.hash === activeHash);
-    });
+  function handleError(err) {
+    errs.push(err);
+  }
 
-    beforeEach(done => {
-      location.hash = activeHash;
+  beforeAll(() => {
+    singleSpa.registerApplication('./mount-times-out-dies.app.js', () => import('./mount-times-out-dies.app.js'), location => location.hash === activeHash);
+    singleSpa.start();
+  });
 
-      System
-      .import('./mount-times-out-dies.app.js')
+  beforeEach(() => {
+    location.hash = '#';
+
+    errs = [];
+    singleSpa.addErrorHandler(handleError);
+
+    return import('./mount-times-out-dies.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
-      .then(done)
-      .catch(err => {throw err})
-    })
+  })
 
-    it(`is put into SKIP_BECAUSE_BROKEN if dieOnTimeout is true`, (done) => {
-      singleSpa
+  afterEach(() => singleSpa.removeErrorHandler(handleError));
+
+  it(`is put into SKIP_BECAUSE_BROKEN if dieOnTimeout is true`, () => {
+    location.hash = activeHash;
+
+    return singleSpa
       .triggerAppChange()
       .then(() => {
         expect(myApp.bootstraps()).toEqual(1);
         expect(myApp.mounts()).toEqual(1);
         expect(singleSpa.getMountedApps()).toEqual([]);
         expect(singleSpa.getAppStatus('./mount-times-out-dies.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
-        done();
       })
-      .catch(ex => {
-        fail(ex);
-        done();
-      });
-    });
   });
-}
+});

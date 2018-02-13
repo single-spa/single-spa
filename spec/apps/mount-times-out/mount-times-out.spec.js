@@ -1,38 +1,42 @@
+import * as singleSpa from 'single-spa';
+
 const activeHash = `#mount-times-out`;
 
-export default function() {
-  describe(`mount-times-out app`, () => {
-    let myApp;
+describe(`mount-times-out app`, () => {
+  let myApp, errs;
 
-    beforeAll(() => {
-      singleSpa.registerApplication('./mount-times-out.app.js', () => System.import('./mount-times-out.app.js'), location => location.hash === activeHash);
-    });
+  function handleError(err) {
+    errs.push(err);
+  }
 
-    beforeEach(done => {
-      location.hash = activeHash;
+  beforeAll(() => {
+    singleSpa.registerApplication('./mount-times-out.app.js', () => import('./mount-times-out.app.js'), location => location.hash === activeHash);
+    singleSpa.start();
+  });
 
-      System
-      .import('./mount-times-out.app.js')
+  beforeEach(() => {
+    location.hash = '#'
+
+    errs = [];
+    singleSpa.addErrorHandler(handleError);
+
+    return import('./mount-times-out.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
-      .then(done)
-      .catch(err => {throw err})
-    })
+  })
 
-    it(`is just waited for if dieOnTimeout is false`, (done) => {
-      singleSpa
+  afterEach(() => singleSpa.removeErrorHandler(handleError));
+
+  it(`is just waited for if dieOnTimeout is false`, () => {
+    location.hash = activeHash;
+
+    return singleSpa
       .triggerAppChange()
       .then(() => {
         expect(myApp.bootstraps()).toEqual(1);
         expect(myApp.mounts()).toEqual(1);
         expect(singleSpa.getMountedApps()).toEqual(['./mount-times-out.app.js']);
         expect(singleSpa.getAppStatus('./mount-times-out.app.js')).toEqual('MOUNTED');
-        done();
       })
-      .catch(ex => {
-        fail(ex);
-        done();
-      });
-    });
   });
-}
+});

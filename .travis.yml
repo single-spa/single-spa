@@ -1,6 +1,8 @@
 language: node_js
 node_js:
-  - "6.0.0"
+  - "8.9.4"
 script:
-  - npm run jspm-install
-  - npm run test:travis
+  - yarn lint
+  - yarn test:travis
+addons:
+  - sauce_connect: true
