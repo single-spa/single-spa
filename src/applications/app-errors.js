@@ -5,9 +5,6 @@ let errorHandlers = []
 export function handleAppError(err, app) {
   const transformedErr = transformErr(err, app);
 
-  // TODO remove in 4.0
-  window.dispatchEvent(new CustomEvent("single-spa:application-broken", {detail: {appName: app.name, err: transformedErr}}));
-
   if (errorHandlers.length) {
     errorHandlers.forEach(handler => handler(transformedErr));
   } else {
