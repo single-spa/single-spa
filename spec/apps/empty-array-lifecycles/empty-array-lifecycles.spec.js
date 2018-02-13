@@ -1,44 +1,33 @@
-export default function() {
-  describe(`empty-array-lifecycles`, () => {
-    let myApp;
+import * as singleSpa from 'single-spa'
 
-    beforeAll(() => {
-      singleSpa.registerApplication('./empty-array-lifecycles.app.js', () => System.import('./empty-array-lifecycles.app.js'), location => location.hash === "#empty-array-lifecycles");
-    });
+describe(`empty-array-lifecycles`, () => {
+  let myApp;
 
-    beforeEach(done => {
-      location.hash = '#empty-array-lifecycles';
+  beforeAll(() => {
+    singleSpa.registerApplication('./empty-array-lifecycles.app.js', () => import('./empty-array-lifecycles.app.js'), location => location.hash === "#empty-array-lifecycles");
+    singleSpa.start();
+  });
 
-      System
-      .import('./empty-array-lifecycles.app.js')
+  beforeEach(() => {
+    location.hash = '#empty-array-lifecycles';
+
+    return import('./empty-array-lifecycles.app.js')
       .then(app => myApp = app)
-      .then(done)
-      .catch(err => {throw err})
-    })
+  })
 
-    it(`works just fine even though it's got empty arrays`, (done) => {
-      singleSpa
+  it(`works just fine even though it's got empty arrays`, () => {
+    return singleSpa
       .triggerAppChange()
       .then(() => {
         expect(singleSpa.getMountedApps()).toEqual(['./empty-array-lifecycles.app.js']);
 
         location.hash = '#not-empty-array-lifecycles';
 
-        singleSpa
-        .triggerAppChange()
-        .then(() => {
-          expect(singleSpa.getMountedApps()).toEqual([]);
-          done();
-        })
-        .catch(ex => {
-          fail(ex);
-          done();
-        });
+        return singleSpa
+          .triggerAppChange()
+          .then(() => {
+            expect(singleSpa.getMountedApps()).toEqual([]);
+          })
       })
-      .catch(ex => {
-        fail(ex);
-        done();
-      })
-    });
   });
-}
+});

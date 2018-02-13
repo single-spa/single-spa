@@ -1,29 +1,28 @@
-export default function() {
-  describe(`happy-basic`, () => {
-    let myApp;
+import * as singleSpa from 'single-spa';
 
-    beforeAll(() => {
-      singleSpa.registerApplication('./happy-basic.app.js', () => System.import('./happy-basic.app.js'), location => location.hash === "#happy-basic");
-    });
+describe(`happy-basic`, () => {
+  let myApp;
 
-    beforeEach(done => {
-      location.hash = '#happy-basic';
+  beforeAll(() => {
+    singleSpa.registerApplication('./happy-basic.app.js', () => import('./happy-basic.app.js'), location => location.hash === "#happy-basic");
+    singleSpa.start();
+  });
 
-      System
-      .import('./happy-basic.app.js')
+  beforeEach(() => {
+    location.hash = '#happy-basic';
+
+    return import('./happy-basic.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
-      .then(done)
-      .catch(err => {throw err})
-    })
+  })
 
-    it(`goes through the whole lifecycle successfully`, (done) => {
-      expect(myApp.isMounted()).toEqual(false);
-      expect(singleSpa.getMountedApps()).toEqual([]);
+  it(`goes through the whole lifecycle successfully`, () => {
+    expect(myApp.isMounted()).toEqual(false);
+    expect(singleSpa.getMountedApps()).toEqual([]);
 
-      location.hash = 'happy-basic';
+    location.hash = 'happy-basic';
 
-      singleSpa
+    return singleSpa
       .triggerAppChange()
       .then(() => {
         expect(myApp.wasBootstrapped()).toEqual(true);
@@ -32,23 +31,13 @@ export default function() {
 
         location.hash = '#not-happy-basic';
 
-        singleSpa
-        .triggerAppChange()
-        .then(() => {
-          expect(myApp.wasBootstrapped()).toEqual(true);
-          expect(myApp.isMounted()).toEqual(false);
-          expect(singleSpa.getMountedApps()).toEqual([]);
-          done();
-        })
-        .catch(ex => {
-          fail(ex);
-          done();
-        });
+        return singleSpa
+          .triggerAppChange()
+          .then(() => {
+            expect(myApp.wasBootstrapped()).toEqual(true);
+            expect(myApp.isMounted()).toEqual(false);
+            expect(singleSpa.getMountedApps()).toEqual([]);
+          })
       })
-      .catch(ex => {
-        fail(ex);
-        done();
-      })
-    });
   });
-}
+});

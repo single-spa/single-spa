@@ -77,24 +77,24 @@ export function checkActivityFunctions(location) {
 
 export function getAppsToLoad() {
   return apps
-    .filter(shouldBeActive)
     .filter(notSkipped)
     .filter(isntLoaded)
+    .filter(shouldBeActive)
 }
 
 export function getAppsToUnmount() {
   return apps
-    .filter(shouldntBeActive)
     .filter(notSkipped)
     .filter(isActive)
+    .filter(shouldntBeActive)
 }
 
 export function getAppsToMount() {
   return apps
-    .filter(shouldBeActive)
     .filter(notSkipped)
     .filter(isntActive)
     .filter(isLoaded)
+    .filter(shouldBeActive)
 }
 
 export function unloadChildApplication(appName, opts) {

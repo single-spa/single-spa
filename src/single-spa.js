@@ -5,6 +5,7 @@ export { registerApplication, getMountedApps, getAppStatus, unloadApplication, c
 export { navigateToUrl } from './navigation/navigation-events.js';
 export { reroute as triggerAppChange } from './navigation/reroute.js';
 export { setLoader } from './loader.js';
+export { addErrorHandler, removeErrorHandler } from './applications/app-errors.js';
 
 export {
   NOT_LOADED,

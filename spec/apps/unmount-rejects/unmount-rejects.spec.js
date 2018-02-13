@@ -1,26 +1,34 @@
+import * as singleSpa from 'single-spa';
+
 const activeHash = `#unmount-rejects`;
 
-export default function() {
-  describe(`mount-rejects app`, () => {
-    let myApp;
+describe(`mount-rejects app`, () => {
+  let myApp, errs;
 
-    beforeAll(() => {
-      singleSpa.registerApplication('./unmount-rejects.app.js', () => System.import('./unmount-rejects.app.js'), location => location.hash === activeHash);
-    });
+  function handleError(err) {
+    errs.push(err);
+  }
 
-    beforeEach(done => {
-      location.hash = activeHash;
+  beforeAll(() => {
+    singleSpa.registerApplication('./unmount-rejects.app.js', () => import('./unmount-rejects.app.js'), location => location.hash === activeHash);
+    singleSpa.start();
+  });
 
-      System
-      .import('./unmount-rejects.app.js')
+  beforeEach(() => {
+    location.hash = activeHash;
+
+    errs = [];
+    singleSpa.addErrorHandler(handleError);
+
+    return import('./unmount-rejects.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
-      .then(done)
-      .catch(err => {throw err})
-    })
+  })
 
-    it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN once it unmounts`, (done) => {
-      singleSpa
+  afterEach(() => singleSpa.removeErrorHandler(handleError));
+
+  it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN once it unmounts`, () => {
+    return singleSpa
       .triggerAppChange()
       .then(() => {
         expect(myApp.numBootstraps()).toEqual(1);
@@ -30,38 +38,25 @@ export default function() {
         expect(singleSpa.getAppStatus('./unmount-rejects.app.js')).toEqual('MOUNTED');
 
         location.hash = '#not-unmount-rejects';
-        singleSpa
-        .triggerAppChange()
-        .then(() => {
-          expect(myApp.numUnmounts()).toEqual(1);
-          expect(singleSpa.getMountedApps()).toEqual([]);
-          expect(singleSpa.getAppStatus('./unmount-rejects.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 
-          location.hash = '#unmount-rejects';
-          singleSpa
+        return singleSpa
           .triggerAppChange()
           .then(() => {
-            // it shouldn't be mounted again
-            expect(myApp.numMounts()).toEqual(1);
+            expect(myApp.numUnmounts()).toEqual(1);
             expect(singleSpa.getMountedApps()).toEqual([]);
             expect(singleSpa.getAppStatus('./unmount-rejects.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 
-            done();
+            location.hash = '#unmount-rejects';
+
+            return singleSpa
+              .triggerAppChange()
+              .then(() => {
+                // it shouldn't be mounted again
+                expect(myApp.numMounts()).toEqual(1);
+                expect(singleSpa.getMountedApps()).toEqual([]);
+                expect(singleSpa.getAppStatus('./unmount-rejects.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
+              })
           })
-          .catch(ex => {
-            fail(ex);
-            done();
-          });
-        })
-        .catch(ex => {
-          fail(ex);
-          done();
-        });
       })
-      .catch(ex => {
-        fail(ex);
-        done();
-      });
-    });
   });
-}
+});

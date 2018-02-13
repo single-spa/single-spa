@@ -1,5 +1,6 @@
 // Karma configuration
 // Generated on Wed Aug 10 2016 16:23:13 GMT-0600 (MDT)
+const path = require('path')
 
 module.exports = function(config) {
   config.set({
@@ -15,15 +16,33 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'jspm_packages/system-polyfills.js',
-      'jspm_packages/system.src.js',
-      'jspm.config.js',
-      'spec/bundles/webpack2.spec.build.js',
-      'spec/bundles/systemjs.spec.build.js',
-      { pattern: 'spec/**/*.*', watched: false, included: false, served: true },
-      { pattern: 'jspm_packages/**/*.*', watched: false, included: false, served: true },
-      { pattern: 'lib/**/*.*', watched: false, included: false, served: true },
+      'spec/**/*.spec.js',
     ],
+
+    webpack: {
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: 'babel-loader',
+            options: {
+              plugins: ['syntax-dynamic-import'],
+            },
+          },
+        ],
+      },
+      resolve: {
+        modules: [
+          "node_modules",
+          path.resolve(__dirname),
+        ],
+        alias: {
+          'single-spa': path.resolve(__dirname, 'src/single-spa.js'),
+        },
+      },
+      devtool: 'inline-source-map',
+    },
 
 
     // list of files to exclude
@@ -34,6 +53,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      "spec/**/*.spec.js": ['webpack', 'sourcemap']
     },
 
     // test results reporter to use
