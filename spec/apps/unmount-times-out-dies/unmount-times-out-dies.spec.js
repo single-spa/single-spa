@@ -2,7 +2,7 @@ import * as singleSpa from 'single-spa';
 
 const activeHash = `#unmount-times-out-dies`;
 
-describe(`unmount-times-out app`, () => {
+describe(`unmount-times-out-dies app`, () => {
   let myApp, errs;
 
   function handleError(err) {
@@ -15,7 +15,7 @@ describe(`unmount-times-out app`, () => {
   });
 
   beforeEach(() => {
-    location.hash = activeHash;
+    location.hash = '#';
 
     errs = [];
     singleSpa.addErrorHandler(handleError);
@@ -28,6 +28,8 @@ describe(`unmount-times-out app`, () => {
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
   it(`is put into SKIP_BECAUSE_BROKEN when dieOnTimeout is true`, () => {
+    location.hash = activeHash;
+
     return singleSpa
       .triggerAppChange()
       .then(() => {

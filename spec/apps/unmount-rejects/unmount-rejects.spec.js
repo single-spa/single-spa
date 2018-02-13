@@ -2,7 +2,7 @@ import * as singleSpa from 'single-spa';
 
 const activeHash = `#unmount-rejects`;
 
-describe(`mount-rejects app`, () => {
+describe(`unmount-rejects app`, () => {
   let myApp, errs;
 
   function handleError(err) {
@@ -15,7 +15,7 @@ describe(`mount-rejects app`, () => {
   });
 
   beforeEach(() => {
-    location.hash = activeHash;
+    location.hash = '#';
 
     errs = [];
     singleSpa.addErrorHandler(handleError);
@@ -28,6 +28,8 @@ describe(`mount-rejects app`, () => {
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
   it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN once it unmounts`, () => {
+    location.hash = activeHash;
+
     return singleSpa
       .triggerAppChange()
       .then(() => {

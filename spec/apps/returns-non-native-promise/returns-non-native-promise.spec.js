@@ -9,7 +9,7 @@ describe(`returns-non-native-promise`, () => {
   });
 
   beforeEach(() => {
-    location.hash = '#returns-non-native-promise';
+    location.hash = '#';
 
     return import('./returns-non-native-promise.app.js')
       .then(app => myApp = app)

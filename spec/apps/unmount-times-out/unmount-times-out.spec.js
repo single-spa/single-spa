@@ -24,10 +24,11 @@ describe(`unmount-times-out app`, () => {
     ogJasmineTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
+    location.hash = '#';
+
     return import('./unmount-times-out.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
-      .then(() => location.hash = `#`)
   })
 
   afterEach(() => {

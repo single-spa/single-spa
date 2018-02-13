@@ -13,7 +13,7 @@ describe(`bootstrap-times-out`, () => {
   });
 
   beforeEach(() => {
-    location.hash = '#bootstrap-times-out';
+    location.hash = '#'
 
     errs = [];
     singleSpa.addErrorHandler(handleError);
@@ -28,6 +28,8 @@ describe(`bootstrap-times-out`, () => {
   })
 
   it(`is just waited for if dieOnTimeout is false`, () => {
+    location.hash = '#bootstrap-times-out';
+
     return singleSpa
       .triggerAppChange()
       .then(() => {
