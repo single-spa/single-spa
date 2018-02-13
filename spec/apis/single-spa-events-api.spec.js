@@ -69,22 +69,20 @@ describe(`events api :`, () => {
 
       window.addEventListener("single-spa:routing-event", listener);
 
-      singleSpa
-      .triggerAppChange()
-      .then(() => window.onerror = ogOnError)
-      .catch(err => {
-        // If single-spa died because of the thrown error above, we've got a problem
-        window.removeEventListener("single-spa:routing-event", listener);
-        window.onerror = ogOnError;
-        throw err
-      });
+      return singleSpa
+        .triggerAppChange()
+        .then(() => window.onerror = ogOnError)
+        .catch(err => {
+          // If single-spa died because of the thrown error above, we've got a problem
+          window.removeEventListener("single-spa:routing-event", listener);
+          window.onerror = ogOnError;
+          throw err
+        });
     });
   });
 
   describe(`single-spa:app-change`, () => {
     it(`is fired when an app is unmounted`, done => {
-      // console.log('starting app change')
-
       window.location.hash = `#`;
 
       singleSpa
@@ -94,7 +92,6 @@ describe(`events api :`, () => {
         window.location.hash = `#/russell`;
 
         function finishTest() {
-          // console.log("finishing test")
           window.removeEventListener("single-spa:app-change", finishTest);
           done();
         }
@@ -114,12 +111,13 @@ describe(`events api :`, () => {
         done();
       }
 
-      window.location.hash = ``;
+      window.location.hash = `#`;
 
       console.log("starting app change")
 
       singleSpa
-      .triggerAppChange() 
+      .triggerAppChange()
+      .then(() => singleSpa.triggerAppChange())
       .then(() => {
         window.addEventListener("single-spa:app-change", failTest);
         window.location.hash = `#/not-a-real-app`;
