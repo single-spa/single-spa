@@ -26,29 +26,16 @@ describe(`bootstrap-rejects`, () => {
   })
 
   it(`puts the app into SKIP_BECAUSE_BROKEN, fires a window event, and doesn't mount it`, () => {
-    window.addEventListener("single-spa:application-broken", applicationBroken);
-    let applicationBrokenCalled = false;
-
     location.hash = "#bootstrap-rejects";
-
-    function applicationBroken(evt) {
-      applicationBrokenCalled = true;
-      expect(evt.detail.appName).toBe('./bootstrap-rejects.app.js');
-    }
 
     return singleSpa
       .triggerAppChange()
       .then(() => {
-        window.removeEventListener("single-spa:application-broken", applicationBroken);
-        expect(applicationBrokenCalled).toBe(true);
+        expect(errs.length).toBe(1);
         expect(myApp.wasBootstrapped()).toEqual(true);
         expect(myApp.wasMounted()).toEqual(false);
         expect(singleSpa.getMountedApps()).toEqual([]);
         expect(singleSpa.getAppStatus('./bootstrap-rejects.app.js')).toEqual(singleSpa.SKIP_BECAUSE_BROKEN);
       })
-      .catch(err => {
-        window.removeEventListener("single-spa:application-broken", applicationBroken);
-        throw err;
-      });
   });
 });
