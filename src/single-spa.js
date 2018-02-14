@@ -4,7 +4,6 @@ export { setBootstrapMaxTime, setMountMaxTime, setUnmountMaxTime, setUnloadMaxTi
 export { registerApplication, getMountedApps, getAppStatus, unloadApplication, checkActivityFunctions, getAppNames, declareChildApplication, unloadChildApplication } from './applications/apps.js';
 export { navigateToUrl } from './navigation/navigation-events.js';
 export { reroute as triggerAppChange } from './navigation/reroute.js';
-export { setLoader } from './loader.js';
 export { addErrorHandler, removeErrorHandler } from './applications/app-errors.js';
 export { mountRootParcel } from 'src/parcels/mount-parcel.js';
 
