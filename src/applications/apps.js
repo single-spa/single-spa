@@ -1,4 +1,3 @@
-import { Loader } from '../loader.js';
 import { ensureJQuerySupport } from '../jquery-support.js';
 import { isActive, isLoaded, isntLoaded, toName, NOT_LOADED, shouldBeActive, shouldntBeActive, isntActive, notSkipped } from './app.helpers.js';
 import { reroute } from 'src/navigation/reroute.js';
@@ -36,10 +35,6 @@ export function registerApplication(appName, arg1, arg2, customProps = {}) {
 
   let loadImpl, activeWhen;
   if (!arg2) {
-    if (!Loader) {
-      throw new Error(`You cannot declare a single-spa application without either providing a way to load the application or a Loader. See https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-api.md#declareApplication`);
-    }
-    loadImpl = () => Loader.import(appName);
     activeWhen = arg1;
   } else {
     if (typeof arg1 !== 'function') {
