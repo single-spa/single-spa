@@ -33,17 +33,17 @@ export function registerApplication(appName, arg1, arg2, customProps = {}) {
   if (typeof customProps !== 'object')
     throw new Error('customProps must be an object');
 
+  if (!arg1)
+    throw new Error(`The application or loading function is required`);
+
   let loadImpl, activeWhen;
-  if (!arg2) {
-    activeWhen = arg1;
+  if (typeof arg1 !== 'function') {
+    loadImpl = () => Promise.resolve(arg1);
   } else {
-    if (typeof arg1 !== 'function') {
-      loadImpl = () => Promise.resolve(arg1)
-    } else {
-      loadImpl = arg1;
-    }
-    activeWhen = arg2;
+    loadImpl = arg1;
   }
+  activeWhen = arg2;
+
   if (typeof activeWhen !== 'function')
     throw new Error(`The activeWhen argument must be a function`);
 
