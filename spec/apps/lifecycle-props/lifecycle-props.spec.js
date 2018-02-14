@@ -33,10 +33,10 @@ describe(`lifecycle-props app`, () => {
         return singleSpa.unloadApplication('lifecycle-props');
       })
       .then(() => {
-        expect(myApp.getBootstrapProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
-        expect(myApp.getMountProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
-        expect(myApp.getUnmountProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
-        expect(myApp.getUnloadProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
+        expect(myApp.getBootstrapProps().name).toEqual('lifecycle-props');
+        expect(myApp.getMountProps().name).toEqual('lifecycle-props');
+        expect(myApp.getUnmountProps().name).toEqual('lifecycle-props');
+        expect(myApp.getUnloadProps().name).toEqual('lifecycle-props');
       })
   });
 
@@ -56,10 +56,10 @@ describe(`lifecycle-props app`, () => {
       })
       .then(() => singleSpa.unloadApplication('lifecycle-props-customProps'))
       .then(() => {
-        expect(myApp.getBootstrapProps()).toEqual({appName: 'lifecycle-props-customProps', customProps: {test: 'test'}});
-        expect(myApp.getMountProps()).toEqual({appName: 'lifecycle-props-customProps', customProps: {test: 'test'}});
-        expect(myApp.getUnmountProps()).toEqual({appName: 'lifecycle-props-customProps', customProps: {test: 'test'}});
-        expect(myApp.getUnloadProps()).toEqual({appName: 'lifecycle-props-customProps', customProps: {test: 'test'}});
+        expect(myApp.getBootstrapProps().customProps).toEqual({test: 'test'});
+        expect(myApp.getMountProps().customProps).toEqual({test: 'test'});
+        expect(myApp.getUnmountProps().customProps).toEqual({test: 'test'});
+        expect(myApp.getUnloadProps().customProps).toEqual({test: 'test'});
       })
     });
 });

@@ -57,6 +57,7 @@ export function registerApplication(appName, arg1, arg2, customProps = {}) {
     loadImpl,
     activeWhen,
     status: NOT_LOADED,
+    parcels: {},
     customProps: customProps
   });
 
