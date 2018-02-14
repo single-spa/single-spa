@@ -78,6 +78,14 @@ describe('registerApplication', function() {
         }
       ).toThrowError('customProps must be an object')
     })
+
+    it('should throw when I pass in an array for custom props', () => {
+      expect(
+        () => {
+          singleSpa.registerApplication('bad-custom-props-will-throw-error-app', app, () => true, [])
+        }
+      ).toThrowError('customProps must be an object')
+    })
   })
 
 })
