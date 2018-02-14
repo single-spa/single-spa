@@ -1,7 +1,9 @@
-import { NOT_BOOTSTRAPPED, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN, NOT_LOADED, getAppProps } from '../app.helpers.js';
+import { NOT_BOOTSTRAPPED, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN, NOT_LOADED } from '../app.helpers.js';
 import { ensureValidAppTimeouts } from '../timeouts.js';
 import { handleAppError } from '../app-errors.js';
 import { find } from 'src/utils/find.js';
+import { flattenFnArray, smellsLikeAPromise, validLifecycleFn } from './lifecycle.helpers.js';
+import { getProps } from './prop.helpers.js';
 
 export async function toLoadPromise(app) {
   if (app.status !== NOT_LOADED) {
@@ -13,7 +15,7 @@ export async function toLoadPromise(app) {
   let appOpts;
 
   try {
-    const loadPromise = app.loadImpl(getAppProps(app));
+    const loadPromise = app.loadImpl(getProps(app));
     if (!smellsLikeAPromise(loadPromise)) {
       // The name of the app will be prepended to this error message inside of the handleAppError function
       throw new Error(`single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`);
@@ -57,46 +59,4 @@ export async function toLoadPromise(app) {
   app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
 
   return app;
-}
-
-function validLifecycleFn(fn) {
-  return fn && (typeof fn === 'function' || isArrayOfFns(fn));
-
-  function isArrayOfFns(arr) {
-    return Array.isArray(arr) && !find(arr, item => typeof item !== 'function');
-  }
-}
-
-function flattenFnArray(fns, description) {
-  fns = Array.isArray(fns) ? fns : [fns];
-  if (fns.length === 0) {
-    fns = [() => Promise.resolve()];
-  }
-
-  return function(props) {
-    return new Promise((resolve, reject) => {
-      waitForPromises(0);
-
-      function waitForPromises(index) {
-        const promise = fns[index](props);
-        if (!smellsLikeAPromise(promise)) {
-          reject(`${description} at index ${index} did not return a promise`);
-        } else {
-          promise
-            .then(() => {
-              if (index === fns.length - 1) {
-                resolve();
-              } else {
-                waitForPromises(index + 1);
-              }
-            })
-            .catch(reject);
-        }
-      }
-    });
-  }
-}
-
-function smellsLikeAPromise(promise) {
-  return promise && typeof promise.then === 'function' && typeof promise.catch === 'function';
 }
