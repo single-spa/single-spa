@@ -1,4 +1,5 @@
 import { handleAppError } from './app-errors.js';
+import * as singleSpa from 'src/single-spa.js';
 
 // App statuses
 export const NOT_LOADED = 'NOT_LOADED';
@@ -61,6 +62,7 @@ export function toName(app) {
 export function getAppProps(app) {
   return {
     appName: app.name,
-    customProps: app.customProps
+    customProps: app.customProps,
+    singleSpa: singleSpa,
   };
 }

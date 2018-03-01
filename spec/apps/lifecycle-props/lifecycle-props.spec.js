@@ -33,11 +33,18 @@ describe(`lifecycle-props app`, () => {
         return singleSpa.unloadApplication('lifecycle-props');
       })
       .then(() => {
-        expect(myApp.getBootstrapProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
-        expect(myApp.getMountProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
-        expect(myApp.getUnmountProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
-        expect(myApp.getUnloadProps()).toEqual({appName: 'lifecycle-props', customProps: {}});
+        expectPropsToBeCorrect(myApp.getBootstrapProps())
+        expectPropsToBeCorrect(myApp.getMountProps())
+        expectPropsToBeCorrect(myApp.getUnmountProps())
+        expectPropsToBeCorrect(myApp.getUnloadProps())
       })
+
+    function expectPropsToBeCorrect(props) {
+      expect(props.appName).toEqual('lifecycle-props')
+      expect(props.customProps).toEqual({})
+      expect(props.singleSpa).toBeDefined()
+      expect(props.singleSpa.getAppStatus).toBeDefined()
+    }
   });
 
   it(`is given the correct props for each lifecycle function if customProps are passed`, () => {
@@ -56,10 +63,17 @@ describe(`lifecycle-props app`, () => {
       })
       .then(() => singleSpa.unloadApplication('lifecycle-props-customProps'))
       .then(() => {
-        expect(myApp.getBootstrapProps()).toEqual({appName: 'lifecycle-props-customProps', customProps: {test: 'test'}});
-        expect(myApp.getMountProps()).toEqual({appName: 'lifecycle-props-customProps', customProps: {test: 'test'}});
-        expect(myApp.getUnmountProps()).toEqual({appName: 'lifecycle-props-customProps', customProps: {test: 'test'}});
-        expect(myApp.getUnloadProps()).toEqual({appName: 'lifecycle-props-customProps', customProps: {test: 'test'}});
+        expectPropsToBeCorrect(myApp.getBootstrapProps())
+        expectPropsToBeCorrect(myApp.getMountProps())
+        expectPropsToBeCorrect(myApp.getUnmountProps())
+        expectPropsToBeCorrect(myApp.getUnloadProps())
+
+        function expectPropsToBeCorrect(props) {
+          expect(props.appName).toEqual('lifecycle-props-customProps')
+          expect(props.customProps).toEqual({test: 'test'})
+          expect(props.singleSpa).toBeDefined()
+          expect(props.singleSpa.getAppStatus).toBeDefined()
+        }
       })
     });
 });
