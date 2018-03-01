@@ -23,7 +23,6 @@ A lifecycle function is a function or array of functions that single-spa will ca
 Single-spa calls these by finding exported functions from the registered application's main file.
 
 Notes:
-- Lifecycle functions are called with a `props` argument, which is an object with a `appName` string and a `customProps` object wich contains any property you want to pass from your root-application to your child app. See [Passing custom properties to child apps](/docs/applications.md#passing-custom-properties-to-child-apps)
 - Implementing `bootstrap`, `mount`, and `unmount` is required. But implementing `unload` is optional.
 - Each lifecycle function must either return a `Promise` or be an `async function`.
 - If an array of functions is exported (instead of just one function), the functions will be called
@@ -31,8 +30,12 @@ Notes:
 - If single-spa is [not started](/docs/single-spa-api.md#start), applications will be loaded,
   but will not be bootstrapped, mounted or unmounted.
 
-### Lifecycle middleware
-Middleware that helps implement lifecycle functions for specific frameworks, libraries, and applications
+## Lifecyle props
+Lifecycle functions are called with a `props` argument, which is an object with some guaranteed information and also some custom information.
+`appName` string and a `customProps` object wich contains any property you want to pass from your root-application to your child app. See [Passing custom properties to child apps](/docs/applications.md#passing-custom-properties-to-child-apps)
+
+### Lifecycle helpers
+Helper libraries that helps implement lifecycle functions for specific frameworks, libraries, and applications
 is available for many popular technologies. See [the ecosystem docs](/docs/single-spa-ecosystem.md) for details.
 
 ### Load
