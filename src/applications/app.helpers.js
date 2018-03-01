@@ -63,6 +63,6 @@ export function getAppProps(app) {
   return {
     appName: app.name,
     customProps: app.customProps,
-    singleSpa: singleSpa,
+    singleSpa,
   };
 }
