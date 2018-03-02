@@ -47,6 +47,63 @@ describe('parcel errors', () => {
 
     })
 
+    describe('mount errors', () => {
+
+      it(`should throw an error when mounting fails`, () => {
+        const app = createApp();
+        let shouldAppBeMounted = true;
+
+        singleSpa.registerApplication('parcel-mount-errors', app, () => shouldAppBeMounted);
+        return singleSpa.triggerAppChange().then(() => {
+          expect(app.mountCalls).toBe(1)
+
+          const parcelConfig1 = createParcelConfig('mount')
+          parcelConfig1.name = 'mount-error'
+          const parcel1 = app.mountProps.mountParcel(parcelConfig1, {domElement: document.createElement('div')})
+          return parcel1.mountPromise.then((results) => {
+            expect(errs.length).toBe(1);
+            expect(errs[0].name).toBe('mount-error');
+            expect(errs[0].message.indexOf(`NOT_MOUNTED`)).toBeGreaterThan(-1);
+            expect(errs[0].message.indexOf(`mount-error`)).toBeGreaterThan(-1);
+          })
+        })
+      })
+
+    })
+
+    describe('ummount errors', () => {
+
+      it(`should throw an error when unmounting fails`, () => {
+        const app = createApp();
+        let shouldAppBeMounted = true;
+
+        singleSpa.registerApplication('parcel-unmount-errors', app, () => shouldAppBeMounted);
+        return singleSpa.triggerAppChange().then(() => {
+          expect(app.mountCalls).toBe(1)
+
+          const parcelConfig1 = createParcelConfig('unmount')
+          parcelConfig1.name = 'unmount-error'
+          const parcel1 = app.mountProps.mountParcel(parcelConfig1, {domElement: document.createElement('div')})
+          return parcel1.mountPromise.then((results) => {
+            expect(parcelConfig1.bootstrapCalls).toBe(1)
+            expect(parcelConfig1.mountCalls).toBe(1)
+            expect(parcelConfig1.unmountCalls).toBe(0)
+          }).then(() => {
+            shouldAppBeMounted = false
+            return singleSpa.triggerAppChange()
+          }).then(() => {
+            return parcel1.unmountPromise.then((results) => {
+              expect(errs.length).toBe(1);
+              expect(errs[0].name).toBe('unmount-error');
+              expect(errs[0].message.indexOf(`UNMOUNTING`)).toBeGreaterThan(-1);
+              expect(errs[0].message.indexOf(`unmount-error`)).toBeGreaterThan(-1);
+            })
+          })
+        })
+      })
+
+    })
+
   })
 
 })
@@ -99,7 +156,7 @@ function createParcelConfig(errLocation) {
     },
     unmountCalls: 0,
     unmount() {
-      if (errLocation === 'ummount') {
+      if (errLocation === 'unmount') {
         return Promise.reject(new Error('ummount error'))
       } else {
         parcelConfig.unmountCalls++;
