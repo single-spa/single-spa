@@ -69,7 +69,7 @@ export function mountParcel(config, customProps) {
         throw new Error(`Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`);
       }
 
-      return toUnmountPromise(parcel)
+      return toUnmountPromise(parcel, true)
         .then(value => {
           if (parcel.owningAppOrParcel) {
             delete parcel.owningAppOrParcel.parcels[parcel.id];
@@ -93,8 +93,8 @@ export function mountParcel(config, customProps) {
 
   // Start bootstrapping and mounting
   // The .then() causes the work to be put on the event loop instead of happening immediately
-  const bootstrapPromise = Promise.resolve().then(() => toBootstrapPromise(parcel));
-  const mountPromise = bootstrapPromise.then(() => toMountPromise(parcel));
+  const bootstrapPromise = Promise.resolve().then(() => toBootstrapPromise(parcel, true));
+  const mountPromise = bootstrapPromise.then(() => toMountPromise(parcel, true));
 
   let resolveUnmount, rejectUnmount;
 

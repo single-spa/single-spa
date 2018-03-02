@@ -7,7 +7,7 @@ import { getProps } from './prop.helpers.js';
 let beforeFirstMountFired = false;
 let firstMountFired = false;
 
-export async function toMountPromise(appOrParcel) {
+export async function toMountPromise(appOrParcel, hardFail = false) {
   if (appOrParcel.status !== NOT_MOUNTED) {
     return appOrParcel;
   }
@@ -23,6 +23,9 @@ export async function toMountPromise(appOrParcel) {
   } catch (err) {
     handleAppError(err, appOrParcel);
     appOrParcel.status = SKIP_BECAUSE_BROKEN;
+    if (hardFail) {
+      throw err
+    }
   }
 
   if (!firstMountFired) {

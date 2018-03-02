@@ -3,7 +3,7 @@ import { handleAppError } from '../app-errors.js';
 import { reasonableTime } from '../timeouts.js';
 import { getProps } from './prop.helpers.js';
 
-export async function toUnmountPromise(appOrParcel) {
+export async function toUnmountPromise(appOrParcel, hardFail = true) {
   if (appOrParcel.status !== MOUNTED) {
     return appOrParcel;
   }
@@ -20,6 +20,9 @@ export async function toUnmountPromise(appOrParcel) {
     parcelError = err;
     handleAppError(err, appOrParcel);
     appOrParcel.status = SKIP_BECAUSE_BROKEN;
+    if (hardFail) {
+      throw err
+    }
   } finally {
     // We always try to unmount the appOrParcel, even if the children parcels failed to unmount.
     try {
