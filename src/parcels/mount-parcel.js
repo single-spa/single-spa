@@ -83,6 +83,7 @@ export function mountParcel(config, customProps) {
         })
         .catch(err => {
           rejectUnmount(err);
+          err.parcel = parcel
           throw err;
         });
     }

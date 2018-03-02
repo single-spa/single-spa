@@ -37,8 +37,9 @@ export function removeErrorHandler(handler) {
   return removedSomething;
 }
 
-export function transformErr(ogErr, app) {
-  const errPrefix = `'${app.name}' died in status ${app.status}: `;
+export function transformErr(ogErr, appOrParcel) {
+  const objectType = appOrParcel.unmountThisParcel ? 'Parcel' : 'Application';
+  const errPrefix = `${objectType} '${appOrParcel.name}' died in status ${appOrParcel.status}: `;
 
   let result;
 
@@ -52,7 +53,7 @@ export function transformErr(ogErr, app) {
     }
     result = ogErr;
   } else {
-    console.warn(`While ${app.status}, '${app.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
+    console.warn(`While ${appOrParcel.status}, '${appOrParcel.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
     try {
       result = new Error(errPrefix + JSON.stringify(ogErr));
     } catch(err) {
@@ -61,8 +62,8 @@ export function transformErr(ogErr, app) {
     }
   }
 
-  result.appName = app.name;
-  result.name = app.name
+  result.appName = appOrParcel.name;
+  result.name = appOrParcel.name
 
   return result;
 }
