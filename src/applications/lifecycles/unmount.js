@@ -1,5 +1,5 @@
 import { UNMOUNTING, NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN } from '../app.helpers.js';
-import { handleAppError } from '../app-errors.js';
+import { handleAppError, transformErr } from '../app-errors.js';
 import { reasonableTime } from '../timeouts.js';
 import { getProps } from './prop.helpers.js';
 
@@ -18,12 +18,13 @@ export async function toUnmountPromise(appOrParcel, hardFail = false) {
     await Promise.all(unmountChildrenParcels);
   } catch (err) {
     parcelError = err;
+    const parentError = new Error(parcelError.message)
     if (hardFail) {
-      const transformedErr = transformErr(err, appOrParcel)
+      const transformedErr = transformErr(parentError, appOrParcel)
       appOrParcel.status = SKIP_BECAUSE_BROKEN;
       throw transformedErr
     } else {
-      handleAppError(err, appOrParcel);
+      handleAppError(parentError, appOrParcel);
       appOrParcel.status = SKIP_BECAUSE_BROKEN;
     }
   } finally {
@@ -36,8 +37,14 @@ export async function toUnmountPromise(appOrParcel, hardFail = false) {
         appOrParcel.status = NOT_MOUNTED;
       }
     } catch (err) {
-      handleAppError(err, appOrParcel);
-      appOrParcel.status = SKIP_BECAUSE_BROKEN;
+      if (hardFail) {
+        const transformedErr = transformErr(err, appOrParcel)
+        appOrParcel.status = SKIP_BECAUSE_BROKEN;
+        throw transformedErr
+      } else {
+        handleAppError(err, appOrParcel);
+        appOrParcel.status = SKIP_BECAUSE_BROKEN;
+      }
     }
   }
 

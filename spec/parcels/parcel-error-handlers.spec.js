@@ -58,6 +58,20 @@ describe('parcel errors', () => {
     })
 
     describe('ummount errors', () => {
+      let errs;
+
+      function handleError(err) {
+        errs.push(err);
+      }
+
+      beforeEach(() => {
+        errs = [];
+        singleSpa.addErrorHandler(handleError);
+      })
+
+      afterEach(() => {
+        expect(singleSpa.removeErrorHandler(handleError)).toBe(true)
+      });
 
       it(`should throw an error when unmounting fails`, () => {
         const app = createApp();
@@ -83,6 +97,11 @@ describe('parcel errors', () => {
               expect(err.message.indexOf(`UNMOUNTING`)).toBeGreaterThan(-1);
               expect(err.message.indexOf(`unmount-error`)).toBeGreaterThan(-1);
             })
+            return Promise.resolve()
+          }).then(() => {
+            expect(errs.length).toBe(1);
+            expect(errs[0].appName).toBe('app-parcel-unmount-errors');
+            expect(errs[0].message.indexOf(`Application 'app-parcel-unmount-errors' died in status UNMOUNTING: Parcel 'unmount-error' died in status UNMOUNTING: unmount error`)).toBeGreaterThan(-1);
           })
         })
       })
