@@ -2,23 +2,8 @@ import * as singleSpa from 'single-spa'
 
 describe('parcel errors', () => {
 
-  let errs
-
-  function handleError(err) {
-    errs.push(err)
-  }
-
   beforeAll(() => {
     singleSpa.start()
-  })
-
-  beforeEach(() => {
-    errs = []
-    singleSpa.addErrorHandler(handleError)
-  })
-
-  afterEach(() => {
-    expect(singleSpa.removeErrorHandler(handleError)).toBe(true)
   })
 
   describe('lifecycle errors', () => {

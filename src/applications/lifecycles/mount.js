@@ -1,5 +1,5 @@
 import { NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN } from '../app.helpers.js';
-import { handleAppError } from '../app-errors.js';
+import { handleAppError, transformErr } from '../app-errors.js';
 import { reasonableTime } from '../timeouts.js';
 import CustomEvent from 'custom-event';
 import { getProps } from './prop.helpers.js';
@@ -21,11 +21,13 @@ export async function toMountPromise(appOrParcel, hardFail = false) {
     await reasonableTime(appOrParcel.mount(getProps(appOrParcel)), `Mounting application '${appOrParcel.name}'`, appOrParcel.timeouts.mount);
     appOrParcel.status = MOUNTED;
   } catch (err) {
-    handleAppError(err, appOrParcel);
-    appOrParcel.status = SKIP_BECAUSE_BROKEN;
-    if (hardFail) {
-      throw err
+    if (!hardFail) {
+      handleAppError(err, appOrParcel);
+    } else {
+      const transformedErr = transformErr(err, appOrParcel)
+      throw transformedErr
     }
+    appOrParcel.status = SKIP_BECAUSE_BROKEN;
   }
 
   if (!firstMountFired) {
