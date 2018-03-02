@@ -37,7 +37,7 @@ export function removeErrorHandler(handler) {
   return removedSomething;
 }
 
-function transformErr(ogErr, app) {
+export function transformErr(ogErr, app) {
   const errPrefix = `'${app.name}' died in status ${app.status}: `;
 
   let result;
