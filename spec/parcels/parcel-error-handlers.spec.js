@@ -36,11 +36,10 @@ describe('parcel errors', () => {
           const parcelConfig1 = createParcelConfig('bootstrap')
           parcelConfig1.name = 'bootstrap-error'
           const parcel1 = app.mountProps.mountParcel(parcelConfig1, {domElement: document.createElement('div')})
-          return parcel1.bootstrapPromise.then((results) => {
-            expect(errs.length).toBe(1);
-            expect(errs[0].name).toBe('bootstrap-error');
-            expect(errs[0].message.indexOf(`SKIP_BECAUSE_BROKEN`)).toBeGreaterThan(-1);
-            expect(errs[0].message.indexOf(`bootstrap-error`)).toBeGreaterThan(-1);
+          return parcel1.bootstrapPromise.catch(err => {
+            expect(err.name).toBe('bootstrap-error');
+            expect(err.message.indexOf(`SKIP_BECAUSE_BROKEN`)).toBeGreaterThan(-1);
+            expect(err.message.indexOf(`bootstrap-error`)).toBeGreaterThan(-1);
           })
         })
       })
@@ -60,11 +59,9 @@ describe('parcel errors', () => {
           const parcelConfig1 = createParcelConfig('mount')
           parcelConfig1.name = 'mount-error'
           const parcel1 = app.mountProps.mountParcel(parcelConfig1, {domElement: document.createElement('div')})
-          return parcel1.mountPromise.then((results) => {
-            expect(errs.length).toBe(1);
-            expect(errs[0].name).toBe('mount-error');
-            expect(errs[0].message.indexOf(`NOT_MOUNTED`)).toBeGreaterThan(-1);
-            expect(errs[0].message.indexOf(`mount-error`)).toBeGreaterThan(-1);
+          return parcel1.mountPromise.catch(err => {
+            expect(err.name).toBe('mount-error');
+            expect(err.message.indexOf(`NOT_MOUNTED`)).toBeGreaterThan(-1);
           })
         })
       })
@@ -77,7 +74,7 @@ describe('parcel errors', () => {
         const app = createApp();
         let shouldAppBeMounted = true;
 
-        singleSpa.registerApplication('parcel-unmount-errors', app, () => shouldAppBeMounted);
+        singleSpa.registerApplication('app-parcel-unmount-errors', app, () => shouldAppBeMounted);
         return singleSpa.triggerAppChange().then(() => {
           expect(app.mountCalls).toBe(1)
 
@@ -92,11 +89,10 @@ describe('parcel errors', () => {
             shouldAppBeMounted = false
             return singleSpa.triggerAppChange()
           }).then(() => {
-            return parcel1.unmountPromise.then((results) => {
-              expect(errs.length).toBe(1);
-              expect(errs[0].name).toBe('unmount-error');
-              expect(errs[0].message.indexOf(`UNMOUNTING`)).toBeGreaterThan(-1);
-              expect(errs[0].message.indexOf(`unmount-error`)).toBeGreaterThan(-1);
+            return parcel1.unmountPromise.catch(err => {
+              expect(err.name).toBe('unmount-error');
+              expect(err.message.indexOf(`UNMOUNTING`)).toBeGreaterThan(-1);
+              expect(err.message.indexOf(`unmount-error`)).toBeGreaterThan(-1);
             })
           })
         })
