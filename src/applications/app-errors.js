@@ -62,6 +62,7 @@ function transformErr(ogErr, app) {
   }
 
   result.appName = app.name;
+  result.name = app.name
 
   return result;
 }
