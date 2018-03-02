@@ -25,6 +25,8 @@ describe('parcel errors', () => {
             expect(err.name).toBe('bootstrap-error');
             expect(err.message.indexOf(`SKIP_BECAUSE_BROKEN`)).toBeGreaterThan(-1);
             expect(err.message.indexOf(`bootstrap-error`)).toBeGreaterThan(-1);
+          }).then(() => {
+            expect(parcel1.getStatus()).toBe('SKIP_BECAUSE_BROKEN')
           })
         })
       })
@@ -47,6 +49,8 @@ describe('parcel errors', () => {
           return parcel1.mountPromise.catch(err => {
             expect(err.name).toBe('mount-error');
             expect(err.message.indexOf(`NOT_MOUNTED`)).toBeGreaterThan(-1);
+          }).then(() => {
+            expect(parcel1.getStatus()).toBe('SKIP_BECAUSE_BROKEN')
           })
         })
       })
@@ -138,7 +142,7 @@ function createParcelConfig(errLocation) {
     unmountCalls: 0,
     unmount() {
       if (errLocation === 'unmount') {
-        return Promise.reject(new Error('ummount error'))
+        return Promise.reject(new Error('unmount error'))
       } else {
         parcelConfig.unmountCalls++;
         return Promise.resolve();
