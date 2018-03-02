@@ -3,7 +3,7 @@ import { handleAppError } from '../app-errors.js';
 import { reasonableTime } from '../timeouts.js';
 import { getProps } from './prop.helpers.js';
 
-export async function toUnmountPromise(appOrParcel, hardFail = true) {
+export async function toUnmountPromise(appOrParcel, hardFail = false) {
   if (appOrParcel.status !== MOUNTED) {
     return appOrParcel;
   }
