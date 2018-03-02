@@ -20,11 +20,12 @@ export async function toUnmountPromise(appOrParcel, hardFail = true) {
     parcelError = err;
     if (hardFail) {
       const transformedErr = transformErr(err, appOrParcel)
+      appOrParcel.status = SKIP_BECAUSE_BROKEN;
       throw transformedErr
     } else {
       handleAppError(err, appOrParcel);
+      appOrParcel.status = SKIP_BECAUSE_BROKEN;
     }
-    appOrParcel.status = SKIP_BECAUSE_BROKEN;
   } finally {
     // We always try to unmount the appOrParcel, even if the children parcels failed to unmount.
     try {

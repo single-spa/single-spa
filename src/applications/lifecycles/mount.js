@@ -23,11 +23,12 @@ export async function toMountPromise(appOrParcel, hardFail = false) {
   } catch (err) {
     if (!hardFail) {
       handleAppError(err, appOrParcel);
+      appOrParcel.status = SKIP_BECAUSE_BROKEN;
     } else {
       const transformedErr = transformErr(err, appOrParcel)
+      appOrParcel.status = SKIP_BECAUSE_BROKEN;
       throw transformedErr
     }
-    appOrParcel.status = SKIP_BECAUSE_BROKEN;
   }
 
   if (!firstMountFired) {
