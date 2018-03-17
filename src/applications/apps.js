@@ -97,6 +97,12 @@ export function getAppsToMount() {
     .filter(shouldBeActive)
 }
 
+export function getAppByName(name) {
+  return apps
+    .filter(app => app.name === name)
+    .filter(notSkipped)[0]
+}
+
 export function unloadChildApplication(appName, opts) {
   console.warn('unloadChildApplication is deprecated and will be removed in the next major version, use "unloadApplication" instead')
   return unloadApplication(appName, opts)
