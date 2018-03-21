@@ -58,58 +58,94 @@ describe('parcel errors', () => {
     })
 
     describe('ummount errors', () => {
-      let errs;
 
-      function handleError(err) {
-        errs.push(err);
-      }
+      describe(`parcel unmount itself errors`, () => {
 
-      beforeEach(() => {
-        errs = [];
-        singleSpa.addErrorHandler(handleError);
-      })
+        it(`should throw an error that you can catch when a parcel fails to unmount outside an app lifecycle`, () => {
+          const app = createApp();
+          let shouldAppBeMounted = true;
 
-      afterEach(() => {
-        expect(singleSpa.removeErrorHandler(handleError)).toBe(true)
-      });
+          singleSpa.registerApplication('parcel-unmount-parcel-errors', app, () => shouldAppBeMounted);
+          return singleSpa.triggerAppChange().then(() => {
+            expect(app.mountCalls).toBe(1)
 
-      it(`should throw an error when unmounting fails`, () => {
-        const app = createApp();
-        let shouldAppBeMounted = true;
+            const parcelConfig1 = createParcelConfig('unmount')
+            parcelConfig1.name = 'unmount-error'
+            const parcel1 = app.mountProps.mountParcel(parcelConfig1, {domElement: document.createElement('div')})
+            return parcel1.mountPromise.then(() => {
 
-        singleSpa.registerApplication('app-parcel-unmount-errors', app, () => shouldAppBeMounted);
-        return singleSpa.triggerAppChange().then(() => {
-          expect(app.mountCalls).toBe(1)
+              expect(parcel1.getStatus()).toBe('MOUNTED')
+              expect(parcelConfig1.bootstrapCalls).toBe(1);
+              expect(parcelConfig1.mountCalls).toBe(1);
+              expect(parcelConfig1.unmountCalls).toBe(0);
 
-          const parcelConfig1 = createParcelConfig('unmount')
-          parcelConfig1.name = 'unmount-error'
-          const parcel1 = app.mountProps.mountParcel(parcelConfig1, {domElement: document.createElement('div')})
-          return parcel1.mountPromise.then((results) => {
-            expect(parcelConfig1.bootstrapCalls).toBe(1)
-            expect(parcelConfig1.mountCalls).toBe(1)
-            expect(parcelConfig1.unmountCalls).toBe(0)
-          }).then(() => {
-            shouldAppBeMounted = false
-            return singleSpa.triggerAppChange()
-          }).then(() => {
-            return parcel1.unmountPromise.catch(err => {
-              expect(err.name).toBe('unmount-error');
-              expect(err.message.indexOf(`UNMOUNTING`)).toBeGreaterThan(-1);
-              expect(err.message.indexOf(`unmount-error`)).toBeGreaterThan(-1);
+              parcel1.unmount()
+              expect(parcelConfig1.unmountCalls).toBe(0);
+              return parcel1.unmountPromise.catch(err => {
+                expect(err.name).toBe('unmount-error');
+                expect(err.message.indexOf(`UNMOUNTING`)).toBeGreaterThan(-1);
+                expect(err.message.indexOf(`unmount-error`)).toBeGreaterThan(-1);
+              }).then(() => {
+                expect(parcel1.getStatus()).toBe('SKIP_BECAUSE_BROKEN')
+              })
+
             })
-            return Promise.resolve()
-          }).then(() => {
-            expect(errs.length).toBe(1);
-            expect(errs[0].appName).toBe('app-parcel-unmount-errors');
-            expect(errs[0].message.indexOf(`Application 'app-parcel-unmount-errors' died in status UNMOUNTING: Parcel 'unmount-error' died in status UNMOUNTING: unmount error`)).toBeGreaterThan(-1);
           })
         })
       })
 
+      describe(`parcel unmounted by app unmount errors`, () => {
+        let errs;
+
+        function handleError(err) {
+          errs.push(err);
+        }
+
+        beforeEach(() => {
+          errs = [];
+          singleSpa.addErrorHandler(handleError);
+        })
+
+        afterEach(() => {
+          expect(singleSpa.removeErrorHandler(handleError)).toBe(true)
+        });
+
+
+        it(`should throw an error when unmounting a parcel fails during app unmount`, () => {
+          const app = createApp();
+          let shouldAppBeMounted = true;
+
+          singleSpa.registerApplication('app-parcel-unmount-errors', app, () => shouldAppBeMounted);
+          return singleSpa.triggerAppChange().then(() => {
+            expect(app.mountCalls).toBe(1)
+
+            const parcelConfig1 = createParcelConfig('unmount')
+            parcelConfig1.name = 'unmount-error'
+            const parcel1 = app.mountProps.mountParcel(parcelConfig1, {domElement: document.createElement('div')})
+            return parcel1.mountPromise.then((results) => {
+              expect(parcelConfig1.bootstrapCalls).toBe(1)
+              expect(parcelConfig1.mountCalls).toBe(1)
+              expect(parcelConfig1.unmountCalls).toBe(0)
+            }).then(() => {
+              shouldAppBeMounted = false
+              return singleSpa.triggerAppChange()
+            }).then(() => {
+              return parcel1.unmountPromise.catch(err => {
+                expect(err.name).toBe('unmount-error');
+                expect(err.message.indexOf(`UNMOUNTING`)).toBeGreaterThan(-1);
+                expect(err.message.indexOf(`unmount-error`)).toBeGreaterThan(-1);
+              })
+              return Promise.resolve()
+            }).then(() => {
+              expect(errs.length).toBe(1);
+              expect(errs[0].appName).toBe('app-parcel-unmount-errors');
+              expect(errs[0].message.indexOf(`Application 'app-parcel-unmount-errors' died in status UNMOUNTING: Parcel 'unmount-error' died in status UNMOUNTING: unmount error`)).toBeGreaterThan(-1);
+            })
+          })
+        })
+      })
     })
-
   })
-
 })
 
 function createApp() {
