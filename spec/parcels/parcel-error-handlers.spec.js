@@ -139,7 +139,7 @@ describe('parcel errors', () => {
             }).then(() => {
               expect(errs.length).toBe(1);
               expect(errs[0].appName).toBe('app-parcel-unmount-errors');
-              expect(errs[0].message.indexOf(`Application 'app-parcel-unmount-errors' died in status UNMOUNTING: Parcel 'unmount-error' died in status UNMOUNTING: unmount error`)).toBeGreaterThan(-1);
+              expect(errs[0].message.indexOf(`Application 'app-parcel-unmount-errors' died in status UNMOUNTING: Parcel 'unmount-error' died in status SKIP_BECAUSE_BROKEN: Parcel 'unmount-error' died in status UNMOUNTING: unmount error`)).toBeGreaterThan(-1);
             })
           })
         })

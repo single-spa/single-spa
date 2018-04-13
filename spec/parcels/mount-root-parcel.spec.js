@@ -44,6 +44,27 @@ describe(`root parcels`, () => {
         expect(unmountValue).toBe(null);
       })
   })
+
+  it(`lets you call mountParcel with a config loading function instead of an actual parcel config`, () => {
+    const parcelConfig = createParcelConfig();
+    let resolveConfigLoading
+    const configLoadingFunction = () => new Promise(resolve => {
+      resolveConfigLoading = () => resolve(parcelConfig)
+    })
+    const parcel = singleSpa.mountRootParcel(configLoadingFunction, {domElement: document.createElement('div')});
+    expect(parcel.getStatus()).toBe(singleSpa.LOADING_SOURCE_CODE);
+    return Promise
+      .resolve()
+      .then(() => expect(parcel.getStatus()).toBe(singleSpa.LOADING_SOURCE_CODE))
+      .then(() => resolveConfigLoading())
+      .then(() => parcel.loadPromise)
+      .then(() => expect(parcel.getStatus()).not.toBe(singleSpa.LOADING_SOURCE_CODE))
+      .then(() => parcel.mountPromise)
+      .then(() => expect(parcel.getStatus()).toBe(singleSpa.MOUNTED))
+      .then(() => parcel.unmount())
+      .then(() => expect(parcel.getStatus()).toBe(singleSpa.NOT_MOUNTED))
+      .then(() => parcel.unmountPromise)
+  })
 });
 
 function createParcelConfig() {
