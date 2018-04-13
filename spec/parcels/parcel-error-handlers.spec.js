@@ -146,6 +146,69 @@ describe('parcel errors', () => {
       })
     })
   })
+
+  describe(`invalid config`, () => {
+    it(`throws an error immediately if you don't provide a config object`, () => {
+      expect(() => {
+        singleSpa.mountRootParcel(null, {domElement: document.createElement('div')})
+      }).toThrow()
+    })
+
+    it(`throws if your loading function doesn't return a valid config promise`, () => {
+      expect(() => {
+        // loading function should return promise
+        singleSpa.mountRootParcel(() => createParcelConfig(), {domElement: document.createElement('div')})
+      }).toThrow()
+    })
+
+    it(`rejects the load promise if loading function returns a promise that resolves with undefined`, () => {
+      const parcel = singleSpa.mountRootParcel(() => Promise.resolve(), {domElement: document.createElement('div')})
+      return parcel.loadPromise.then(
+        () => {
+          throw new Error('load promise should not have succeeded')
+        },
+        err => {
+          expect(err.message.indexOf('did not resolve with a parcel config')).toBeGreaterThan(-1)
+        }
+      )
+    })
+
+    it(`rejects the load promise if the config doesn't have a valid bootstrap function`, () => {
+      const parcel = singleSpa.mountRootParcel({mount() {}, unmount() {}}, {domElement: document.createElement('div')})
+      return parcel.loadPromise.then(
+        () => {
+          throw new Error('load promise should not have succeeded')
+        },
+        err => {
+          expect(err.message.indexOf('must have a valid bootstrap function')).toBeGreaterThan(-1)
+        }
+      )
+    })
+
+    it(`rejects the load promise if the config doesn't have a valid mount function`, () => {
+      const parcel = singleSpa.mountRootParcel({bootstrap() {}, unmount() {}}, {domElement: document.createElement('div')})
+      return parcel.loadPromise.then(
+        () => {
+          throw new Error('load promise should not have succeeded')
+        },
+        err => {
+          expect(err.message.indexOf('must have a valid mount function')).toBeGreaterThan(-1)
+        }
+      )
+    })
+
+    it(`rejects the load promise if the config doesn't have a valid unmount function`, () => {
+      const parcel = singleSpa.mountRootParcel({bootstrap() {}, mount() {}}, {domElement: document.createElement('div')})
+      return parcel.loadPromise.then(
+        () => {
+          throw new Error('load promise should not have succeeded')
+        },
+        err => {
+          expect(err.message.indexOf('must have a valid unmount function')).toBeGreaterThan(-1)
+        }
+      )
+    })
+  })
 })
 
 function createApp() {
