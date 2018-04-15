@@ -5,48 +5,48 @@ import { getProps } from './prop.helpers.js';
 
 const appsToUnload = {};
 
-export async function toUnloadPromise(app) {
-  const unloadInfo = appsToUnload[app.name];
+export function toUnloadPromise(app) {
+  return Promise.resolve().then(() => {
+    const unloadInfo = appsToUnload[app.name];
 
-  if (app.status === NOT_LOADED) {
-    /* This app is already unloaded. We just need to clean up
-     * anything that still thinks we need to unload the app.
-     */
-    finishUnloadingApp(app, unloadInfo);
-    return app;
-  }
+    if (app.status === NOT_LOADED) {
+      /* This app is already unloaded. We just need to clean up
+       * anything that still thinks we need to unload the app.
+       */
+      finishUnloadingApp(app, unloadInfo);
+      return app;
+    }
 
-  if (app.status === UNLOADING) {
-    /* Both unloadApplication and reroute want to unload this app.
-     * It only needs to be done once, though.
-     */
-    await unloadInfo.promise;
-    return app;
-  }
+    if (app.status === UNLOADING) {
+      /* Both unloadApplication and reroute want to unload this app.
+       * It only needs to be done once, though.
+       */
+      return unloadInfo.promise.then(() => app);
+    }
 
-  if (app.status !== NOT_MOUNTED) {
-    /* The app cannot be unloaded until it is unmounted.
-     */
-    return app;
-  }
+    if (app.status !== NOT_MOUNTED) {
+      /* The app cannot be unloaded until it is unmounted.
+      */
+      return app;
+    }
 
-  if (!unloadInfo) {
-    /* No one has called unloadApplication for this app,
-     */
-    return app;
-  }
+    if (!unloadInfo) {
+      /* No one has called unloadApplication for this app,
+      */
+      return app;
+    }
 
-  try {
     app.status = UNLOADING;
-    await reasonableTime(app.unload(getProps(app)), `Unloading application '${app.name}'`, app.timeouts.unload);
-  } catch (err) {
-    errorUnloadingApp(app, unloadInfo, err);
-    return app;
-  }
-
-  finishUnloadingApp(app, unloadInfo);
-
-  return app;
+    return reasonableTime(app.unload(getProps(app)), `Unloading application '${app.name}'`, app.timeouts.unload)
+      .then(() => {
+        finishUnloadingApp(app, unloadInfo);
+        return app;
+      })
+      .catch(err => {
+        errorUnloadingApp(app, unloadInfo, err);
+        return app;
+      })
+  })
 }
 
 function finishUnloadingApp(app, unloadInfo) {
