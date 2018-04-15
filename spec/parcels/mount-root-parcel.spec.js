@@ -66,7 +66,7 @@ describe(`root parcels`, () => {
       .then(() => parcel.unmountPromise)
   })
 
-  fit(`allows you to update a parcel that has implemented the update lifecycle`, () => {
+  it(`allows you to update a parcel that has implemented the update lifecycle`, () => {
     const parcelConfig = createParcelConfig({withUpdate: true});
     const parcel = singleSpa.mountRootParcel(parcelConfig, {domElement: document.createElement('div')});
 
