@@ -47,7 +47,6 @@ export function mountParcel(config, customProps) {
     status: passedConfigLoadingFunction ? LOADING_SOURCE_CODE : NOT_BOOTSTRAPPED,
     customProps,
     owningAppOrParcel,
-    isParcel: true,
     unmountThisParcel() {
       if (parcel.status !== MOUNTED) {
         throw new Error(`Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`);
