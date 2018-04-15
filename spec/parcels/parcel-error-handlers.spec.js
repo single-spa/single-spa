@@ -57,6 +57,19 @@ describe('parcel errors', () => {
 
     })
 
+    describe('update errors', () => {
+      it(`should throw an error if you call update on a parcel does not implement the 'update' lifecycle`, () => {
+        const parcelConfig = createParcelConfig()
+        const parcel = singleSpa.mountRootParcel(parcelConfig, {domElement: document.createElement('div')})
+
+        return parcel
+          .mountPromise
+          .then(() => {
+            expect(() => parcel.update({})).toThrow()
+          })
+      })
+    })
+
     describe('ummount errors', () => {
 
       describe(`parcel unmount itself errors`, () => {

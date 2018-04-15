@@ -75,6 +75,7 @@ describe(`root parcels`, () => {
       .then(() => expect(typeof parcel.update).toBe('function'))
       .then(() => expect(parcelConfig.updateCalls).toBe(0))
       .then(() => parcel.update({}))
+      .then(resolvedVal => expect(resolvedVal).toBe(null))
       .then(() => expect(parcelConfig.updateCalls).toBe(1))
   })
 

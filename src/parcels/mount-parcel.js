@@ -125,10 +125,6 @@ export function mountParcel(config, customProps) {
       externalRepresentation.update = function(customProps) {
         parcel.customProps = customProps;
 
-        if (parcel.status !== MOUNTED) {
-          throw new Error(`Cannot update parcel '${name}' -- it is in a ${parcel.status} status`);
-        }
-
         return promiseWithoutReturnValue(toUpdatePromise(parcel));
       }
     }
