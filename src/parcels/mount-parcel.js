@@ -105,7 +105,7 @@ export function mountParcel(config, customProps) {
       throw new Error(`Parcel ${name} must have a valid unmount function`);
     }
 
-    if(config.update && !validLifecycleFn(config.update)) {
+    if (config.update && !validLifecycleFn(config.update)) {
       throw new Error(`Parcel ${name} provided an invalid update function`);
     }
 
