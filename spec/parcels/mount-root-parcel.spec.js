@@ -65,9 +65,30 @@ describe(`root parcels`, () => {
       .then(() => expect(parcel.getStatus()).toBe(singleSpa.NOT_MOUNTED))
       .then(() => parcel.unmountPromise)
   })
+
+  fit(`allows you to update a parcel that has implemented the update lifecycle`, () => {
+    const parcelConfig = createParcelConfig({withUpdate: true});
+    const parcel = singleSpa.mountRootParcel(parcelConfig, {domElement: document.createElement('div')});
+
+    return parcel
+      .mountPromise
+      .then(() => expect(typeof parcel.update).toBe('function'))
+      .then(() => expect(parcelConfig.updateCalls).toBe(0))
+      .then(() => parcel.update({}))
+      .then(() => expect(parcelConfig.updateCalls).toBe(1))
+  })
+
+  it(`does not allow you to call update on a parcel that does not implement the update lifecycle`, () => {
+    const parcelConfig = createParcelConfig();
+    const parcel = singleSpa.mountRootParcel(parcelConfig, {domElement: document.createElement('div')});
+
+    return parcel
+      .mountPromise
+      .then(() => expect(parcel.update).toBeUndefined())
+  })
 });
 
-function createParcelConfig() {
+function createParcelConfig(opts = {}) {
   const parcelConfig = {
     bootstrapCalls: 0,
     bootstrap() {
@@ -87,6 +108,14 @@ function createParcelConfig() {
       return Promise.resolve();
     },
   };
+
+  if (opts.withUpdate) {
+    parcelConfig.updateCalls = 0;
+    parcelConfig.update = function(props) {
+      parcelConfig.updateCalls++;
+      return Promise.resolve();
+    }
+  }
 
   return parcelConfig;
 }

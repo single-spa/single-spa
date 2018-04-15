@@ -1,6 +1,6 @@
-import { UNMOUNTING, NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN } from '../app.helpers.js';
-import { handleAppError, transformErr } from '../app-errors.js';
-import { reasonableTime } from '../timeouts.js';
+import { UNMOUNTING, NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN } from '../applications/app.helpers.js';
+import { handleAppError, transformErr } from '../applications/app-errors.js';
+import { reasonableTime } from '../applications/timeouts.js';
 import { getProps } from './prop.helpers.js';
 
 export async function toUnmountPromise(appOrParcel, hardFail = false) {

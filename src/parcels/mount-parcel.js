@@ -1,8 +1,9 @@
-import { validLifecycleFn, flattenFnArray } from 'src/applications/lifecycles/lifecycle.helpers.js';
-import { NOT_BOOTSTRAPPED, NOT_MOUNTED, MOUNTED, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN } from 'src/applications/app.helpers.js';
-import { toBootstrapPromise } from 'src/applications/lifecycles/bootstrap.js';
-import { toMountPromise } from 'src/applications/lifecycles/mount.js';
-import { toUnmountPromise } from 'src/applications/lifecycles/unmount.js';
+import { validLifecycleFn, flattenFnArray } from 'src/lifecycles/lifecycle.helpers.js';
+import { NOT_BOOTSTRAPPED, NOT_MOUNTED, MOUNTED, UPDATING, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN } from 'src/applications/app.helpers.js';
+import { toBootstrapPromise } from 'src/lifecycles/bootstrap.js';
+import { toMountPromise } from 'src/lifecycles/mount.js';
+import { toUpdatePromise } from 'src/lifecycles/update.js';
+import { toUnmountPromise } from 'src/lifecycles/unmount.js';
 import { ensureValidAppTimeouts } from 'src/applications/timeouts.js';
 import { transformErr } from '../applications/app-errors.js';
 
@@ -46,6 +47,7 @@ export function mountParcel(config, customProps) {
     status: passedConfigLoadingFunction ? LOADING_SOURCE_CODE : NOT_BOOTSTRAPPED,
     customProps,
     owningAppOrParcel,
+    isParcel: true,
     unmountThisParcel() {
       if (parcel.status !== MOUNTED) {
         throw new Error(`Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`);
@@ -71,6 +73,9 @@ export function mountParcel(config, customProps) {
         });
     }
   };
+
+  // We return an external representation
+  let externalRepresentation
 
   // Add to owning app or parcel
   owningAppOrParcel.parcels[id] = parcel;
@@ -100,6 +105,10 @@ export function mountParcel(config, customProps) {
       throw new Error(`Parcel ${name} must have a valid unmount function`);
     }
 
+    if(config.update && !validLifecycleFn(config.update)) {
+      throw new Error(`Parcel ${name} provided an invalid update function`);
+    }
+
     const bootstrap = flattenFnArray(config.bootstrap);
     const mount = flattenFnArray(config.mount);
     const unmount = flattenFnArray(config.unmount);
@@ -110,6 +119,19 @@ export function mountParcel(config, customProps) {
     parcel.mount = mount;
     parcel.unmount = unmount;
     parcel.timeouts = ensureValidAppTimeouts(parcel);
+
+    if (config.update) {
+      parcel.update = flattenFnArray(config.update);
+      externalRepresentation.update = function(customProps) {
+        parcel.customProps = customProps;
+
+        if (parcel.status !== MOUNTED) {
+          throw new Error(`Cannot update parcel '${name}' -- it is in a ${parcel.status} status`);
+        }
+
+        return promiseWithoutReturnValue(toUpdatePromise(parcel));
+      }
+    }
   })
 
   // Start bootstrapping and mounting
@@ -124,8 +146,7 @@ export function mountParcel(config, customProps) {
     rejectUnmount = reject;
   });
 
-  // Return external representation
-  return {
+  externalRepresentation = {
     mount() {
       return promiseWithoutReturnValue(
         Promise
@@ -155,6 +176,8 @@ export function mountParcel(config, customProps) {
     mountPromise: promiseWithoutReturnValue(mountPromise),
     unmountPromise: promiseWithoutReturnValue(unmountPromise),
   };
+
+  return externalRepresentation
 }
 
 function promiseWithoutReturnValue(promise) {
