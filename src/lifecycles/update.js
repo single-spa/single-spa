@@ -3,24 +3,22 @@ import { handleAppError, transformErr } from '../applications/app-errors.js';
 import { reasonableTime } from '../applications/timeouts.js';
 import { getProps } from './prop.helpers.js';
 
-export function toUpdatePromise(appOrParcel) {
+export function toUpdatePromise(parcel) {
   return Promise.resolve().then(() => {
-    const objectType = appOrParcel.isParcel ? 'parcel' : 'application';
-
-    if (appOrParcel.status !== MOUNTED) {
-      throw new Error(`Cannot update ${objectType} '${appOrParcel.name}' because it is not mounted`)
+    if (parcel.status !== MOUNTED) {
+      throw new Error(`Cannot update ${objectType} '${parcel.name}' because it is not mounted`)
     }
 
-    appOrParcel.status = UPDATING;
+    parcel.status = UPDATING;
 
-    return reasonableTime(appOrParcel.update(getProps(appOrParcel)), `Updating ${objectType} '${appOrParcel.name}'`, appOrParcel.timeouts.mount)
+    return reasonableTime(parcel.update(getProps(parcel)), `Updating parcel '${parcel.name}'`, parcel.timeouts.mount)
       .then(() => {
-        appOrParcel.status = MOUNTED;
-        return appOrParcel;
+        parcel.status = MOUNTED;
+        return parcel;
       })
       .catch(err => {
-        const transformedErr = transformErr(err, appOrParcel)
-        appOrParcel.status = SKIP_BECAUSE_BROKEN;
+        const transformedErr = transformErr(err, parcel)
+        parcel.status = SKIP_BECAUSE_BROKEN;
         throw transformedErr;
       })
   })
