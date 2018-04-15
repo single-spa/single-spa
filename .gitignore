@@ -10,3 +10,4 @@ dist/
 *.build.spec.js
 *.build.spec.js.map
 .DS_Store
+yarn-error.log

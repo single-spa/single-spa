@@ -1,13 +1,13 @@
 import CustomEvent from 'custom-event';
 import { isStarted } from 'src/start.js';
-import { toLoadPromise } from 'src/applications/lifecycles/load.js';
-import { toBootstrapPromise } from 'src/applications/lifecycles/bootstrap.js';
-import { toMountPromise } from 'src/applications/lifecycles/mount.js';
-import { toUnmountPromise } from 'src/applications/lifecycles/unmount.js';
+import { toLoadPromise } from 'src/lifecycles/load.js';
+import { toBootstrapPromise } from 'src/lifecycles/bootstrap.js';
+import { toMountPromise } from 'src/lifecycles/mount.js';
+import { toUnmountPromise } from 'src/lifecycles/unmount.js';
 import { getMountedApps, getAppsToLoad, getAppsToUnmount, getAppsToMount } from 'src/applications/apps.js';
 import { notSkipped } from 'src/applications/app.helpers.js';
 import { callCapturedEventListeners } from './navigation-events.js';
-import { getAppsToUnload, toUnloadPromise } from 'src/applications/lifecycles/unload.js';
+import { getAppsToUnload, toUnloadPromise } from 'src/lifecycles/unload.js';
 
 let appChangeUnderway = false, peopleWaitingOnAppChange = [];
 

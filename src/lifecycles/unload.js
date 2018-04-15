@@ -1,6 +1,6 @@
-import { NOT_MOUNTED, UNLOADING, NOT_LOADED, SKIP_BECAUSE_BROKEN, isntActive } from '../app.helpers.js';
-import { handleAppError } from '../app-errors.js';
-import { reasonableTime } from '../timeouts.js';
+import { NOT_MOUNTED, UNLOADING, NOT_LOADED, SKIP_BECAUSE_BROKEN, isntActive } from '../applications/app.helpers.js';
+import { handleAppError } from '../applications/app-errors.js';
+import { reasonableTime } from '../applications/timeouts.js';
 import { getProps } from './prop.helpers.js';
 
 const appsToUnload = {};
