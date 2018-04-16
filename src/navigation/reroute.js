@@ -31,98 +31,99 @@ export function reroute(pendingPromises = [], eventArguments) {
     return loadApps();
   }
 
-  async function loadApps() {
-    const loadPromises = getAppsToLoad().map(toLoadPromise);
+  function loadApps() {
+    return Promise.resolve().then(() => {
+      const loadPromises = getAppsToLoad().map(toLoadPromise);
 
-    if (loadPromises.length > 0) {
-      wasNoOp = false;
-    }
-
-    try {
-      await Promise.all(loadPromises);
-    } catch(err) {
-      callAllEventListeners();
-      throw err;
-    }
-
-    return finishUpAndReturn();
-  }
-
-  async function performAppChanges() {
-
-    let myCE
-    if (eventArguments && eventArguments[0]) {
-      myCE = {
-        detail: eventArguments[0]
+      if (loadPromises.length > 0) {
+        wasNoOp = false;
       }
-    }
-    window.dispatchEvent(new CustomEvent("single-spa:before-routing-event", myCE));
-    const unloadPromises = getAppsToUnload().map(toUnloadPromise);
 
-    const unmountUnloadPromises = getAppsToUnmount()
-      .map(toUnmountPromise)
-      .map(unmountPromise => unmountPromise.then(toUnloadPromise));
-
-    const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
-    if (allUnmountPromises.length > 0) {
-      wasNoOp = false;
-    }
-
-    const unmountAllPromise = Promise.all(allUnmountPromises);
-
-    const appsToLoad = getAppsToLoad();
-
-    /* We load and bootstrap apps while other apps are unmounting, but we
-     * wait to mount the app until all apps are finishing unmounting
-     */
-    const loadThenMountPromises = appsToLoad.map(app => {
-      return toLoadPromise(app)
-        .then(toBootstrapPromise)
-        .then(async function(app) {
-          await unmountAllPromise;
-          return toMountPromise(app);
+      return Promise
+        .all(loadPromises)
+        .then(finishUpAndReturn)
+        .catch(err => {
+          callAllEventListeners();
+          throw err;
         })
     })
-    if (loadThenMountPromises.length > 0) {
-      wasNoOp = false;
-    }
+  }
 
-    /* These are the apps that are already bootstrapped and just need
-     * to be mounted. They each wait for all unmounting apps to finish up
-     * before they mount.
-     */
-    const mountPromises = getAppsToMount()
-      .filter(appToMount => appsToLoad.indexOf(appToMount) < 0)
-      .map(async function(appToMount) {
-        await toBootstrapPromise(appToMount);
-        await unmountAllPromise;
-        return toMountPromise(appToMount);
+  function performAppChanges() {
+    return Promise.resolve().then(() => {
+      let myCE
+      if (eventArguments && eventArguments[0]) {
+        myCE = {
+          detail: eventArguments[0]
+        }
+      }
+      window.dispatchEvent(new CustomEvent("single-spa:before-routing-event", myCE));
+      const unloadPromises = getAppsToUnload().map(toUnloadPromise);
+
+      const unmountUnloadPromises = getAppsToUnmount()
+        .map(toUnmountPromise)
+        .map(unmountPromise => unmountPromise.then(toUnloadPromise));
+
+      const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
+      if (allUnmountPromises.length > 0) {
+        wasNoOp = false;
+      }
+
+      const unmountAllPromise = Promise.all(allUnmountPromises);
+
+      const appsToLoad = getAppsToLoad();
+
+      /* We load and bootstrap apps while other apps are unmounting, but we
+       * wait to mount the app until all apps are finishing unmounting
+       */
+      const loadThenMountPromises = appsToLoad.map(app => {
+        return toLoadPromise(app)
+          .then(toBootstrapPromise)
+          .then(app => {
+            return unmountAllPromise
+              .then(() => toMountPromise(app))
+          })
       })
-    if (mountPromises.length > 0) {
-      wasNoOp = false;
-    }
+      if (loadThenMountPromises.length > 0) {
+        wasNoOp = false;
+      }
 
-    try {
-      await unmountAllPromise;
-    } catch(err) {
-      callAllEventListeners();
-      throw err;
-    }
+      /* These are the apps that are already bootstrapped and just need
+       * to be mounted. They each wait for all unmounting apps to finish up
+       * before they mount.
+       */
+      const mountPromises = getAppsToMount()
+        .filter(appToMount => appsToLoad.indexOf(appToMount) < 0)
+        .map(appToMount => {
+          return toBootstrapPromise(appToMount)
+            .then(() => unmountAllPromise)
+            .then(() => toMountPromise(appToMount))
+        })
+      if (mountPromises.length > 0) {
+        wasNoOp = false;
+      }
+      return unmountAllPromise
+        .catch(err => {
+          callAllEventListeners();
+          throw err;
+        })
+        .then(() => {
+          /* Now that the apps that needed to be unmounted are unmounted, their DOM navigation
+           * events (like hashchange or popstate) should have been cleaned up. So it's safe
+           * to let the remaining captured event listeners to handle about the DOM event.
+           */
+          callAllEventListeners();
 
-    /* Now that the apps that needed to be unmounted are unmounted, their DOM navigation
-     * events (like hashchange or popstate) should have been cleaned up. So it's safe
-     * to let the remaining captured event listeners to handle about the DOM event.
-     */
-    callAllEventListeners();
+          return Promise
+            .all(loadThenMountPromises.concat(mountPromises))
+            .catch(err => {
+              pendingPromises.forEach(promise => promise.reject(err));
+              throw err;
+            })
+            .then(() => finishUpAndReturn(false))
+        })
 
-    try {
-      await Promise.all(loadThenMountPromises.concat(mountPromises));
-    } catch(err) {
-      pendingPromises.forEach(promise => promise.reject(err));
-      throw err;
-    }
-
-    return finishUpAndReturn(false);
+    })
   }
 
   function finishUpAndReturn(callEventListeners=true) {
@@ -150,7 +151,7 @@ export function reroute(pendingPromises = [], eventArguments) {
     /* Setting this allows for subsequent calls to reroute() to actually perform
      * a reroute instead of just getting queued behind the current reroute call.
      * We want to do this after the mounting/unmounting is done but before we
-     * resolve the promise for the `reroute` async function.
+     * resolve the promise for the `reroute` function.
      */
     appChangeUnderway = false;
 

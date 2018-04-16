@@ -20,25 +20,26 @@ export function toUnmountPromise(appOrParcel, hardFail = false) {
       .then(
         unmountAppOrParcel,
         parcelError => {
+          console.log('here0', appOrParcel.name, parcelError.message)
           // There is a parcel unmount error
           return unmountAppOrParcel()
             .then(() => {
-              console.log('here1', appOrParcel.name)
+              console.log('here1', appOrParcel.name, 'parcelError', parcelError.message)
               // Unmounting the app/parcel succeeded, but unmounting its children parcels did not
               const parentError = new Error(parcelError.message)
               if (hardFail) {
-                console.log('parcelError', parcelError, appOrParcel.name)
                 const transformedErr = transformErr(parentError, appOrParcel)
+                console.log('here2', appOrParcel.name, transformedErr.message)
                 appOrParcel.status = SKIP_BECAUSE_BROKEN;
                 throw transformedErr
               } else {
                 handleAppError(parentError, appOrParcel);
                 appOrParcel.status = SKIP_BECAUSE_BROKEN;
-                return appOrParcel
               }
             })
         }
       )
+      .then(() => appOrParcel)
 
     function unmountAppOrParcel() {
       console.log('unmounting app or parcel', appOrParcel.name)
@@ -49,20 +50,18 @@ export function toUnmountPromise(appOrParcel, hardFail = false) {
           if (!parcelError) {
             appOrParcel.status = NOT_MOUNTED;
           }
-
-          return appOrParcel;
         })
         .catch(err => {
           if (hardFail) {
             console.log('appOrParcel', appOrParcel.name, err.message)
             const transformedErr = transformErr(err, appOrParcel);
             appOrParcel.status = SKIP_BECAUSE_BROKEN;
+            console.log('transformed message', err.message)
             throw transformedErr;
           } else {
             console.log('not hard fail', err)
             handleAppError(err, appOrParcel);
             appOrParcel.status = SKIP_BECAUSE_BROKEN;
-            return appOrParcel;
           }
         })
     }
