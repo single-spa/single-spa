@@ -30,21 +30,17 @@ describe(`invalid-unload app :`, () => {
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
   it(`throws an error if you call unloadApplication incorrectly`, () => {
-    try {
+    expect(() => {
       // The parameters are in the reverse order
       singleSpa.unloadApplication({waitForUnmount}, './invalid-unload.app.js');
       fail("Calling unloadApplication with incorrect params should throw");
-    } catch(err) {
-      // expected
-    }
+    }).toThrow()
 
-    try {
+    expect(() => {
       // Trying to unload an app that doesn't exist
       singleSpa.unloadApplication("App that doesn't exist");
       fail("Calling unloadApplication on non-existent app should throw");
-    } catch(err) {
-      // expected
-    }
+    })
   });
 
   it(`puts the app into SKIP_BECAUSE_BROKEN because it has an incorrect unload lifecycle`, () => {
