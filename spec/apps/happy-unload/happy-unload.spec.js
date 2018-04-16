@@ -6,7 +6,7 @@ describe(`happy-unload app :`, () => {
   let myApp;
 
   beforeAll(() => {
-    singleSpa.registerApplication('./happy-unload.app.js', () => System.import('./happy-unload.app.js'), location => location.hash === activeHash);
+    singleSpa.registerApplication('./happy-unload.app.js', () => import('./happy-unload.app.js'), location => location.hash === activeHash);
     singleSpa.start();
   });
 
