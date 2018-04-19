@@ -9,6 +9,12 @@ export function toUnloadPromise(app) {
   return Promise.resolve().then(() => {
     const unloadInfo = appsToUnload[app.name];
 
+    if (!unloadInfo) {
+      /* No one has called unloadApplication for this app,
+      */
+      return app;
+    }
+
     if (app.status === NOT_LOADED) {
       /* This app is already unloaded. We just need to clean up
        * anything that still thinks we need to unload the app.
@@ -26,12 +32,6 @@ export function toUnloadPromise(app) {
 
     if (app.status !== NOT_MOUNTED) {
       /* The app cannot be unloaded until it is unmounted.
-      */
-      return app;
-    }
-
-    if (!unloadInfo) {
-      /* No one has called unloadApplication for this app,
       */
       return app;
     }
