@@ -1,5 +1,3 @@
-import { assign } from 'src/utils/assign.js';
-
 const globalTimeoutConfig = {
   bootstrap: {
     millis: 4000,
@@ -107,5 +105,8 @@ export function reasonableTime(promise, description, timeoutConfig) {
 }
 
 export function ensureValidAppTimeouts(timeouts = {}) {
-  return assign({}, globalTimeoutConfig, timeouts);
+  return {
+    ...globalTimeoutConfig,
+    ...timeouts,
+  }
 }
