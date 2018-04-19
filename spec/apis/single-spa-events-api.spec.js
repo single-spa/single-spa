@@ -113,8 +113,6 @@ describe(`events api :`, () => {
 
       window.location.hash = `#`;
 
-      console.log("starting app change")
-
       singleSpa
       .triggerAppChange()
       .then(() => singleSpa.triggerAppChange())
@@ -125,7 +123,6 @@ describe(`events api :`, () => {
         return singleSpa.triggerAppChange();
       })
       .then(() => {
-        console.log("Trigger app change finished")
         window.removeEventListener("single-spa:app-change", failTest);
 
         // If failTest wasn't called, then we're good

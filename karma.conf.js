@@ -21,6 +21,7 @@ module.exports = function(config) {
     ],
 
     webpack: {
+      mode: 'development',
       module: {
         rules: [
           {
@@ -28,8 +29,8 @@ module.exports = function(config) {
             exclude: /node_modules/,
             loader: 'babel-loader',
             options: {
-              plugins: ['syntax-dynamic-import'],
-            },
+              plugins: ['@babel/plugin-syntax-dynamic-import'],
+            }
           },
         ],
       },

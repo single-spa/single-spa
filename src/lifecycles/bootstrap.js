@@ -3,25 +3,28 @@ import { reasonableTime } from '../applications/timeouts.js';
 import { handleAppError, transformErr } from '../applications/app-errors.js';
 import { getProps } from './prop.helpers.js'
 
-export async function toBootstrapPromise(appOrParcel, hardFail = false) {
-  if (appOrParcel.status !== NOT_BOOTSTRAPPED) {
-    return appOrParcel;
-  }
-
-  appOrParcel.status = BOOTSTRAPPING;
-
-  try {
-    await reasonableTime(appOrParcel.bootstrap(getProps(appOrParcel)), `Bootstrapping appOrParcel '${appOrParcel.name}'`, appOrParcel.timeouts.bootstrap);
-    appOrParcel.status = NOT_MOUNTED;
-  } catch(err) {
-    appOrParcel.status = SKIP_BECAUSE_BROKEN;
-    if (hardFail) {
-      const transformedErr = transformErr(err, appOrParcel)
-      throw transformedErr
-    } else {
-      handleAppError(err, appOrParcel);
+export function toBootstrapPromise(appOrParcel, hardFail = false) {
+  return Promise.resolve().then(() => {
+    if (appOrParcel.status !== NOT_BOOTSTRAPPED) {
+      return appOrParcel;
     }
-  }
 
-  return appOrParcel;
+    appOrParcel.status = BOOTSTRAPPING;
+
+    return reasonableTime(appOrParcel.bootstrap(getProps(appOrParcel)), `Bootstrapping appOrParcel '${appOrParcel.name}'`, appOrParcel.timeouts.bootstrap)
+      .then(() => {
+        appOrParcel.status = NOT_MOUNTED;
+        return appOrParcel;
+      })
+      .catch(err => {
+        appOrParcel.status = SKIP_BECAUSE_BROKEN;
+        if (hardFail) {
+          const transformedErr = transformErr(err, appOrParcel)
+          throw transformedErr
+        } else {
+          handleAppError(err, appOrParcel);
+          return appOrParcel;
+        }
+      })
+  })
 }

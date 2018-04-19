@@ -66,9 +66,8 @@ export function mountParcel(config, customProps) {
         })
         .catch(err => {
           parcel.status = SKIP_BECAUSE_BROKEN;
-          const transformedErr = transformErr(err, parcel);
-          rejectUnmount(transformedErr);
-          throw transformedErr;
+          rejectUnmount(err);
+          throw err;
         });
     }
   };
