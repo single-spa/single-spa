@@ -1,8 +1,8 @@
 language: node_js
 node_js:
-  - "node"
+  - "8.11.1"
 script:
-  - yarn build --ignore-engines
+  - yarn build
   - yarn lint
   - yarn test:travis
 addons:
