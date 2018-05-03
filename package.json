@@ -9,7 +9,7 @@
     "build:analyze": "webpack --config webpack.config.analyze.js",
     "watch": "webpack -w --config webpack.config.dev.js",
     "build:test": "./bin/build-tests",
-    "prepublish": "in-publish && yarn build --ignore-engines || not-in-publish",
+    "prepublish": "in-publish && yarn build || not-in-publish",
     "clean": "rm -rf lib",
     "test": "karma start --single-run",
     "test:debug": "karma start",
