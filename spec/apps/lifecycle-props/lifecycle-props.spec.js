@@ -56,10 +56,10 @@ describe(`lifecycle-props app`, () => {
       })
       .then(() => singleSpa.unloadApplication('lifecycle-props-customProps'))
       .then(() => {
-        expect(myApp.getBootstrapProps().customProps).toEqual({test: 'test'});
-        expect(myApp.getMountProps().customProps).toEqual({test: 'test'});
-        expect(myApp.getUnmountProps().customProps).toEqual({test: 'test'});
-        expect(myApp.getUnloadProps().customProps).toEqual({test: 'test'});
+        expect(myApp.getBootstrapProps().test).toEqual('test');
+        expect(myApp.getMountProps().test).toEqual('test');
+        expect(myApp.getUnmountProps().test).toEqual('test');
+        expect(myApp.getUnloadProps().test).toEqual('test');
       })
     });
 });

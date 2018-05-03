@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "node"
+  - "8.11.1"
 script:
   - yarn build
   - yarn lint
