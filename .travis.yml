@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - "node"
 script:
-  - yarn build
+  - yarn build --ignore-engines
   - yarn lint
   - yarn test:travis
 addons:
