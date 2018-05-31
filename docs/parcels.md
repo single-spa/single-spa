@@ -26,7 +26,7 @@ function bootstrap(props) {
 ```
 
 ### Mount
-This lifecycle function will be called whenever the parcel is not mounted and `mountParcel` is called. When
+If the parcel is not mounted this lifecycle function is called when ever `mountParcel` is called. When 
 called, this function should create DOM elements, DOM event listeners, etc. to render content to the user.
 
 ```js
@@ -41,9 +41,11 @@ function mount(props) {
 ```
 
 ### Unmount
-This lifecycle function will be called whenever the parcel is mounted, and either A) `unmount()` is called 
-or B) the parent parcel or application is unmounted. When called, this function should clean up all DOM elements, 
-DOM event listeners, leaked memory, globals, observable subscriptions, etc. that were created at any point when the parcel was mounted.
+This lifecycle function will be called whenever the parcel is mounted and one of the following cases is true:
+- `unmount()` is called
+- The parent parcel or application is unmounted
+When called, this function should clean up all DOM elements, DOM event listeners, leaked memory, globals, 
+observable subscriptions, etc. that were created at any point when the parcel was mounted.
 
 ```js
 function unmount(props) {
