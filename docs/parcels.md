@@ -70,7 +70,8 @@ We could do any number of things to share the functionality between application 
 - We could use single-spa parcels.
 
 Exporting a parcel that wraps the component gives us the ability to share components and behavior accross disparate frameworks, without losing application cohesion.
-App1 can export a single-spa parcel and App2 can import the parcel and use it easily.
+App1 can export a single-spa parcel and App2 can import the parcel and use it easily. One major advantage is that in the below example
+if App2 is unmounted then the modal will also be unmounted.
 
 ```js
 // App1
@@ -92,4 +93,18 @@ componentDidMount() {
 ...
 
 ```
+
+### Cross Library Components
+
+There are a lot of different approaches to share components accross libraries, one we use extensively 
+for leaf nodes (buttons, etc) is web components. However once you move beyond a leaf node it's much more difficult 
+to share complex components accross different frameworks. Single Spa parcels takes the same concepts of multiple 
+child apps written in multiple frameworks and applies that to components.
+
+### Imperitive Applications
+
+Sometimes you need a single spa application to be mounted in a very specific situation. That situation 
+could be in an area where another application is active 99% of the time by itself. You could use the [Application activity Function](/docs/single-spa-config.md#activity-function)
+and `localStorage` or `history` to manage that or you could imperitively mount something using Parcels.
+You could mount an entire application or you could mount a component.
 
