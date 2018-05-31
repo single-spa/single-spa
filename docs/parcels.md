@@ -1,9 +1,9 @@
 # Parcels
 
-A single-spa parcel is a bundle of functionality (like an application) meant to be controlled imperatively 
-by an application, Parcels use similar methodology as Applications so we recommend [starting with Applications.](/docs/applications.md)
+A single-spa parcel is a bundle of functionality (like an application or component) meant to be controlled imperatively 
+by an application, Parcels use similar methodology as Applications, and can be considered an advanced single spa feature so we recommend [starting with Applications.](/docs/applications.md)
 A parcel can be as large as an application or as small as an component and written in 
-and language as long as it exports the correct lifecycle events. In a single-spa world, your SPA contains 
+any language as long as it exports the correct lifecycle events. In a single-spa world, your SPA contains 
 many registered applications and potentially many parcels. Usually you'll want to mount a parcel within the 
 context of an application, this will automatically unmount the parcel when the application is unmounted.
 
@@ -42,9 +42,8 @@ function mount(props) {
 
 ### Unmount
 This lifecycle function will be called whenever the parcel is mounted, and either A) `unmount()` is called 
-or B) the parent parcel or Application is unmounted. When
-called, this function should clean up all DOM elements, DOM event listeners, leaked memory, globals,
-observable subscriptions, etc. that were created at any point when the parcel was mounted.
+or B) the parent parcel or Application is unmounted. When called, this function should clean up all DOM elements, 
+DOM event listeners, leaked memory, globals, observable subscriptions, etc. that were created at any point when the parcel was mounted.
 
 ```js
 function unmount(props) {
