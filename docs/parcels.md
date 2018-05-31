@@ -72,3 +72,24 @@ We could do any number of things to share the functionality between application 
 Exporting a parcel that wraps the component gives us the ability to share components and behavior accross disparate frameworks, without losing application cohesion.
 App1 can export a single-spa parcel and App2 can import the parcel and use it easily.
 
+```js
+// App1
+export const AddContactParcel = {
+  bootstrap: bootstrapFn,
+  mount: mountFn,
+  unmount: unmountFn,
+}
+
+// App2
+// get the parcel configuration in this case I'm using systemJS and react
+...
+componentDidMount() {
+  SystemJS.import('App1').then(App1 => {
+    const domElement = document.body
+    App2MountProps.mountParcel(App1.AddContactParcel, {domElement})
+  })
+}
+...
+
+```
+
