@@ -1,14 +1,14 @@
 # Parcels
 
 A single-spa parcel is a bundle of functionality (like an application or component) meant to be controlled imperatively 
-by an application, Parcels use similar methodology as Applications, and can be considered an advanced single spa feature so we recommend [starting with Applications.](/docs/applications.md)
+by an application, parcels use similar methodology as applications, and can be considered an advanced single spa feature so we recommend [starting with applications.](/docs/applications.md)
 A parcel can be as large as an application or as small as an component and written in 
 any language as long as it exports the correct lifecycle events. In a single-spa world, your SPA contains 
-many registered applications and potentially many parcels. Usually you'll want to mount a parcel within the 
-context of an application, this will automatically unmount the parcel when the application is unmounted.
+many registered applications and potentially many parcels. Typically we recommend you mount a parcel within 
+the context of an application because the parcel will be unmounted with the application.
 
 ## Parcel Lifecycles
-To read more about lifecycles and how single-spa handles the concept start with [applications](/docs/applications.md#registered-application-lifecycle)
+Start with [applications](/docs/applications.md#registered-application-lifecycle) to learn more about the functionality of single-spa's lifecycle methods.
 
 ### Bootstrap
 This lifecycle function will be called once, right before the parcel is
@@ -42,7 +42,7 @@ function mount(props) {
 
 ### Unmount
 This lifecycle function will be called whenever the parcel is mounted, and either A) `unmount()` is called 
-or B) the parent parcel or Application is unmounted. When called, this function should clean up all DOM elements, 
+or B) the parent parcel or application is unmounted. When called, this function should clean up all DOM elements, 
 DOM event listeners, leaked memory, globals, observable subscriptions, etc. that were created at any point when the parcel was mounted.
 
 ```js
@@ -62,15 +62,15 @@ This lifecycle function will be called whenever the parcel is mounted, and it ne
 ## Example use cases
 
 ### Modals
-`App1` handles everything related to contacts (highly cohesive) but in another area `App2` of our single-spa application we need to create a contact.
+`App1` handles everything related to contacts (highly cohesive) but somewhere in `App2` we need to create a contact.
 We could do any number of things to share the functionality between application 1 and 2: 
 - If both are written in the same framework we could export/import components.
 - We could reimplement creating a contact (loss of cohesion)
 - We could use single-spa parcels.
 
-Exporting a parcel that wraps the component gives us the ability to share components and behavior across disparate frameworks, without losing application cohesion.
-App1 can export a single-spa parcel and App2 can import the parcel and use it easily. One major advantage is that in the below example
-if App2 is unmounted then the modal will also be unmounted.
+Exporting a parcel from `App1` that wraps the craeteContact modal component gives us the ability to share components and behavior across disparate frameworks, without losing application cohesion.
+App1 can export a modal as a single-spa parcel and App2 can import the parcel and use it easily. One major advantage is that in the below example
+the parcel/modal from App1 that is being used by App2 will also be unmounted, without unmounting/mounting of App1.
 
 ```js
 // App1
@@ -103,7 +103,6 @@ child apps written in multiple frameworks and applies that to components.
 ### Imperative Applications
 
 Sometimes you need a single spa application to be mounted in a very specific situation. That situation 
-could be in an area where another application is active 99% of the time by itself. You could use the [Application activity Function](/docs/single-spa-config.md#activity-function)
-and `localStorage` or `history` to manage that or you could imperatively mount something using Parcels.
-You could mount an entire application or you could mount a component.
+could be in an area where another application is active 99% of the time by itself. You could use the [application activity Function](/docs/single-spa-config.md#activity-function)
+and `localStorage` or `history` to manage that or you could imperatively mount something using parcels.
 
