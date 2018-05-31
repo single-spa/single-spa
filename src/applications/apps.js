@@ -1,10 +1,9 @@
-import { Loader } from '../loader.js';
 import { ensureJQuerySupport } from '../jquery-support.js';
 import { isActive, isLoaded, isntLoaded, toName, NOT_LOADED, shouldBeActive, shouldntBeActive, isntActive, notSkipped } from './app.helpers.js';
 import { reroute } from 'src/navigation/reroute.js';
 import { find } from 'src/utils/find.js';
-import { toUnmountPromise } from 'src/applications/lifecycles/unmount.js';
-import { toUnloadPromise, getAppUnloadInfo, addAppToUnload } from 'src/applications/lifecycles/unload.js';
+import { toUnmountPromise } from 'src/lifecycles/unmount.js';
+import { toUnloadPromise, getAppUnloadInfo, addAppToUnload } from 'src/lifecycles/unload.js';
 
 const apps = [];
 
@@ -26,39 +25,36 @@ export function declareChildApplication(appName, arg1, arg2) {
   return registerApplication(appName, arg1, arg2)
 }
 
-export function registerApplication(appName, arg1, arg2, customProps = {}) {
+export function registerApplication(appName, applicationOrLoadingFn, activityFn, customProps = {}) {
   if (typeof appName !== 'string' || appName.length === 0)
     throw new Error(`The first argument must be a non-empty string 'appName'`);
   if (getAppNames().indexOf(appName) !== -1)
     throw new Error(`There is already an app declared with name ${appName}`);
-  if (typeof customProps !== 'object')
+  if (typeof customProps !== 'object' || Array.isArray(customProps))
     throw new Error('customProps must be an object');
 
-  let loadImpl, activeWhen;
-  if (!arg2) {
-    if (!Loader) {
-      throw new Error(`You cannot declare a single-spa application without either providing a way to load the application or a Loader. See https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-api.md#declareApplication`);
-    }
-    loadImpl = () => Loader.import(appName);
-    activeWhen = arg1;
+  if (!applicationOrLoadingFn)
+    throw new Error(`The application or loading function is required`);
+
+  let loadImpl;
+  if (typeof applicationOrLoadingFn !== 'function') {
+    // applicationOrLoadingFn is an application
+    loadImpl = () => Promise.resolve(applicationOrLoadingFn);
   } else {
-    if (typeof arg1 !== 'function') {
-      loadImpl = () => Promise.resolve(arg1)
-    } else {
-      loadImpl = arg1;
-    }
-    activeWhen = arg2;
+    // applicationOrLoadingFn is a loadingFn
+    loadImpl = applicationOrLoadingFn;
   }
-  if (typeof activeWhen !== 'function')
+
+  if (typeof activityFn !== 'function')
     throw new Error(`The activeWhen argument must be a function`);
 
   apps.push({
     name: appName,
     loadImpl,
-    activeWhen,
+    activeWhen: activityFn,
     status: NOT_LOADED,
     parcels: {},
-    customProps: customProps
+    customProps
   });
 
   ensureJQuerySupport();

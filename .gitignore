@@ -5,8 +5,5 @@ npm-debug.log
 lib
 coverage/
 dist/
-*.build.js
-*.build.js.map
-*.build.spec.js
-*.build.spec.js.map
 .DS_Store
+yarn-error.log

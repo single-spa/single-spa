@@ -5,29 +5,40 @@ describe(`event listeners before single-spa is started :`, () => {
 
   it(`calls hashchange and popstate event listeners even when single-spa is not started`, done => {
     let hashchangeCalled = false, popstateCalled = false;
-    window.addEventListener("hashchange", () => {
+
+    function hashchange() {
       if (window.location.hash === '#/a-new-hash')
         hashchangeCalled = true;
 
       checkTestComplete();
-    });
-    window.addEventListener("popstate", () => {
+    };
+
+    function popstate() {
       if (window.location.hash === '#/a-new-hash')
         popstateCalled = true;
 
       checkTestComplete();
-    });
+    }
+
+    window.addEventListener('hashchange', hashchange)
+    window.addEventListener('popstate', popstate)
 
     window.location.hash = '#/a-new-hash';
 
     function checkTestComplete() {
       if (isIE()) {
         // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
-        done(); // popstate isn't ever going to be called
+        cleanupAndFinish()
       } else if (hashchangeCalled && popstateCalled) {
         // Wait for both hashchange and popstate events
-        done();
+        cleanupAndFinish()
       }
+    }
+
+    function cleanupAndFinish() {
+      window.removeEventListener('hashchange', hashchange)
+      window.removeEventListener('popstate', popstate)
+      done()
     }
   });
 });
@@ -42,14 +53,18 @@ describe(`event listeners after single-spa is started`, () => {
   it(`calls all of the enqueued hashchange listeners even when the first event given to singleSpa is a popstate event`, done => {
     let hashchangeCalled = false, popstateCalled = false;
 
-    window.addEventListener("hashchange", () => {
+    function hashchange() {
       hashchangeCalled = true;
       checkTestComplete();
-    });
-    window.addEventListener("popstate", () => {
+    };
+
+    function popstate() {
       popstateCalled = true;
       checkTestComplete();
-    });
+    };
+
+    window.addEventListener('hashchange', hashchange)
+    window.addEventListener('popstate', popstate)
 
     /* This will first trigger a PopStateEvent, and then a HashChangeEvent. The
      * hashchange event will be queued and not actually given to any event listeners
@@ -62,11 +77,17 @@ describe(`event listeners after single-spa is started`, () => {
     function checkTestComplete() {
       if (isIE()) {
         // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
-        done(); // popstate isn't ever going to be called
+        cleanupAndFinish(); // popstate isn't ever going to be called
       } else if (hashchangeCalled && popstateCalled) {
         // Wait for both hashchange and popstate events
-        done();
+        cleanupAndFinish();
       }
+    }
+
+    function cleanupAndFinish() {
+      window.removeEventListener('hashchange', hashchange)
+      window.removeEventListener('popstate', popstate)
+      done()
     }
   });
 

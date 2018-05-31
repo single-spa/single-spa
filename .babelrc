@@ -1,7 +1,3 @@
 {
-  presets: ['env'],
-  plugins: [
-    'transform-object-rest-spread',
-    ['transform-runtime', {polyfill: false, regenerator: true}],
-  ],
+  presets: ['@babel/preset-env', '@babel/preset-stage-3']
 }
