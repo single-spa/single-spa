@@ -8,7 +8,8 @@ to contribute to this list with your own project:
 
 - [single-spa-angular1](https://github.com/CanopyTax/single-spa-angular1)
 - [single-spa-react](https://github.com/CanopyTax/single-spa-react)
-- [single-spa-angular2](https://github.com/CanopyTax/single-spa-angular2)
+- [single-spa-angular-cli](https://github.com/PlaceMe-SAS/single-spa-angular-cli) (useful for angular-cli applications)
+- [single-spa-angular2](https://github.com/CanopyTax/single-spa-angular2) (works for angular 2, 3, 4, 5+, useful if you don't use angular-cli)
 - [single-spa-vue](https://github.com/CanopyTax/single-spa-vue)
 - [single-spa-ember](https://github.com/CanopyTax/single-spa-ember)
 - [single-spa-preact](https://github.com/CanopyTax/single-spa-preact)

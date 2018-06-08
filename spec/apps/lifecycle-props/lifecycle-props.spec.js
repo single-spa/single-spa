@@ -38,6 +38,13 @@ describe(`lifecycle-props app`, () => {
         expect(myApp.getUnmountProps().name).toEqual('lifecycle-props');
         expect(myApp.getUnloadProps().name).toEqual('lifecycle-props');
       })
+
+    function expectPropsToBeCorrect(props) {
+      expect(props.appName).toEqual('lifecycle-props')
+      expect(props.customProps).toEqual({})
+      expect(props.singleSpa).toBeDefined()
+      expect(props.singleSpa.getAppStatus).toBeDefined()
+    }
   });
 
   it(`is given the correct props for each lifecycle function if customProps are passed`, () => {

@@ -31,8 +31,51 @@ Notes:
 - If single-spa is [not started](/docs/single-spa-api.md#start), applications will be loaded,
   but will not be bootstrapped, mounted or unmounted.
 
-### Lifecycle middleware
-Middleware that helps implement lifecycle functions for specific frameworks, libraries, and applications
+## Lifecyle props
+Lifecycle functions are called with a `props` argument, which is an object with some guaranteed information and also some custom information.
+
+Example:
+```js
+function bootstrap(props) {
+  console.log(props) // will log appName, the singleSpa instance, and custom props
+  return Promise.resolve()
+}
+```
+
+#### Built-in props
+Each lifecycle function is guranteed to be called with the following props:
+- `appName`: The string name that was registered to single-spa.
+- `singleSpa`: A reference to the singleSpa instance, itself. This is intended to allow applications and helper libraries to call singleSpa
+  APIs without having to import it. This is useful in situations where there are multiple webpack configs that are not set up to ensure
+  that only one instance of singleSpa is loaded.
+
+#### Custom props
+In addition to the built-in props that are provided by single-spa, you may optionally specify custom props to be passed to an application.
+This is done by passing a fourth argument to registerApplication, which will be the customProps passed to each lifecycle method.
+
+Example:
+```js
+// root-application.js
+singleSpa.registerApplication('app1', () =>  {}, () => {}, {authToken: "d83jD63UdZ6RS6f70D0"});
+```
+
+```js
+// app1.js
+export function mount(props) {
+  console.log(props.customProps.authToken); // do something with the common authToken in app1
+  return reactLifecycles.mount(props);
+}
+```
+
+The usecases may include:
+- share common access Tokens with all child apps
+- pass down some initialization information like the rendering target
+- pass a reference to a common event bus so each app may talk to each other
+
+Note that when no customProps are provided during registration, `props.customProps` defaults to an empty object.
+
+### Lifecycle helpers
+Helper libraries that helps implement lifecycle functions for specific frameworks, libraries, and applications
 is available for many popular technologies. See [the ecosystem docs](/docs/single-spa-ecosystem.md) for details.
 
 ### Load

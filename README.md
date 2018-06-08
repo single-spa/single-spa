@@ -5,7 +5,7 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/joeldenning.svg)](https://saucelabs.com/u/joeldenning)
 
-[Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/enQtMjk3OTcwNTM2OTAyLTM5ZmZkZWJjYjNiMWNmZWU0M2NjOWRmYzNiNDQ2OWQxNjUwZGY3N2UyNTU5NWYzMTkxMzIzNmQwOWZiZDBiZTQ)
+[Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/enQtMzIwMTcxNTU3ODQyLTM1Y2U1OWMzNTNjOWYyZDBlMDJhN2VkYzk3MDI2NzQ2Nzg0MzMzNjVhNWE2YjVhMTcxNjFkOWYzMjllMmUxMjk)
 
 ## A javascript metaframework
 
@@ -34,7 +34,7 @@ Apps built with single-spa are made up of the following pieces:
     3. A function that determines when the application is active/dormant.
 
 ## How hard will it be to use single-spa?
-single-spa works with es5, es6+, typescript, webpack, systemjs, gulp, grunt, bower, ember-cli, or really anything build system you can think of. You can npm install it, jspm install it, or even just use a `<script>` tag if you prefer. If you're not starting your application from scratch, you'll have to [migrate your SPA](/docs/migrating-existing-spas.md) to become a single-spa application.
+single-spa works with es5, es6+, typescript, webpack, systemjs, gulp, grunt, bower, ember-cli, or really any build system you can think of. You can npm install it, jspm install it, or even just use a `<script>` tag if you prefer. If you're not starting your application from scratch, you'll have to [migrate your SPA](/docs/migrating-existing-spas.md) to become a single-spa application.
 
 single-spa works in Chrome, Firefox, Safari, IE11, and Edge.
 
