@@ -13,6 +13,7 @@ Each function is considered a lifecycle method, `bootstrap`, `mount`, `unmout`, 
 When creating a parcel it's strongly recommended that you use the [lifecycle helper methods](/docs/single-spa-ecosystem.md#help-for-frameworks).
 An example of a parcel written in React would look like this:
 ```js
+// myParcel.js
 import React from 'react'
 import ReactDom from 'react-dom'
 import singleSpaReact from 'single-spa-react'
@@ -24,6 +25,24 @@ export const MyParcel = singleSpaReact({
 })
 
 // in this case singleSpaReact is taking our inputs and generating an object with the required lifecycles.
+```
+Then to use the parcel you just created all you need to do is use the `Parcel` component provided in single-spa-react
+```js
+// mycomponent.js
+import { Parcel } from 'single-spa-react'
+import MyParcel from './myparcel.js'
+
+export myComponent extends React.Component {
+    render () {
+      return (
+        <Parcel
+          config={MyParcel}
+          { /* and any extra props you want here */ }
+        />
+
+      )
+    }
+}
 ```
 
 ## Parcel Lifecycles
