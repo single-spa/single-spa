@@ -26,7 +26,7 @@ export const MyParcel = singleSpaReact({
 
 // in this case singleSpaReact is taking our inputs and generating an object with the required lifecycles.
 ```
-Then to use the parcel you just created all you need to do is use the `Parcel` component provided in single-spa-react
+Then to use the parcel you just created all you need to do is use the `Parcel` component provided in [single-spa-react](https://github.com/CanopyTax/single-spa-react#parcels)
 ```js
 // mycomponent.js
 import { Parcel } from 'single-spa-react'
@@ -37,13 +37,14 @@ export myComponent extends React.Component {
       return (
         <Parcel
           config={MyParcel}
+          { /* optional props */ }
           { /* and any extra props you want here */ }
         />
-
       )
     }
 }
 ```
+Note in some cases the optional props are required [additional examples](https://github.com/CanopyTax/single-spa-react#examples)
 
 ## Parcel Lifecycles
 Start with [applications](/docs/applications.md#registered-application-lifecycle) to learn more about the functionality of single-spa's lifecycle methods.
