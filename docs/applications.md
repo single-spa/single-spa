@@ -37,14 +37,14 @@ Lifecycle functions are called with a `props` argument, which is an object with 
 Example:
 ```js
 function bootstrap(props) {
-  console.log(props) // will log appName, the singleSpa instance, and custom props
+  console.log(props) // will log name, the singleSpa instance, and custom props
   return Promise.resolve()
 }
 ```
 
 #### Built-in props
 Each lifecycle function is guranteed to be called with the following props:
-- `appName`: The string name that was registered to single-spa.
+- `name`: The string name that was registered to single-spa.
 - `singleSpa`: A reference to the singleSpa instance, itself. This is intended to allow applications and helper libraries to call singleSpa
   APIs without having to import it. This is useful in situations where there are multiple webpack configs that are not set up to ensure
   that only one instance of singleSpa is loaded.
