@@ -12,14 +12,14 @@ applications `mountParcel` will be automatically unmounted when the application 
 The [mountRootParcel](/docs/single-spa-api.md#mountrootparcel) method will mount the parcel but `unmount` must be called manually.
 
 ## Parcel Object
-The parcel object is the external representation of a single-spa parcel. It contains the following functions and methods
-- [mount]()
-- [unmount]()
-- [getStatus]()
-- [loadPromise]()
-- [bootstrapPromise]()
-- [mountPromise]()
-- [unmountPromise]()
+The parcel object is the external representation of a single-spa parcel. It contains the following functions and methods:
+- [mount]('/docs/parcel-api.md#mount')
+- [unmount]('/docs/parcel-api.md#unmount')
+- [getStatus]('/docs/parcel-api.md#getstatus')
+- [loadPromise]('/docs/parcel-api.md#loadpromise')
+- [bootstrapPromise]('/docs/parcel-api.md#bootstrappromise')
+- [mountPromise]('/docs/parcel-api.md#mountpromise')
+- [unmountPromise]('/docs/parcel-api.md#unmountpromise')
 
 ### unmount
 `parcel.unmount()` returns a promise that resolves once the parcel is successfully unmounted. The promise may throw an error which needs to be handled.
