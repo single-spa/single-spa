@@ -7,6 +7,42 @@ any language as long as it exports the correct lifecycle events. In a single-spa
 many registered applications and potentially many parcels. Typically we recommend you mount a parcel within 
 the context of an application because the parcel will be unmounted with the application.
 
+## Quick Example
+```js
+// The parcel implementation
+const parcelConfig = {
+  bootstrap() {
+    // one time initialization
+    return Promise.resolve()
+  },
+  mount() {
+    // use a framework to create dom nodes and mount the parcel
+    return Promise.resolve()
+  },
+  unmount() {
+    // use a framework to unmount dom nodes and perform other cleanup
+    return Promise.resolve()
+  }
+}
+
+// How to mount the parcel
+const domElement = document.getElementById('place-in-dom-to-mount-parcel')
+const parcelProps = {domElement, customProp1: 'foo'}
+const parcel = singleSpa.mountRootParcel(parcelConfig, parcelProps)
+
+// The parcel is being mounted. We can wait for it to finish with the mountPromise.
+parcel.mountPromise.then(() => {
+    console.log('finished mounting parcel!')
+    // If we want to re-render the parcel, we can call the update lifecycle method, which returns a promise
+    parcelProps.customProp1 = 'bar'
+    return parcel.update(parcelProps)
+})
+.then(() => {
+  // Call the unmount lifecycle when we need the parcel to unmount. This function also returns a promise
+  return parcel.unmount()
+})
+```
+
 ## Parcel configuration
 A parcel is just an object with 3 or 4 functions on it. When mounting a parcel, you can provided either the object itself or a loading function that asynchronously downloads the parcel object.
 Each function on a parcel object is a lifecycle method, which is a function that returns a promise. Parcels have three required lifecycle methods (bootstrap, mount, and unmount) and one optional lifecycle method (update).
