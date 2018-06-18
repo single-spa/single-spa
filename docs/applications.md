@@ -23,7 +23,7 @@ A lifecycle function is a function or array of functions that single-spa will ca
 Single-spa calls these by finding exported functions from the registered application's main file.
 
 Notes:
-- Lifecycle functions are called with a `props` argument, which is an object with a `name` string and a `customProps` object wich contains any property you want to pass from your root-application to your child app. See [Passing custom properties to child apps](/docs/applications.md#passing-custom-properties-to-child-apps)
+- Lifecycle functions are called with a `props` argument, which is an object with a `name` string, a `mountParcel` [function]('/docs/parcel-api#mountParcel') and all other properties you want to pass from your root-application to your child app. See [Passing custom properties to child apps](/docs/applications.md#passing-custom-properties-to-child-apps)
 - Implementing `bootstrap`, `mount`, and `unmount` is required. But implementing `unload` is optional.
 - Each lifecycle function must either return a `Promise` or be an `async function`.
 - If an array of functions is exported (instead of just one function), the functions will be called
@@ -126,7 +126,7 @@ export function unload(props) {
 ```
 
 ## Passing custom properties to child apps
-Each lifecycle method has a `props` property which contains an object with a `name` string and a `customProps` object wich holds any information you want to pass to your child app.
+Each lifecycle method has a `props` property which contains an object with a `name` string, a `mountParcel` [function]('/docs/parcel-api#mountParcel'), and all additional props pass to your child app.
 
 The usecases may include:
 - share common access Tokens with all child apps
@@ -142,7 +142,7 @@ singleSpa.registerApplication('app1', () =>  {}, () => {}, {authToken: "d83jD63U
 ```js
 // app1.js
 export function mount(props) {
-  console.log(props.customProps.authToken); // do something with the common authToken in app1
+  console.log(props.authToken); // do something with the common authToken in app1
   return reactLifecycles.mount(props);
 }
 ```
