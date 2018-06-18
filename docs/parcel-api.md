@@ -2,7 +2,7 @@
 Most parcel methods will be called on the parcel itself, with the excpetion being around mounting.
 
 ## mounting
-Both mount methods return a [parcel object]('/docs/parcel-api.md#parcelobject'). The parcel object contains all additional exposed methods.
+Both mount methods return a [parcel object](/docs/parcel-api.md#parcelobject). The parcel object contains all additional exposed methods.
 ### mountParcel
 `application.mountParcel(parcelConfig)`. Each application is provided a mountParcel function.
 The main advantage to using an applications `mountParcel` function is that parcels mounted via an 
@@ -13,13 +13,13 @@ The [mountRootParcel](/docs/single-spa-api.md#mountrootparcel) method will mount
 
 ## Parcel Object
 The parcel object is the external representation of a single-spa parcel. It contains the following functions and methods:
-- [mount]('/docs/parcel-api.md#mount')
-- [unmount]('/docs/parcel-api.md#unmount')
-- [getStatus]('/docs/parcel-api.md#getstatus')
-- [loadPromise]('/docs/parcel-api.md#loadpromise')
-- [bootstrapPromise]('/docs/parcel-api.md#bootstrappromise')
-- [mountPromise]('/docs/parcel-api.md#mountpromise')
-- [unmountPromise]('/docs/parcel-api.md#unmountpromise')
+- [mount](/docs/parcel-api.md#mount)
+- [unmount](/docs/parcel-api.md#unmount)
+- [getStatus](/docs/parcel-api.md#getstatus)
+- [loadPromise](/docs/parcel-api.md#loadpromise)
+- [bootstrapPromise](/docs/parcel-api.md#bootstrappromise)
+- [mountPromise](/docs/parcel-api.md#mountpromise)
+- [unmountPromise](/docs/parcel-api.md#unmountpromise)
 
 ### unmount
 `parcel.unmount()` returns a promise that resolves once the parcel is successfully unmounted. The promise may throw an error which needs to be handled.
