@@ -108,6 +108,9 @@ The `fn` must be a function. It will be called with one argument, `err`, which i
 ## removeErrorHandler
 `removeErrorHandler(fn)` removes an error handler. Returns true if the error handler was removed, and false if it was not.
 
+## mountRootParcel
+`mountRootParcel(parcelConfig)` will create and mount a parcel. The parcel will not be automatically unmounted and unmounting will need to be triggered manually.
+
 ## before routing event
 single-spa fires an event `single-spa:before-routing-event` on the window every time before a routing event occurs.
 This event will get fired after each hashchange, popstate, or triggerAppChange, even if no changes

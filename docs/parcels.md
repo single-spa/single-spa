@@ -8,9 +8,9 @@ many registered applications and potentially many parcels. Typically we recommen
 the context of an application because the parcel will be unmounted with the application.
 
 ## Parcel configuration
-A parcel is just an object with 3 or 4 functions on it, it can be loaded syncronously or asyncronously.
-Each function is considered a lifecycle method, `bootstrap`, `mount`, `unmout`, `update` and must return a promise.
-When creating a parcel it's strongly recommended that you use the [lifecycle helper methods](/docs/single-spa-ecosystem.md#help-for-frameworks).
+A parcel is just an object with 3 or 4 functions on it. When mounting a parcel, you can provided either the object itself or a loading function that asynchronously downloads the parcel object.
+Each function on a parcel object is a lifecycle method, which is a function that returns a promise. Parcels have three required lifecycle methods (bootstrap, mount, and unmount) and one optional lifecycle method (update).
+When implementing a parcel, it's strongly recommended that you use the [lifecycle helper methods](/docs/single-spa-ecosystem.md#help-for-frameworks).
 An example of a parcel written in React would look like this:
 ```js
 // myParcel.js
@@ -27,12 +27,12 @@ export const MyParcel = singleSpaReact({
 // in this case singleSpaReact is taking our inputs and generating an object with the required lifecycles.
 ```
 Then to use the parcel you just created all you need to do is use the `Parcel` component provided in [single-spa-react](https://github.com/CanopyTax/single-spa-react#parcels)
-```js
+```jsx
 // mycomponent.js
 import { Parcel } from 'single-spa-react'
 import MyParcel from './myparcel.js'
 
-export myComponent extends React.Component {
+export class myComponent extends React.Component {
     render () {
       return (
         <Parcel
@@ -98,7 +98,8 @@ function unmount(props) {
 ```
 
 ### Update (optional)
-This lifecycle function will be called whenever the parcel is mounted, and it needs to be updated.
+The update lifecycle function will be called whenever the user of the parcel calls `parcel.update()`.
+Single this lifecycle is optional, the user of a parcel needs to check whether the parcel has implemented the update lifecycle before attempting to make the call.
 
 ## Example use cases
 
@@ -138,12 +139,12 @@ componentDidMount() {
 
 There are a lot of different approaches to share components across libraries. One we use extensively 
 for leaf nodes (buttons, etc) is web components. However once you move beyond a leaf node it's much more difficult 
-to share complex components across different frameworks. Single Spa parcels takes the same concepts of multiple 
+to share complex components across different frameworks. Single-spa parcels takes the same concepts of multiple 
 applications written in multiple frameworks and applies that to components.
 
 ### Imperative Applications
 
-Sometimes you need a single spa application to be mounted in a very specific situation. That situation 
+Sometimes you need a single-spa application to be mounted in a very specific situation. That situation 
 could be in an area where another application is active 99% of the time by itself. You could use the [application activity Function](/docs/single-spa-config.md#activity-function)
 and `localStorage` or `history` to manage that or you could mount your application as a parcel.
 
