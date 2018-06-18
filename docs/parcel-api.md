@@ -2,7 +2,7 @@
 Most parcel methods will be called on the parcel itself, with the excpetion being around mounting.
 
 ## mounting
-Both mount methods return a [parcel object](/docs/parcel-api.md#parcelobject). The parcel object contains all additional exposed methods.
+Both mount methods return a [parcel object](/docs/parcel-api.md#parcel-object). The parcel object contains all additional exposed methods.
 ### mountParcel
 `application.mountParcel(parcelConfig)`. Each application is provided a mountParcel function.
 The main advantage to using an applications `mountParcel` function is that parcels mounted via an 
