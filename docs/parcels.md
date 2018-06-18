@@ -134,17 +134,3 @@ componentDidMount() {
 ...
 
 ```
-
-### Cross Library Components
-
-There are a lot of different approaches to share components across libraries. One we use extensively 
-for leaf nodes (buttons, etc) is web components. However once you move beyond a leaf node it's much more difficult 
-to share complex components across different frameworks. Single-spa parcels takes the same concepts of multiple 
-applications written in multiple frameworks and applies that to components.
-
-### Imperative Applications
-
-Sometimes you need a single-spa application to be mounted in a very specific situation. That situation 
-could be in an area where another application is active 99% of the time by itself. You could use the [application activity Function](/docs/single-spa-config.md#activity-function)
-and `localStorage` or `history` to manage that or you could mount your application as a parcel.
-
