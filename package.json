@@ -1,6 +1,6 @@
 {
   "name": "single-spa",
-  "version": "4.0.0-beta.6",
+  "version": "4.0.0",
   "description": "Multiple applications, one page",
   "main": "lib/single-spa.js",
   "scripts": {
