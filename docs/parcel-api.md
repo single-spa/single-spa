@@ -1,10 +1,22 @@
 # Parcel API
-Most parcel methods will be called on the parcel itself, with the excpetion being around mounting.
+Most parcel methods will be called on the parcel itself, with the exception being around mounting.
 
 ## mounting
-Both mount methods return a [parcel object](/docs/parcel-api.md#parcel-object). The parcel object contains all additional exposed methods.
+Both mount methods take a [parcelConfig](/docs/parcels.md#parcel-configuration) and [additional props](/docs/parcel-api.md#parcel-props).
+They both return a [parcel object](/docs/parcel-api.md#parcel-object). The parcel object contains all additional exposed methods.
+
+### Parcel Props
+When mounting a parcel the second argument is props, a javascript object of properties to be passed to the parcel. This object must have a domElement prop, which is the dom node that the parcel will mount into.
+```js
+const parcelProps = {
+  customerId: 7,
+  numberOfTasks: 42,
+  domElement: document.createElement('div')
+}
+```
+
 ### mountParcel
-`application.mountParcel(parcelConfig)`. Each application is provided a mountParcel function.
+`applicationProps.mountParcel(parcelConfig, parcelProps)`. Each application is provided a mountParcel function.
 The main advantage to using an applications `mountParcel` function is that parcels mounted via an 
 applications `mountParcel` will be automatically unmounted when the application is unmounted.
 
@@ -12,7 +24,7 @@ applications `mountParcel` will be automatically unmounted when the application 
 The [mountRootParcel](/docs/single-spa-api.md#mountrootparcel) method will mount the parcel but `unmount` must be called manually.
 
 ## Parcel Object
-The parcel object is the external representation of a single-spa parcel. It contains the following functions and methods:
+The parcel object contains the following functions and methods:
 - [mount](/docs/parcel-api.md#mount)
 - [unmount](/docs/parcel-api.md#unmount)
 - [getStatus](/docs/parcel-api.md#getstatus)

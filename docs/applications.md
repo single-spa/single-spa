@@ -23,7 +23,7 @@ A lifecycle function is a function or array of functions that single-spa will ca
 Single-spa calls these by finding exported functions from the registered application's main file.
 
 Notes:
-- Lifecycle functions are called with a `props` argument, which is an object with a `name` string, a `mountParcel` [function]('/docs/parcel-api#mountParcel') and all other properties you want to pass from your root-application to your child app. See [Passing custom properties to child apps](/docs/applications.md#passing-custom-properties-to-child-apps)
+- Lifecycle functions are called with a `props` argument, which is an object with a `name` string, a `mountParcel` [function]('/docs/parcel-api#mountParcel') and all other properties you want to pass from your root-application to your child app. See [Passing custom properties to applications](/docs/applications.md#passing-custom-properties-to-applications)
 - Implementing `bootstrap`, `mount`, and `unmount` is required. But implementing `unload` is optional.
 - Each lifecycle function must either return a `Promise` or be an `async function`.
 - If an array of functions is exported (instead of just one function), the functions will be called
@@ -125,11 +125,11 @@ export function unload(props) {
 }
 ```
 
-## Passing custom properties to child apps
-Each lifecycle method has a `props` property which contains an object with a `name` string, a `mountParcel` [function]('/docs/parcel-api#mountParcel'), and all additional props pass to your child app.
+## Passing custom properties to applications
+Each lifecycle method has a `props` property which contains an object with a `name` string, a `mountParcel` [function]('/docs/parcel-api#mountParcel'), and all custom props that were passed to the application.
 
 The usecases may include:
-- share common access Tokens with all child apps
+- share common access Tokens with all applications
 - pass down some initialization information like the rendering target
 - pass a reference to a common event bus so each app may talk to each other
 

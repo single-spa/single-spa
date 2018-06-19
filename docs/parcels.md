@@ -80,7 +80,7 @@ export class myComponent extends React.Component {
     }
 }
 ```
-Note in some cases the optional props are required [additional examples](https://github.com/CanopyTax/single-spa-react#examples)
+Note that in some cases the optional props are required [(see additional examples)](https://github.com/CanopyTax/single-spa-react#examples).
 
 ## Parcel Lifecycles
 Start with [applications](/docs/applications.md#registered-application-lifecycle) to learn more about the functionality of single-spa's lifecycle methods.
