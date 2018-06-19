@@ -61,7 +61,7 @@ export function setUnloadMaxTime(time, dieOnTimeout = false) {
   };
 }
 
-export function reasonableTime(promise, description, timeoutConfig, app) {
+export function reasonableTime(promise, description, timeoutConfig) {
   const warningPeriod = 1000;
 
   return new Promise((resolve, reject) => {
@@ -108,5 +108,5 @@ export function ensureValidAppTimeouts(timeouts = {}) {
   return {
     ...globalTimeoutConfig,
     ...timeouts,
-  };
+  }
 }

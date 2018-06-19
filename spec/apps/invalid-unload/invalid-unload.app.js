@@ -7,14 +7,17 @@ export function reset() {
   numUnmountCalls = 0;
 }
 
-export async function bootstrap() {
+export function bootstrap() {
   numBootstrapCalls++;
+  return Promise.resolve()
 }
-export async function mount() {
+export function mount() {
   numMountCalls++;
+  return Promise.resolve()
 }
-export async function unmount() {
+export function unmount() {
   numUnmountCalls++;
+  return Promise.resolve()
 }
 export function unload() {
   numUnloadCalls++;

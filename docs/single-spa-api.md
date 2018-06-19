@@ -108,6 +108,11 @@ The `fn` must be a function. It will be called with one argument, `err`, which i
 ## removeErrorHandler
 `removeErrorHandler(fn)` removes an error handler. Returns true if the error handler was removed, and false if it was not.
 
+## mountRootParcel
+`mountRootParcel(parcelConfig, parcelProps)` will create and mount a parcel. 
+This function takes a [parcelConfig](/docs/parcels.md#parcel-configuration) and [parcelProps](/docs/parcel-api.md#parcel-props).
+The mounted parcel will not be automatically unmounted and unmounting will need to be triggered manually.
+
 ## before routing event
 single-spa fires an event `single-spa:before-routing-event` on the window every time before a routing event occurs.
 This event will get fired after each hashchange, popstate, or triggerAppChange, even if no changes
@@ -204,10 +209,3 @@ nothing more than some warnings in the console up until `millis` is reached.
 If `dieOnTimeout` is true, registered applications that are slowing things down will be siloed into a SKIP_BECAUSE_BROKEN
 status where they will never again be given the chance to break everything.
 
-## setLoader (deprecated)
-`setLoader(Loader)` sets the javascript [loader](https://whatwg.github.io/loader/) that will be used by single-spa.
-A loader must implement `Loader.import(...).then(...).catch(...)`, and the most commonly used loader is
-[SystemJS](https://github.com/systemjs/systemjs). This API should be called **before** any `registerApplication`
-calls are made. Once called, you may omit the [loading function](/docs/single-spa-config.md#loading-function) argument when
-calling `registerApplication` and single-spa will assume that a registered application may be loaded with
-`Loader.import(appName).then(app => ...)`

@@ -9,6 +9,7 @@ export const BOOTSTRAPPING = 'BOOTSTRAPPING';
 export const NOT_MOUNTED = 'NOT_MOUNTED';
 export const MOUNTING = 'MOUNTING';
 export const MOUNTED = 'MOUNTED';
+export const UPDATING = 'UPDATING';
 export const UNMOUNTING = 'UNMOUNTING';
 export const UNLOADING = 'UNLOADING';
 export const SKIP_BECAUSE_BROKEN = 'SKIP_BECAUSE_BROKEN';
@@ -57,12 +58,4 @@ export function notSkipped(item) {
 
 export function toName(app) {
   return app.name;
-}
-
-export function getAppProps(app) {
-  return {
-    appName: app.name,
-    customProps: app.customProps,
-    singleSpa,
-  };
 }

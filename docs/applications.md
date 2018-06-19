@@ -23,6 +23,7 @@ A lifecycle function is a function or array of functions that single-spa will ca
 Single-spa calls these by finding exported functions from the registered application's main file.
 
 Notes:
+- Lifecycle functions are called with a `props` argument, which is an object with a `name` string, a `mountParcel` [function]('/docs/parcel-api#mountParcel') and all other properties you want to pass from your root-application to your child app. See [Passing custom properties to applications](/docs/applications.md#passing-custom-properties-to-applications)
 - Implementing `bootstrap`, `mount`, and `unmount` is required. But implementing `unload` is optional.
 - Each lifecycle function must either return a `Promise` or be an `async function`.
 - If an array of functions is exported (instead of just one function), the functions will be called
@@ -164,6 +165,28 @@ export function unload(props) {
 			// This is where you would normally do whatever it is you need to hot reload the code.
 			console.log('unloaded!');
 		});
+}
+```
+
+## Passing custom properties to applications
+Each lifecycle method has a `props` property which contains an object with a `name` string, a `mountParcel` [function]('/docs/parcel-api#mountParcel'), and all custom props that were passed to the application.
+
+The usecases may include:
+- share common access Tokens with all applications
+- pass down some initialization information like the rendering target
+- pass a reference to a common event bus so each app may talk to each other
+
+Here is a simple example on how to pass a authToken to a child app when the app is beeing mounted:
+```js
+// root-application.js
+singleSpa.registerApplication('app1', () =>  {}, () => {}, {authToken: "d83jD63UdZ6RS6f70D0"});
+```
+
+```js
+// app1.js
+export function mount(props) {
+  console.log(props.authToken); // do something with the common authToken in app1
+  return reactLifecycles.mount(props);
 }
 ```
 
