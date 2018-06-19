@@ -1,5 +1,7 @@
 # single-spa
 
+<img src="https://single-spa.js.org/img/logo-white-bgblue.svg" width="50" height="50">
+
 [![npm version](https://img.shields.io/npm/v/single-spa.svg?style=flat-square)](https://www.npmjs.org/package/single-spa)
 [![Build Status](https://img.shields.io/travis/CanopyTax/single-spa/master.svg?style=flat-square)](https://travis-ci.org/CanopyTax/single-spa)
 
