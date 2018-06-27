@@ -15,6 +15,24 @@ Build micro frontends that coexist and can each be written with their own framew
 - Write code using a new framework, without rewriting your existing app
 - Lazy load code for improved initial load time.
 
+## Documentation
+
+You can find the single-spa documentation [on the website](https://single-spa.js.org/).  
+
+Check out the [Getting Started](https://single-spa.js.org/docs/getting-started-overview.html) page for a quick overview.
+
+The documentation is divided into several sections:
+
+* [Getting Started](https://single-spa.js.org/docs/getting-started-overview.html)
+* [Single-spa Applications](https://single-spa.js.org/docs/building-applications.html)
+* [Single-spa Parcels](https://single-spa.js.org/docs/parcels-overview.html)
+* [Examples](https://single-spa.js.org/docs/examples.html)
+* [Ecosystem](https://single-spa.js.org/docs/ecosystem.html)
+* [Where to Get Support](https://single-spa.js.org/en/help.html)
+* [Contributing Guide](https://single-spa.js.org/en/contribute.html)
+
+You can improve it by sending pull requests to [this repository](https://github.com/CanopyTax/single-spa).
+
 ## Demo and examples
 A [live demo](https://single-spa.surge.sh) is available and the source code for that demo is available in the [single-spa-examples](https://github.com/CanopyTax/single-spa-examples) repository.
 
