@@ -29,9 +29,9 @@ The documentation is divided into several sections:
 * [Examples](https://single-spa.js.org/docs/examples.html)
 * [Ecosystem](https://single-spa.js.org/docs/ecosystem.html)
 * [Where to Get Support](https://single-spa.js.org/en/help.html)
-* [Contributing Guide](https://single-spa.js.org/en/contribute.html)
+* [Contributing Guide](https://single-spa.js.org/docs/contributing-overview.html)
 
-You can improve it by sending pull requests to [this repository](https://github.com/CanopyTax/single-spa).
+You can improve it by sending pull requests to [this repository](https://github.com/CanopyTax/single-spa.js.org).
 
 ## Demo and examples
 A [live demo](https://single-spa.surge.sh) is available and the source code for that demo is available in the [single-spa-examples](https://github.com/CanopyTax/single-spa-examples) repository.
@@ -58,11 +58,6 @@ single-spa works in Chrome, Firefox, Safari, IE11, and Edge.
 
 ## Isn't single-spa sort of a redundant name?
 Yep
-
-## Documentation
-See the [docs](/docs). If you're looking for help with specific frameworks or build systems (React, Angular, Webpack, Ember, etc), check out the [ecosystem wiki](https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-ecosystem.md)
-
-Also, check out [this step by step guide](https://medium.com/@joeldenning/a-step-by-step-guide-to-single-spa-abbbcb1bedc6).
 
 ## Simple Usage
 For a full example, check out [this simple webpack example](https://github.com/joeldenning/simple-single-spa-webpack-example).
