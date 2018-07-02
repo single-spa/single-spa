@@ -132,3 +132,15 @@ Please submit a P.R. to this section if you start using single-spa.
 - [CanopyTax](https://www.canopytax.com)
 - [Dealer Socket](https://dealersocket.com/)
 - [Beamery](https://beamery.com/)
+
+## Contributing
+
+The main purpose of this repository is to continue to evolve single-spa, making it better and easier to use. Development of single-spa, and the [single-spa ecosystem](https://single-spa.js.org/docs/ecosystem.html) happens in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. Read below to learn how you can take part in improving single-spa.
+
+### [Code of Conduct](https://single-spa.js.org/docs/code-of-conduct.html)
+
+Single-spa has adopted a Code of Conduct that we expect project participants to adhere to. Please read [the full text](https://single-spa.js.org/docs/code-of-conduct.html) so that you can understand what actions will and will not be tolerated.
+
+### [Contributing Guide](https://reactjs.org/contributing/how-to-contribute.html)
+
+Read our [contributing guide](https://reactjs.org/contributing/how-to-contribute.html) to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to single-spa.
