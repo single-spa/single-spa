@@ -1,3 +1,4 @@
+import * as singleSpa from 'src/single-spa.js'
 import { mountParcel } from 'src/parcels/mount-parcel.js';
 
 export function getProps(appOrParcel) {
@@ -5,6 +6,7 @@ export function getProps(appOrParcel) {
     ...appOrParcel.customProps,
     name: appOrParcel.name,
     mountParcel: mountParcel.bind(appOrParcel),
+    singleSpa
   };
 
   if (appOrParcel.unmountThisParcel) {

@@ -33,6 +33,11 @@ describe(`lifecycle-props app`, () => {
         return singleSpa.unloadApplication('lifecycle-props');
       })
       .then(() => {
+        expect(myApp.getMountProps().singleSpa).toBeDefined();
+        expect(myApp.getBootstrapProps().singleSpa).toBeDefined();
+        expect(myApp.getUnmountProps().singleSpa).toBeDefined();
+        expect(myApp.getUnloadProps().singleSpa).toBeDefined();
+
         expect(myApp.getBootstrapProps().name).toEqual('lifecycle-props');
         expect(myApp.getMountProps().name).toEqual('lifecycle-props');
         expect(myApp.getUnmountProps().name).toEqual('lifecycle-props');
