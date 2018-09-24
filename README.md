@@ -51,6 +51,6 @@ The main purpose of this repository is to continue to evolve single-spa, making 
 
 Single-spa has adopted a Code of Conduct that we expect project participants to adhere to. Please read [the full text](https://single-spa.js.org/docs/code-of-conduct.html) so that you can understand what actions will and will not be tolerated.
 
-### [Contributing Guide](https://reactjs.org/contributing/how-to-contribute.html)
+### [Contributing Guide](https://single-spa.js.org/docs/contributing-overview.html)
 
-Read our [contributing guide](https://reactjs.org/contributing/how-to-contribute.html) to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to single-spa.
+Read our [contributing guide](https://single-spa.js.org/docs/contributing-overview.html) to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to single-spa.
