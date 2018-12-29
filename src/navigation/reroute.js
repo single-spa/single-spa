@@ -51,13 +51,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 
   function performAppChanges() {
     return Promise.resolve().then(() => {
-      let myCE
-      if (eventArguments && eventArguments[0]) {
-        myCE = {
-          detail: eventArguments[0]
-        }
-      }
-      window.dispatchEvent(new CustomEvent("single-spa:before-routing-event", myCE));
+      window.dispatchEvent(new CustomEvent("single-spa:before-routing-event", getCustomEventDetail()));
       const unloadPromises = getAppsToUnload().map(toUnloadPromise);
 
       const unmountUnloadPromises = getAppsToUnmount()
@@ -136,8 +130,8 @@ export function reroute(pendingPromises = [], eventArguments) {
 
     try {
       const appChangeEventName = wasNoOp ? "single-spa:no-app-change": "single-spa:app-change";
-      window.dispatchEvent(new CustomEvent(appChangeEventName));
-      window.dispatchEvent(new CustomEvent("single-spa:routing-event"));
+      window.dispatchEvent(new CustomEvent(appChangeEventName, getCustomEventDetail()));
+      window.dispatchEvent(new CustomEvent("single-spa:routing-event", getCustomEventDetail()));
     } catch (err) {
       /* We use a setTimeout because if someone else's event handler throws an error, single-spa
        * needs to carry on. If a listener to the event throws an error, it's their own fault, not
@@ -179,5 +173,15 @@ export function reroute(pendingPromises = [], eventArguments) {
     });
 
     callCapturedEventListeners(eventArguments);
+  }
+
+  function getCustomEventDetail() {
+    const result = {detail: {}}
+
+    if (eventArguments && eventArguments[0]) {
+      result.detail.originalEvent = eventArguments[0]
+    }
+
+    return result
   }
 }

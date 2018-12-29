@@ -1,3 +1,8 @@
 {
-  presets: ['@babel/preset-env', '@babel/preset-stage-3']
+  presets: [
+    '@babel/preset-env',
+  ],
+  plugins: [
+    '@babel/plugin-syntax-dynamic-import',
+  ],
 }
