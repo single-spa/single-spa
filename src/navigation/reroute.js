@@ -5,7 +5,6 @@ import { toBootstrapPromise } from 'src/lifecycles/bootstrap.js';
 import { toMountPromise } from 'src/lifecycles/mount.js';
 import { toUnmountPromise } from 'src/lifecycles/unmount.js';
 import { getMountedApps, getAppsToLoad, getAppsToUnmount, getAppsToMount } from 'src/applications/apps.js';
-import { notSkipped } from 'src/applications/app.helpers.js';
 import { callCapturedEventListeners } from './navigation-events.js';
 import { getAppsToUnload, toUnloadPromise } from 'src/lifecycles/unload.js';
 
