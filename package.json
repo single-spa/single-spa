@@ -3,6 +3,7 @@
   "version": "4.0.1",
   "description": "Multiple applications, one page",
   "main": "lib/single-spa.js",
+  "module: "src/single-spa.js",
   "scripts": {
     "build": "webpack -p",
     "build:dev": "webpack --config webpack.config.dev.js",
