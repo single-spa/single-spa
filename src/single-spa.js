@@ -23,8 +23,6 @@ export {
 import * as devtools from "./devtools/devtools"
 if(window && window.__SINGLE_SPA_DEVTOOLS_ACTIVE__) {
   Object.defineProperty(window, "__SINGLE_SPA_DEVTOOLS__", {
-    value: {
-      ...devtools,
-    }
+    value: devtools,
   })
 }
