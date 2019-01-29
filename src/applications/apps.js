@@ -15,6 +15,11 @@ export function getAppNames() {
   return apps.map(toName);
 }
 
+// used in devtools, not (currently) exposed as a single-spa API
+export function getRawAppData() {
+  return [...apps];
+}
+
 export function getAppStatus(appName) {
   const app = find(apps, app => app.name === appName);
   return app ? app.status : null;

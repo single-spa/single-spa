@@ -46,7 +46,7 @@ export function mountParcel(config, customProps) {
     parcels: {},
     status: passedConfigLoadingFunction ? LOADING_SOURCE_CODE : NOT_BOOTSTRAPPED,
     customProps,
-    owningAppOrParcel,
+    parentName: owningAppOrParcel.name,
     unmountThisParcel() {
       if (parcel.status !== MOUNTED) {
         throw new Error(`Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`);
@@ -54,8 +54,8 @@ export function mountParcel(config, customProps) {
 
       return toUnmountPromise(parcel, true)
         .then(value => {
-          if (parcel.owningAppOrParcel) {
-            delete parcel.owningAppOrParcel.parcels[parcel.id];
+          if (parcel.parentName) {
+            delete owningAppOrParcel.parcels[parcel.id];
           }
 
           return value;
@@ -116,7 +116,7 @@ export function mountParcel(config, customProps) {
     parcel.bootstrap = bootstrap;
     parcel.mount = mount;
     parcel.unmount = unmount;
-    parcel.timeouts = ensureValidAppTimeouts(parcel);
+    parcel.timeouts = ensureValidAppTimeouts(config.timeouts);
 
     if (config.update) {
       parcel.update = flattenFnArray(config.update);
