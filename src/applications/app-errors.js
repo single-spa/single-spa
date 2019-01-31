@@ -1,4 +1,3 @@
-import CustomEvent from 'custom-event';
 
 let errorHandlers = []
 
