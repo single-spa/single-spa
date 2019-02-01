@@ -1,5 +1,4 @@
 import { handleAppError } from './app-errors.js';
-import * as singleSpa from 'src/single-spa.js';
 
 // App statuses
 export const NOT_LOADED = 'NOT_LOADED';

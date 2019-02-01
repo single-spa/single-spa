@@ -1,4 +1,3 @@
-
 let errorHandlers = []
 
 export function handleAppError(err, app) {

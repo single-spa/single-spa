@@ -5,7 +5,6 @@ import { toMountPromise } from 'src/lifecycles/mount.js';
 import { toUpdatePromise } from 'src/lifecycles/update.js';
 import { toUnmountPromise } from 'src/lifecycles/unmount.js';
 import { ensureValidAppTimeouts } from 'src/applications/timeouts.js';
-import { transformErr } from '../applications/app-errors.js';
 
 let parcelCount = 0;
 const rootParcels = {parcels: {}};
