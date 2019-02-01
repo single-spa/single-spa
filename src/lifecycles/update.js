@@ -1,5 +1,5 @@
 import { UPDATING, MOUNTED, SKIP_BECAUSE_BROKEN } from '../applications/app.helpers.js';
-import { handleAppError, transformErr } from '../applications/app-errors.js';
+import { transformErr } from '../applications/app-errors.js';
 import { reasonableTime } from '../applications/timeouts.js';
 import { getProps } from './prop.helpers.js';
 
