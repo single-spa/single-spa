@@ -1,4 +1,4 @@
-import { find } from 'src/utils/find.js';
+import { find } from '../utils/find.js';
 
 export function validLifecycleFn(fn) {
   return fn && (typeof fn === 'function' || isArrayOfFns(fn));

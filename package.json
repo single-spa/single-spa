@@ -3,11 +3,12 @@
   "version": "4.0.3",
   "description": "Multiple applications, one page",
   "main": "lib/single-spa.js",
+  "module:": "lib/single-spa.esm.js",
   "scripts": {
-    "build": "webpack -p",
-    "build:dev": "webpack --config webpack.config.dev.js",
+    "build": "rollup -c --environment NODE_ENV:'production'",
+    "build:dev": "rollup -c --environment NODE_ENV:'development'",
     "build:analyze": "webpack --config webpack.config.analyze.js",
-    "watch": "webpack -w --config webpack.config.dev.js",
+    "watch": "rollup -c -w --environment NODE_ENV:'development'",
     "prepublish": "in-publish && yarn build || not-in-publish",
     "clean": "rm -rf lib",
     "test": "karma start --single-run",
@@ -50,6 +51,7 @@
     "rollup": "^1.1.2",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-terser": "^4.0.4",
     "webpack": "^4.28.2",
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "^3.1.2"

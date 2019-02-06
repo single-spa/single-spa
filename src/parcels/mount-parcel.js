@@ -1,10 +1,10 @@
-import { validLifecycleFn, flattenFnArray } from 'src/lifecycles/lifecycle.helpers.js';
-import { NOT_BOOTSTRAPPED, NOT_MOUNTED, MOUNTED, UPDATING, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN } from 'src/applications/app.helpers.js';
-import { toBootstrapPromise } from 'src/lifecycles/bootstrap.js';
-import { toMountPromise } from 'src/lifecycles/mount.js';
-import { toUpdatePromise } from 'src/lifecycles/update.js';
-import { toUnmountPromise } from 'src/lifecycles/unmount.js';
-import { ensureValidAppTimeouts } from 'src/applications/timeouts.js';
+import { validLifecycleFn, flattenFnArray } from '../lifecycles/lifecycle.helpers.js';
+import { NOT_BOOTSTRAPPED, NOT_MOUNTED, MOUNTED, UPDATING, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN } from '../applications/app.helpers.js';
+import { toBootstrapPromise } from '../lifecycles/bootstrap.js';
+import { toMountPromise } from '../lifecycles/mount.js';
+import { toUpdatePromise } from '../lifecycles/update.js';
+import { toUnmountPromise } from '../lifecycles/unmount.js';
+import { ensureValidAppTimeouts } from '../applications/timeouts.js';
 
 let parcelCount = 0;
 const rootParcels = {parcels: {}};

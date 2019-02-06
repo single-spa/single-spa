@@ -1,5 +1,5 @@
 import { reroute } from './reroute.js';
-import { find } from 'src/utils/find.js';
+import { find } from '../utils/find.js';
 
 /* We capture navigation event listeners so that we can make sure
  * that application navigation listeners are not called until
