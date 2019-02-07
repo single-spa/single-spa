@@ -13,7 +13,7 @@ function applyOverlays(selectors, options, appName) {
 }
 
 export function removeOverlaysFromApp(app) {
-  const { options, selectors } = getSelectorsAndOptions(app)
+  const { selectors } = getSelectorsAndOptions(app)
   removeOverlayFromSelectors(selectors)
 }
 
