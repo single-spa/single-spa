@@ -3,13 +3,14 @@ import {reroute} from '../navigation/reroute'
 import {NOT_LOADED} from '../applications/app.helpers'
 import {toLoadPromise} from '../lifecycles/load'
 import {toBootstrapPromise} from '../lifecycles/bootstrap'
+import { setOverlaysOnApp, removeOverlaysFromApp } from './overlay-helpers.js'
 
 export const getAppData = getRawAppData
 export const forceMount = forceMountUnmount.bind(null, true)
 export const forceUnmount = forceMountUnmount.bind(null, false)
 
 export function revertForceMountUnmount(appName) {
-  const app = getRawAppData().find(rawapp => rawapp.name === appName)
+  const app = getAppByName(appName)
   if(app.devtools.activeWhenBackup) {
     app.activeWhen = app.devtools.activeWhenBackup
     delete app.devtools.activeWhenBackup
@@ -41,4 +42,18 @@ function forceMountUnmount(shouldMount, appName) {
   } else {
     reroute()
   }
+}
+
+export function highlight(appName) {
+  const app = getAppByName(appName)
+  return setOverlaysOnApp(app)
+}
+
+export function removeHighlight(appName) {
+  const app = getAppByName(appName)
+  return removeOverlaysFromApp(app)
+}
+
+function getAppByName (appName) {
+  return getRawAppData().find(rawApp => rawApp.name === appName)
 }

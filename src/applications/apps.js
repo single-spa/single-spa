@@ -59,7 +59,12 @@ export function registerApplication(appName, applicationOrLoadingFn, activityFn,
     activeWhen: activityFn,
     status: NOT_LOADED,
     parcels: {},
-    devtools: {},
+    devtools: {
+      overlays: {
+        options: {},
+        selectors: [],
+      }
+    },
     customProps
   });
 

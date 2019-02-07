@@ -22,6 +22,7 @@ export function toLoadPromise(app) {
       }
       return loadPromise.then(val => {
         appOpts = val;
+        console.log('appOpts', appOpts)
 
         let validationErrMessage;
 
@@ -45,6 +46,10 @@ export function toLoadPromise(app) {
           handleAppError(validationErrMessage, app);
           app.status = SKIP_BECAUSE_BROKEN;
           return app;
+        }
+
+        if (appOpts.devtools && appOpts.devtools.overlays) {
+          app.devtools.overlays = {...app.devtools.overlays, ...appOpts.devtools.overlays}
         }
 
         app.status = NOT_BOOTSTRAPPED;
