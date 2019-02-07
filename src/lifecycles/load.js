@@ -22,7 +22,6 @@ export function toLoadPromise(app) {
       }
       return loadPromise.then(val => {
         appOpts = val;
-        console.log('appOpts', appOpts)
 
         let validationErrMessage;
 
