@@ -27,8 +27,8 @@ describe(`checkActivityFunctionsApi`, () => {
   })
 
   beforeEach(() => {
-    spyOn(activityFunctions, 1).and.callThrough()
-    spyOn(activityFunctions, 2).and.callThrough()
+    jest.spyOn(activityFunctions, 1)
+    jest.spyOn(activityFunctions, 2)
   })
 
   it(`returns 'test1' when the locationContains 'one'`, () => {
