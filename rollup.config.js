@@ -1,8 +1,10 @@
 import resolve from 'rollup-plugin-node-resolve'
 import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
+import analyzer, { analyze } from 'rollup-plugin-analyzer'
 
 const isProduction = process.env.NODE_ENV === 'production'
+const useAnalyzer = process.env.ANALYZER === 'analyzer'
 
 export default (async () => ([
   {
@@ -19,7 +21,8 @@ export default (async () => ([
       babel({
         exclude: 'node_modules/**'
       }),
-      isProduction && (await import('rollup-plugin-terser')).terser()
+      isProduction && (await import('rollup-plugin-terser')).terser(),
+      useAnalyzer && analyzer()
     ]
   },
   {
@@ -35,7 +38,8 @@ export default (async () => ([
       babel({
         exclude: 'node_modules/**'
       }),
-      isProduction && (await import('rollup-plugin-terser')).terser()
+      isProduction && (await import('rollup-plugin-terser')).terser(),
+      useAnalyzer && analyzer()
     ]
   }
 ]))()

@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rollup -c --environment NODE_ENV:'production'",
     "build:dev": "rollup -c",
-    "build:analyze": "webpack --config webpack.config.analyze.js",
+    "build:analyze": "rollup -c --environment ANALYZER:'analyzer'",
     "watch": "rollup -c -w",
     "prepublish": "in-publish && yarn build || not-in-publish",
     "clean": "rm -rf lib",
@@ -49,6 +49,7 @@
     "karma-webpack": "^3.0.5",
     "promise-polyfill": "^8.1.0",
     "rollup": "^1.1.2",
+    "rollup-plugin-analyzer": "^3.0.0",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^4.0.0",
