@@ -12,7 +12,6 @@
     "clean": "rm -rf lib",
     "test": "jest",
     "test:debug": "jest --watch",
-    "test:travis": "karma start karma-saucelabs.conf.js --single-run",
     "lint": "eslint src"
   },
   "repository": "https://github.com/CanopyTax/single-spa",
@@ -41,15 +40,7 @@
     "eslint": "5.11.1",
     "eslint-config-canopy": "2.1.0",
     "in-publish": "^2.0.0",
-    "jasmine": "^3.3.1",
     "jest": "^24.1.0",
-    "karma": "^3.1.4",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-jasmine": "^2.0.1",
-    "karma-sauce-launcher": "^2.0.2",
-    "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "^3.0.5",
-    "promise-polyfill": "^8.1.0",
     "webpack": "^4.28.2",
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "^3.1.2"
