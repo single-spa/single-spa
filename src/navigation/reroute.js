@@ -1,4 +1,4 @@
-const CustomEvent = require('custom-event');
+import CustomEvent from 'custom-event';
 import { isStarted } from '../start.js';
 import { toLoadPromise } from '../lifecycles/load.js';
 import { toBootstrapPromise } from '../lifecycles/bootstrap.js';

@@ -1,7 +1,7 @@
 import { NOT_MOUNTED, MOUNTED, SKIP_BECAUSE_BROKEN } from '../applications/app.helpers.js';
 import { handleAppError, transformErr } from '../applications/app-errors.js';
 import { reasonableTime } from '../applications/timeouts.js';
-const CustomEvent = require('custom-event');
+import CustomEvent from 'custom-event';
 import { getProps } from './prop.helpers.js';
 
 let beforeFirstMountFired = false;
