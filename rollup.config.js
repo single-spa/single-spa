@@ -1,7 +1,7 @@
 import resolve from 'rollup-plugin-node-resolve'
 import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
-import analyzer, { analyze } from 'rollup-plugin-analyzer'
+import analyzer from 'rollup-plugin-analyzer'
 
 const isProduction = process.env.NODE_ENV === 'production'
 const useAnalyzer = process.env.ANALYZER === 'analyzer'
@@ -10,7 +10,7 @@ export default (async () => ([
   {
     input: './src/single-spa.js',
     output: {
-      file: './lib/single-spa.js',
+      file: './lib/umd/single-spa.js',
       format: 'umd',
       name: 'singleSpa',
       sourcemap: true,
@@ -28,7 +28,7 @@ export default (async () => ([
   {
     input: './src/single-spa.js',
     output: {
-      file: './lib/single-spa.esm.js',
+      file: './lib/esm/single-spa.js',
       format: 'esm',
       sourcemap: true,
     },

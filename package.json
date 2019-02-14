@@ -2,8 +2,8 @@
   "name": "single-spa",
   "version": "4.0.3",
   "description": "Multiple applications, one page",
-  "main": "lib/single-spa.js",
-  "module:": "lib/single-spa.esm.js",
+  "main": "lib/umd/single-spa.js",
+  "module:": "lib/esm/single-spa.js",
   "scripts": {
     "build": "rollup -c --environment NODE_ENV:'production'",
     "build:dev": "rollup -c",
