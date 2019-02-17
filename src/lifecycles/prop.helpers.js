@@ -1,5 +1,5 @@
-import * as singleSpa from 'src/single-spa.js'
-import { mountParcel } from 'src/parcels/mount-parcel.js';
+import * as singleSpa from '../single-spa.js'
+import { mountParcel } from '../parcels/mount-parcel.js';
 
 export function getProps(appOrParcel) {
   const result = {

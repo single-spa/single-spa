@@ -1,9 +1,9 @@
 import { ensureJQuerySupport } from '../jquery-support.js';
 import { isActive, isLoaded, isntLoaded, toName, NOT_LOADED, shouldBeActive, shouldntBeActive, isntActive, notSkipped } from './app.helpers.js';
-import { reroute } from 'src/navigation/reroute.js';
-import { find } from 'src/utils/find.js';
-import { toUnmountPromise } from 'src/lifecycles/unmount.js';
-import { toUnloadPromise, getAppUnloadInfo, addAppToUnload } from 'src/lifecycles/unload.js';
+import { reroute } from '../navigation/reroute.js';
+import { find } from '../utils/find.js';
+import { toUnmountPromise } from '../lifecycles/unmount.js';
+import { toUnloadPromise, getAppUnloadInfo, addAppToUnload } from '../lifecycles/unload.js';
 
 const apps = [];
 

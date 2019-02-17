@@ -5,7 +5,7 @@ export { registerApplication, getMountedApps, getAppStatus, unloadApplication, c
 export { navigateToUrl } from './navigation/navigation-events.js';
 export { reroute as triggerAppChange } from './navigation/reroute.js';
 export { addErrorHandler, removeErrorHandler } from './applications/app-errors.js';
-export { mountRootParcel } from 'src/parcels/mount-parcel.js';
+export { mountRootParcel } from './parcels/mount-parcel.js';
 
 export {
   NOT_LOADED,
