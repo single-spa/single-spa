@@ -47,6 +47,10 @@ export function toLoadPromise(app) {
           return app;
         }
 
+        if (appOpts.devtools && appOpts.devtools.overlays) {
+          app.devtools.overlays = {...app.devtools.overlays, ...appOpts.devtools.overlays}
+        }
+
         app.status = NOT_BOOTSTRAPPED;
         app.bootstrap = flattenFnArray(appOpts.bootstrap, `App '${app.name}' bootstrap function`);
         app.mount = flattenFnArray(appOpts.mount, `App '${app.name}' mount function`);
