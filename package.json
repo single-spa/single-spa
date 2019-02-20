@@ -1,6 +1,6 @@
 {
   "name": "single-spa",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Multiple applications, one page",
   "main": "lib/umd/single-spa.js",
   "module:": "lib/esm/single-spa.js",
