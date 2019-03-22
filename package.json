@@ -2,8 +2,8 @@
   "name": "single-spa",
   "version": "4.1.1",
   "description": "Multiple applications, one page",
-  "main": "lib/umd/single-spa.js",
-  "module:": "lib/esm/single-spa.js",
+  "main": "lib/umd/single-spa.min.js",
+  "module:": "lib/esm/single-spa.min.js",
   "scripts": {
     "build": "rollup -c --environment NODE_ENV:'production'",
     "build:dev": "rollup -c",
@@ -15,7 +15,9 @@
     "test:debug": "BABEL_ENV=test jest --watch",
     "lint": "eslint src"
   },
+  "homepage": "https://single-spa.js.org",
   "repository": "https://github.com/CanopyTax/single-spa",
+  "bugs": "https://github.com/CanopyTax/single-spa/issues",
   "keywords": [
     "single",
     "page",
