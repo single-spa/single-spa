@@ -10,7 +10,7 @@ export default (async () => ([
   {
     input: './src/single-spa.js',
     output: {
-      file: './lib/umd/single-spa.js',
+      file: './lib/umd/single-spa.min.js',
       format: 'umd',
       name: 'singleSpa',
       sourcemap: true,
@@ -28,7 +28,7 @@ export default (async () => ([
   {
     input: './src/single-spa.js',
     output: {
-      file: './lib/esm/single-spa.js',
+      file: './lib/esm/single-spa.min.js',
       format: 'esm',
       sourcemap: true,
     },
