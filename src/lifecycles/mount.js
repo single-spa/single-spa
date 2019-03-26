@@ -31,7 +31,6 @@ export function toMountPromise(appOrParcel, hardFail = false) {
         return appOrParcel;
       })
       .catch(err => {
-        console.log('HERE err', err)
         // If we fail to mount the appOrParcel, we should attempt to unmount it before putting in SKIP_BECAUSE_BROKEN
         // We temporarily put the appOrParcel into MOUNTED status so that toUnmountPromise actually attempts to unmount it
         // instead of just doing a no-op.
@@ -40,7 +39,6 @@ export function toMountPromise(appOrParcel, hardFail = false) {
           .then(setSkipBecauseBroken, setSkipBecauseBroken)
 
         function setSkipBecauseBroken() {
-          console.log('setting skip because broken')
           if (!hardFail) {
             handleAppError(err, appOrParcel);
             appOrParcel.status = SKIP_BECAUSE_BROKEN;
