@@ -15,6 +15,7 @@ export function mount() {
 export function unmount() {
   return new Promise(resolve => {
     unmountCalled = true;
+    resolve()
   });
 }
 
