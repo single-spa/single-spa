@@ -5,7 +5,6 @@ import { getProps } from './prop.helpers.js';
 
 export function toUnmountPromise(appOrParcel, hardFail = false) {
   return Promise.resolve().then(() => {
-    console.log('attempting to unmount', appOrParcel.status)
     if (appOrParcel.status !== MOUNTED) {
       return appOrParcel;
     }
