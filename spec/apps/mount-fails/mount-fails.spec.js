@@ -1,8 +1,8 @@
 import * as singleSpa from 'single-spa';
 
-const activeHash = `#mount-rejects`;
+const activeHash = `#mount-fails`;
 
-describe(`mount-rejects app`, () => {
+describe(`mount-fails app`, () => {
   let myApp, errs;
 
   function handleError(err) {
@@ -10,7 +10,7 @@ describe(`mount-rejects app`, () => {
   }
 
   beforeAll(() => {
-    singleSpa.registerApplication('./mount-rejects.app.js', () => import('./mount-rejects.app.js'), location => location.hash === activeHash);
+    singleSpa.registerApplication('./mount-fails.app.js', () => import('./mount-fails.app.js'), location => location.hash === activeHash);
     singleSpa.start();
   });
 
@@ -20,14 +20,14 @@ describe(`mount-rejects app`, () => {
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import('./mount-rejects.app.js')
+    return import('./mount-fails.app.js')
       .then(app => myApp = app)
       .then(app => app.reset())
   })
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
-  it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN and never unmounts`, () => {
+  it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN and unmounts as a last effort`, () => {
     location.hash = activeHash;
 
     return singleSpa
@@ -35,15 +35,17 @@ describe(`mount-rejects app`, () => {
       .then(() => {
         expect(myApp.wasBootstrapped()).toEqual(true);
         expect(myApp.wasMounted()).toEqual(true);
+        expect(myApp.wasUnmounted()).toEqual(true); // We try to unmount an application if it fails to mount.
         expect(singleSpa.getMountedApps()).toEqual([]);
-        expect(singleSpa.getAppStatus('./mount-rejects.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
+        expect(singleSpa.getAppStatus('./mount-fails.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
 
-        location.hash = '#not-mount-rejects';
+        location.hash = '#not-mount-fails';
         return singleSpa
           .triggerAppChange()
           .then(() => {
+            expect(myApp.wasUnmounted()).toEqual(true);
             expect(singleSpa.getMountedApps()).toEqual([]);
-            expect(singleSpa.getAppStatus('./mount-rejects.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
+            expect(singleSpa.getAppStatus('./mount-fails.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
           })
       })
   });

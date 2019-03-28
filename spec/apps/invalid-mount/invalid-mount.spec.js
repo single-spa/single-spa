@@ -27,7 +27,7 @@ describe(`invalid-mount app`, () => {
     singleSpa.removeErrorHandler(handleError)
   })
 
-  it(`is bootstrapped and mounted, but then put in a broken state and never unmounted`, () => {
+  it(`is bootstrapped and mounted, but then put in a broken state`, () => {
     location.hash = activeHash;
 
     return singleSpa
@@ -43,8 +43,6 @@ describe(`invalid-mount app`, () => {
         return singleSpa
           .triggerAppChange()
           .then(() => {
-            // doesn't get unmounted because it's in a broken state.
-            expect(myApp.wasUnmounted()).toEqual(false);
             expect(singleSpa.getMountedApps()).toEqual([]);
             expect(singleSpa.getAppStatus('./invalid-mount.app.js')).toEqual('SKIP_BECAUSE_BROKEN');
           })

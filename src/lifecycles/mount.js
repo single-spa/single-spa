@@ -3,6 +3,7 @@ import { handleAppError, transformErr } from '../applications/app-errors.js';
 import { reasonableTime } from '../applications/timeouts.js';
 import CustomEvent from 'custom-event';
 import { getProps } from './prop.helpers.js';
+import { toUnmountPromise } from './unmount.js';
 
 let beforeFirstMountFired = false;
 let firstMountFired = false;
@@ -30,14 +31,23 @@ export function toMountPromise(appOrParcel, hardFail = false) {
         return appOrParcel;
       })
       .catch(err => {
-        if (!hardFail) {
-          handleAppError(err, appOrParcel);
-          appOrParcel.status = SKIP_BECAUSE_BROKEN;
-          return appOrParcel;
-        } else {
-          const transformedErr = transformErr(err, appOrParcel)
-          appOrParcel.status = SKIP_BECAUSE_BROKEN;
-          throw transformedErr
+        // If we fail to mount the appOrParcel, we should attempt to unmount it before putting in SKIP_BECAUSE_BROKEN
+        // We temporarily put the appOrParcel into MOUNTED status so that toUnmountPromise actually attempts to unmount it
+        // instead of just doing a no-op.
+        appOrParcel.status = MOUNTED
+        return toUnmountPromise(appOrParcel)
+          .then(setSkipBecauseBroken, setSkipBecauseBroken)
+
+        function setSkipBecauseBroken() {
+          if (!hardFail) {
+            handleAppError(err, appOrParcel);
+            appOrParcel.status = SKIP_BECAUSE_BROKEN;
+            return appOrParcel;
+          } else {
+            const transformedErr = transformErr(err, appOrParcel)
+            appOrParcel.status = SKIP_BECAUSE_BROKEN;
+            throw transformedErr
+          }
         }
       })
   })
