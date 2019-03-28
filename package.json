@@ -5,7 +5,7 @@
   "main": "lib/umd/single-spa.min.js",
   "module:": "lib/esm/single-spa.min.js",
   "scripts": {
-    "build": "rollup -c --environment NODE_ENV:'production'",
+    "build": "yarn clean && rollup -c --environment NODE_ENV:'production'",
     "build:dev": "rollup -c",
     "build:analyze": "rollup -c --environment ANALYZER:'analyzer'",
     "watch": "rollup -c -w",
