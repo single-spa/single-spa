@@ -27,7 +27,7 @@ describe(`invalid-mount app`, () => {
     singleSpa.removeErrorHandler(handleError)
   })
 
-  it(`is bootstrapped and mounted, but then put in a broken state and never unmounted`, () => {
+  it(`is bootstrapped and mounted, but then put in a broken state`, () => {
     location.hash = activeHash;
 
     return singleSpa
