@@ -99,7 +99,10 @@ const originalPushState = window.history.pushState;
 window.history.pushState = function(state) {
   const result = originalPushState.apply(this, arguments);
 
-  reroute();
+  // https://github.com/CanopyTax/single-spa/issues/224 and https://github.com/CanopyTax/single-spa-angular/issues/49
+  // We need a popstate event even though the browser doesn't do one by default when you call pushState, so that
+  // all the applications can reroute.
+  urlReroute(new PopStateEvent('popstate'));
   
   return result;
 }
@@ -107,7 +110,10 @@ window.history.pushState = function(state) {
 const originalReplaceState = window.history.replaceState;
 window.history.replaceState = function() {
   const result = originalReplaceState.apply(this, arguments);
-  reroute();
+  // https://github.com/CanopyTax/single-spa/issues/224 and https://github.com/CanopyTax/single-spa-angular/issues/49
+  // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
+  // all the applications can reroute.
+  urlReroute(new PopStateEvent('popstate'));
   return result;
 }
 
