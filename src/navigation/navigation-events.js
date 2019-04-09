@@ -99,7 +99,7 @@ const originalPushState = window.history.pushState;
 window.history.pushState = function(state) {
   const result = originalPushState.apply(this, arguments);
 
-  reroute();
+  urlReroute(new PopStateEvent('popstate'));
   
   return result;
 }
@@ -107,7 +107,7 @@ window.history.pushState = function(state) {
 const originalReplaceState = window.history.replaceState;
 window.history.replaceState = function() {
   const result = originalReplaceState.apply(this, arguments);
-  reroute();
+  urlReroute(new PopStateEvent('popstate'));
   return result;
 }
 
