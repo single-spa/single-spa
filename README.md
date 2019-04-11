@@ -4,8 +4,6 @@
 [![npm version](https://img.shields.io/npm/v/single-spa.svg?style=flat-square)](https://www.npmjs.org/package/single-spa)
 [![Build Status](https://img.shields.io/travis/CanopyTax/single-spa/master.svg?style=flat-square)](https://travis-ci.org/CanopyTax/single-spa)
 
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/joeldenning.svg)](https://saucelabs.com/u/joeldenning)
-
 # single-spa
 
 [Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/enQtMzIwMTcxNTU3ODQyLTM1Y2U1OWMzNTNjOWYyZDBlMDJhN2VkYzk3MDI2NzQ2Nzg0MzMzNjVhNWE2YjVhMTcxNjFkOWYzMjllMmUxMjk)
