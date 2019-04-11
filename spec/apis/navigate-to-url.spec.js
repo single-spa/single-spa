@@ -107,11 +107,13 @@ describe('window.history.pushState', () => {
   it('should fire a popstate event when history.pushState is called', function() {
     return singleSpa.triggerAppChange().then(() => {
       return new Promise((resolve, reject) => {
+        const newHistoryState = {why: 'hello'}
         window.addEventListener('popstate', popstateListener)
-        window.history.pushState({}, 'title', '/new-url')
+        window.history.pushState(newHistoryState, 'title', '/new-url')
         function popstateListener(evt) {
           expect(evt instanceof PopStateEvent).toBe(true)
           expect(window.location.pathname).toBe('/new-url')
+          expect(evt.state).toBe(newHistoryState)
           window.removeEventListener('popstate', popstateListener)
           resolve()
         }
@@ -125,11 +127,13 @@ describe('window.history.pushState', () => {
   it('should fire a popstate event when history.replaceState is called', function() {
     return singleSpa.triggerAppChange().then(() => {
       return new Promise((resolve, reject) => {
+        const newHistoryState = {'yoshi': 'best'}
         window.addEventListener('popstate', popstateListener)
-        window.history.replaceState({}, 'title', '/new-url')
+        window.history.replaceState(newHistoryState, 'title', '/new-url')
         function popstateListener(evt) {
           expect(evt instanceof PopStateEvent).toBe(true)
           expect(window.location.pathname).toBe('/new-url')
+          expect(evt.state).toBe(newHistoryState)
           window.removeEventListener('popstate', popstateListener)
           resolve()
         }
