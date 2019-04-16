@@ -99,10 +99,7 @@ const originalPushState = window.history.pushState;
 window.history.pushState = function(state) {
   const result = originalPushState.apply(this, arguments);
 
-  // https://github.com/CanopyTax/single-spa/issues/224 and https://github.com/CanopyTax/single-spa-angular/issues/49
-  // We need a popstate event even though the browser doesn't do one by default when you call pushState, so that
-  // all the applications can reroute.
-  urlReroute(new PopStateEvent('popstate', {state}));
+  urlReroute(createPopStateEvent(state));
   
   return result;
 }
@@ -110,11 +107,23 @@ window.history.pushState = function(state) {
 const originalReplaceState = window.history.replaceState;
 window.history.replaceState = function(state) {
   const result = originalReplaceState.apply(this, arguments);
+  urlReroute(createPopStateEvent(state));
+  return result;
+}
+
+function createPopStateEvent(state) {
   // https://github.com/CanopyTax/single-spa/issues/224 and https://github.com/CanopyTax/single-spa-angular/issues/49
   // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
   // all the applications can reroute.
-  urlReroute(new PopStateEvent('popstate', {state}));
-  return result;
+  try {
+    return new PopStateEvent('popstate', {state});
+  } catch (err) {
+    // IE 11 compatibility https://github.com/CanopyTax/single-spa/issues/299
+    // https://docs.microsoft.com/en-us/openspecs/ie_standards/ms-html5e/bd560f47-b349-4d2c-baa8-f1560fb489dd
+    const evt = document.createEvent('PopStateEvent');
+    evt.initPopStateEvent('popstate', false, false, state);
+    return evt;
+  }
 }
 
 /* For convenience in `onclick` attributes, we expose a global function for navigating to
