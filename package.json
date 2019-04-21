@@ -3,6 +3,7 @@
   "version": "4.3.2",
   "description": "Multiple applications, one page",
   "main": "lib/umd/single-spa.min.js",
+  "types": "src/single-spa.d.ts",
   "module:": "lib/esm/single-spa.min.js",
   "scripts": {
     "build": "yarn clean && rollup -c --environment NODE_ENV:'production'",
