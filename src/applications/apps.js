@@ -106,18 +106,13 @@ export function getAppsToMount() {
 }
 
 export function unregisterApplication(appName) {
-  let app, appIndex
-  for (let i = 0; i < apps.length; i++) {
-    app = apps[i]
-    appIndex = i;
-    break;
-  }
-  if (!app) {
+  if (!apps.find(app => app.name === appName)) {
     throw Error(`Cannot unregister application '${appName}' because no such application has been registered`)
   }
 
   return unloadApplication(appName)
     .then(() => {
+      const appIndex = apps.findIndex(app => app.name === appName)
       apps.splice(appIndex, 1)
     })
 }
