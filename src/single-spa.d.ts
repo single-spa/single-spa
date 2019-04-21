@@ -4,7 +4,7 @@ declare module "single-spa" {
   export function isStarted(): boolean;
 
   // ./jquery-support.js
-  export function ensureJQuerySupport(jQuery?: Object): void;
+  export function ensureJQuerySupport(jQuery?: JQuery): void;
 
   // ./applications/timeouts.js
   export function setBootstrapMaxTime(
