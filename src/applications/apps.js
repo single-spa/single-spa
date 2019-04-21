@@ -32,14 +32,14 @@ export function declareChildApplication(appName, arg1, arg2) {
 
 export function registerApplication(appName, applicationOrLoadingFn, activityFn, customProps = {}) {
   if (typeof appName !== 'string' || appName.length === 0)
-    throw new Error(`The first argument must be a non-empty string 'appName'`);
+    throw Error(`The first argument must be a non-empty string 'appName'`);
   if (getAppNames().indexOf(appName) !== -1)
-    throw new Error(`There is already an app declared with name ${appName}`);
+    throw Error(`There is already an app declared with name ${appName}`);
   if (typeof customProps !== 'object' || Array.isArray(customProps))
-    throw new Error('customProps must be an object');
+    throw Error('customProps must be an object');
 
   if (!applicationOrLoadingFn)
-    throw new Error(`The application or loading function is required`);
+    throw Error(`The application or loading function is required`);
 
   let loadImpl;
   if (typeof applicationOrLoadingFn !== 'function') {
@@ -51,7 +51,7 @@ export function registerApplication(appName, applicationOrLoadingFn, activityFn,
   }
 
   if (typeof activityFn !== 'function')
-    throw new Error(`The activeWhen argument must be a function`);
+    throw Error(`The activeWhen argument must be a function`);
 
   apps.push({
     name: appName,
@@ -105,6 +105,23 @@ export function getAppsToMount() {
     .filter(shouldBeActive)
 }
 
+export function unregisterApplication(appName) {
+  let app, appIndex
+  for (let i = 0; i < apps.length; i++) {
+    app = apps[i]
+    appIndex = i;
+    break;
+  }
+  if (!app) {
+    throw Error(`Cannot unregister application '${appName}' because no such application has been registered`)
+  }
+
+  return unloadApplication(appName)
+    .then(() => {
+      apps.splice(appIndex, 1)
+    })
+}
+
 export function unloadChildApplication(appName, opts) {
   console.warn('unloadChildApplication is deprecated and will be removed in the next major version, use "unloadApplication" instead')
   return unloadApplication(appName, opts)
@@ -112,11 +129,11 @@ export function unloadChildApplication(appName, opts) {
 
 export function unloadApplication(appName, opts={waitForUnmount: false}) {
   if (typeof appName !== 'string') {
-    throw new Error(`unloadApplication requires a string 'appName'`);
+    throw Error(`unloadApplication requires a string 'appName'`);
   }
   const app = find(apps, App => App.name === appName);
   if (!app) {
-    throw new Error(`Could not unload application '${appName}' because no such application has been declared`);
+    throw Error(`Could not unload application '${appName}' because no such application has been registered`);
   }
 
   const appUnloadInfo = getAppUnloadInfo(app.name);

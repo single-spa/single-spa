@@ -23,7 +23,7 @@ export function toUnmountPromise(appOrParcel, hardFail = false) {
           return unmountAppOrParcel()
             .then(() => {
               // Unmounting the app/parcel succeeded, but unmounting its children parcels did not
-              const parentError = new Error(parcelError.message)
+              const parentError = Error(parcelError.message)
               if (hardFail) {
                 const transformedErr = transformErr(parentError, appOrParcel)
                 appOrParcel.status = SKIP_BECAUSE_BROKEN;

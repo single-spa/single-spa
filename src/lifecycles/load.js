@@ -18,7 +18,7 @@ export function toLoadPromise(app) {
       const loadPromise = app.loadImpl(getProps(app));
       if (!smellsLikeAPromise(loadPromise)) {
         // The name of the app will be prepended to this error message inside of the handleAppError function
-        throw new Error(`single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`);
+        throw Error(`single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`);
       }
       return loadPromise.then(val => {
         appOpts = val;

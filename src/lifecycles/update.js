@@ -6,7 +6,7 @@ import { getProps } from './prop.helpers.js';
 export function toUpdatePromise(parcel) {
   return Promise.resolve().then(() => {
     if (parcel.status !== MOUNTED) {
-      throw new Error(`Cannot update parcel '${parcel.name}' because it is not mounted`)
+      throw Error(`Cannot update parcel '${parcel.name}' because it is not mounted`)
     }
 
     parcel.status = UPDATING;

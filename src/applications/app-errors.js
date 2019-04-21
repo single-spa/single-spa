@@ -14,7 +14,7 @@ export function handleAppError(err, app) {
 
 export function addErrorHandler(handler) {
   if (typeof handler !== 'function') {
-    throw new Error('a single-spa error handler must be a function');
+    throw Error('a single-spa error handler must be a function');
   }
 
   errorHandlers.push(handler);
@@ -22,7 +22,7 @@ export function addErrorHandler(handler) {
 
 export function removeErrorHandler(handler) {
   if (typeof handler !== 'function') {
-    throw new Error('a single-spa error handler must be a function');
+    throw Error('a single-spa error handler must be a function');
   }
 
   let removedSomething = false;
@@ -53,7 +53,7 @@ export function transformErr(ogErr, appOrParcel) {
   } else {
     console.warn(`While ${appOrParcel.status}, '${appOrParcel.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
     try {
-      result = new Error(errPrefix + JSON.stringify(ogErr));
+      result = Error(errPrefix + JSON.stringify(ogErr));
     } catch(err) {
       // If it's not an Error and you can't stringify it, then what else can you even do to it?
       result = ogErr;

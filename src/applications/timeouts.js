@@ -19,7 +19,7 @@ const globalTimeoutConfig = {
 
 export function setBootstrapMaxTime(time, dieOnTimeout = false) {
   if (typeof time !== 'number' || time <= 0) {
-    throw new Error(`bootstrap max time must be a positive integer number of milliseconds`);
+    throw Error(`bootstrap max time must be a positive integer number of milliseconds`);
   }
 
   globalTimeoutConfig.bootstrap = {
@@ -30,7 +30,7 @@ export function setBootstrapMaxTime(time, dieOnTimeout = false) {
 
 export function setMountMaxTime(time, dieOnTimeout = false) {
   if (typeof time !== 'number' || time <= 0) {
-    throw new Error(`mount max time must be a positive integer number of milliseconds`);
+    throw Error(`mount max time must be a positive integer number of milliseconds`);
   }
 
   globalTimeoutConfig.mount = {
@@ -41,7 +41,7 @@ export function setMountMaxTime(time, dieOnTimeout = false) {
 
 export function setUnmountMaxTime(time, dieOnTimeout = false) {
   if (typeof time !== 'number' || time <= 0) {
-    throw new Error(`unmount max time must be a positive integer number of milliseconds`);
+    throw Error(`unmount max time must be a positive integer number of milliseconds`);
   }
 
   globalTimeoutConfig.unmount = {
@@ -52,7 +52,7 @@ export function setUnmountMaxTime(time, dieOnTimeout = false) {
 
 export function setUnloadMaxTime(time, dieOnTimeout = false) {
   if (typeof time !== 'number' || time <= 0) {
-    throw new Error(`unload max time must be a positive integer number of milliseconds`);
+    throw Error(`unload max time must be a positive integer number of milliseconds`);
   }
 
   globalTimeoutConfig.unload = {
