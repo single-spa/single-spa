@@ -10,6 +10,11 @@ import { getAppsToUnload, toUnloadPromise } from '../lifecycles/unload.js';
 
 let appChangeUnderway = false, peopleWaitingOnAppChange = [];
 
+export function triggerAppChange() {
+  // Call reroute with no arguments, intentionally
+  return reroute()
+}
+
 export function reroute(pendingPromises = [], eventArguments) {
   if (appChangeUnderway) {
     return new Promise((resolve, reject) => {
