@@ -15,28 +15,6 @@ declare module "single-spa" {
   export function setUnmountMaxTime(time: number, dieOnTimeout?: boolean): void;
   export function setUnloadMaxTime(time: number, dieOnTimeout?: boolean): void;
 
-  type timeoutConfig = {
-    millis: number;
-    dieOnTimeout: boolean;
-  };
-
-  type globalTimeoutConfig = {
-    bootstrap: timeoutConfig;
-    mount: timeoutConfig;
-    unmount: timeoutConfig;
-    unload: timeoutConfig;
-  };
-
-  export function reasonableTime(
-    promise: Promise<any>,
-    description: string,
-    timeoutConfig: timeoutConfig
-  ): void;
-
-  export function ensureValidAppTimeouts(
-    timeouts?: globalTimeoutConfig
-  ): globalTimeoutConfig;
-
   // ./applications/apps.js
   export function registerApplication(
     appName: string,
@@ -85,10 +63,7 @@ declare module "single-spa" {
   ): void;
 
   // './navigation/reroute.js'
-  export function triggerAppChange(
-    pendingPromises?: any[],
-    eventArguments?: any
-  ): Promise<any>;
+  export function triggerAppChange(): Promise<any>;
 
   // './applications/app-errors.js'
   export function addErrorHandler(handler: (error: Error) => void): void;
