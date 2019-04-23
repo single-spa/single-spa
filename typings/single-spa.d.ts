@@ -4,7 +4,7 @@ declare module "single-spa" {
   export function isStarted(): boolean;
 
   // ./jquery-support.js
-  export function ensureJQuerySupport(jQuery?: JQuery): void;
+  export function ensureJQuerySupport(jQuery?: any): void;
 
   // ./applications/timeouts.js
   export function setBootstrapMaxTime(
@@ -25,7 +25,7 @@ declare module "single-spa" {
 
   export function getMountedApps(): string[];
 
-  export enum AppStatus {
+  export const {
     NOT_LOADED = "NOT_LOADED",
     LOADING_SOURCE_CODE = "LOADING_SOURCE_CODE",
     NOT_BOOTSTRAPPED = "NOT_BOOTSTRAPPED",
@@ -39,7 +39,7 @@ declare module "single-spa" {
     SKIP_BECAUSE_BROKEN = "SKIP_BECAUSE_BROKEN"
   }
 
-  export function getAppStatus(appName: string): AppStatus | null;
+  export function getAppStatus(appName: string): string | null;
 
   export function unloadApplication(
     appName: string,

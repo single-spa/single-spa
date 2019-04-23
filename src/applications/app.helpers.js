@@ -13,20 +13,6 @@ export const UNMOUNTING = 'UNMOUNTING';
 export const UNLOADING = 'UNLOADING';
 export const SKIP_BECAUSE_BROKEN = 'SKIP_BECAUSE_BROKEN';
 
-export const AppStatus = {
-  NOT_LOADED,
-  LOADING_SOURCE_CODE,
-  NOT_BOOTSTRAPPED,
-  BOOTSTRAPPING,
-  NOT_MOUNTED,
-  MOUNTING,
-  MOUNTED,
-  UPDATING,
-  UNMOUNTING,
-  UNLOADING,
-  SKIP_BECAUSE_BROKEN
-};
-
 export function isActive(app) {
   return app.status === MOUNTED;
 }

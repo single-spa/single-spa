@@ -30,9 +30,7 @@
   ],
   "author": "Joel Denning",
   "license": "MIT",
-  "dependencies": {
-    "@types/jquery": "latest"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.4.0",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
