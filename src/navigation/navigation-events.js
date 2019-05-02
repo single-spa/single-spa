@@ -23,7 +23,7 @@ export function navigateToUrl(obj, opts={}) {
     url = obj.currentTarget.href;
     obj.preventDefault();
   } else {
-    throw new Error(`singleSpaNavigate must be either called with a string url, with an <a> tag as its context, or with an event whose currentTarget is an <a> tag`);
+    throw Error(`singleSpaNavigate must be either called with a string url, with an <a> tag as its context, or with an event whose currentTarget is an <a> tag`);
   }
 
   const current = parseUri(window.location.href);

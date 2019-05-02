@@ -19,19 +19,19 @@ export function mountParcel(config, customProps) {
 
   // Validate inputs
   if (!config || (typeof config !== 'object' && typeof config !== 'function')) {
-    throw new Error('Cannot mount parcel without a config object or config loading function');
+    throw Error('Cannot mount parcel without a config object or config loading function');
   }
 
   if (config.name && typeof config.name !== 'string') {
-    throw new Error('Parcel name must be a string, if provided');
+    throw Error('Parcel name must be a string, if provided');
   }
 
   if (typeof customProps !== 'object') {
-    throw new Error(`Parcel ${name} has invalid customProps -- must be an object`);
+    throw Error(`Parcel ${name} has invalid customProps -- must be an object`);
   }
 
   if (!customProps.domElement) {
-    throw new Error(`Parcel ${name} cannot be mounted without a domElement provided as a prop`);
+    throw Error(`Parcel ${name} cannot be mounted without a domElement provided as a prop`);
   }
 
   const id = parcelCount++;
@@ -48,7 +48,7 @@ export function mountParcel(config, customProps) {
     parentName: owningAppOrParcel.name,
     unmountThisParcel() {
       if (parcel.status !== MOUNTED) {
-        throw new Error(`Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`);
+        throw Error(`Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`);
       }
 
       return toUnmountPromise(parcel, true)
@@ -80,30 +80,30 @@ export function mountParcel(config, customProps) {
   let loadPromise = configLoadingFunction()
 
   if (!loadPromise || typeof loadPromise.then !== 'function') {
-    throw new Error(`When mounting a parcel, the config loading function must return a promise that resolves with the parcel config`)
+    throw Error(`When mounting a parcel, the config loading function must return a promise that resolves with the parcel config`)
   }
 
   loadPromise = loadPromise.then(config => {
     if (!config) {
-      throw new Error(`When mounting a parcel, the config loading function returned a promise that did not resolve with a parcel config`)
+      throw Error(`When mounting a parcel, the config loading function returned a promise that did not resolve with a parcel config`)
     }
 
     const name = config.name || `parcel-${id}`;
 
     if (!validLifecycleFn(config.bootstrap)) {
-      throw new Error(`Parcel ${name} must have a valid bootstrap function`);
+      throw Error(`Parcel ${name} must have a valid bootstrap function`);
     }
 
     if (!validLifecycleFn(config.mount)) {
-      throw new Error(`Parcel ${name} must have a valid mount function`);
+      throw Error(`Parcel ${name} must have a valid mount function`);
     }
 
     if (!validLifecycleFn(config.unmount)) {
-      throw new Error(`Parcel ${name} must have a valid unmount function`);
+      throw Error(`Parcel ${name} must have a valid unmount function`);
     }
 
     if (config.update && !validLifecycleFn(config.update)) {
-      throw new Error(`Parcel ${name} provided an invalid update function`);
+      throw Error(`Parcel ${name} provided an invalid update function`);
     }
 
     const bootstrap = flattenFnArray(config.bootstrap);
@@ -146,7 +146,7 @@ export function mountParcel(config, customProps) {
         .resolve()
         .then(() => {
           if (parcel.status !== NOT_MOUNTED) {
-            throw new Error(`Cannot mount parcel '${name}' -- it is in a ${parcel.status} status`);
+            throw Error(`Cannot mount parcel '${name}' -- it is in a ${parcel.status} status`);
           }
 
           // Add to owning app or parcel
