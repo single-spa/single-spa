@@ -1,6 +1,6 @@
 import * as singleSpa from 'single-spa';
 
-describe('registerApplication', function() {
+describe('unregisterApplication', function() {
   let app
   beforeEach(() => {
     app = {
