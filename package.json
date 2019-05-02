@@ -15,6 +15,11 @@
     "test:watch": "BABEL_ENV=test jest --config jest.config.json --watch",
     "lint": "eslint src"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn test && yarn lint"
+    }
+  },
   "homepage": "https://single-spa.js.org",
   "repository": "https://github.com/CanopyTax/single-spa",
   "bugs": "https://github.com/CanopyTax/single-spa/issues",
@@ -41,6 +46,7 @@
     "custom-event": "^1.0.1",
     "eslint": "5.15.3",
     "eslint-config-canopy": "2.3.0",
+    "husky": "^2.2.0",
     "in-publish": "^2.0.0",
     "jest": "^24.5.0",
     "rollup": "^1.7.3",
