@@ -12,7 +12,7 @@
     "prepublish": "in-publish && yarn build || not-in-publish",
     "clean": "rm -rf lib",
     "test": "BABEL_ENV=test jest --config jest.config.json",
-    "test:debug": "BABEL_ENV=test jest --config jest.config.json --watch",
+    "test:watch": "BABEL_ENV=test jest --config jest.config.json --watch",
     "lint": "eslint src"
   },
   "homepage": "https://single-spa.js.org",
