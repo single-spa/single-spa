@@ -4,7 +4,7 @@
   "description": "Multiple applications, one page",
   "main": "lib/umd/single-spa.min.js",
   "types": "typings/single-spa.d.ts",
-  "module:": "lib/esm/single-spa.min.js",
+  "module": "lib/esm/single-spa.min.js",
   "scripts": {
     "build": "yarn clean && rollup -c --environment NODE_ENV:'production'",
     "build:dev": "rollup -c",
