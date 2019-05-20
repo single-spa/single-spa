@@ -1,4 +1,21 @@
 declare module "single-spa" {
+
+  type Splat<T> = {
+  	[p in keyof T]: Array<T[p]>
+  };
+
+  type AppProps = {
+  	name: string,
+  	mountParcel(): any,
+	singleSpa: any,
+  };
+
+  type LifeCycles<T = {}> = {
+  	bootstrap: (config: T & AppProps) => Promise<any>,
+  	mount: (config: T & AppProps) => Promise<any>,
+  	unmount: (config: T & AppProps) => Promise<any>,
+  };
+
   // ./start.js
   export function start(): void;
   export function isStarted(): boolean;
@@ -16,11 +33,11 @@ declare module "single-spa" {
   export function setUnloadMaxTime(time: number, dieOnTimeout?: boolean): void;
 
   // ./applications/apps.js
-  export function registerApplication(
+  export function registerApplication<T extends object = {}>(
     appName: string,
-    applicationOrLoadingFn: Function | Promise<any>,
+	applicationOrLoadingFn: LifeCycles<T> | ((config: T & AppProps) => Promise<LifeCycles<T> | Splat<LifeCycles<T>>>),
     activityFn: (location: Location) => boolean,
-    customProps?: Object
+    customProps?: T,
   ): void;
 
   export function getMountedApps(): string[];
