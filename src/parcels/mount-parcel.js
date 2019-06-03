@@ -16,6 +16,7 @@ export function mountRootParcel() {
 
 export function mountParcel(config, customProps) {
   const owningAppOrParcel = this;
+  let name = config.name || '';
 
   // Validate inputs
   if (!config || (typeof config !== 'object' && typeof config !== 'function')) {
@@ -52,22 +53,22 @@ export function mountParcel(config, customProps) {
       }
 
       return toUnmountPromise(parcel, true)
-        .then(value => {
-          if (parcel.parentName) {
-            delete owningAppOrParcel.parcels[parcel.id];
-          }
+          .then(value => {
+            if (parcel.parentName) {
+              delete owningAppOrParcel.parcels[parcel.id];
+            }
 
-          return value;
-        })
-        .then(value => {
-          resolveUnmount(value);
-          return value;
-        })
-        .catch(err => {
-          parcel.status = SKIP_BECAUSE_BROKEN;
-          rejectUnmount(err);
-          throw err;
-        });
+            return value;
+          })
+          .then(value => {
+            resolveUnmount(value);
+            return value;
+          })
+          .catch(err => {
+            parcel.status = SKIP_BECAUSE_BROKEN;
+            rejectUnmount(err);
+            throw err;
+          });
     }
   };
 
@@ -88,7 +89,7 @@ export function mountParcel(config, customProps) {
       throw Error(`When mounting a parcel, the config loading function returned a promise that did not resolve with a parcel config`)
     }
 
-    const name = config.name || `parcel-${id}`;
+    name = config.name || `parcel-${id}`;
 
     if (!validLifecycleFn(config.bootstrap)) {
       throw Error(`Parcel ${name} must have a valid bootstrap function`);
@@ -142,23 +143,23 @@ export function mountParcel(config, customProps) {
   externalRepresentation = {
     mount() {
       return promiseWithoutReturnValue(
-        Promise
-        .resolve()
-        .then(() => {
-          if (parcel.status !== NOT_MOUNTED) {
-            throw Error(`Cannot mount parcel '${name}' -- it is in a ${parcel.status} status`);
-          }
+          Promise
+              .resolve()
+              .then(() => {
+                if (parcel.status !== NOT_MOUNTED) {
+                  throw Error(`Cannot mount parcel '${name}' -- it is in a ${parcel.status} status`);
+                }
 
-          // Add to owning app or parcel
-          owningAppOrParcel.parcels[id] = parcel;
+                // Add to owning app or parcel
+                owningAppOrParcel.parcels[id] = parcel;
 
-          return toMountPromise(parcel);
-        })
+                return toMountPromise(parcel);
+              })
       )
     },
     unmount() {
       return promiseWithoutReturnValue(
-        parcel.unmountThisParcel()
+          parcel.unmountThisParcel()
       );
     },
     getStatus() {
