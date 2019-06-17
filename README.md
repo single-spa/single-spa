@@ -10,7 +10,7 @@
 
 [Donate to this project](https://opencollective.com/single-spa)
 
-## A javascript metaframework
+## A javascript framework for front-end microservices
 
 Build micro frontends that coexist and can each be written with their own framework. This allows you to:
 - [Use multiple frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) on the same page [without refreshing the page](/docs/applications.md)
