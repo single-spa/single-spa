@@ -21,6 +21,10 @@
       "pre-push": "yarn test && yarn lint"
     }
   },
+  "files": [
+    "lib",
+    "typings"
+  ],
   "homepage": "https://single-spa.js.org",
   "repository": "https://github.com/CanopyTax/single-spa",
   "bugs": "https://github.com/CanopyTax/single-spa/issues",
