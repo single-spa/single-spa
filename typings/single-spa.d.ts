@@ -10,7 +10,7 @@ declare module "single-spa" {
     mountParcel(parcelConfig: ParcelConfig, customProps: object): Parcel,
   };
 
-  type ParcelConfig = ParcelConfigObject | (() => Promise<ParcelConfigObject>);
+  export type ParcelConfig = ParcelConfigObject | (() => Promise<ParcelConfigObject>);
 
   type ParcelConfigObject = {
     name?: string,
@@ -30,7 +30,7 @@ declare module "single-spa" {
     unmountPromise: Promise<null>,
   }
 
-  type LifeCycles<T = {}> = {
+  export type LifeCycles<T = {}> = {
   	bootstrap: (config: T & AppProps) => Promise<any>,
   	mount: (config: T & AppProps) => Promise<any>,
     unmount: (config: T & AppProps) => Promise<any>,
