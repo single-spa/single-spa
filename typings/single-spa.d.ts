@@ -4,16 +4,37 @@ declare module "single-spa" {
   	[p in keyof T]: Array<T[p]>
   };
 
-  type AppProps = {
-  	name: string,
-  	mountParcel(): any,
-	singleSpa: any,
+  export type AppProps = {
+    name: string,
+    singleSpa: any,
+    mountParcel(parcelConfig: ParcelConfig, customProps: object): Parcel,
   };
 
-  type LifeCycles<T = {}> = {
+  export type ParcelConfig = ParcelConfigObject | (() => Promise<ParcelConfigObject>);
+
+  type ParcelConfigObject = {
+    name?: string,
+    customProps: object,
+    domElement: HTMLElement,
+  } & LifeCycles
+
+  type Parcel = {
+    mount(): Promise<null>,
+    unmount(): Promise<null>,
+    getStatus(): "NOT_LOADED" | "LOADING_SOURCE_CODE" | "NOT_BOOTSTRAPPED"
+      | "BOOTSTRAPPING" | "NOT_MOUNTED" | "MOUNTING" | "MOUNTED" | "UPDATING"
+      | "UNMOUNTING" | "UNLOADING" | "SKIP_BECAUSE_BROKEN",
+    loadPromise: Promise<null>,
+    bootstrapPromise: Promise<null>,
+    mountPromise: Promise<null>,
+    unmountPromise: Promise<null>,
+  }
+
+  export type LifeCycles<T = {}> = {
   	bootstrap: (config: T & AppProps) => Promise<any>,
   	mount: (config: T & AppProps) => Promise<any>,
-  	unmount: (config: T & AppProps) => Promise<any>,
+    unmount: (config: T & AppProps) => Promise<any>,
+    update?: (config: T & AppProps) => Promise<any>,
   };
 
   // ./start.js
@@ -87,5 +108,5 @@ declare module "single-spa" {
   export function removeErrorHandler(handler: (error: Error) => void): void;
 
   // './parcels/mount-parcel.js'
-  export function mountRootParcel(parcelConfig: any, parcelProps: any): boolean;
+  export function mountRootParcel(parcelConfig: ParcelConfig, parcelProps: object): Parcel;
 }
