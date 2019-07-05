@@ -29,7 +29,7 @@ describe('error handlers api', () => {
       .triggerAppChange()
       .then(() => {
         expect(errs.length).toBe(1);
-        expect(errs[0].appName).toBe('load-error');
+        expect(errs[0].appOrParcelName).toBe('load-error');
         expect(errs[0].message.indexOf(`'load-error' died in status LOADING_SOURCE_CODE: "Could not load this one"`)).toBeGreaterThan(-1);
       })
   })
@@ -55,7 +55,7 @@ describe('error handlers api', () => {
       .triggerAppChange()
       .then(() => {
         expect(errs.length).toBe(1);
-        expect(errs[0].appName).toBe('bootstrap-error');
+        expect(errs[0].appOrParcelName).toBe('bootstrap-error');
         expect(errs[0].message.indexOf(`'bootstrap-error' died in status SKIP_BECAUSE_BROKEN: couldn't bootstrap`)).toBeGreaterThan(-1);
       })
   })
@@ -81,7 +81,7 @@ describe('error handlers api', () => {
       .triggerAppChange()
       .then(() => {
         expect(errs.length).toBe(1);
-        expect(errs[0].appName).toBe('mount-error');
+        expect(errs[0].appOrParcelName).toBe('mount-error');
         expect(errs[0].message.indexOf(`'mount-error' died in status NOT_MOUNTED: "couldn't mount"`)).toBeGreaterThan(-1);
       })
   })
@@ -111,7 +111,7 @@ describe('error handlers api', () => {
       })
       .then(() => {
         expect(errs.length).toBe(1);
-        expect(errs[0].appName).toBe('unmount-error');
+        expect(errs[0].appOrParcelName).toBe('unmount-error');
         expect(errs[0].message.indexOf(`'unmount-error' died in status UNMOUNTING: couldn't unmount`)).toBeGreaterThan(-1);
       })
   })
@@ -137,7 +137,7 @@ describe('error handlers api', () => {
       .triggerAppChange()
       .then(() => {
         expect(errs.length).toBe(1);
-        expect(errs[0].appName).toBe('activity-error');
+        expect(errs[0].appOrParcelName).toBe('activity-error');
         expect(errs[0].message.indexOf(`'activity-error' died in status NOT_LOADED: bad activity function`)).toBeGreaterThan(-1);
       })
   })

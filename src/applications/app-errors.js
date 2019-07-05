@@ -61,7 +61,14 @@ export function transformErr(ogErr, appOrParcel) {
   }
 
   result.appName = appOrParcel.name;
-  result.name = appOrParcel.name
+  result.appOrParcelName = appOrParcel.name;
+  try {
+    result.name = appOrParcel.name
+  } catch (err) {
+    // See https://github.com/CanopyTax/single-spa/issues/323
+    // In a future major release, we can remove the `name` property altogether,
+    // as a breaking change, in favor of appOrParcelName.
+  }
 
   return result;
 }
