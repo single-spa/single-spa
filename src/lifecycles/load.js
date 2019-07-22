@@ -42,6 +42,7 @@ export function toLoadPromise(app) {
         }
 
         if (validationErrMessage) {
+          console.error(`The loading function for single-spa application '${app.name}' resolved with the following, which does not have bootstrap, mount, and unmount functions`, appOpts)
           handleAppError(validationErrMessage, app);
           app.status = SKIP_BECAUSE_BROKEN;
           return app;
