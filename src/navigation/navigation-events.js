@@ -37,8 +37,8 @@ export function navigateToUrl(obj, opts={}) {
     } else {
       window.location.href = url;
     }
-  } else if (!isSamePath(destination.path, current.path)) {
-    // different path or a different host
+  } else if (!isSamePath(destination.path + "?" + destination.query, current.path + "?" + current.query)) {
+    // different path, host, or query params
     window.history.pushState(null, null, url);
   } else {
     window.location.hash = '#' + destination.anchor;

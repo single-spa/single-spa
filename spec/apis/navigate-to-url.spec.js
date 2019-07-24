@@ -79,6 +79,13 @@ describe('navigateToUrl', function() {
     expectPathAndHashToEqual('/some-other-path-without-hash');
   });
 
+  it('should reroute if query params have changed', function() {
+    singleSpaNavigate('/route?yoshi=best');
+    spyOn(window.history, 'pushState')
+    singleSpaNavigate('/route?yoshi=criminal');
+    expect(window.history.pushState).toHaveBeenCalledWith(null, null, '/route?yoshi=criminal')
+  })
+
   it('should error if not called with appropriate args', function() {
     const errors = [
       null,
