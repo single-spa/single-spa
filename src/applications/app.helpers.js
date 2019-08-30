@@ -11,6 +11,7 @@ export const MOUNTED = 'MOUNTED';
 export const UPDATING = 'UPDATING';
 export const UNMOUNTING = 'UNMOUNTING';
 export const UNLOADING = 'UNLOADING';
+export const LOAD_ERROR = 'LOAD_ERROR';
 export const SKIP_BECAUSE_BROKEN = 'SKIP_BECAUSE_BROKEN';
 
 export function isActive(app) {
@@ -22,7 +23,7 @@ export function isntActive(app) {
 }
 
 export function isLoaded(app) {
-  return app.status !== NOT_LOADED && app.status !== LOADING_SOURCE_CODE;
+  return app.status !== NOT_LOADED && app.status !== LOADING_SOURCE_CODE && app.status !== LOAD_ERROR;
 }
 
 export function isntLoaded(app) {
