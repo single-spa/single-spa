@@ -56,6 +56,12 @@ export function notSkipped(item) {
   return item !== SKIP_BECAUSE_BROKEN && (!item || item.status !== SKIP_BECAUSE_BROKEN);
 }
 
+export function withoutLoadErrors(app) {
+  return app.status === LOAD_ERROR
+    ? app.loadErrorHref !== window.location.href
+    : true;
+}
+
 export function toName(app) {
   return app.name;
 }

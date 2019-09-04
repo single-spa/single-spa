@@ -23,6 +23,8 @@ export function toLoadPromise(app) {
         throw new UserError(`single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`);
       }
       return loadPromise.then(val => {
+        app.loadErrorHref = null;
+
         appOpts = val;
 
         let validationErrMessage;
@@ -66,7 +68,13 @@ export function toLoadPromise(app) {
     })
     .catch(err => {
       handleAppError(err, app);
-      app.status = err instanceof UserError ? SKIP_BECAUSE_BROKEN : LOAD_ERROR;
+      if (err instanceof UserError) {
+        app.status = SKIP_BECAUSE_BROKEN;
+      } else {
+        app.status = LOAD_ERROR;
+        app.loadErrorHref = window.location.href;
+      }
+
       return app;
     })
   })

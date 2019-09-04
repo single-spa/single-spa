@@ -83,7 +83,7 @@ describe(`invalid-load-function`, () => {
         unmount: () => new Promise(),
       });
     }
-    singleSpa.registerApplication('invalid-load-4', loadFunction, location => location.hash === "#invalid-load-function");
+    singleSpa.registerApplication('invalid-load-4', loadFunction, location => location.hash.includes("#invalid-load-function"));
 
     location.hash = "#invalid-load-function";
 
@@ -93,6 +93,8 @@ describe(`invalid-load-function`, () => {
         expect(errs.length).toBeGreaterThan(0);
         expect(errs[0].appName).toBe('invalid-load-4');
         expect(errs[0].message.indexOf(`It didn't load`)).toBeGreaterThan(-1)
+
+        location.hash = "#invalid-load-function-1";
 
         return singleSpa
           .triggerAppChange()

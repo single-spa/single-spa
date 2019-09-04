@@ -1,5 +1,16 @@
 import { ensureJQuerySupport } from '../jquery-support.js';
-import { isActive, isLoaded, isntLoaded, toName, NOT_LOADED, shouldBeActive, shouldntBeActive, isntActive, notSkipped } from './app.helpers.js';
+import {
+  isActive,
+  isLoaded,
+  isntLoaded,
+  toName,
+  NOT_LOADED,
+  shouldBeActive,
+  shouldntBeActive,
+  isntActive,
+  notSkipped,
+  withoutLoadErrors,
+} from "./app.helpers.js";
 import { reroute } from '../navigation/reroute.js';
 import { find } from '../utils/find.js';
 import { toUnmountPromise } from '../lifecycles/unmount.js';
@@ -54,6 +65,7 @@ export function registerApplication(appName, applicationOrLoadingFn, activityFn,
     throw Error(`The activeWhen argument must be a function`);
 
   apps.push({
+    loadErrorHref: null,
     name: appName,
     loadImpl,
     activeWhen: activityFn,
@@ -86,6 +98,7 @@ export function checkActivityFunctions(location) {
 export function getAppsToLoad() {
   return apps
     .filter(notSkipped)
+    .filter(withoutLoadErrors)
     .filter(isntLoaded)
     .filter(shouldBeActive)
 }

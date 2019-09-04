@@ -20,7 +20,7 @@ describe('error handlers api', () => {
     expect(singleSpa.removeErrorHandler(handleError)).toBe(true)
   });
 
-  it.only(`reports an error during load`, () => {
+  it(`reports an error during load`, () => {
     singleSpa.registerApplication('load-error',
     () => Promise.reject('Could not load this one'),
     location => location.hash === '#load-error');
@@ -30,7 +30,7 @@ describe('error handlers api', () => {
     return singleSpa
       .triggerAppChange()
       .then(() => {
-        expect(errs.length).toBe(2);
+        expect(errs.length).toBe(1);
         expect(errs[0].appOrParcelName).toBe('load-error');
         expect(errs[0].message.indexOf(`'load-error' died in status LOADING_SOURCE_CODE: "Could not load this one"`)).toBeGreaterThan(-1);
       })
