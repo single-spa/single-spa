@@ -71,4 +71,36 @@ describe(`invalid-load-function`, () => {
         expect(singleSpa.getAppStatus('invalid-load-3')).toBe(singleSpa.SKIP_BECAUSE_BROKEN);
       })
   });
+
+  it('It retries loading an application that previously failed', () => {
+    let count = 0;
+    function loadFunction() {
+      count++;
+      if (count === 1) return Promise.reject(`It didn't load`);
+      else return Promise.resolve({
+        bootstrap: () => new Promise(),
+        mount: () => new Promise(),
+        unmount: () => new Promise(),
+      });
+    }
+    singleSpa.registerApplication('invalid-load-4', loadFunction, location => location.hash.includes("#invalid-load-function"));
+
+    location.hash = "#invalid-load-function";
+
+    return singleSpa
+      .triggerAppChange()
+      .then(() => {
+        expect(errs.length).toBeGreaterThan(0);
+        expect(errs[0].appName).toBe('invalid-load-4');
+        expect(errs[0].message.indexOf(`It didn't load`)).toBeGreaterThan(-1)
+
+        location.hash = "#invalid-load-function-1";
+
+        return singleSpa
+          .triggerAppChange()
+          .then(() => {
+            expect(singleSpa.getAppStatus('invalid-load-4')).toBe(singleSpa.NOT_BOOTSTRAPPED);
+          })
+      })
+  });
 });

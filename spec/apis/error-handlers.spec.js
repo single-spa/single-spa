@@ -21,7 +21,9 @@ describe('error handlers api', () => {
   });
 
   it(`reports an error during load`, () => {
-    singleSpa.registerApplication('load-error', () => Promise.reject('Could not load this one'), location => location.hash === '#load-error');
+    singleSpa.registerApplication('load-error',
+    () => Promise.reject('Could not load this one'),
+    location => location.hash === '#load-error');
 
     location.hash = '#load-error';
 

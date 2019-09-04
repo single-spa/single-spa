@@ -1,12 +1,14 @@
-import { NOT_BOOTSTRAPPED, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN, NOT_LOADED } from '../applications/app.helpers.js';
+import { LOAD_ERROR, NOT_BOOTSTRAPPED, LOADING_SOURCE_CODE, SKIP_BECAUSE_BROKEN, NOT_LOADED } from '../applications/app.helpers.js';
 import { ensureValidAppTimeouts } from '../applications/timeouts.js';
 import { handleAppError } from '../applications/app-errors.js';
 import { flattenFnArray, smellsLikeAPromise, validLifecycleFn } from './lifecycle.helpers.js';
 import { getProps } from './prop.helpers.js';
 
+class UserError extends Error {}
+
 export function toLoadPromise(app) {
   return Promise.resolve().then(() => {
-    if (app.status !== NOT_LOADED) {
+    if (app.status !== NOT_LOADED && app.status !== LOAD_ERROR) {
       return app;
     }
 
@@ -18,9 +20,11 @@ export function toLoadPromise(app) {
       const loadPromise = app.loadImpl(getProps(app));
       if (!smellsLikeAPromise(loadPromise)) {
         // The name of the app will be prepended to this error message inside of the handleAppError function
-        throw Error(`single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`);
+        throw new UserError(`single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`);
       }
       return loadPromise.then(val => {
+        app.loadErrorHref = null;
+
         appOpts = val;
 
         let validationErrMessage;
@@ -64,7 +68,13 @@ export function toLoadPromise(app) {
     })
     .catch(err => {
       handleAppError(err, app);
-      app.status = SKIP_BECAUSE_BROKEN;
+      if (err instanceof UserError) {
+        app.status = SKIP_BECAUSE_BROKEN;
+      } else {
+        app.status = LOAD_ERROR;
+        app.loadErrorHref = window.location.href;
+      }
+
       return app;
     })
   })
