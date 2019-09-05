@@ -65,7 +65,7 @@ export function registerApplication(appName, applicationOrLoadingFn, activityFn,
     throw Error(`The activeWhen argument must be a function`);
 
   apps.push({
-    loadErrorHref: null,
+    loadErrorTime: null,
     name: appName,
     loadImpl,
     activeWhen: activityFn,

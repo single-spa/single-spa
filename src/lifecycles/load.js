@@ -23,7 +23,7 @@ export function toLoadPromise(app) {
         throw new UserError(`single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`);
       }
       return loadPromise.then(val => {
-        app.loadErrorHref = null;
+        app.loadErrorTime = null;
 
         appOpts = val;
 
@@ -72,7 +72,7 @@ export function toLoadPromise(app) {
         app.status = SKIP_BECAUSE_BROKEN;
       } else {
         app.status = LOAD_ERROR;
-        app.loadErrorHref = window.location.href;
+        app.loadErrorTime = new Date().getTime();
       }
 
       return app;
