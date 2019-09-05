@@ -96,11 +96,11 @@ describe(`invalid-load-function`, () => {
 
         location.hash = "#invalid-load-function-1";
 
-        return singleSpa
+        return new Promise(resolve => setTimeout(resolve, 201)).then(() => singleSpa
           .triggerAppChange()
           .then(() => {
             expect(singleSpa.getAppStatus('invalid-load-4')).toBe(singleSpa.NOT_BOOTSTRAPPED);
-          })
+          }))
       })
   });
 });

@@ -58,7 +58,7 @@ export function notSkipped(item) {
 
 export function withoutLoadErrors(app) {
   return app.status === LOAD_ERROR
-    ? app.loadErrorHref !== window.location.href
+    ? (new Date().getTime() - app.loadErrorTime) >= 200
     : true;
 }
 
