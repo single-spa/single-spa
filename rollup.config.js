@@ -10,7 +10,7 @@ export default (async () => ([
   {
     input: './src/single-spa.js',
     output: {
-      file: './lib/umd/single-spa.min.js',
+      file: `./lib/umd/single-spa${isProduction ? ".min" : ".dev"}.js`,
       format: 'umd',
       name: 'singleSpa',
       sourcemap: true,
@@ -28,7 +28,7 @@ export default (async () => ([
   {
     input: './src/single-spa.js',
     output: {
-      file: './lib/esm/single-spa.min.js',
+      file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
       format: 'esm',
       sourcemap: true,
     },
@@ -45,7 +45,7 @@ export default (async () => ([
   {
     input: './src/single-spa.js',
     output: {
-      file: './lib/system/single-spa.min.js',
+      file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
       format: 'system',
       sourcemap: true,
     },
