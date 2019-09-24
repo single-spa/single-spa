@@ -6,7 +6,7 @@
 [![](https://data.jsdelivr.com/v1/package/npm/single-spa/badge)](https://www.jsdelivr.com/package/npm/single-spa)
 # single-spa
 
-[Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/enQtMzIwMTcxNTU3ODQyLTM1Y2U1OWMzNTNjOWYyZDBlMDJhN2VkYzk3MDI2NzQ2Nzg0MzMzNjVhNWE2YjVhMTcxNjFkOWYzMjllMmUxMjk)
+[Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/enQtMzIwMTcxNTU3ODQyLWMyMDE0YzljMGZlZDRhMTYyMjMwYTkyYjIzODlkYTA2N2FmOTQ2NzA2YjBjYjBiYzY0Nzk4N2RhMTMyNGU3MTI)
 
 [Donate to this project](https://opencollective.com/single-spa)
 
