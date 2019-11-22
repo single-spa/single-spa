@@ -28,23 +28,6 @@ export default (async () => ([
   {
     input: './src/single-spa.js',
     output: {
-      file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
-      format: 'esm',
-      sourcemap: true,
-    },
-    plugins: [
-      resolve(),
-      commonjs(),
-      babel({
-        exclude: 'node_modules/**'
-      }),
-      isProduction && (await import('rollup-plugin-terser')).terser(),
-      useAnalyzer && analyzer()
-    ]
-  },
-  {
-    input: './src/single-spa.js',
-    output: {
       file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
       format: 'system',
       sourcemap: true,

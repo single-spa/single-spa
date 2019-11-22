@@ -4,11 +4,12 @@
   "description": "Multiple applications, one page",
   "main": "lib/umd/single-spa.min.js",
   "types": "typings/single-spa.d.ts",
-  "module": "lib/esm/single-spa.min.js",
+  "module": "lib/esm/single-spa.js",
+  "sideEffects": false,
   "scripts": {
     "build": "yarn clean && npm run build:prod && npm run build:dev",
-    "build:prod": "rollup -c --environment NODE_ENV:'production'",
-    "build:dev": "rollup -c",
+    "build:prod": "rollup -c --environment NODE_ENV:'production' && babel ./src --out-dir ./lib/esm",
+    "build:dev": "rollup -c && babel ./src --out-dir ./lib/esm",
     "build:analyze": "rollup -c --environment ANALYZER:'analyzer'",
     "watch": "rollup -c -w",
     "prepublishOnly": "yarn build",
@@ -42,6 +43,7 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "@babel/cli": "^7.7.0",
     "@babel/core": "^7.5.5",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.5.5",
