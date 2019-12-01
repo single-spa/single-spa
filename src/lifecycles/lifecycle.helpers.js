@@ -1,10 +1,10 @@
-import { find } from '../utils/find.js';
+import { find } from "../utils/find.js";
 
 export function validLifecycleFn(fn) {
-  return fn && (typeof fn === 'function' || isArrayOfFns(fn));
+  return fn && (typeof fn === "function" || isArrayOfFns(fn));
 
   function isArrayOfFns(arr) {
-    return Array.isArray(arr) && !find(arr, item => typeof item !== 'function');
+    return Array.isArray(arr) && !find(arr, item => typeof item !== "function");
   }
 }
 
@@ -35,9 +35,13 @@ export function flattenFnArray(fns, description) {
         }
       }
     });
-  }
+  };
 }
 
 export function smellsLikeAPromise(promise) {
-  return promise && typeof promise.then === 'function' && typeof promise.catch === 'function';
+  return (
+    promise &&
+    typeof promise.then === "function" &&
+    typeof promise.catch === "function"
+  );
 }

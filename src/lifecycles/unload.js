@@ -1,7 +1,13 @@
-import { NOT_MOUNTED, UNLOADING, NOT_LOADED, SKIP_BECAUSE_BROKEN, isntActive } from '../applications/app.helpers.js';
-import { handleAppError } from '../applications/app-errors.js';
-import { reasonableTime } from '../applications/timeouts.js';
-import { getProps } from './prop.helpers.js';
+import {
+  NOT_MOUNTED,
+  UNLOADING,
+  NOT_LOADED,
+  SKIP_BECAUSE_BROKEN,
+  isntActive
+} from "../applications/app.helpers.js";
+import { handleAppError } from "../applications/app-errors.js";
+import { reasonableTime } from "../applications/timeouts.js";
+import { getProps } from "./prop.helpers.js";
 
 const appsToUnload = {};
 
@@ -11,7 +17,7 @@ export function toUnloadPromise(app) {
 
     if (!unloadInfo) {
       /* No one has called unloadApplication for this app,
-      */
+       */
       return app;
     }
 
@@ -32,12 +38,16 @@ export function toUnloadPromise(app) {
 
     if (app.status !== NOT_MOUNTED) {
       /* The app cannot be unloaded until it is unmounted.
-      */
+       */
       return app;
     }
 
     app.status = UNLOADING;
-    return reasonableTime(app.unload(getProps(app)), `Unloading application '${app.name}'`, app.timeouts.unload)
+    return reasonableTime(
+      app.unload(getProps(app)),
+      `Unloading application '${app.name}'`,
+      app.timeouts.unload
+    )
       .then(() => {
         finishUnloadingApp(app, unloadInfo);
         return app;
@@ -45,8 +55,8 @@ export function toUnloadPromise(app) {
       .catch(err => {
         errorUnloadingApp(app, unloadInfo, err);
         return app;
-      })
-  })
+      });
+  });
 }
 
 function finishUnloadingApp(app, unloadInfo) {
@@ -81,8 +91,10 @@ function errorUnloadingApp(app, unloadInfo, err) {
 }
 
 export function addAppToUnload(app, promiseGetter, resolve, reject) {
-  appsToUnload[app.name] = {app, resolve, reject};
-  Object.defineProperty(appsToUnload[app.name], 'promise', {get: promiseGetter});
+  appsToUnload[app.name] = { app, resolve, reject };
+  Object.defineProperty(appsToUnload[app.name], "promise", {
+    get: promiseGetter
+  });
 }
 
 export function getAppUnloadInfo(appName) {
@@ -92,5 +104,5 @@ export function getAppUnloadInfo(appName) {
 export function getAppsToUnload() {
   return Object.keys(appsToUnload)
     .map(appName => appsToUnload[appName].app)
-    .filter(isntActive)
+    .filter(isntActive);
 }

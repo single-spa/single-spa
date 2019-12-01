@@ -3,8 +3,8 @@ let numBootstraps, numMounts, numUnmounts;
 export const timeouts = {
   mount: {
     dieOnTimeout: true,
-    millis: 20,
-  },
+    millis: 20
+  }
 };
 
 export function bootstrap() {

@@ -3,14 +3,14 @@ let bootstrapCalled, mountCalled;
 export const timeouts = {
   bootstrap: {
     millis: 20,
-    dieOnTimeout: true,
-  },
+    dieOnTimeout: true
+  }
 };
 
 export function bootstrap() {
   return new Promise(resolve => {
     bootstrapCalled = true;
-    setTimeout(resolve, 30)
+    setTimeout(resolve, 30);
   });
 }
 
