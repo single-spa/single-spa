@@ -36,11 +36,6 @@ export function getAppStatus(appName) {
   return app ? app.status : null;
 }
 
-export function declareChildApplication(appName, arg1, arg2) {
-  console.warn('declareChildApplication is deprecated and will be removed in the next major version, use "registerApplication" instead')
-  return registerApplication(appName, arg1, arg2)
-}
-
 export function registerApplication(appName, applicationOrLoadingFn, activityFn, customProps = {}) {
   if (typeof appName !== 'string' || appName.length === 0)
     throw Error(`The first argument must be a non-empty string 'appName'`);
@@ -128,11 +123,6 @@ export function unregisterApplication(appName) {
       const appIndex = apps.findIndex(app => app.name === appName)
       apps.splice(appIndex, 1)
     })
-}
-
-export function unloadChildApplication(appName, opts) {
-  console.warn('unloadChildApplication is deprecated and will be removed in the next major version, use "unloadApplication" instead')
-  return unloadApplication(appName, opts)
 }
 
 export function unloadApplication(appName, opts={waitForUnmount: false}) {
