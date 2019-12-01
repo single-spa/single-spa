@@ -60,7 +60,7 @@ describe(`warning-timeouts app`, () => {
   });
 
   it(`does warn if things don't resolve until after the default warning setting`, () => {
-    myApp.setDelay(50)
+    myApp.setDelay(10)
     location.hash = activeHash;
 
     return singleSpa
@@ -69,7 +69,7 @@ describe(`warning-timeouts app`, () => {
         expect(singleSpa.getAppStatus('warning-timeouts')).toEqual('MOUNTED');
         expect(errs.length).toBe(0)
         expectWarning(`Bootstrapping appOrParcel 'warning-timeouts' did not resolve or reject within 5 milliseconds`)
-        expectWarning(`Mounting application 'warning-timeouts' did not resolve or reject within 5 milliseconds`)
+        expectWarning(`Mounting appOrParcel 'warning-timeouts' did not resolve or reject within 5 milliseconds`)
 
         location.hash = '#not-warning-timeouts';
 
