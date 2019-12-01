@@ -52,10 +52,6 @@ export function shouldntBeActive(app) {
   }
 }
 
-export function notBootstrapped(app) {
-  return app.status !== NOT_BOOTSTRAPPED;
-}
-
 export function notSkipped(item) {
   return (
     item !== SKIP_BECAUSE_BROKEN &&
@@ -70,5 +66,5 @@ export function withoutLoadErrors(app) {
 }
 
 export function toName(app) {
-  return app.name;
+  return app.appOrParcelName || app.name;
 }
