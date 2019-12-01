@@ -81,12 +81,12 @@ describe(`warning-timeouts app`, () => {
           })
       })
   })
-});
 
-function expectWarning(message) {
-  expect(console.warn).toHaveBeenCalled()
-  const found = console.warn.mock.calls.some(call => call[0] === message)
-  if (!found) {
-    expect(console.warn).toHaveBeenCalledWith(message)
+  function expectWarning(message) {
+    expect(consoleWarnSpy).toHaveBeenCalled()
+    const found = consoleWarnSpy.mock.calls.some(call => call[0] === message)
+    if (!found) {
+      expect(consoleWarnSpy).toHaveBeenCalledWith(message)
+    }
   }
-}
+});

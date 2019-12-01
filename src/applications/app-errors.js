@@ -7,6 +7,7 @@ export function handleAppError(err, app) {
     errorHandlers.forEach(handler => handler(transformedErr));
   } else {
     setTimeout(() => {
+      console.log('yep!')
       throw transformedErr;
     });
   }
@@ -52,6 +53,7 @@ export function transformErr(ogErr, appOrParcel) {
     result = ogErr;
   } else {
     console.warn(`While ${appOrParcel.status}, '${appOrParcel.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
+    console.warn(ogErr)
     try {
       result = Error(errPrefix + JSON.stringify(ogErr));
     } catch(err) {

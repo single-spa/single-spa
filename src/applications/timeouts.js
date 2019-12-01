@@ -73,38 +73,39 @@ export function reasonableTime(promise, description, timeoutConfig) {
   const warningPeriod = timeoutConfig.warningMillis;
 
   return new Promise((resolve, reject) => {
+    let finished = false;
     let errored = false;
-
-    const timeouts = [
-      setTimeout(() => maybeTimingOut(1), warningPeriod),
-      setTimeout(() => maybeTimingOut(true), timeoutConfig.millis)
-    ];
 
     promise
     .then(val => {
-      timeouts.forEach(clearTimeout);
+      finished = true;
       resolve(val);
     })
     .catch(val => {
-      timeouts.forEach(clearTimeout);
+      finished = true;
       reject(val);
     });
 
+    setTimeout(() => maybeTimingOut(1), warningPeriod);
+    setTimeout(() => maybeTimingOut(true), timeoutConfig.millis);
+
     function maybeTimingOut(shouldError) {
-      if (shouldError === true) {
-        errored = true;
-        if (timeoutConfig.dieOnTimeout) {
-          reject(`${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds`);
-        } else {
-          console.error(`${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds -- we're no longer going to warn you about it.`);
-          //don't resolve or reject, we're waiting this one out
-        }
-      } else if (!errored) {
-        const numWarnings = shouldError;
-        const numMillis = numWarnings * warningPeriod;
-        console.warn(`${description} did not resolve or reject within ${numMillis} milliseconds`);
-        if (numMillis + warningPeriod < timeoutConfig.millis) {
-          setTimeout(() => maybeTimingOut(numWarnings + 1), warningPeriod);
+      if (!finished) {
+        if (shouldError === true) {
+          errored = true;
+          if (timeoutConfig.dieOnTimeout) {
+            reject(Error(`${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds`));
+          } else {
+            console.error(`${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds -- we're no longer going to warn you about it.`);
+            //don't resolve or reject, we're waiting this one out
+          }
+        } else if (!errored) {
+          const numWarnings = shouldError;
+          const numMillis = numWarnings * warningPeriod;
+          console.warn(`${description} did not resolve or reject within ${numMillis} milliseconds`);
+          if (numMillis + warningPeriod < timeoutConfig.millis) {
+            setTimeout(() => maybeTimingOut(numWarnings + 1), warningPeriod);
+          }
         }
       }
     }
