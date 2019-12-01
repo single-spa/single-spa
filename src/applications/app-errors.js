@@ -7,7 +7,6 @@ export function handleAppError(err, app) {
     errorHandlers.forEach(handler => handler(transformedErr));
   } else {
     setTimeout(() => {
-      console.log('yep!')
       throw transformedErr;
     });
   }
