@@ -19,7 +19,7 @@ export function toMountPromise(appOrParcel, hardFail = false) {
       beforeFirstMountFired = true;
     }
 
-    return reasonableTime(appOrParcel.mount(getProps(appOrParcel)), `Mounting application '${appOrParcel.name}'`, appOrParcel.timeouts.mount)
+    return reasonableTime(appOrParcel.mount(getProps(appOrParcel)), `Mounting appOrParcel '${appOrParcel.name}'`, appOrParcel.timeouts.mount)
       .then(() => {
         appOrParcel.status = MOUNTED;
 

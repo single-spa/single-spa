@@ -39,7 +39,7 @@ export function toUnmountPromise(appOrParcel, hardFail = false) {
 
     function unmountAppOrParcel() {
       // We always try to unmount the appOrParcel, even if the children parcels failed to unmount.
-      return reasonableTime(appOrParcel.unmount(getProps(appOrParcel)), `Unmounting application ${appOrParcel.name}'`, appOrParcel.timeouts.unmount)
+      return reasonableTime(appOrParcel.unmount(getProps(appOrParcel)), `Unmounting appOrParcel '${appOrParcel.name}'`, appOrParcel.timeouts.unmount)
         .then(() => {
           // The appOrParcel needs to stay in a broken status if its children parcels fail to unmount
           if (!parcelError) {
