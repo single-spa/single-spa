@@ -1,7 +1,7 @@
 import * as singleSpa from 'single-spa'
 import { setBootstrapMaxTime } from '../../src/single-spa';
 
-describe('global timeout configuration', () => {
+xdescribe('global timeout configuration', () => {
   let consoleWarnSpy, consoleErrSpy
 
   beforeAll(() => {
