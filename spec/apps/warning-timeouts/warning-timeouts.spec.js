@@ -53,7 +53,7 @@ describe(`warning-timeouts app`, () => {
     expect(consoleWarnSpy).not.toHaveBeenCalled()
   });
 
-  fit(`does warn if things don't resolve until after the default warning setting`, async () => {
+  it(`does warn if things don't resolve until after the default warning setting`, async () => {
     myApp.setDelay(3)
     location.hash = activeHash;
 
