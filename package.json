@@ -12,14 +12,13 @@
     "build:analyze": "rollup -c --environment ANALYZER:'analyzer'",
     "watch": "rollup -c -w",
     "prepublishOnly": "yarn build",
-    "clean": "rm -rf lib",
+    "clean": "rimraf lib",
     "test": "BABEL_ENV=test jest --config jest.config.json",
-    "test:watch": "BABEL_ENV=test jest --config jest.config.json --watch",
     "lint": "eslint src"
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn test && yarn lint"
+      "pre-commit": "concurrently yarn:test yarn:lint"
     }
   },
   "files": [
@@ -49,11 +48,13 @@
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.4",
     "babel-plugin-dynamic-import-node": "^2.3.0",
+    "concurrently": "^5.0.0",
     "custom-event": "^1.0.1",
     "eslint": "6.3.0",
     "eslint-config-canopy": "2.3.0",
     "husky": "^3.0.5",
     "jest": "^24.9.0",
+    "rimraf": "^3.0.0",
     "rollup": "^1.20.3",
     "rollup-plugin-analyzer": "^3.1.2",
     "rollup-plugin-babel": "^4.3.3",
