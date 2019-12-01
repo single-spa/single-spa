@@ -47,7 +47,6 @@
     "@babel/preset-env": "^7.5.5",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
-    "babel-loader": "^8.0.4",
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "concurrently": "^5.0.0",
     "custom-event": "^1.0.1",
