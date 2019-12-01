@@ -8,7 +8,11 @@
   "env": {
     "test": {
       "presets": [
-        "@babel/preset-env",
+        ["@babel/preset-env", {
+          "targets": {
+            "browsers": "node >=10"
+          },
+        }],
       ],
       "plugins": [
         "dynamic-import-node"

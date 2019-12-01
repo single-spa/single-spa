@@ -13,10 +13,12 @@ describe(`warning-timeouts app`, () => {
     singleSpa.registerApplication('warning-timeouts', () => import('./warning-timeouts.app'), location => location.hash === activeHash);
     singleSpa.start();
     consoleWarnSpy = jest.spyOn(console, 'warn')
+    jest.useFakeTimers()
   });
 
   afterAll(() => {
     consoleWarnSpy.mockRestore();
+    jest.useRealTimers()
   });
 
   beforeEach(() => {
@@ -24,8 +26,6 @@ describe(`warning-timeouts app`, () => {
     singleSpa.addErrorHandler(handleError);
 
     location.hash = '#';
-
-    console.warn.mockReset()
 
     return import('./warning-timeouts.app')
       .then(app => myApp = app)
@@ -37,49 +37,37 @@ describe(`warning-timeouts app`, () => {
     return singleSpa.unloadApplication('warning-timeouts')
   });
 
-  it(`doesn't warn if everything resolves before the default warning setting`, () => {
+  it(`doesn't warn if everything resolves before the default warning setting`, async () => {
     location.hash = activeHash;
 
-    return singleSpa
-      .triggerAppChange()
-      .then(() => {
-        expect(singleSpa.getAppStatus('warning-timeouts')).toEqual('MOUNTED');
-        expect(errs.length).toBe(0)
-        expect(console.warn).not.toHaveBeenCalled()
+    await controlledAppChange()
+    expect(singleSpa.getAppStatus('warning-timeouts')).toEqual('MOUNTED');
+    expect(errs.length).toBe(0)
+    expect(consoleWarnSpy).not.toHaveBeenCalled()
 
-        location.hash = '#not-warning-timeouts';
+    location.hash = '#not-warning-timeouts';
 
-        return singleSpa
-          .triggerAppChange()
-          .then(() => {
-            expect(singleSpa.getAppStatus('warning-timeouts')).toEqual('NOT_MOUNTED');
-            expect(errs.length).toBe(0)
-            expect(consoleWarnSpy).not.toHaveBeenCalled()
-          })
-      })
+    await controlledAppChange()
+    expect(singleSpa.getAppStatus('warning-timeouts')).toEqual('NOT_MOUNTED');
+    expect(errs.length).toBe(0)
+    expect(consoleWarnSpy).not.toHaveBeenCalled()
   });
 
-  it(`does warn if things don't resolve until after the default warning setting`, () => {
-    myApp.setDelay(10)
+  fit(`does warn if things don't resolve until after the default warning setting`, async () => {
+    myApp.setDelay(3)
     location.hash = activeHash;
 
-    return singleSpa
-      .triggerAppChange()
-      .then(() => {
-        expect(singleSpa.getAppStatus('warning-timeouts')).toEqual('MOUNTED');
-        expect(errs.length).toBe(0)
-        expectWarning(`Bootstrapping appOrParcel 'warning-timeouts' did not resolve or reject within 5 milliseconds`)
-        expectWarning(`Mounting appOrParcel 'warning-timeouts' did not resolve or reject within 5 milliseconds`)
+    await controlledAppChange()
+    expect(singleSpa.getAppStatus('warning-timeouts')).toEqual('MOUNTED');
+    expect(errs.length).toBe(0)
+    expectWarning(`Bootstrapping appOrParcel 'warning-timeouts' did not resolve or reject within 2 milliseconds`)
+    expectWarning(`Mounting appOrParcel 'warning-timeouts' did not resolve or reject within 2 milliseconds`)
 
-        location.hash = '#not-warning-timeouts';
+    location.hash = '#not-warning-timeouts';
 
-        return singleSpa
-          .triggerAppChange()
-          .then(() => {
-            expect(singleSpa.getAppStatus('warning-timeouts')).toEqual('NOT_MOUNTED');
-            expect(errs.length).toBe(0)
-          })
-      })
+    await controlledAppChange()
+    expect(singleSpa.getAppStatus('warning-timeouts')).toEqual('NOT_MOUNTED');
+    expect(errs.length).toBe(0)
   })
 
   function expectWarning(message) {
@@ -90,3 +78,28 @@ describe(`warning-timeouts app`, () => {
     }
   }
 });
+
+async function controlledAppChange() {
+  const appChangePromise = singleSpa.triggerAppChange()
+  await flushPromises()
+  jest.advanceTimersByTime(1)
+  await flushPromises()
+  jest.advanceTimersByTime(1)
+  await flushPromises()
+  jest.advanceTimersByTime(1)
+  await flushPromises()
+  jest.advanceTimersByTime(1)
+  await flushPromises()
+  jest.advanceTimersByTime(1)
+  await flushPromises()
+  jest.advanceTimersByTime(1)
+  await flushPromises()
+  jest.advanceTimersByTime(1)
+  await flushPromises()
+  await appChangePromise
+}
+
+// https://github.com/facebook/jest/issues/2157#issuecomment-279171856
+function flushPromises() {
+  return new Promise(resolve => setImmediate(resolve));
+}

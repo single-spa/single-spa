@@ -20,16 +20,16 @@ export function unmount() {
 
 export const timeouts = {
   bootstrap: {
-    warningMillis: 5,
+    warningMillis: 2,
   },
   mount: {
-    warningMillis: 5,
+    warningMillis: 2,
   },
   unmount: {
-    warningMillis: 5,
+    warningMillis: 2,
   },
   unload: {
-    warningMillis: 5,
+    warningMillis: 2,
   }
 }
 
