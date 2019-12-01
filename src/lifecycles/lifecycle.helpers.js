@@ -19,11 +19,9 @@ export function flattenFnArray(fns, description) {
       return resultPromise.then(() => {
         const thisPromise = fn(props);
         return smellsLikeAPromise(thisPromise)
-          ? resultPromise.then(() => thisPromise)
-          : resultPromise.then(() =>
-              Promise.reject(
-                `${description} at index ${index} did not return a promise`
-              )
+          ? thisPromise
+          : Promise.reject(
+              `${description} at index ${index} did not return a promise`
             );
       });
     }, Promise.resolve());
