@@ -9,11 +9,6 @@ const globalTimeoutConfig = {
     dieOnTimeout: false,
     warningMillis: 1000,
   },
-  update: {
-    millis: 3000,
-    dieOnTimeout: false,
-    warningMillis: 1000,
-  },
   unmount: {
     millis: 3000,
     dieOnTimeout: false,
