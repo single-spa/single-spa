@@ -54,7 +54,7 @@ describe(`warning-timeouts app`, () => {
           .then(() => {
             expect(singleSpa.getAppStatus('warning-timeouts')).toEqual('NOT_MOUNTED');
             expect(errs.length).toBe(0)
-            expect(console.warn).not.toHaveBeenCalled()
+            expect(consoleWarnSpy).not.toHaveBeenCalled()
           })
       })
   });
