@@ -1,1 +1,1 @@
-window.__SINGLE_SPA_DEVTOOLS__ = {}
+window.__SINGLE_SPA_DEVTOOLS__ = {};

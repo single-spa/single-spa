@@ -22,7 +22,7 @@ export const bootstrap = [
           _bootstrapsCalledOutOfOrder = `bootstrap 3 called before bootstrap 1`;
         _bootstrap1Called = true;
         resolve();
-      }, 10)
+      }, 10);
     });
   },
 
@@ -40,7 +40,7 @@ export const bootstrap = [
       _bootstrap3Called = true;
       resolve();
     });
-  },
+  }
 ];
 
 export const mount = [
@@ -53,7 +53,7 @@ export const mount = [
           _mountsCalledOutOfOrder = `mount 3 called before mount 1`;
         _mount1Called = true;
         resolve();
-      }, 10)
+      }, 10);
     });
   },
 
@@ -71,7 +71,7 @@ export const mount = [
       _mount3Called = true;
       resolve();
     });
-  },
+  }
 ];
 
 export const unmount = [
@@ -84,7 +84,7 @@ export const unmount = [
           _unmountsCalledOutOfOrder = `unmount 3 called before unmount 1`;
         _unmount1Called = true;
         resolve();
-      }, 10)
+      }, 10);
     });
   },
 
@@ -102,7 +102,7 @@ export const unmount = [
       _unmount3Called = true;
       resolve();
     });
-  },
+  }
 ];
 
 export function reset() {
@@ -129,7 +129,6 @@ export function bootstrap1Called() {
 export function bootstrap2Called() {
   return _bootstrap2Called;
 }
-
 
 export function bootstrap3Called() {
   return _bootstrap3Called;

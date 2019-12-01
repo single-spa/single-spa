@@ -1,18 +1,10 @@
 {
-  "presets": [
-    ["@babel/preset-env", {"modules": false}]
-  ],
-  "plugins": [
-    "@babel/plugin-syntax-dynamic-import",
-  ],
+  "presets": [["@babel/preset-env", { "modules": false }]],
+  "plugins": ["@babel/plugin-syntax-dynamic-import"],
   "env": {
     "test": {
-      "presets": [
-        "@babel/preset-env",
-      ],
-      "plugins": [
-        "dynamic-import-node"
-      ]
+      "presets": ["@babel/preset-env"],
+      "plugins": ["dynamic-import-node"]
     }
   }
 }

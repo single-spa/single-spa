@@ -1,4 +1,4 @@
-import * as singleSpa from 'single-spa';
+import * as singleSpa from "single-spa";
 
 const activeHash = `#invalid-unload`;
 
@@ -10,17 +10,21 @@ describe(`invalid-unload app :`, () => {
   }
 
   beforeAll(() => {
-    singleSpa.registerApplication('./invalid-unload.app.js', () => import('./invalid-unload.app.js'), location => location.hash === activeHash);
+    singleSpa.registerApplication(
+      "./invalid-unload.app.js",
+      () => import("./invalid-unload.app.js"),
+      location => location.hash === activeHash
+    );
     singleSpa.start();
   });
 
   beforeEach(() => {
-    location.hash = '';
+    location.hash = "";
 
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return singleSpa.triggerAppChange()
+    return singleSpa.triggerAppChange();
   });
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));
@@ -28,13 +32,16 @@ describe(`invalid-unload app :`, () => {
   it(`throws an error if you call unloadApplication incorrectly`, () => {
     expect(() => {
       // The parameters are in the reverse order
-      singleSpa.unloadApplication({waitForUnmount}, './invalid-unload.app.js');
-    }).toThrow()
+      singleSpa.unloadApplication(
+        { waitForUnmount },
+        "./invalid-unload.app.js"
+      );
+    }).toThrow();
 
     expect(() => {
       // Trying to unload an app that doesn't exist
       singleSpa.unloadApplication("App that doesn't exist");
-    }).toThrow()
+    }).toThrow();
   });
 
   it(`puts the app into SKIP_BECAUSE_BROKEN because it has an incorrect unload lifecycle`, () => {
@@ -43,15 +50,21 @@ describe(`invalid-unload app :`, () => {
       .triggerAppChange()
       .then(() => {
         // The unload lifecycle hasn't been called yet, so single-spa doesn't know it is a bad impl yet.
-        expect(singleSpa.getAppStatus('./invalid-unload.app.js')).toBe('MOUNTED');
-        return singleSpa.unloadApplication('./invalid-unload.app.js');
+        expect(singleSpa.getAppStatus("./invalid-unload.app.js")).toBe(
+          "MOUNTED"
+        );
+        return singleSpa.unloadApplication("./invalid-unload.app.js");
       })
       .then(() => {
-        fail(`unloadApplication() should have rejected the promise it returned because the app has a bad implementation of the unload lifecycle`);
+        fail(
+          `unloadApplication() should have rejected the promise it returned because the app has a bad implementation of the unload lifecycle`
+        );
       })
       .catch(err => {
         // Now the unload lifecycle has been called and has been determined to be invalid
-        expect(singleSpa.getAppStatus('./invalid-unload.app.js')).toBe('SKIP_BECAUSE_BROKEN');
+        expect(singleSpa.getAppStatus("./invalid-unload.app.js")).toBe(
+          "SKIP_BECAUSE_BROKEN"
+        );
       });
   });
 });
