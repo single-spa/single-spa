@@ -12,9 +12,7 @@ export {
   getAppStatus,
   unloadApplication,
   checkActivityFunctions,
-  getAppNames,
-  declareChildApplication,
-  unloadChildApplication
+  getAppNames
 } from "./applications/apps.js";
 export { navigateToUrl } from "./navigation/navigation-events.js";
 export { triggerAppChange } from "./navigation/reroute.js";
