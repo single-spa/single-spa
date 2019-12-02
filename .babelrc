@@ -1,10 +1,26 @@
 {
-  "presets": [["@babel/preset-env", { "modules": false }]],
-  "plugins": ["@babel/plugin-syntax-dynamic-import"],
+  "presets": [
+    ["@babel/preset-env", {
+      "modules": false
+    }]
+  ],
   "env": {
     "test": {
       "presets": ["@babel/preset-env"],
-      "plugins": ["dynamic-import-node"]
+      "plugins": ["dynamic-import-node", "@babel/plugin-syntax-dynamic-import"]
+    },
+    "esm": {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "modules": false,
+            "targets": {
+              "esmodules": true
+            }
+          }
+        ]
+      ]
     }
   }
 }

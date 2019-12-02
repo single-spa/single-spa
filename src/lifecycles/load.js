@@ -14,8 +14,6 @@ import {
 } from "./lifecycle.helpers.js";
 import { getProps } from "./prop.helpers.js";
 
-class UserError extends Error {}
-
 export function toLoadPromise(app) {
   return Promise.resolve().then(() => {
     if (app.status !== NOT_LOADED && app.status !== LOAD_ERROR) {
@@ -24,14 +22,15 @@ export function toLoadPromise(app) {
 
     app.status = LOADING_SOURCE_CODE;
 
-    let appOpts;
+    let appOpts, isUserErr;
 
     return Promise.resolve()
       .then(() => {
         const loadPromise = app.loadImpl(getProps(app));
         if (!smellsLikeAPromise(loadPromise)) {
           // The name of the app will be prepended to this error message inside of the handleAppError function
-          throw new UserError(
+          isUserErr = true;
+          throw Error(
             `single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`
           );
         }
@@ -99,7 +98,7 @@ export function toLoadPromise(app) {
       })
       .catch(err => {
         handleAppError(err, app);
-        if (err instanceof UserError) {
+        if (isUserErr) {
           app.status = SKIP_BECAUSE_BROKEN;
         } else {
           app.status = LOAD_ERROR;
