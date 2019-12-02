@@ -6,6 +6,17 @@ import analyzer from "rollup-plugin-analyzer";
 const isProduction = process.env.NODE_ENV === "production";
 const useAnalyzer = process.env.ANALYZER === "analyzer";
 
+const babelOpts = {
+  exclude: "node_modules/**"
+};
+
+const terserOpts = {
+  compress: {
+    passes: 2
+  },
+  module: true
+};
+
 export default (async () => [
   {
     input: "./src/single-spa.js",
@@ -18,10 +29,8 @@ export default (async () => [
     plugins: [
       resolve(),
       commonjs(),
-      babel({
-        exclude: "node_modules/**"
-      }),
-      isProduction && (await import("rollup-plugin-terser")).terser(),
+      babel(babelOpts),
+      isProduction && (await import("rollup-plugin-terser")).terser(terserOpts),
       useAnalyzer && analyzer()
     ]
   },
@@ -35,10 +44,17 @@ export default (async () => [
     plugins: [
       resolve(),
       commonjs(),
-      babel({
-        exclude: "node_modules/**"
-      }),
-      isProduction && (await import("rollup-plugin-terser")).terser(),
+      babel(
+        Object.assign({}, babelOpts, {
+          envName: "esm"
+        })
+      ),
+      isProduction &&
+        (await import("rollup-plugin-terser")).terser(
+          Object.assign({}, terserOpts, {
+            ecma: 6
+          })
+        ),
       useAnalyzer && analyzer()
     ]
   },
@@ -52,10 +68,8 @@ export default (async () => [
     plugins: [
       resolve(),
       commonjs(),
-      babel({
-        exclude: "node_modules/**"
-      }),
-      isProduction && (await import("rollup-plugin-terser")).terser(),
+      babel(babelOpts),
+      isProduction && (await import("rollup-plugin-terser")).terser(terserOpts),
       useAnalyzer && analyzer()
     ]
   }
