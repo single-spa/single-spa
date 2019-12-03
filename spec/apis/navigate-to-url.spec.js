@@ -75,8 +75,7 @@ describe("navigateToUrl", function() {
 
   it(`should reload the page to a new url when the origin's don't match, since that's the only way to navigate to a different domain/origin`, function() {
     const url = "https://other-app.com/something#b/my-route";
-    const opts = { isTestingEnv: true };
-    const returnValue = singleSpa.navigateToUrl(url, opts);
+    const returnValue = singleSpa.navigateToUrl(url);
     expect(returnValue).toEqual({ wouldHaveReloadedThePage: true });
   });
 
@@ -96,6 +95,13 @@ describe("navigateToUrl", function() {
       null,
       "/route?yoshi=criminal"
     );
+  });
+
+  it("should reroute if query params have changed with hash based routing", function() {
+    singleSpaNavigate("#/route?yoshi=criminal");
+    spyOn(window.history, "pushState");
+    singleSpaNavigate("#/route?yoshi=freeanimal");
+    expect(location.hash).toBe("#/route?yoshi=freeanimal");
   });
 
   it("should error if not called with appropriate args", function() {

@@ -2,9 +2,14 @@ import resolve from "rollup-plugin-node-resolve";
 import babel from "rollup-plugin-babel";
 import commonjs from "rollup-plugin-commonjs";
 import analyzer from "rollup-plugin-analyzer";
+import replace from "@rollup/plugin-replace";
 
 const isProduction = process.env.NODE_ENV === "production";
 const useAnalyzer = process.env.ANALYZER === "analyzer";
+
+const replaceOpts = {
+  "process.env.BABEL_ENV": null
+};
 
 const babelOpts = {
   exclude: "node_modules/**"
@@ -27,6 +32,7 @@ export default (async () => [
       sourcemap: true
     },
     plugins: [
+      replace(replaceOpts),
       resolve(),
       commonjs(),
       babel(babelOpts),
@@ -42,6 +48,7 @@ export default (async () => [
       sourcemap: true
     },
     plugins: [
+      replace(replaceOpts),
       resolve(),
       commonjs(),
       babel(
@@ -66,6 +73,7 @@ export default (async () => [
       sourcemap: true
     },
     plugins: [
+      replace(replaceOpts),
       resolve(),
       commonjs(),
       babel(babelOpts),

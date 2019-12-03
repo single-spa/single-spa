@@ -1,3 +1,10 @@
 {
-  "extends": "canopy"
+  "extends": [
+    "canopy",
+    "important-stuff"
+  ],
+  "env": {
+    "browser": true,
+    "node": true
+  }
 }
