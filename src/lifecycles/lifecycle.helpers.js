@@ -15,26 +15,16 @@ export function flattenFnArray(fns, description) {
   }
 
   return function(props) {
-    return new Promise((resolve, reject) => {
-      waitForPromises(0);
-
-      function waitForPromises(index) {
-        const promise = fns[index](props);
-        if (!smellsLikeAPromise(promise)) {
-          reject(`${description} at index ${index} did not return a promise`);
-        } else {
-          promise
-            .then(() => {
-              if (index === fns.length - 1) {
-                resolve();
-              } else {
-                waitForPromises(index + 1);
-              }
-            })
-            .catch(reject);
-        }
-      }
-    });
+    return fns.reduce((resultPromise, fn, index) => {
+      return resultPromise.then(() => {
+        const thisPromise = fn(props);
+        return smellsLikeAPromise(thisPromise)
+          ? thisPromise
+          : Promise.reject(
+              `${description} at index ${index} did not return a promise`
+            );
+      });
+    }, Promise.resolve());
   };
 }
 

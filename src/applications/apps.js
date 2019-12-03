@@ -90,13 +90,7 @@ export function registerApplication(
 }
 
 export function checkActivityFunctions(location) {
-  const activeApps = [];
-  for (let i = 0; i < apps.length; i++) {
-    if (apps[i].activeWhen(location)) {
-      activeApps.push(apps[i].name);
-    }
-  }
-  return activeApps;
+  return apps.filter(app => app.activeWhen(location)).map(toName);
 }
 
 export function getAppsToLoad() {

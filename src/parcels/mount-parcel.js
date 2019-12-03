@@ -6,7 +6,6 @@ import {
   NOT_BOOTSTRAPPED,
   NOT_MOUNTED,
   MOUNTED,
-  UPDATING,
   LOADING_SOURCE_CODE,
   SKIP_BECAUSE_BROKEN
 } from "../applications/app.helpers.js";
