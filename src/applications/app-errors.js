@@ -46,14 +46,14 @@ export function removeErrorHandler(handler) {
 }
 
 export function prodErrorMessage(code, ...args) {
-  return `single-spa minified message #${code}: See https://single-spa.js.org/error/${code}.html${
-    args.length ? `?arg=${args.join("&arg=")}` : ""
+  return `single-spa minified message #${code}: See https://single-spa.js.org/error?code=${code}${
+    args.length ? `&arg=${args.join("&arg=")}` : ""
   }`;
 }
 
 export function devErrorMessage(code, msg, ...args) {
-  return `single-spa message #${code}: ${msg}. See https://single-spa.js.org/error/${code}.html${
-    args.length ? `?arg=${args.join("&arg=")}` : ""
+  return `single-spa message #${code}: ${msg}. See https://single-spa.js.org/error?code=${code}${
+    args.length ? `&arg=${args.join("&arg=")}` : ""
   }`;
 }
 
