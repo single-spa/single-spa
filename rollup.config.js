@@ -20,8 +20,7 @@ const terserOpts = {
   compress: {
     passes: 2
   },
-  module: true,
-  ecma: 5
+  module: true
 };
 
 export default (async () => [
