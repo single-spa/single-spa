@@ -198,9 +198,10 @@ export function mountParcel(config, customProps) {
         __DEV__
           ? devErrorMessage(
               12,
-              `Parcel ${name} provided an invalid update function`
+              `Parcel ${name} provided an invalid update function`,
+              name
             )
-          : prodErrorMessage(12)
+          : prodErrorMessage(12, name)
       );
     }
 
