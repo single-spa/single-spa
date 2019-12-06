@@ -3,25 +3,30 @@ import {
   MOUNTED,
   SKIP_BECAUSE_BROKEN
 } from "../applications/app.helpers.js";
-import { transformErr } from "../applications/app-errors.js";
+import {
+  transformErr,
+  devErrorMessage,
+  prodErrorMessage
+} from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
-import { getProps } from "./prop.helpers.js";
 
 export function toUpdatePromise(parcel) {
   return Promise.resolve().then(() => {
     if (parcel.status !== MOUNTED) {
       throw Error(
-        `Cannot update parcel '${parcel.name}' because it is not mounted`
+        __DEV__
+          ? devErrorMessage(
+              32,
+              `Cannot update parcel '${parcel.name}' because it is not mounted`,
+              parcel.name
+            )
+          : prodErrorMessage(32, parcel.name)
       );
     }
 
     parcel.status = UPDATING;
 
-    return reasonableTime(
-      parcel.update(getProps(parcel)),
-      `Updating parcel '${parcel.name}'`,
-      parcel.timeouts.mount
-    )
+    return reasonableTime(parcel, "update")
       .then(() => {
         parcel.status = MOUNTED;
         return parcel;

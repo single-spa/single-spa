@@ -1,3 +1,7 @@
+import { devErrorMessage, prodErrorMessage } from "./app-errors";
+import { getProps } from "../lifecycles/prop.helpers";
+import { objectType, toName } from "./app.helpers";
+
 const globalTimeoutConfig = {
   bootstrap: {
     millis: 4000,
@@ -14,13 +18,22 @@ const globalTimeoutConfig = {
   unload: {
     millis: 3000,
     dieOnTimeout: false
+  },
+  update: {
+    millis: 3000,
+    dieOnTimeout: false
   }
 };
 
-export function setBootstrapMaxTime(time, dieOnTimeout = false) {
+export function setBootstrapMaxTime(time, dieOnTimeout) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
-      `bootstrap max time must be a positive integer number of milliseconds`
+      __DEV__
+        ? devErrorMessage(
+            16,
+            `bootstrap max time must be a positive integer number of milliseconds`
+          )
+        : prodErrorMessage(16)
     );
   }
 
@@ -30,10 +43,15 @@ export function setBootstrapMaxTime(time, dieOnTimeout = false) {
   };
 }
 
-export function setMountMaxTime(time, dieOnTimeout = false) {
+export function setMountMaxTime(time, dieOnTimeout) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
-      `mount max time must be a positive integer number of milliseconds`
+      __DEV__
+        ? devErrorMessage(
+            17,
+            `mount max time must be a positive integer number of milliseconds`
+          )
+        : prodErrorMessage(17)
     );
   }
 
@@ -43,10 +61,15 @@ export function setMountMaxTime(time, dieOnTimeout = false) {
   };
 }
 
-export function setUnmountMaxTime(time, dieOnTimeout = false) {
+export function setUnmountMaxTime(time, dieOnTimeout) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
-      `unmount max time must be a positive integer number of milliseconds`
+      __DEV__
+        ? devErrorMessage(
+            18,
+            `unmount max time must be a positive integer number of milliseconds`
+          )
+        : prodErrorMessage(18)
     );
   }
 
@@ -56,10 +79,15 @@ export function setUnmountMaxTime(time, dieOnTimeout = false) {
   };
 }
 
-export function setUnloadMaxTime(time, dieOnTimeout = false) {
+export function setUnloadMaxTime(time, dieOnTimeout) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
-      `unload max time must be a positive integer number of milliseconds`
+      __DEV__
+        ? devErrorMessage(
+            19,
+            `unload max time must be a positive integer number of milliseconds`
+          )
+        : prodErrorMessage(19)
     );
   }
 
@@ -69,14 +97,16 @@ export function setUnloadMaxTime(time, dieOnTimeout = false) {
   };
 }
 
-export function reasonableTime(promise, description, timeoutConfig) {
+export function reasonableTime(appOrParcel, lifecycle) {
   const warningPeriod = 1000;
+  const timeoutConfig = appOrParcel.timeouts[lifecycle];
+  const type = objectType(appOrParcel);
 
   return new Promise((resolve, reject) => {
     let finished = false;
     let errored = false;
 
-    promise
+    appOrParcel[lifecycle](getProps(appOrParcel))
       .then(val => {
         finished = true;
         resolve(val);
@@ -89,26 +119,35 @@ export function reasonableTime(promise, description, timeoutConfig) {
     setTimeout(() => maybeTimingOut(1), warningPeriod);
     setTimeout(() => maybeTimingOut(true), timeoutConfig.millis);
 
+    const errMsg = __DEV__
+      ? devErrorMessage(
+          31,
+          `Lifecycle function ${lifecycle} for ${type} ${toName(
+            appOrParcel
+          )} lifecycle did not resolve or reject for ${timeoutConfig.millis}`
+        )
+      : prodErrorMessage(
+          31,
+          lifecycle,
+          type,
+          toName(appOrParcel),
+          timeoutConfig.millis
+        );
+
     function maybeTimingOut(shouldError) {
       if (!finished) {
         if (shouldError === true) {
           errored = true;
           if (timeoutConfig.dieOnTimeout) {
-            reject(
-              `${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds`
-            );
+            reject(Error());
           } else {
-            console.error(
-              `${description} did not resolve or reject for ${timeoutConfig.millis} milliseconds -- we're no longer going to warn you about it.`
-            );
+            console.error(errMsg);
             //don't resolve or reject, we're waiting this one out
           }
         } else if (!errored) {
           const numWarnings = shouldError;
           const numMillis = numWarnings * warningPeriod;
-          console.warn(
-            `${description} did not resolve or reject within ${numMillis} milliseconds`
-          );
+          console.warn(errMsg);
           if (numMillis + warningPeriod < timeoutConfig.millis) {
             setTimeout(() => maybeTimingOut(numWarnings + 1), warningPeriod);
           }

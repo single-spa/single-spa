@@ -14,7 +14,11 @@ export function handleAppError(err, app) {
 
 export function addErrorHandler(handler) {
   if (typeof handler !== "function") {
-    throw Error("a single-spa error handler must be a function");
+    throw Error(
+      __DEV__
+        ? devErrorMessage(28, "a single-spa error handler must be a function")
+        : prodErrorMessage(28)
+    );
   }
 
   errorHandlers.push(handler);
@@ -22,7 +26,11 @@ export function addErrorHandler(handler) {
 
 export function removeErrorHandler(handler) {
   if (typeof handler !== "function") {
-    throw Error("a single-spa error handler must be a function");
+    throw Error(
+      __DEV__
+        ? devErrorMessage(29, "a single-spa error handler must be a function")
+        : prodErrorMessage(29)
+    );
   }
 
   let removedSomething = false;
@@ -35,9 +43,22 @@ export function removeErrorHandler(handler) {
   return removedSomething;
 }
 
+export function prodErrorMessage(code, ...args) {
+  return `single-spa minified message #${code}: See https://single-spa.js.org/error/${code}.html${
+    args.length ? `?arg=${args.join("&arg=")}` : ""
+  }`;
+}
+
+export function devErrorMessage(code, msg, ...args) {
+  return `single-spa message #${code}: ${msg}. See https://single-spa.js.org/error/${code}.html${
+    args.length ? `?arg=${args.join("&arg")}` : ""
+  }`;
+}
+
 export function transformErr(ogErr, appOrParcel) {
-  const objectType = appOrParcel.unmountThisParcel ? "Parcel" : "Application";
-  const errPrefix = `${objectType} '${appOrParcel.name}' died in status ${appOrParcel.status}: `;
+  const errPrefix = `${
+    appOrParcel.unmountThisParcel ? "Parcel" : "Application"
+  } '${appOrParcel.name}' died in status ${appOrParcel.status}: `;
 
   let result;
 
@@ -52,7 +73,14 @@ export function transformErr(ogErr, appOrParcel) {
     result = ogErr;
   } else {
     console.warn(
-      `While ${appOrParcel.status}, '${appOrParcel.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`
+      __DEV__
+        ? devErrorMessage(
+            30,
+            `While ${appOrParcel.status}, '${appOrParcel.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`,
+            appOrParcel.status,
+            appOrParcel.name
+          )
+        : prodErrorMessage(30, appOrParcel.status, appOrParcel.name)
     );
     try {
       result = Error(errPrefix + JSON.stringify(ogErr));

@@ -6,5 +6,8 @@
   "env": {
     "browser": true,
     "node": true
+  },
+  "globals": {
+    "__DEV__": true
   }
 }
