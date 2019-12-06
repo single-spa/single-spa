@@ -139,7 +139,7 @@ export function reasonableTime(appOrParcel, lifecycle) {
         if (shouldError === true) {
           errored = true;
           if (timeoutConfig.dieOnTimeout) {
-            reject(Error());
+            reject(Error(errMsg));
           } else {
             console.error(errMsg);
             //don't resolve or reject, we're waiting this one out
