@@ -53,7 +53,7 @@ export function prodErrorMessage(code, ...args) {
 
 export function devErrorMessage(code, msg, ...args) {
   return `single-spa message #${code}: ${msg}. See https://single-spa.js.org/error/${code}.html${
-    args.length ? `?arg=${args.join("&arg")}` : ""
+    args.length ? `?arg=${args.join("&arg=")}` : ""
   }`;
 }
 
