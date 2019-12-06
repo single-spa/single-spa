@@ -1,3 +1,5 @@
+import { objectType } from "./app.helpers";
+
 let errorHandlers = [];
 
 export function handleAppError(err, app) {
@@ -56,9 +58,9 @@ export function devErrorMessage(code, msg, ...args) {
 }
 
 export function transformErr(ogErr, appOrParcel) {
-  const errPrefix = `${
-    appOrParcel.unmountThisParcel ? "Parcel" : "Application"
-  } '${appOrParcel.name}' died in status ${appOrParcel.status}: `;
+  const errPrefix = `${objectType(appOrParcel)} '${
+    appOrParcel.name
+  }' died in status ${appOrParcel.status}: `;
 
   let result;
 
