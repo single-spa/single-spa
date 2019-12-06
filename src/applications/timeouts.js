@@ -120,6 +120,6 @@ export function reasonableTime(promise, description, timeoutConfig) {
   });
 }
 
-export function ensureValidAppTimeouts(timeouts = {}) {
-  return assign({}, globalTimeoutConfig, timeouts);
+export function ensureValidAppTimeouts(timeouts) {
+  return assign({}, globalTimeoutConfig, timeouts || {});
 }
