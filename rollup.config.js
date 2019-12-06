@@ -25,12 +25,19 @@ const terserOpts = {
 export default (async () => [
   {
     input: "./src/single-spa.js",
-    output: {
-      file: `./lib/umd/single-spa${isProduction ? ".min" : ".dev"}.js`,
-      format: "umd",
-      name: "singleSpa",
-      sourcemap: true
-    },
+    output: [
+      {
+        file: `./lib/umd/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        format: "umd",
+        name: "singleSpa",
+        sourcemap: true
+      },
+      {
+        file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        format: "system",
+        sourcemap: true
+      }
+    ],
     plugins: [
       replace(replaceOpts),
       resolve(),
@@ -62,22 +69,6 @@ export default (async () => [
             ecma: 6
           })
         ),
-      useAnalyzer && analyzer()
-    ]
-  },
-  {
-    input: "./src/single-spa.js",
-    output: {
-      file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
-      format: "system",
-      sourcemap: true
-    },
-    plugins: [
-      replace(replaceOpts),
-      resolve(),
-      commonjs(),
-      babel(babelOpts),
-      isProduction && (await import("rollup-plugin-terser")).terser(terserOpts),
       useAnalyzer && analyzer()
     ]
   }
