@@ -1,6 +1,6 @@
-import { devErrorMessage, prodErrorMessage } from "./app-errors";
 import { getProps } from "../lifecycles/prop.helpers";
 import { objectType, toName } from "./app.helpers";
+import { formatErrorMessage } from "./app-errors";
 
 const globalTimeoutConfig = {
   bootstrap: {
@@ -28,12 +28,11 @@ const globalTimeoutConfig = {
 export function setBootstrapMaxTime(time, dieOnTimeout) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            16,
-            `bootstrap max time must be a positive integer number of milliseconds`
-          )
-        : prodErrorMessage(16)
+      formatErrorMessage(
+        16,
+        __DEV__ &&
+          `bootstrap max time must be a positive integer number of milliseconds`
+      )
     );
   }
 
@@ -46,12 +45,11 @@ export function setBootstrapMaxTime(time, dieOnTimeout) {
 export function setMountMaxTime(time, dieOnTimeout) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            17,
-            `mount max time must be a positive integer number of milliseconds`
-          )
-        : prodErrorMessage(17)
+      formatErrorMessage(
+        17,
+        __DEV__ &&
+          `mount max time must be a positive integer number of milliseconds`
+      )
     );
   }
 
@@ -64,12 +62,11 @@ export function setMountMaxTime(time, dieOnTimeout) {
 export function setUnmountMaxTime(time, dieOnTimeout) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            18,
-            `unmount max time must be a positive integer number of milliseconds`
-          )
-        : prodErrorMessage(18)
+      formatErrorMessage(
+        18,
+        __DEV__ &&
+          `unmount max time must be a positive integer number of milliseconds`
+      )
     );
   }
 
@@ -82,12 +79,11 @@ export function setUnmountMaxTime(time, dieOnTimeout) {
 export function setUnloadMaxTime(time, dieOnTimeout) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            19,
-            `unload max time must be a positive integer number of milliseconds`
-          )
-        : prodErrorMessage(19)
+      formatErrorMessage(
+        19,
+        __DEV__ &&
+          `unload max time must be a positive integer number of milliseconds`
+      )
     );
   }
 
@@ -119,20 +115,17 @@ export function reasonableTime(appOrParcel, lifecycle) {
     setTimeout(() => maybeTimingOut(1), warningPeriod);
     setTimeout(() => maybeTimingOut(true), timeoutConfig.millis);
 
-    const errMsg = __DEV__
-      ? devErrorMessage(
-          31,
-          `Lifecycle function ${lifecycle} for ${type} ${toName(
-            appOrParcel
-          )} lifecycle did not resolve or reject for ${timeoutConfig.millis}`
-        )
-      : prodErrorMessage(
-          31,
-          lifecycle,
-          type,
-          toName(appOrParcel),
-          timeoutConfig.millis
-        );
+    const errMsg = formatErrorMessage(
+      31,
+      __DEV__ &&
+        `Lifecycle function ${lifecycle} for ${type} ${toName(
+          appOrParcel
+        )} lifecycle did not resolve or reject for ${timeoutConfig.millis}`,
+      lifecycle,
+      type,
+      toName(appOrParcel),
+      timeoutConfig.millis
+    );
 
     function maybeTimingOut(shouldError) {
       if (!finished) {

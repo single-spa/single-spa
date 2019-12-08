@@ -19,7 +19,7 @@ import {
   getAppUnloadInfo,
   addAppToUnload
 } from "../lifecycles/unload.js";
-import { devErrorMessage, prodErrorMessage } from "./app-errors.js";
+import { formatErrorMessage } from "./app-errors.js";
 
 const apps = [];
 
@@ -49,35 +49,30 @@ export function registerApplication(
 ) {
   if (typeof appName !== "string" || appName.length === 0)
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            20,
-            `The first argument must be a non-empty string 'appName'`
-          )
-        : prodErrorMessage(20)
+      formatErrorMessage(
+        20,
+        __DEV__ && `The first argument must be a non-empty string 'appName'`
+      )
     );
   if (getAppNames().indexOf(appName) !== -1)
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            21,
-            `There is already an app declared with name ${appName}`,
-            appName
-          )
-        : prodErrorMessage(21, appName)
+      formatErrorMessage(
+        21,
+        __DEV__ && `There is already an app declared with name ${appName}`,
+        appName
+      )
     );
   if (typeof customProps !== "object" || Array.isArray(customProps))
     throw Error(
-      __DEV__
-        ? devErrorMessage(22, "customProps must be an object")
-        : prodErrorMessage(22)
+      formatErrorMessage(22, __DEV__ && "customProps must be an object")
     );
 
   if (!applicationOrLoadingFn)
     throw Error(
-      __DEV__
-        ? devErrorMessage(23, `The application or loading function is required`)
-        : prodErrorMessage(23)
+      formatErrorMessage(
+        23,
+        __DEV__ && "The application or loading function is required"
+      )
     );
 
   let loadImpl;
@@ -91,9 +86,10 @@ export function registerApplication(
 
   if (typeof activityFn !== "function")
     throw Error(
-      __DEV__
-        ? devErrorMessage(24, `The activeWhen argument must be a function`)
-        : prodErrorMessage(24)
+      formatErrorMessage(
+        24,
+        __DEV__ && `The activeWhen argument must be a function`
+      )
     );
 
   apps.push({
@@ -147,13 +143,12 @@ export function getAppsToMount() {
 export function unregisterApplication(appName) {
   if (!apps.find(app => app.name === appName)) {
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            25,
-            `Cannot unregister application '${appName}' because no such application has been registered`,
-            appName
-          )
-        : prodErrorMessage(25, appName)
+      formatErrorMessage(
+        25,
+        __DEV__ &&
+          `Cannot unregister application '${appName}' because no such application has been registered`,
+        appName
+      )
     );
   }
 
@@ -166,21 +161,21 @@ export function unregisterApplication(appName) {
 export function unloadApplication(appName, opts = { waitForUnmount: false }) {
   if (typeof appName !== "string") {
     throw Error(
-      __DEV__
-        ? devErrorMessage(26, `unloadApplication requires a string 'appName'`)
-        : prodErrorMessage(26)
+      formatErrorMessage(
+        26,
+        __DEV__ && `unloadApplication requires a string 'appName'`
+      )
     );
   }
   const app = find(apps, App => App.name === appName);
   if (!app) {
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            27,
-            `Could not unload application '${appName}' because no such application has been registered`,
-            appName
-          )
-        : prodErrorMessage(27, appName)
+      formatErrorMessage(
+        27,
+        __DEV__ &&
+          `Could not unload application '${appName}' because no such application has been registered`,
+        appName
+      )
     );
   }
 

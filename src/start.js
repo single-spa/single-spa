@@ -1,8 +1,5 @@
 import { reroute } from "./navigation/reroute.js";
-import {
-  devErrorMessage,
-  prodErrorMessage
-} from "./applications/app-errors.js";
+import { formatErrorMessage } from "./applications/app-errors.js";
 
 let started = false;
 
@@ -18,12 +15,11 @@ export function isStarted() {
 setTimeout(() => {
   if (!started) {
     console.warn(
-      __DEV__
-        ? devErrorMessage(
-            1,
-            `singleSpa.start() has not been called, 5000ms after single-spa was loaded. Before start() is called, apps can be declared and loaded, but not bootstrapped or mounted.`
-          )
-        : prodErrorMessage(1)
+      formatErrorMessage(
+        1,
+        __DEV__ &&
+          `singleSpa.start() has not been called, 5000ms after single-spa was loaded. Before start() is called, apps can be declared and loaded, but not bootstrapped or mounted.`
+      )
     );
   }
 }, 5000);

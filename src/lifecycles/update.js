@@ -5,8 +5,7 @@ import {
 } from "../applications/app.helpers.js";
 import {
   transformErr,
-  devErrorMessage,
-  prodErrorMessage
+  formatErrorMessage
 } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
 
@@ -14,13 +13,12 @@ export function toUpdatePromise(parcel) {
   return Promise.resolve().then(() => {
     if (parcel.status !== MOUNTED) {
       throw Error(
-        __DEV__
-          ? devErrorMessage(
-              32,
-              `Cannot update parcel '${parcel.name}' because it is not mounted`,
-              parcel.name
-            )
-          : prodErrorMessage(32, parcel.name)
+        formatErrorMessage(
+          32,
+          __DEV__ &&
+            `Cannot update parcel '${parcel.name}' because it is not mounted`,
+          parcel.name
+        )
       );
     }
 

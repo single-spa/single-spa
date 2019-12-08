@@ -9,8 +9,7 @@ import {
 import { ensureValidAppTimeouts } from "../applications/timeouts.js";
 import {
   handleAppError,
-  devErrorMessage,
-  prodErrorMessage
+  formatErrorMessage
 } from "../applications/app-errors.js";
 import {
   flattenFnArray,
@@ -36,13 +35,12 @@ export function toLoadPromise(app) {
           // The name of the app will be prepended to this error message inside of the handleAppError function
           isUserErr = true;
           throw Error(
-            __DEV__
-              ? devErrorMessage(
-                  33,
-                  `single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`,
-                  app.name
-                )
-              : prodErrorMessage(33, app.name)
+            formatErrorMessage(
+              33,
+              __DEV__ &&
+                `single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`,
+              app.name
+            )
           );
         }
         return loadPromise.then(val => {
@@ -88,20 +86,14 @@ export function toLoadPromise(app) {
               appOptsStr = JSON.stringify(appOpts);
             } catch {}
             console.error(
-              __DEV__
-                ? devErrorMessage(
-                    validationErrCode,
-                    `The loading function for single-spa ${type} '${app.name}' resolved with the following, which does not have bootstrap, mount, and unmount functions`,
-                    type,
-                    app.name,
-                    appOptsStr
-                  )
-                : prodErrorMessage(
-                    validationErrCode,
-                    type,
-                    app.name,
-                    appOptsStr
-                  ),
+              formatErrorMessage(
+                validationErrCode,
+                __DEV__ &&
+                  `The loading function for single-spa ${type} '${app.name}' resolved with the following, which does not have bootstrap, mount, and unmount functions`,
+                type,
+                app.name,
+                appOptsStr
+              ),
               appOpts
             );
             handleAppError(validationErrMessage, app);

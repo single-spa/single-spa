@@ -1,9 +1,6 @@
 import { find } from "../utils/find.js";
-import {
-  devErrorMessage,
-  prodErrorMessage
-} from "../applications/app-errors.js";
 import { objectType, toName } from "../applications/app.helpers.js";
+import { formatErrorMessage } from "../applications/app-errors.js";
 
 export function validLifecycleFn(fn) {
   return fn && (typeof fn === "function" || isArrayOfFns(fn));
@@ -30,16 +27,15 @@ export function flattenFnArray(appOrParcel, lifecycle) {
         return smellsLikeAPromise(thisPromise)
           ? thisPromise
           : Promise.reject(
-              __DEV__
-                ? devErrorMessage(
-                    15,
-                    `Within ${type} ${name}, the lifecycle function ${lifecycle} at array index ${index} did not return a promise`,
-                    type,
-                    name,
-                    lifecycle,
-                    index
-                  )
-                : prodErrorMessage(15, type, name, lifecycle, index)
+              formatErrorMessage(
+                15,
+                __DEV__ &&
+                  `Within ${type} ${name}, the lifecycle function ${lifecycle} at array index ${index} did not return a promise`,
+                type,
+                name,
+                lifecycle,
+                index
+              )
             );
       });
     }, Promise.resolve());

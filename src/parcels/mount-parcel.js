@@ -14,10 +14,7 @@ import { toMountPromise } from "../lifecycles/mount.js";
 import { toUpdatePromise } from "../lifecycles/update.js";
 import { toUnmountPromise } from "../lifecycles/unmount.js";
 import { ensureValidAppTimeouts } from "../applications/timeouts.js";
-import {
-  devErrorMessage,
-  prodErrorMessage
-} from "../applications/app-errors.js";
+import { formatErrorMessage } from "../applications/app-errors.js";
 
 let parcelCount = 0;
 const rootParcels = { parcels: {} };
@@ -33,44 +30,42 @@ export function mountParcel(config, customProps) {
   // Validate inputs
   if (!config || (typeof config !== "object" && typeof config !== "function")) {
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            2,
-            "Cannot mount parcel without a config object or config loading function"
-          )
-        : prodErrorMessage(2)
+      formatErrorMessage(
+        2,
+        __DEV__ &&
+          "Cannot mount parcel without a config object or config loading function"
+      )
     );
   }
 
   if (config.name && typeof config.name !== "string") {
     throw Error(
-      __DEV__
-        ? devErrorMessage(3, "Parcel name must be a string, if provided")
-        : prodErrorMessage(3)
+      formatErrorMessage(
+        3,
+        __DEV__ && "Parcel name must be a string, if provided"
+      )
     );
   }
 
   if (typeof customProps !== "object") {
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            4,
-            `Parcel ${name} has invalid customProps -- must be an object`,
-            name
-          )
-        : prodErrorMessage(4, name)
+      formatErrorMessage(
+        4,
+        __DEV__ &&
+          `Parcel ${name} has invalid customProps -- must be an object`,
+        name
+      )
     );
   }
 
   if (!customProps.domElement) {
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            5,
-            `Parcel ${name} cannot be mounted without a domElement provided as a prop`,
-            name
-          )
-        : prodErrorMessage(5, name)
+      formatErrorMessage(
+        5,
+        __DEV__ &&
+          `Parcel ${name} cannot be mounted without a domElement provided as a prop`,
+        name
+      )
     );
   }
 
@@ -93,14 +88,13 @@ export function mountParcel(config, customProps) {
     unmountThisParcel() {
       if (parcel.status !== MOUNTED) {
         throw Error(
-          __DEV__
-            ? devErrorMessage(
-                6,
-                `Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`,
-                name,
-                parcel.status
-              )
-            : prodErrorMessage(6, name, parcel.status)
+          formatErrorMessage(
+            6,
+            __DEV__ &&
+              `Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`,
+            name,
+            parcel.status
+          )
         );
       }
 
@@ -134,24 +128,22 @@ export function mountParcel(config, customProps) {
 
   if (!loadPromise || typeof loadPromise.then !== "function") {
     throw Error(
-      __DEV__
-        ? devErrorMessage(
-            7,
-            `When mounting a parcel, the config loading function must return a promise that resolves with the parcel config`
-          )
-        : prodErrorMessage(7)
+      formatErrorMessage(
+        7,
+        __DEV__ &&
+          `When mounting a parcel, the config loading function must return a promise that resolves with the parcel config`
+      )
     );
   }
 
   loadPromise = loadPromise.then(config => {
     if (!config) {
       throw Error(
-        __DEV__
-          ? devErrorMessage(
-              8,
-              `When mounting a parcel, the config loading function returned a promise that did not resolve with a parcel config`
-            )
-          : prodErrorMessage(8)
+        formatErrorMessage(
+          8,
+          __DEV__ &&
+            `When mounting a parcel, the config loading function returned a promise that did not resolve with a parcel config`
+        )
       );
     }
 
@@ -159,49 +151,41 @@ export function mountParcel(config, customProps) {
 
     if (!validLifecycleFn(config.bootstrap)) {
       throw Error(
-        __DEV__
-          ? devErrorMessage(
-              9,
-              `Parcel ${name} must have a valid bootstrap function`,
-              name
-            )
-          : prodErrorMessage(9, name)
+        formatErrorMessage(
+          9,
+          __DEV__ && `Parcel ${name} must have a valid bootstrap function`,
+          name
+        )
       );
     }
 
     if (!validLifecycleFn(config.mount)) {
       throw Error(
-        __DEV__
-          ? devErrorMessage(
-              10,
-              `Parcel ${name} must have a valid mount function`,
-              name
-            )
-          : prodErrorMessage(10, name)
+        formatErrorMessage(
+          10,
+          __DEV__ && `Parcel ${name} must have a valid mount function`,
+          name
+        )
       );
     }
 
     if (!validLifecycleFn(config.unmount)) {
       throw Error(
-        __DEV__
-          ? devErrorMessage(
-              11,
-              `Parcel ${name} must have a valid unmount function`,
-              name
-            )
-          : prodErrorMessage(11, name)
+        formatErrorMessage(
+          11,
+          __DEV__ && `Parcel ${name} must have a valid unmount function`,
+          name
+        )
       );
     }
 
     if (config.update && !validLifecycleFn(config.update)) {
       throw Error(
-        __DEV__
-          ? devErrorMessage(
-              12,
-              `Parcel ${name} provided an invalid update function`,
-              name
-            )
-          : prodErrorMessage(12, name)
+        formatErrorMessage(
+          12,
+          __DEV__ && `Parcel ${name} provided an invalid update function`,
+          name
+        )
       );
     }
 
@@ -248,14 +232,13 @@ export function mountParcel(config, customProps) {
         Promise.resolve().then(() => {
           if (parcel.status !== NOT_MOUNTED) {
             throw Error(
-              __DEV__
-                ? devErrorMessage(
-                    13,
-                    `Cannot mount parcel '${name}' -- it is in a ${parcel.status} status`,
-                    name,
-                    parcel.status
-                  )
-                : prodErrorMessage(13, name, parcel.status)
+              formatErrorMessage(
+                13,
+                __DEV__ &&
+                  `Cannot mount parcel '${name}' -- it is in a ${parcel.status} status`,
+                name,
+                parcel.status
+              )
             );
           }
 
