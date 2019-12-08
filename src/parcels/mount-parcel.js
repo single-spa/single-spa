@@ -195,7 +195,7 @@ export function mountParcel(config, customProps) {
     const unmount = flattenFnArray(config, "unmount");
 
     parcel.status = NOT_BOOTSTRAPPED;
-    parcel.appOrParcelName = name;
+    parcel.name = name;
     parcel.bootstrap = bootstrap;
     parcel.mount = mount;
     parcel.unmount = unmount;

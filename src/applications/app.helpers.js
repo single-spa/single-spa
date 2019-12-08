@@ -66,7 +66,7 @@ export function withoutLoadErrors(app) {
 }
 
 export function toName(app) {
-  return app.appOrParcelName;
+  return app.name;
 }
 
 export function isParcel(appOrParcel) {

@@ -94,7 +94,7 @@ export function registerApplication(
 
   apps.push({
     loadErrorTime: null,
-    appOrParcelName: appName,
+    name: appName,
     loadImpl,
     activeWhen: activityFn,
     status: NOT_LOADED,
