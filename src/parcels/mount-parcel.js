@@ -7,7 +7,8 @@ import {
   NOT_MOUNTED,
   MOUNTED,
   LOADING_SOURCE_CODE,
-  SKIP_BECAUSE_BROKEN
+  SKIP_BECAUSE_BROKEN,
+  toName
 } from "../applications/app.helpers.js";
 import { toBootstrapPromise } from "../lifecycles/bootstrap.js";
 import { toMountPromise } from "../lifecycles/mount.js";
@@ -84,7 +85,7 @@ export function mountParcel(config, customProps) {
       ? LOADING_SOURCE_CODE
       : NOT_BOOTSTRAPPED,
     customProps,
-    parentName: owningAppOrParcel.name,
+    parentName: toName(owningAppOrParcel),
     unmountThisParcel() {
       if (parcel.status !== MOUNTED) {
         throw Error(
@@ -194,7 +195,7 @@ export function mountParcel(config, customProps) {
     const unmount = flattenFnArray(config, "unmount");
 
     parcel.status = NOT_BOOTSTRAPPED;
-    parcel.name = name;
+    parcel.appOrParcelName = name;
     parcel.bootstrap = bootstrap;
     parcel.mount = mount;
     parcel.unmount = unmount;

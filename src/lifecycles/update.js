@@ -1,7 +1,8 @@
 import {
   UPDATING,
   MOUNTED,
-  SKIP_BECAUSE_BROKEN
+  SKIP_BECAUSE_BROKEN,
+  toName
 } from "../applications/app.helpers.js";
 import {
   transformErr,
@@ -16,8 +17,10 @@ export function toUpdatePromise(parcel) {
         formatErrorMessage(
           32,
           __DEV__ &&
-            `Cannot update parcel '${parcel.name}' because it is not mounted`,
-          parcel.name
+            `Cannot update parcel '${toName(
+              parcel
+            )}' because it is not mounted`,
+          toName(parcel)
         )
       );
     }

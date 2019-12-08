@@ -1,4 +1,4 @@
-import { objectType } from "./app.helpers";
+import { objectType, toName } from "./app.helpers";
 
 let errorHandlers = [];
 
@@ -56,9 +56,9 @@ export function formatErrorMessage(code, msg, ...args) {
 }
 
 export function transformErr(ogErr, appOrParcel) {
-  const errPrefix = `${objectType(appOrParcel)} '${
-    appOrParcel.name
-  }' died in status ${appOrParcel.status}: `;
+  const errPrefix = `${objectType(appOrParcel)} '${toName(
+    appOrParcel
+  )}' died in status ${appOrParcel.status}: `;
 
   let result;
 
@@ -76,9 +76,11 @@ export function transformErr(ogErr, appOrParcel) {
       formatErrorMessage(
         30,
         __DEV__ &&
-          `While ${appOrParcel.status}, '${appOrParcel.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`,
+          `While ${appOrParcel.status}, '${toName(
+            appOrParcel
+          )}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`,
         appOrParcel.status,
-        appOrParcel.name
+        toName(appOrParcel)
       )
     );
     try {
@@ -89,15 +91,7 @@ export function transformErr(ogErr, appOrParcel) {
     }
   }
 
-  result.appName = appOrParcel.name;
-  result.appOrParcelName = appOrParcel.name;
-  try {
-    result.name = appOrParcel.name;
-  } catch (err) {
-    // See https://github.com/CanopyTax/single-spa/issues/323
-    // In a future major release, we can remove the `name` property altogether,
-    // as a breaking change, in favor of appOrParcelName.
-  }
+  result.appOrParcelName = toName(appOrParcel);
 
   return result;
 }

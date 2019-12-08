@@ -4,7 +4,8 @@ import {
   LOADING_SOURCE_CODE,
   SKIP_BECAUSE_BROKEN,
   NOT_LOADED,
-  objectType
+  objectType,
+  toName
 } from "../applications/app.helpers.js";
 import { ensureValidAppTimeouts } from "../applications/timeouts.js";
 import {
@@ -38,8 +39,10 @@ export function toLoadPromise(app) {
             formatErrorMessage(
               33,
               __DEV__ &&
-                `single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`,
-              app.name
+                `single-spa loading function did not return a promise. Check the second argument to registerApplication('${toName(
+                  app
+                )}', loadingFunction, activityFunction)`,
+              toName(app)
             )
           );
         }
@@ -89,9 +92,11 @@ export function toLoadPromise(app) {
               formatErrorMessage(
                 validationErrCode,
                 __DEV__ &&
-                  `The loading function for single-spa ${type} '${app.name}' resolved with the following, which does not have bootstrap, mount, and unmount functions`,
+                  `The loading function for single-spa ${type} '${toName(
+                    app
+                  )}' resolved with the following, which does not have bootstrap, mount, and unmount functions`,
                 type,
-                app.name,
+                toName(app),
                 appOptsStr
               ),
               appOpts

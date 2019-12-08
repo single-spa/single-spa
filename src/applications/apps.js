@@ -37,7 +37,7 @@ export function getRawAppData() {
 }
 
 export function getAppStatus(appName) {
-  const app = find(apps, app => app.name === appName);
+  const app = find(apps, app => toName(app) === appName);
   return app ? app.status : null;
 }
 
@@ -94,7 +94,7 @@ export function registerApplication(
 
   apps.push({
     loadErrorTime: null,
-    name: appName,
+    appOrParcelName: appName,
     loadImpl,
     activeWhen: activityFn,
     status: NOT_LOADED,
@@ -141,7 +141,7 @@ export function getAppsToMount() {
 }
 
 export function unregisterApplication(appName) {
-  if (!apps.find(app => app.name === appName)) {
+  if (!apps.find(app => toName(app) === appName)) {
     throw Error(
       formatErrorMessage(
         25,
@@ -153,7 +153,7 @@ export function unregisterApplication(appName) {
   }
 
   return unloadApplication(appName).then(() => {
-    const appIndex = apps.findIndex(app => app.name === appName);
+    const appIndex = apps.findIndex(app => toName(app) === appName);
     apps.splice(appIndex, 1);
   });
 }
@@ -167,7 +167,7 @@ export function unloadApplication(appName, opts = { waitForUnmount: false }) {
       )
     );
   }
-  const app = find(apps, App => App.name === appName);
+  const app = find(apps, App => toName(App) === appName);
   if (!app) {
     throw Error(
       formatErrorMessage(
@@ -179,7 +179,7 @@ export function unloadApplication(appName, opts = { waitForUnmount: false }) {
     );
   }
 
-  const appUnloadInfo = getAppUnloadInfo(app.name);
+  const appUnloadInfo = getAppUnloadInfo(toName(app));
   if (opts && opts.waitForUnmount) {
     // We need to wait for unmount before unloading the app
 

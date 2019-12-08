@@ -3,7 +3,8 @@ import {
   UNLOADING,
   NOT_LOADED,
   SKIP_BECAUSE_BROKEN,
-  isntActive
+  isntActive,
+  toName
 } from "../applications/app.helpers.js";
 import { handleAppError } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
@@ -12,7 +13,7 @@ const appsToUnload = {};
 
 export function toUnloadPromise(app) {
   return Promise.resolve().then(() => {
-    const unloadInfo = appsToUnload[app.name];
+    const unloadInfo = appsToUnload[toName(app)];
 
     if (!unloadInfo) {
       /* No one has called unloadApplication for this app,
@@ -55,7 +56,7 @@ export function toUnloadPromise(app) {
 }
 
 function finishUnloadingApp(app, unloadInfo) {
-  delete appsToUnload[app.name];
+  delete appsToUnload[toName(app)];
 
   // Unloaded apps don't have lifecycles
   delete app.bootstrap;
@@ -72,7 +73,7 @@ function finishUnloadingApp(app, unloadInfo) {
 }
 
 function errorUnloadingApp(app, unloadInfo, err) {
-  delete appsToUnload[app.name];
+  delete appsToUnload[toName(app)];
 
   // Unloaded apps don't have lifecycles
   delete app.bootstrap;
@@ -86,8 +87,8 @@ function errorUnloadingApp(app, unloadInfo, err) {
 }
 
 export function addAppToUnload(app, promiseGetter, resolve, reject) {
-  appsToUnload[app.name] = { app, resolve, reject };
-  Object.defineProperty(appsToUnload[app.name], "promise", {
+  appsToUnload[toName(app)] = { app, resolve, reject };
+  Object.defineProperty(appsToUnload[toName(app)], "promise", {
     get: promiseGetter
   });
 }
