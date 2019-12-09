@@ -49,7 +49,7 @@ export function removeErrorHandler(handler) {
 
 export function formatErrorMessage(code, msg, ...args) {
   return `single-spa minified message #${code}: ${
-    msg ? msg : ""
+    msg ? msg + " " : ""
   }See https://single-spa.js.org/error?code=${code}${
     args.length ? `&arg=${args.join("&arg=")}` : ""
   }`;
