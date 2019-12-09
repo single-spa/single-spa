@@ -7,7 +7,6 @@ import {
 } from "../applications/app.helpers.js";
 import { handleAppError } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
-import { getProps } from "./prop.helpers.js";
 
 const appsToUnload = {};
 
@@ -43,11 +42,7 @@ export function toUnloadPromise(app) {
     }
 
     app.status = UNLOADING;
-    return reasonableTime(
-      app.unload(getProps(app)),
-      `Unloading application '${app.name}'`,
-      app.timeouts.unload
-    )
+    return reasonableTime(app, "unload")
       .then(() => {
         finishUnloadingApp(app, unloadInfo);
         return app;

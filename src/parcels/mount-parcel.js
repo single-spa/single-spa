@@ -14,6 +14,7 @@ import { toMountPromise } from "../lifecycles/mount.js";
 import { toUpdatePromise } from "../lifecycles/update.js";
 import { toUnmountPromise } from "../lifecycles/unmount.js";
 import { ensureValidAppTimeouts } from "../applications/timeouts.js";
+import { formatErrorMessage } from "../applications/app-errors.js";
 
 let parcelCount = 0;
 const rootParcels = { parcels: {} };
@@ -29,21 +30,42 @@ export function mountParcel(config, customProps) {
   // Validate inputs
   if (!config || (typeof config !== "object" && typeof config !== "function")) {
     throw Error(
-      "Cannot mount parcel without a config object or config loading function"
+      formatErrorMessage(
+        2,
+        __DEV__ &&
+          "Cannot mount parcel without a config object or config loading function"
+      )
     );
   }
 
   if (config.name && typeof config.name !== "string") {
-    throw Error("Parcel name must be a string, if provided");
+    throw Error(
+      formatErrorMessage(
+        3,
+        __DEV__ && "Parcel name must be a string, if provided"
+      )
+    );
   }
 
   if (typeof customProps !== "object") {
-    throw Error(`Parcel ${name} has invalid customProps -- must be an object`);
+    throw Error(
+      formatErrorMessage(
+        4,
+        __DEV__ &&
+          `Parcel ${name} has invalid customProps -- must be an object`,
+        name
+      )
+    );
   }
 
   if (!customProps.domElement) {
     throw Error(
-      `Parcel ${name} cannot be mounted without a domElement provided as a prop`
+      formatErrorMessage(
+        5,
+        __DEV__ &&
+          `Parcel ${name} cannot be mounted without a domElement provided as a prop`,
+        name
+      )
     );
   }
 
@@ -66,7 +88,13 @@ export function mountParcel(config, customProps) {
     unmountThisParcel() {
       if (parcel.status !== MOUNTED) {
         throw Error(
-          `Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`
+          formatErrorMessage(
+            6,
+            __DEV__ &&
+              `Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`,
+            name,
+            parcel.status
+          )
         );
       }
 
@@ -100,38 +128,70 @@ export function mountParcel(config, customProps) {
 
   if (!loadPromise || typeof loadPromise.then !== "function") {
     throw Error(
-      `When mounting a parcel, the config loading function must return a promise that resolves with the parcel config`
+      formatErrorMessage(
+        7,
+        __DEV__ &&
+          `When mounting a parcel, the config loading function must return a promise that resolves with the parcel config`
+      )
     );
   }
 
   loadPromise = loadPromise.then(config => {
     if (!config) {
       throw Error(
-        `When mounting a parcel, the config loading function returned a promise that did not resolve with a parcel config`
+        formatErrorMessage(
+          8,
+          __DEV__ &&
+            `When mounting a parcel, the config loading function returned a promise that did not resolve with a parcel config`
+        )
       );
     }
 
     const name = config.name || `parcel-${id}`;
 
     if (!validLifecycleFn(config.bootstrap)) {
-      throw Error(`Parcel ${name} must have a valid bootstrap function`);
+      throw Error(
+        formatErrorMessage(
+          9,
+          __DEV__ && `Parcel ${name} must have a valid bootstrap function`,
+          name
+        )
+      );
     }
 
     if (!validLifecycleFn(config.mount)) {
-      throw Error(`Parcel ${name} must have a valid mount function`);
+      throw Error(
+        formatErrorMessage(
+          10,
+          __DEV__ && `Parcel ${name} must have a valid mount function`,
+          name
+        )
+      );
     }
 
     if (!validLifecycleFn(config.unmount)) {
-      throw Error(`Parcel ${name} must have a valid unmount function`);
+      throw Error(
+        formatErrorMessage(
+          11,
+          __DEV__ && `Parcel ${name} must have a valid unmount function`,
+          name
+        )
+      );
     }
 
     if (config.update && !validLifecycleFn(config.update)) {
-      throw Error(`Parcel ${name} provided an invalid update function`);
+      throw Error(
+        formatErrorMessage(
+          12,
+          __DEV__ && `Parcel ${name} provided an invalid update function`,
+          name
+        )
+      );
     }
 
-    const bootstrap = flattenFnArray(config.bootstrap);
-    const mount = flattenFnArray(config.mount);
-    const unmount = flattenFnArray(config.unmount);
+    const bootstrap = flattenFnArray(config, "bootstrap");
+    const mount = flattenFnArray(config, "mount");
+    const unmount = flattenFnArray(config, "unmount");
 
     parcel.status = NOT_BOOTSTRAPPED;
     parcel.name = name;
@@ -141,7 +201,7 @@ export function mountParcel(config, customProps) {
     parcel.timeouts = ensureValidAppTimeouts(config.timeouts);
 
     if (config.update) {
-      parcel.update = flattenFnArray(config.update);
+      parcel.update = flattenFnArray(config, "update");
       externalRepresentation.update = function(customProps) {
         parcel.customProps = customProps;
 
@@ -172,7 +232,13 @@ export function mountParcel(config, customProps) {
         Promise.resolve().then(() => {
           if (parcel.status !== NOT_MOUNTED) {
             throw Error(
-              `Cannot mount parcel '${name}' -- it is in a ${parcel.status} status`
+              formatErrorMessage(
+                13,
+                __DEV__ &&
+                  `Cannot mount parcel '${name}' -- it is in a ${parcel.status} status`,
+                name,
+                parcel.status
+              )
             );
           }
 

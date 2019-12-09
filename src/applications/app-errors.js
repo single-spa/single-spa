@@ -1,3 +1,5 @@
+import { objectType } from "./app.helpers";
+
 let errorHandlers = [];
 
 export function handleAppError(err, app) {
@@ -14,7 +16,12 @@ export function handleAppError(err, app) {
 
 export function addErrorHandler(handler) {
   if (typeof handler !== "function") {
-    throw Error("a single-spa error handler must be a function");
+    throw Error(
+      formatErrorMessage(
+        28,
+        __DEV__ && "a single-spa error handler must be a function"
+      )
+    );
   }
 
   errorHandlers.push(handler);
@@ -22,7 +29,12 @@ export function addErrorHandler(handler) {
 
 export function removeErrorHandler(handler) {
   if (typeof handler !== "function") {
-    throw Error("a single-spa error handler must be a function");
+    throw Error(
+      formatErrorMessage(
+        29,
+        __DEV__ && "a single-spa error handler must be a function"
+      )
+    );
   }
 
   let removedSomething = false;
@@ -35,9 +47,18 @@ export function removeErrorHandler(handler) {
   return removedSomething;
 }
 
+export function formatErrorMessage(code, msg, ...args) {
+  return `single-spa minified message #${code}: ${
+    msg ? msg + " " : ""
+  }See https://single-spa.js.org/error?code=${code}${
+    args.length ? `&arg=${args.join("&arg=")}` : ""
+  }`;
+}
+
 export function transformErr(ogErr, appOrParcel) {
-  const objectType = appOrParcel.unmountThisParcel ? "Parcel" : "Application";
-  const errPrefix = `${objectType} '${appOrParcel.name}' died in status ${appOrParcel.status}: `;
+  const errPrefix = `${objectType(appOrParcel)} '${
+    appOrParcel.name
+  }' died in status ${appOrParcel.status}: `;
 
   let result;
 
@@ -52,7 +73,13 @@ export function transformErr(ogErr, appOrParcel) {
     result = ogErr;
   } else {
     console.warn(
-      `While ${appOrParcel.status}, '${appOrParcel.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`
+      formatErrorMessage(
+        30,
+        __DEV__ &&
+          `While ${appOrParcel.status}, '${appOrParcel.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`,
+        appOrParcel.status,
+        appOrParcel.name
+      )
     );
     try {
       result = Error(errPrefix + JSON.stringify(ogErr));

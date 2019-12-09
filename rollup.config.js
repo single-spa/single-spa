@@ -8,7 +8,8 @@ const isProduction = process.env.NODE_ENV === "production";
 const useAnalyzer = process.env.ANALYZER === "analyzer";
 
 const replaceOpts = {
-  "process.env.BABEL_ENV": null
+  "process.env.BABEL_ENV": null,
+  __DEV__: !isProduction
 };
 
 const babelOpts = {

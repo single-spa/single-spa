@@ -3,10 +3,14 @@ import {
   NOT_BOOTSTRAPPED,
   LOADING_SOURCE_CODE,
   SKIP_BECAUSE_BROKEN,
-  NOT_LOADED
+  NOT_LOADED,
+  objectType
 } from "../applications/app.helpers.js";
 import { ensureValidAppTimeouts } from "../applications/timeouts.js";
-import { handleAppError } from "../applications/app-errors.js";
+import {
+  handleAppError,
+  formatErrorMessage
+} from "../applications/app-errors.js";
 import {
   flattenFnArray,
   smellsLikeAPromise,
@@ -31,7 +35,12 @@ export function toLoadPromise(app) {
           // The name of the app will be prepended to this error message inside of the handleAppError function
           isUserErr = true;
           throw Error(
-            `single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`
+            formatErrorMessage(
+              33,
+              __DEV__ &&
+                `single-spa loading function did not return a promise. Check the second argument to registerApplication('${app.name}', loadingFunction, activityFunction)`,
+              app.name
+            )
           );
         }
         return loadPromise.then(val => {
@@ -39,27 +48,52 @@ export function toLoadPromise(app) {
 
           appOpts = val;
 
-          let validationErrMessage;
+          let validationErrMessage, validationErrCode;
 
           if (typeof appOpts !== "object") {
-            validationErrMessage = `does not export anything`;
+            validationErrCode = 34;
+            if (__DEV__) {
+              validationErrMessage = `does not export anything`;
+            }
           }
 
           if (!validLifecycleFn(appOpts.bootstrap)) {
-            validationErrMessage = `does not export a bootstrap function or array of functions`;
+            validationErrCode = 35;
+            if (__DEV__) {
+              validationErrMessage = `does not export a bootstrap function or array of functions`;
+            }
           }
 
           if (!validLifecycleFn(appOpts.mount)) {
-            validationErrMessage = `does not export a mount function or array of functions`;
+            validationErrCode = 36;
+            if (__DEV__) {
+              validationErrMessage = `does not export a bootstrap function or array of functions`;
+            }
           }
 
           if (!validLifecycleFn(appOpts.unmount)) {
-            validationErrMessage = `does not export an unmount function or array of functions`;
+            validationErrCode = 37;
+            if (__DEV__) {
+              validationErrMessage = `does not export a bootstrap function or array of functions`;
+            }
           }
 
-          if (validationErrMessage) {
+          const type = objectType(appOpts);
+
+          if (validationErrCode) {
+            let appOptsStr;
+            try {
+              appOptsStr = JSON.stringify(appOpts);
+            } catch {}
             console.error(
-              `The loading function for single-spa application '${app.name}' resolved with the following, which does not have bootstrap, mount, and unmount functions`,
+              formatErrorMessage(
+                validationErrCode,
+                __DEV__ &&
+                  `The loading function for single-spa ${type} '${app.name}' resolved with the following, which does not have bootstrap, mount, and unmount functions`,
+                type,
+                app.name,
+                appOptsStr
+              ),
               appOpts
             );
             handleAppError(validationErrMessage, app);
@@ -75,22 +109,10 @@ export function toLoadPromise(app) {
           }
 
           app.status = NOT_BOOTSTRAPPED;
-          app.bootstrap = flattenFnArray(
-            appOpts.bootstrap,
-            `App '${app.name}' bootstrap function`
-          );
-          app.mount = flattenFnArray(
-            appOpts.mount,
-            `App '${app.name}' mount function`
-          );
-          app.unmount = flattenFnArray(
-            appOpts.unmount,
-            `App '${app.name}' unmount function`
-          );
-          app.unload = flattenFnArray(
-            appOpts.unload || [],
-            `App '${app.name}' unload function`
-          );
+          app.bootstrap = flattenFnArray(appOpts, "bootstrap");
+          app.mount = flattenFnArray(appOpts, "mount");
+          app.unmount = flattenFnArray(appOpts, "unmount");
+          app.unload = flattenFnArray(appOpts, "unload");
           app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
 
           return app;
