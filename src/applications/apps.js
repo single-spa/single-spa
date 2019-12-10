@@ -1,4 +1,4 @@
-import { ensureJQuerySupport } from '../jquery-support.js';
+import { ensureJQuerySupport } from "../jquery-support.js";
 import {
   isActive,
   isLoaded,
@@ -9,12 +9,17 @@ import {
   shouldntBeActive,
   isntActive,
   notSkipped,
-  withoutLoadErrors,
+  withoutLoadErrors
 } from "./app.helpers.js";
-import { reroute } from '../navigation/reroute.js';
-import { find } from '../utils/find.js';
-import { toUnmountPromise } from '../lifecycles/unmount.js';
-import { toUnloadPromise, getAppUnloadInfo, addAppToUnload } from '../lifecycles/unload.js';
+import { reroute } from "../navigation/reroute.js";
+import { find } from "../utils/find.js";
+import { toUnmountPromise } from "../lifecycles/unmount.js";
+import {
+  toUnloadPromise,
+  getAppUnloadInfo,
+  addAppToUnload
+} from "../lifecycles/unload.js";
+import { formatErrorMessage } from "./app-errors.js";
 
 const apps = [];
 
@@ -32,28 +37,46 @@ export function getRawAppData() {
 }
 
 export function getAppStatus(appName) {
-  const app = find(apps, app => app.name === appName);
+  const app = find(apps, app => toName(app) === appName);
   return app ? app.status : null;
 }
 
-export function declareChildApplication(appName, arg1, arg2) {
-  console.warn('declareChildApplication is deprecated and will be removed in the next major version, use "registerApplication" instead')
-  return registerApplication(appName, arg1, arg2)
-}
-
-export function registerApplication(appName, applicationOrLoadingFn, activityFn, customProps = {}) {
-  if (typeof appName !== 'string' || appName.length === 0)
-    throw Error(`The first argument must be a non-empty string 'appName'`);
+export function registerApplication(
+  appName,
+  applicationOrLoadingFn,
+  activityFn,
+  customProps = {}
+) {
+  if (typeof appName !== "string" || appName.length === 0)
+    throw Error(
+      formatErrorMessage(
+        20,
+        __DEV__ && `The first argument must be a non-empty string 'appName'`
+      )
+    );
   if (getAppNames().indexOf(appName) !== -1)
-    throw Error(`There is already an app declared with name ${appName}`);
-  if (typeof customProps !== 'object' || Array.isArray(customProps))
-    throw Error('customProps must be an object');
+    throw Error(
+      formatErrorMessage(
+        21,
+        __DEV__ && `There is already an app declared with name ${appName}`,
+        appName
+      )
+    );
+  if (typeof customProps !== "object" || Array.isArray(customProps))
+    throw Error(
+      formatErrorMessage(22, __DEV__ && "customProps must be an object")
+    );
 
   if (!applicationOrLoadingFn)
-    throw Error(`The application or loading function is required`);
+    throw Error(
+      formatErrorMessage(
+        23,
+        __DEV__ && "The application or loading function is required"
+      )
+    );
 
   let loadImpl;
-  if (typeof applicationOrLoadingFn !== 'function') {
+  if (typeof applicationOrLoadingFn !== "function") {
     // applicationOrLoadingFn is an application
     loadImpl = () => Promise.resolve(applicationOrLoadingFn);
   } else {
@@ -61,8 +84,13 @@ export function registerApplication(appName, applicationOrLoadingFn, activityFn,
     loadImpl = applicationOrLoadingFn;
   }
 
-  if (typeof activityFn !== 'function')
-    throw Error(`The activeWhen argument must be a function`);
+  if (typeof activityFn !== "function")
+    throw Error(
+      formatErrorMessage(
+        24,
+        __DEV__ && `The activeWhen argument must be a function`
+      )
+    );
 
   apps.push({
     loadErrorTime: null,
@@ -74,7 +102,7 @@ export function registerApplication(appName, applicationOrLoadingFn, activityFn,
     devtools: {
       overlays: {
         options: {},
-        selectors: [],
+        selectors: []
       }
     },
     customProps
@@ -86,13 +114,7 @@ export function registerApplication(appName, applicationOrLoadingFn, activityFn,
 }
 
 export function checkActivityFunctions(location) {
-  const activeApps = []
-  for (let i = 0; i < apps.length; i++) {
-    if (apps[i].activeWhen(location)) {
-      activeApps.push(apps[i].name)
-    }
-  }
-  return activeApps
+  return apps.filter(app => app.activeWhen(location)).map(toName);
 }
 
 export function getAppsToLoad() {
@@ -100,14 +122,14 @@ export function getAppsToLoad() {
     .filter(notSkipped)
     .filter(withoutLoadErrors)
     .filter(isntLoaded)
-    .filter(shouldBeActive)
+    .filter(shouldBeActive);
 }
 
 export function getAppsToUnmount() {
   return apps
     .filter(notSkipped)
     .filter(isActive)
-    .filter(shouldntBeActive)
+    .filter(shouldntBeActive);
 }
 
 export function getAppsToMount() {
@@ -115,36 +137,49 @@ export function getAppsToMount() {
     .filter(notSkipped)
     .filter(isntActive)
     .filter(isLoaded)
-    .filter(shouldBeActive)
+    .filter(shouldBeActive);
 }
 
 export function unregisterApplication(appName) {
-  if (!apps.find(app => app.name === appName)) {
-    throw Error(`Cannot unregister application '${appName}' because no such application has been registered`)
+  if (!apps.find(app => toName(app) === appName)) {
+    throw Error(
+      formatErrorMessage(
+        25,
+        __DEV__ &&
+          `Cannot unregister application '${appName}' because no such application has been registered`,
+        appName
+      )
+    );
   }
 
-  return unloadApplication(appName)
-    .then(() => {
-      const appIndex = apps.findIndex(app => app.name === appName)
-      apps.splice(appIndex, 1)
-    })
+  return unloadApplication(appName).then(() => {
+    const appIndex = apps.findIndex(app => toName(app) === appName);
+    apps.splice(appIndex, 1);
+  });
 }
 
-export function unloadChildApplication(appName, opts) {
-  console.warn('unloadChildApplication is deprecated and will be removed in the next major version, use "unloadApplication" instead')
-  return unloadApplication(appName, opts)
-}
-
-export function unloadApplication(appName, opts={waitForUnmount: false}) {
-  if (typeof appName !== 'string') {
-    throw Error(`unloadApplication requires a string 'appName'`);
+export function unloadApplication(appName, opts = { waitForUnmount: false }) {
+  if (typeof appName !== "string") {
+    throw Error(
+      formatErrorMessage(
+        26,
+        __DEV__ && `unloadApplication requires a string 'appName'`
+      )
+    );
   }
-  const app = find(apps, App => App.name === appName);
+  const app = find(apps, App => toName(App) === appName);
   if (!app) {
-    throw Error(`Could not unload application '${appName}' because no such application has been registered`);
+    throw Error(
+      formatErrorMessage(
+        27,
+        __DEV__ &&
+          `Could not unload application '${appName}' because no such application has been registered`,
+        appName
+      )
+    );
   }
 
-  const appUnloadInfo = getAppUnloadInfo(app.name);
+  const appUnloadInfo = getAppUnloadInfo(toName(app));
   if (opts && opts.waitForUnmount) {
     // We need to wait for unmount before unloading the app
 
@@ -184,10 +219,10 @@ function immediatelyUnloadApp(app, resolve, reject) {
   toUnmountPromise(app)
     .then(toUnloadPromise)
     .then(() => {
-      resolve()
+      resolve();
       setTimeout(() => {
         // reroute, but the unload promise is done
-        reroute()
+        reroute();
       });
     })
     .catch(reject);

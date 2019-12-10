@@ -12,7 +12,7 @@ export function unmount() {
 }
 
 export function reset() {
-  return bootstrapped = false;
+  return (bootstrapped = false);
 }
 
 export function isBootstrapped() {

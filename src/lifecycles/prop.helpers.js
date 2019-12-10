@@ -1,15 +1,16 @@
-import * as singleSpa from '../single-spa.js'
-import { mountParcel } from '../parcels/mount-parcel.js';
+import * as singleSpa from "../single-spa.js";
+import { mountParcel } from "../parcels/mount-parcel.js";
+import { isParcel, toName } from "../applications/app.helpers.js";
 
 export function getProps(appOrParcel) {
   const result = {
     ...appOrParcel.customProps,
-    name: appOrParcel.name,
+    name: toName(appOrParcel),
     mountParcel: mountParcel.bind(appOrParcel),
     singleSpa
   };
 
-  if (appOrParcel.unmountThisParcel) {
+  if (isParcel(appOrParcel)) {
     result.unmountSelf = appOrParcel.unmountThisParcel;
   }
 

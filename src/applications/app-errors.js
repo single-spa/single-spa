@@ -1,4 +1,6 @@
-let errorHandlers = []
+import { objectType, toName } from "./app.helpers";
+
+let errorHandlers = [];
 
 export function handleAppError(err, app) {
   const transformedErr = transformErr(err, app);
@@ -13,16 +15,26 @@ export function handleAppError(err, app) {
 }
 
 export function addErrorHandler(handler) {
-  if (typeof handler !== 'function') {
-    throw Error('a single-spa error handler must be a function');
+  if (typeof handler !== "function") {
+    throw Error(
+      formatErrorMessage(
+        28,
+        __DEV__ && "a single-spa error handler must be a function"
+      )
+    );
   }
 
   errorHandlers.push(handler);
 }
 
 export function removeErrorHandler(handler) {
-  if (typeof handler !== 'function') {
-    throw Error('a single-spa error handler must be a function');
+  if (typeof handler !== "function") {
+    throw Error(
+      formatErrorMessage(
+        29,
+        __DEV__ && "a single-spa error handler must be a function"
+      )
+    );
   }
 
   let removedSomething = false;
@@ -30,45 +42,56 @@ export function removeErrorHandler(handler) {
     const isHandler = h === handler;
     removedSomething = removedSomething || isHandler;
     return !isHandler;
-  })
+  });
 
   return removedSomething;
 }
 
+export function formatErrorMessage(code, msg, ...args) {
+  return `single-spa minified message #${code}: ${
+    msg ? msg + " " : ""
+  }See https://single-spa.js.org/error?code=${code}${
+    args.length ? `&arg=${args.join("&arg=")}` : ""
+  }`;
+}
+
 export function transformErr(ogErr, appOrParcel) {
-  const objectType = appOrParcel.unmountThisParcel ? 'Parcel' : 'Application';
-  const errPrefix = `${objectType} '${appOrParcel.name}' died in status ${appOrParcel.status}: `;
+  const errPrefix = `${objectType(appOrParcel)} '${toName(
+    appOrParcel
+  )}' died in status ${appOrParcel.status}: `;
 
   let result;
 
   if (ogErr instanceof Error) {
     try {
       ogErr.message = errPrefix + ogErr.message;
-    } catch(err) {
+    } catch (err) {
       /* Some errors have read-only message properties, in which case there is nothing
        * that we can do.
        */
     }
     result = ogErr;
   } else {
-    console.warn(`While ${appOrParcel.status}, '${appOrParcel.name}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`);
+    console.warn(
+      formatErrorMessage(
+        30,
+        __DEV__ &&
+          `While ${appOrParcel.status}, '${toName(
+            appOrParcel
+          )}' rejected its lifecycle function promise with a non-Error. This will cause stack traces to not be accurate.`,
+        appOrParcel.status,
+        toName(appOrParcel)
+      )
+    );
     try {
       result = Error(errPrefix + JSON.stringify(ogErr));
-    } catch(err) {
+    } catch (err) {
       // If it's not an Error and you can't stringify it, then what else can you even do to it?
       result = ogErr;
     }
   }
 
-  result.appName = appOrParcel.name;
-  result.appOrParcelName = appOrParcel.name;
-  try {
-    result.name = appOrParcel.name
-  } catch (err) {
-    // See https://github.com/CanopyTax/single-spa/issues/323
-    // In a future major release, we can remove the `name` property altogether,
-    // as a breaking change, in favor of appOrParcelName.
-  }
+  result.appOrParcelName = toName(appOrParcel);
 
   return result;
 }

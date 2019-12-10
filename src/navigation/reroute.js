@@ -1,18 +1,24 @@
-import CustomEvent from 'custom-event';
-import { isStarted } from '../start.js';
-import { toLoadPromise } from '../lifecycles/load.js';
-import { toBootstrapPromise } from '../lifecycles/bootstrap.js';
-import { toMountPromise } from '../lifecycles/mount.js';
-import { toUnmountPromise } from '../lifecycles/unmount.js';
-import { getMountedApps, getAppsToLoad, getAppsToUnmount, getAppsToMount } from '../applications/apps.js';
-import { callCapturedEventListeners } from './navigation-events.js';
-import { getAppsToUnload, toUnloadPromise } from '../lifecycles/unload.js';
+import CustomEvent from "custom-event";
+import { isStarted } from "../start.js";
+import { toLoadPromise } from "../lifecycles/load.js";
+import { toBootstrapPromise } from "../lifecycles/bootstrap.js";
+import { toMountPromise } from "../lifecycles/mount.js";
+import { toUnmountPromise } from "../lifecycles/unmount.js";
+import {
+  getMountedApps,
+  getAppsToLoad,
+  getAppsToUnmount,
+  getAppsToMount
+} from "../applications/apps.js";
+import { callCapturedEventListeners } from "./navigation-events.js";
+import { getAppsToUnload, toUnloadPromise } from "../lifecycles/unload.js";
 
-let appChangeUnderway = false, peopleWaitingOnAppChange = [];
+let appChangeUnderway = false,
+  peopleWaitingOnAppChange = [];
 
 export function triggerAppChange() {
   // Call reroute with no arguments, intentionally
-  return reroute()
+  return reroute();
 }
 
 export function reroute(pendingPromises = [], eventArguments) {
@@ -21,7 +27,7 @@ export function reroute(pendingPromises = [], eventArguments) {
       peopleWaitingOnAppChange.push({
         resolve,
         reject,
-        eventArguments,
+        eventArguments
       });
     });
   }
@@ -43,19 +49,23 @@ export function reroute(pendingPromises = [], eventArguments) {
         wasNoOp = false;
       }
 
-      return Promise
-        .all(loadPromises)
+      return Promise.all(loadPromises)
         .then(finishUpAndReturn)
         .catch(err => {
           callAllEventListeners();
           throw err;
-        })
-    })
+        });
+    });
   }
 
   function performAppChanges() {
     return Promise.resolve().then(() => {
-      window.dispatchEvent(new CustomEvent("single-spa:before-routing-event", getCustomEventDetail()));
+      window.dispatchEvent(
+        new CustomEvent(
+          "single-spa:before-routing-event",
+          getCustomEventDetail()
+        )
+      );
       const unloadPromises = getAppsToUnload().map(toUnloadPromise);
 
       const unmountUnloadPromises = getAppsToUnmount()
@@ -78,10 +88,9 @@ export function reroute(pendingPromises = [], eventArguments) {
         return toLoadPromise(app)
           .then(toBootstrapPromise)
           .then(app => {
-            return unmountAllPromise
-              .then(() => toMountPromise(app))
-          })
-      })
+            return unmountAllPromise.then(() => toMountPromise(app));
+          });
+      });
       if (loadThenMountPromises.length > 0) {
         wasNoOp = false;
       }
@@ -95,8 +104,8 @@ export function reroute(pendingPromises = [], eventArguments) {
         .map(appToMount => {
           return toBootstrapPromise(appToMount)
             .then(() => unmountAllPromise)
-            .then(() => toMountPromise(appToMount))
-        })
+            .then(() => toMountPromise(appToMount));
+        });
       if (mountPromises.length > 0) {
         wasNoOp = false;
       }
@@ -112,19 +121,17 @@ export function reroute(pendingPromises = [], eventArguments) {
            */
           callAllEventListeners();
 
-          return Promise
-            .all(loadThenMountPromises.concat(mountPromises))
+          return Promise.all(loadThenMountPromises.concat(mountPromises))
             .catch(err => {
               pendingPromises.forEach(promise => promise.reject(err));
               throw err;
             })
-            .then(() => finishUpAndReturn(false))
-        })
-
-    })
+            .then(() => finishUpAndReturn(false));
+        });
+    });
   }
 
-  function finishUpAndReturn(callEventListeners=true) {
+  function finishUpAndReturn(callEventListeners = true) {
     const returnValue = getMountedApps();
 
     if (callEventListeners) {
@@ -133,9 +140,15 @@ export function reroute(pendingPromises = [], eventArguments) {
     pendingPromises.forEach(promise => promise.resolve(returnValue));
 
     try {
-      const appChangeEventName = wasNoOp ? "single-spa:no-app-change": "single-spa:app-change";
-      window.dispatchEvent(new CustomEvent(appChangeEventName, getCustomEventDetail()));
-      window.dispatchEvent(new CustomEvent("single-spa:routing-event", getCustomEventDetail()));
+      const appChangeEventName = wasNoOp
+        ? "single-spa:no-app-change"
+        : "single-spa:app-change";
+      window.dispatchEvent(
+        new CustomEvent(appChangeEventName, getCustomEventDetail())
+      );
+      window.dispatchEvent(
+        new CustomEvent("single-spa:routing-event", getCustomEventDetail())
+      );
     } catch (err) {
       /* We use a setTimeout because if someone else's event handler throws an error, single-spa
        * needs to carry on. If a listener to the event throws an error, it's their own fault, not
@@ -180,12 +193,12 @@ export function reroute(pendingPromises = [], eventArguments) {
   }
 
   function getCustomEventDetail() {
-    const result = {detail: {}}
+    const result = { detail: {} };
 
     if (eventArguments && eventArguments[0]) {
-      result.detail.originalEvent = eventArguments[0]
+      result.detail.originalEvent = eventArguments[0];
     }
 
-    return result
+    return result;
   }
 }

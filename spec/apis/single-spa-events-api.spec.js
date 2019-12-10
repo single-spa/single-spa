@@ -1,15 +1,27 @@
-import * as singleSpa from 'single-spa';
+import * as singleSpa from "single-spa";
 
 const dummyApp = {
-  bootstrap() {return Promise.resolve()},
-  mount() {return Promise.resolve()},
-  unmount() {return Promise.resolve()},
-  unload() {return Promise.resolve()},
+  bootstrap() {
+    return Promise.resolve();
+  },
+  mount() {
+    return Promise.resolve();
+  },
+  unmount() {
+    return Promise.resolve();
+  },
+  unload() {
+    return Promise.resolve();
+  }
 };
 
 describe(`events api :`, () => {
   beforeAll(() => {
-    singleSpa.registerApplication('russell', dummyApp, () => window.location.hash.indexOf("#/russell") === 0);
+    singleSpa.registerApplication(
+      "russell",
+      dummyApp,
+      () => window.location.hash.indexOf("#/russell") === 0
+    );
     singleSpa.start();
   });
 
@@ -20,38 +32,38 @@ describe(`events api :`, () => {
 
     it(`is fired on the window whenever the hash changes`, done => {
       singleSpa
-      .triggerAppChange() // start with a clean slate (no previous tests doing anything)
-      .then(() => {
-        window.addEventListener("single-spa:routing-event", finishTest);
-        window.location.hash = `#/hash-was-changed`;
+        .triggerAppChange() // start with a clean slate (no previous tests doing anything)
+        .then(() => {
+          window.addEventListener("single-spa:routing-event", finishTest);
+          window.location.hash = `#/hash-was-changed`;
 
-        function finishTest() {
-          window.removeEventListener("single-spa:routing-event", finishTest);
+          function finishTest() {
+            window.removeEventListener("single-spa:routing-event", finishTest);
+            done();
+          }
+        })
+        .catch(err => {
+          fail(err);
           done();
-        }
-      })
-      .catch(err => {
-        fail(err);
-        done();
-      });
+        });
     });
 
     it(`is fired on the window whenever the url changes`, done => {
       singleSpa
-      .triggerAppChange() // start with a clean slate (no previous tests doing anything)
-      .then(() => {
-        window.addEventListener("single-spa:routing-event", finishTest);
-        window.history.pushState({}, null, `#/push-state-called`);
+        .triggerAppChange() // start with a clean slate (no previous tests doing anything)
+        .then(() => {
+          window.addEventListener("single-spa:routing-event", finishTest);
+          window.history.pushState({}, null, `#/push-state-called`);
 
-        function finishTest() {
-          window.removeEventListener("single-spa:routing-event", finishTest);
+          function finishTest() {
+            window.removeEventListener("single-spa:routing-event", finishTest);
+            done();
+          }
+        })
+        .catch(err => {
+          fail(err);
           done();
-        }
-      })
-      .catch(err => {
-        fail(err);
-        done();
-      });
+        });
     });
 
     it(`doesn't destroy single-spa when you throw an error inside of an event listener`, () => {
@@ -60,7 +72,7 @@ describe(`events api :`, () => {
         // We expect this to be called exactly once when we throw the error
         console.error(err);
         window.onerror = ogOnError;
-      }
+      };
 
       function listener() {
         window.removeEventListener("single-spa:routing-event", listener);
@@ -71,12 +83,12 @@ describe(`events api :`, () => {
 
       return singleSpa
         .triggerAppChange()
-        .then(() => window.onerror = ogOnError)
+        .then(() => (window.onerror = ogOnError))
         .catch(err => {
           // If single-spa died because of the thrown error above, we've got a problem
           window.removeEventListener("single-spa:routing-event", listener);
           window.onerror = ogOnError;
-          throw err
+          throw err;
         });
     });
   });
@@ -86,22 +98,22 @@ describe(`events api :`, () => {
       window.location.hash = `#`;
 
       singleSpa
-      .triggerAppChange() // start with a clean slate (no previous tests doing anything)
-      .then(() => {
-        window.addEventListener("single-spa:app-change", finishTest);
-        window.location.hash = `#/russell`;
+        .triggerAppChange() // start with a clean slate (no previous tests doing anything)
+        .then(() => {
+          window.addEventListener("single-spa:app-change", finishTest);
+          window.location.hash = `#/russell`;
 
-        function finishTest() {
-          window.removeEventListener("single-spa:app-change", finishTest);
+          function finishTest() {
+            window.removeEventListener("single-spa:app-change", finishTest);
+            done();
+          }
+
+          return singleSpa.triggerAppChange();
+        })
+        .catch(err => {
+          fail(err);
           done();
-        }
-
-        return singleSpa.triggerAppChange();
-      })
-      .catch(err => {
-        fail(err);
-        done();
-      });
+        });
     });
 
     it(`is not fired when no app is mounted`, done => {
@@ -114,25 +126,25 @@ describe(`events api :`, () => {
       window.location.hash = `#`;
 
       singleSpa
-      .triggerAppChange()
-      .then(() => singleSpa.triggerAppChange())
-      .then(() => {
-        window.addEventListener("single-spa:app-change", failTest);
-        window.location.hash = `#/not-a-real-app`;
+        .triggerAppChange()
+        .then(() => singleSpa.triggerAppChange())
+        .then(() => {
+          window.addEventListener("single-spa:app-change", failTest);
+          window.location.hash = `#/not-a-real-app`;
 
-        return singleSpa.triggerAppChange();
-      })
-      .then(() => {
-        window.removeEventListener("single-spa:app-change", failTest);
+          return singleSpa.triggerAppChange();
+        })
+        .then(() => {
+          window.removeEventListener("single-spa:app-change", failTest);
 
-        // If failTest wasn't called, then we're good
-        done();
-      })
-      .catch(err => {
-        fail(err);
-        done();
-      });
-    })
+          // If failTest wasn't called, then we're good
+          done();
+        })
+        .catch(err => {
+          fail(err);
+          done();
+        });
+    });
   });
 
   describe(`single-spa:no-app-change`, () => {
@@ -140,20 +152,20 @@ describe(`events api :`, () => {
       window.location.hash = `#`;
 
       singleSpa
-      .triggerAppChange()
-      .then(() => {
-        window.addEventListener("single-spa:no-app-change", finishTest);
-        window.location.hash = `#not-a-real-app`;
+        .triggerAppChange()
+        .then(() => {
+          window.addEventListener("single-spa:no-app-change", finishTest);
+          window.location.hash = `#not-a-real-app`;
 
-        function finishTest() {
-          window.removeEventListener("single-spa:no-app-change", finishTest);
+          function finishTest() {
+            window.removeEventListener("single-spa:no-app-change", finishTest);
+            done();
+          }
+        })
+        .catch(err => {
+          fail(err);
           done();
-        }
-      })
-      .catch(err => {
-        fail(err);
-        done();
-      });
+        });
     });
   });
 });
