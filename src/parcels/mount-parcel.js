@@ -43,7 +43,9 @@ export function mountParcel(config, customProps) {
     throw Error(
       formatErrorMessage(
         3,
-        __DEV__ && "Parcel name must be a string, if provided"
+        __DEV__ &&
+          `Parcel name must be a string, if provided. Was given ${typeof config.name}`,
+        typeof config.name
       )
     );
   }
@@ -53,8 +55,9 @@ export function mountParcel(config, customProps) {
       formatErrorMessage(
         4,
         __DEV__ &&
-          `Parcel ${name} has invalid customProps -- must be an object`,
-        name
+          `Parcel ${name} has invalid customProps -- must be an object but was given ${typeof customProps}`,
+        name,
+        typeof customProps
       )
     );
   }
