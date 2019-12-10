@@ -43,7 +43,8 @@ export function mountParcel(config, customProps) {
     throw Error(
       formatErrorMessage(
         3,
-        __DEV__ && "Parcel name must be a string, if provided",
+        __DEV__ &&
+          `Parcel name must be a string, if provided. Was given ${typeof config.name}`,
         typeof config.name
       )
     );
