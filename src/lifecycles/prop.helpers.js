@@ -1,11 +1,11 @@
 import * as singleSpa from "../single-spa.js";
 import { mountParcel } from "../parcels/mount-parcel.js";
 import { assign } from "../utils/assign.js";
-import { isParcel } from "../applications/app.helpers.js";
+import { isParcel, toName } from "../applications/app.helpers.js";
 
 export function getProps(appOrParcel) {
   const result = assign({}, appOrParcel.customProps, {
-    name: appOrParcel.name,
+    name: toName(appOrParcel),
     mountParcel: mountParcel.bind(appOrParcel),
     singleSpa
   });
