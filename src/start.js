@@ -1,4 +1,5 @@
 import { reroute } from "./navigation/reroute.js";
+import { formatErrorMessage } from "./applications/app-errors.js";
 
 let started = false;
 
@@ -14,7 +15,11 @@ export function isStarted() {
 setTimeout(() => {
   if (!started) {
     console.warn(
-      `singleSpa.start() has not been called, 5000ms after single-spa was loaded. Before start() is called, apps can be declared and loaded, but not bootstrapped or mounted. See https://github.com/CanopyTax/single-spa/blob/master/docs/single-spa-api.md#start`
+      formatErrorMessage(
+        1,
+        __DEV__ &&
+          `singleSpa.start() has not been called, 5000ms after single-spa was loaded. Before start() is called, apps can be declared and loaded, but not bootstrapped or mounted.`
+      )
     );
   }
 }, 5000);

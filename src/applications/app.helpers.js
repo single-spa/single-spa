@@ -66,5 +66,13 @@ export function withoutLoadErrors(app) {
 }
 
 export function toName(app) {
-  return app.appOrParcelName || app.name;
+  return app.name;
+}
+
+export function isParcel(appOrParcel) {
+  return Boolean(appOrParcel.unmountThisParcel);
+}
+
+export function objectType(appOrParcel) {
+  return isParcel(appOrParcel) ? "parcel" : "application";
 }

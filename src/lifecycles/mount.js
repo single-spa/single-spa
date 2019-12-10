@@ -6,13 +6,12 @@ import {
 import { handleAppError, transformErr } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
 import CustomEvent from "custom-event";
-import { getProps } from "./prop.helpers.js";
 import { toUnmountPromise } from "./unmount.js";
 
 let beforeFirstMountFired = false;
 let firstMountFired = false;
 
-export function toMountPromise(appOrParcel, hardFail = false) {
+export function toMountPromise(appOrParcel, hardFail) {
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== NOT_MOUNTED) {
       return appOrParcel;
@@ -23,11 +22,7 @@ export function toMountPromise(appOrParcel, hardFail = false) {
       beforeFirstMountFired = true;
     }
 
-    return reasonableTime(
-      appOrParcel.mount(getProps(appOrParcel)),
-      `Mounting application '${appOrParcel.name}'`,
-      appOrParcel.timeouts.mount
-    )
+    return reasonableTime(appOrParcel, "mount")
       .then(() => {
         appOrParcel.status = MOUNTED;
 
