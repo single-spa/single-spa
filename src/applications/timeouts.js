@@ -1,3 +1,4 @@
+import { assign } from "../utils/assign";
 import { getProps } from "../lifecycles/prop.helpers";
 import { objectType, toName } from "./app.helpers";
 import { formatErrorMessage } from "./app-errors";
@@ -165,10 +166,11 @@ export function ensureValidAppTimeouts(timeouts) {
   const result = {};
 
   for (let key in globalTimeoutConfig) {
-    result[key] = {
-      ...globalTimeoutConfig[key],
-      ...(timeouts && typeof timeouts[key] === "object" ? timeouts[key] : {})
-    };
+    result[key] = assign(
+      {},
+      globalTimeoutConfig[key],
+      (timeouts && timeouts[key]) || {}
+    );
   }
 
   return result;

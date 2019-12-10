@@ -18,6 +18,7 @@ import {
   validLifecycleFn
 } from "./lifecycle.helpers.js";
 import { getProps } from "./prop.helpers.js";
+import { assign } from "../utils/assign.js";
 
 export function toLoadPromise(app) {
   return Promise.resolve().then(() => {
@@ -107,10 +108,11 @@ export function toLoadPromise(app) {
           }
 
           if (appOpts.devtools && appOpts.devtools.overlays) {
-            app.devtools.overlays = {
-              ...app.devtools.overlays,
-              ...appOpts.devtools.overlays
-            };
+            app.devtools.overlays = assign(
+              {},
+              app.devtools.overlays,
+              appOpts.devtools.overlays
+            );
           }
 
           app.status = NOT_BOOTSTRAPPED;
