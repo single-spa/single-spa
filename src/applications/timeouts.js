@@ -166,9 +166,8 @@ export function ensureValidAppTimeouts(timeouts) {
   const result = {};
 
   for (let key in globalTimeoutConfig) {
-    result[key] = {};
-    assign(
-      result[key],
+    result[key] = assign(
+      {},
       globalTimeoutConfig[key],
       (timeouts && timeouts[key]) || {}
     );
