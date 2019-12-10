@@ -3,30 +3,37 @@ import { getProps } from "../lifecycles/prop.helpers";
 import { objectType, toName } from "./app.helpers";
 import { formatErrorMessage } from "./app-errors";
 
+const defaultWarningMillis = 1000;
+
 const globalTimeoutConfig = {
   bootstrap: {
     millis: 4000,
-    dieOnTimeout: false
+    dieOnTimeout: false,
+    warningMillis: defaultWarningMillis
   },
   mount: {
     millis: 3000,
-    dieOnTimeout: false
+    dieOnTimeout: false,
+    warningMillis: defaultWarningMillis
   },
   unmount: {
     millis: 3000,
-    dieOnTimeout: false
+    dieOnTimeout: false,
+    warningMillis: defaultWarningMillis
   },
   unload: {
     millis: 3000,
-    dieOnTimeout: false
+    dieOnTimeout: false,
+    warningMillis: defaultWarningMillis
   },
   update: {
     millis: 3000,
-    dieOnTimeout: false
+    dieOnTimeout: false,
+    warningMillis: defaultWarningMillis
   }
 };
 
-export function setBootstrapMaxTime(time, dieOnTimeout) {
+export function setBootstrapMaxTime(time, dieOnTimeout, warningMillis) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
@@ -39,11 +46,12 @@ export function setBootstrapMaxTime(time, dieOnTimeout) {
 
   globalTimeoutConfig.bootstrap = {
     millis: time,
-    dieOnTimeout
+    dieOnTimeout,
+    warningMillis: warningMillis || defaultWarningMillis
   };
 }
 
-export function setMountMaxTime(time, dieOnTimeout) {
+export function setMountMaxTime(time, dieOnTimeout, warningMillis) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
@@ -56,11 +64,12 @@ export function setMountMaxTime(time, dieOnTimeout) {
 
   globalTimeoutConfig.mount = {
     millis: time,
-    dieOnTimeout
+    dieOnTimeout,
+    warningMillis: warningMillis || defaultWarningMillis
   };
 }
 
-export function setUnmountMaxTime(time, dieOnTimeout) {
+export function setUnmountMaxTime(time, dieOnTimeout, warningMillis) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
@@ -73,11 +82,12 @@ export function setUnmountMaxTime(time, dieOnTimeout) {
 
   globalTimeoutConfig.unmount = {
     millis: time,
-    dieOnTimeout
+    dieOnTimeout,
+    warningMillis: warningMillis || defaultWarningMillis
   };
 }
 
-export function setUnloadMaxTime(time, dieOnTimeout) {
+export function setUnloadMaxTime(time, dieOnTimeout, warningMillis) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
@@ -90,13 +100,14 @@ export function setUnloadMaxTime(time, dieOnTimeout) {
 
   globalTimeoutConfig.unload = {
     millis: time,
-    dieOnTimeout
+    dieOnTimeout,
+    warningMillis: warningMillis || defaultWarningMillis
   };
 }
 
 export function reasonableTime(appOrParcel, lifecycle) {
-  const warningPeriod = 1000;
   const timeoutConfig = appOrParcel.timeouts[lifecycle];
+  const warningPeriod = timeoutConfig.warningMillis;
   const type = objectType(appOrParcel);
 
   return new Promise((resolve, reject) => {
@@ -121,7 +132,7 @@ export function reasonableTime(appOrParcel, lifecycle) {
       __DEV__ &&
         `Lifecycle function ${lifecycle} for ${type} ${toName(
           appOrParcel
-        )} lifecycle did not resolve or reject for ${timeoutConfig.millis}`,
+        )} lifecycle did not resolve or reject for ${timeoutConfig.millis} ms.`,
       lifecycle,
       type,
       toName(appOrParcel),
@@ -152,5 +163,16 @@ export function reasonableTime(appOrParcel, lifecycle) {
 }
 
 export function ensureValidAppTimeouts(timeouts) {
-  return assign({}, globalTimeoutConfig, timeouts || {});
+  const result = {};
+
+  for (let key in globalTimeoutConfig) {
+    result[key] = {};
+    assign(
+      result[key],
+      globalTimeoutConfig[key],
+      (timeouts && timeouts[key]) || {}
+    );
+  }
+
+  return result;
 }

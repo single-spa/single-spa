@@ -6,8 +6,16 @@
   ],
   "env": {
     "test": {
-      "presets": ["@babel/preset-env"],
-      "plugins": ["dynamic-import-node", "@babel/plugin-syntax-dynamic-import"]
+      "presets": [
+        ["@babel/preset-env", {
+          "targets": {
+            "browsers": "node >=10"
+          },
+        }],
+      ],
+      "plugins": [
+        "dynamic-import-node"
+      ]
     },
     "esm": {
       "presets": [
