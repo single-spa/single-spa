@@ -19,7 +19,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "concurrently yarn:test yarn:lint 'pretty-quick --staged'"
+      "pre-commit": "pretty-quick --staged && concurrently yarn:test yarn:lint"
     }
   },
   "files": [

@@ -32,7 +32,7 @@ describe(`invalid-load-function`, () => {
 
     return singleSpa.triggerAppChange().then(() => {
       expect(errs.length).toBeGreaterThan(0);
-      expect(errs[0].appName).toBe("invalid-load-1");
+      expect(errs[0].appOrParcelName).toBe("invalid-load-1");
       expect(
         errs[0].message.indexOf(
           "single-spa loading function did not return a promise. Check the second argument to registerApplication"
@@ -58,7 +58,7 @@ describe(`invalid-load-function`, () => {
 
     return singleSpa.triggerAppChange().then(() => {
       expect(errs.length).toBeGreaterThan(0);
-      expect(errs[0].appName).toBe("invalid-load-2");
+      expect(errs[0].appOrParcelName).toBe("invalid-load-2");
       expect(
         errs[0].message.indexOf(
           "single-spa loading function did not return a promise. Check the second argument to registerApplication"
@@ -84,7 +84,7 @@ describe(`invalid-load-function`, () => {
 
     return singleSpa.triggerAppChange().then(() => {
       expect(errs.length).toBeGreaterThan(0);
-      expect(errs[0].appName).toBe("invalid-load-3");
+      expect(errs[0].appOrParcelName).toBe("invalid-load-3");
       expect(
         errs[0].message.indexOf(
           "single-spa loading function did not return a promise. Check the second argument to registerApplication"
@@ -116,7 +116,7 @@ describe(`invalid-load-function`, () => {
 
     return singleSpa.triggerAppChange().then(() => {
       expect(errs.length).toBeGreaterThan(0);
-      expect(errs[0].appName).toBe("invalid-load-4");
+      expect(errs[0].appOrParcelName).toBe("invalid-load-4");
       expect(errs[0].message.indexOf(`It didn't load`)).toBeGreaterThan(-1);
 
       location.hash = "#invalid-load-function-1";
