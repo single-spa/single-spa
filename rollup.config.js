@@ -38,7 +38,7 @@ export default (async () => [
         format: "umd",
         name: "singleSpa",
         sourcemap: true,
-        banner: generateBanner("umd")
+        banner: generateBanner("UMD")
       },
       {
         file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
@@ -62,7 +62,7 @@ export default (async () => [
       file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
       format: "esm",
       sourcemap: true,
-      banner: generateBanner("esm")
+      banner: generateBanner("ESM")
     },
     plugins: [
       replace(replaceOpts),
