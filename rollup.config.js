@@ -3,6 +3,7 @@ import babel from "rollup-plugin-babel";
 import commonjs from "rollup-plugin-commonjs";
 import analyzer from "rollup-plugin-analyzer";
 import replace from "@rollup/plugin-replace";
+import packageJson from "./package.json";
 
 const isProduction = process.env.NODE_ENV === "production";
 const useAnalyzer = process.env.ANALYZER === "analyzer";
@@ -20,7 +21,12 @@ const terserOpts = {
   compress: {
     passes: 2
   },
-  module: true
+  module: true,
+  output: {
+    comments(node, comment) {
+      return comment.value.trim().startsWith("single-spa@");
+    }
+  }
 };
 
 export default (async () => [
@@ -31,12 +37,14 @@ export default (async () => [
         file: `./lib/umd/single-spa${isProduction ? ".min" : ".dev"}.js`,
         format: "umd",
         name: "singleSpa",
-        sourcemap: true
+        sourcemap: true,
+        banner: generateBanner("UMD")
       },
       {
         file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
         format: "system",
-        sourcemap: true
+        sourcemap: true,
+        banner: generateBanner("SystemJS")
       }
     ],
     plugins: [
@@ -53,7 +61,8 @@ export default (async () => [
     output: {
       file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
       format: "esm",
-      sourcemap: true
+      sourcemap: true,
+      banner: generateBanner("ESM")
     },
     plugins: [
       replace(replaceOpts),
@@ -74,3 +83,9 @@ export default (async () => [
     ]
   }
 ])();
+
+function generateBanner(format) {
+  return `/* single-spa@${packageJson.version} - ${format} - ${
+    isProduction ? "prod" : "dev"
+  } */`;
+}
