@@ -1,7 +1,7 @@
 {
   "name": "single-spa",
   "version": "5.0.0-beta.0",
-  "description": "Multiple applications, one page",
+  "description": "Microfrontends made easy",
   "main": "lib/umd/single-spa.min.js",
   "types": "typings/single-spa.d.ts",
   "module": "lib/esm/single-spa.min.js",
@@ -30,6 +30,7 @@
   "repository": "https://github.com/CanopyTax/single-spa",
   "bugs": "https://github.com/CanopyTax/single-spa/issues",
   "keywords": [
+    "microfrontends",
     "single",
     "page",
     "application",
