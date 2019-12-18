@@ -23,7 +23,7 @@ declare module "single-spa" {
     unmount(): Promise<null>,
     getStatus(): "NOT_LOADED" | "LOADING_SOURCE_CODE" | "NOT_BOOTSTRAPPED"
       | "BOOTSTRAPPING" | "NOT_MOUNTED" | "MOUNTING" | "MOUNTED" | "UPDATING"
-      | "UNMOUNTING" | "UNLOADING" | "SKIP_BECAUSE_BROKEN",
+      | "UNMOUNTING" | "UNLOADING" | "SKIP_BECAUSE_BROKEN" | "LOAD_ERROR",
     loadPromise: Promise<null>,
     bootstrapPromise: Promise<null>,
     mountPromise: Promise<null>,
@@ -74,7 +74,8 @@ declare module "single-spa" {
     UPDATING = "UPDATING",
     UNMOUNTING = "UNMOUNTING",
     UNLOADING = "UNLOADING",
-    SKIP_BECAUSE_BROKEN = "SKIP_BECAUSE_BROKEN"
+    SKIP_BECAUSE_BROKEN = "SKIP_BECAUSE_BROKEN",
+    LOAD_ERROR = "LOAD_ERROR"
   }
 
   export function getAppStatus(appName: string): string | null;
