@@ -33,7 +33,7 @@ export function navigateToUrl(obj) {
       formatErrorMessage(
         14,
         __DEV__ &&
-          `singleSpaNavigate must be either called with a string url, with an <a> tag as its context, or with an event whose currentTarget is an <a> tag`
+          `singleSpaNavigate/navigateToUrl must be either called with a string url, with an <a> tag as its context, or with an event whose currentTarget is an <a> tag`
       )
     );
   }

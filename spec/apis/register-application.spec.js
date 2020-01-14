@@ -21,12 +21,12 @@ describe("registerApplication", function() {
       expect(() => {
         singleSpa.registerApplication(app);
       }).toThrowError(
-        `The first argument must be a non-empty string 'appName'`
+        `The first argument to registerApplication must be a non-empty string 'appName'`
       );
       expect(() => {
         singleSpa.registerApplication("");
       }).toThrowError(
-        `The first argument must be a non-empty string 'appName'`
+        `The first argument to registerApplication must be a non-empty string 'appName'`
       );
     });
 
@@ -55,7 +55,7 @@ describe("registerApplication", function() {
           "no-loading-fn-will-throw-error-app",
           app
         );
-      }).toThrowError(`The activeWhen argument must be a function`);
+      }).toThrowError(`The activityFunction argument must be a function`);
     });
 
     it(`should throw an error when the activity Function isn't a function`, () => {
@@ -65,7 +65,7 @@ describe("registerApplication", function() {
           app,
           app
         );
-      }).toThrowError(`The activeWhen argument must be a function`);
+      }).toThrowError(`The activityFunction argument must be a function`);
     });
   });
 
