@@ -51,7 +51,8 @@ export function registerApplication(
     throw Error(
       formatErrorMessage(
         20,
-        __DEV__ && `The first argument must be a non-empty string 'appName'`
+        __DEV__ &&
+          `The first argument to registerApplication must be a non-empty string 'appName'`
       )
     );
   if (getAppNames().indexOf(appName) !== -1)
@@ -88,7 +89,7 @@ export function registerApplication(
     throw Error(
       formatErrorMessage(
         24,
-        __DEV__ && `The activeWhen argument must be a function`
+        __DEV__ && `The activityFunction argument must be a function`
       )
     );
 
