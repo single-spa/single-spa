@@ -5,3 +5,4 @@ There are a variety of single-spa example repositories, each for different use c
 - [single-spa-angular-cli-examples](https://github.com/PlaceMe-SAS/single-spa-angular-cli-examples) is an example of multiple angular apps coexisting in the same single page application. Each uses angular-cli to build a bundle lazily loaded by single-spa.
 - [single-spa-es5-angularjs](https://github.com/joeldenning/single-spa-es5-angularjs) is a very tiny es5 example with angularjs.
 - [single-spa-portal-example](https://gitlab.com/TheMcMurder/single-spa-portal-example/) is a complete example with SystemJS, common dependencies, and inter-app communication.
+- [single-spa-parcel-example](https://github.com/Guillembonet/single-spa-parcel-example) is an example of one vue and one react microfrontends, containing a react and a vue parcel respectively and two node.js microservices running in 6 different Docker VM's seamlessly working together in a single web app in a 7th VM.
