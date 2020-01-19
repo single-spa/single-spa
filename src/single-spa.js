@@ -1,7 +1,7 @@
 export { start } from './start.js';
 export { ensureJQuerySupport } from './jquery-support.js';
 export { setBootstrapMaxTime, setMountMaxTime, setUnmountMaxTime, setUnloadMaxTime } from './applications/timeouts.js';
-export { registerApplication, getMountedApps, getAppStatus, unloadApplication, checkActivityFunctions, getAppNames, declareChildApplication, unloadChildApplication } from './applications/apps.js';
+export { registerApplication, getRawAppData, getMountedApps, getAppStatus, unloadApplication, checkActivityFunctions, getAppNames, declareChildApplication, unloadChildApplication } from './applications/apps.js';
 export { navigateToUrl } from './navigation/navigation-events.js';
 export { triggerAppChange } from './navigation/reroute.js';
 export { addErrorHandler, removeErrorHandler } from './applications/app-errors.js';
