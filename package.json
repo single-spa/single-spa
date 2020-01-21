@@ -27,8 +27,8 @@
     "typings"
   ],
   "homepage": "https://single-spa.js.org",
-  "repository": "https://github.com/CanopyTax/single-spa",
-  "bugs": "https://github.com/CanopyTax/single-spa/issues",
+  "repository": "https://github.com/single-spa/single-spa",
+  "bugs": "https://github.com/single-spa/single-spa/issues",
   "keywords": [
     "single",
     "page",
