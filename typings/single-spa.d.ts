@@ -107,7 +107,6 @@ declare module "single-spa" {
   // './applications/app-errors.js'
   type AppError = Error & {
     appOrParcelName: string;
-    message: string;
   }
   export function addErrorHandler(handler: (error: AppError) => void): void;
   export function removeErrorHandler(handler: (error: AppError) => void): void;
