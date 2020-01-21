@@ -105,8 +105,13 @@ declare module "single-spa" {
   export function triggerAppChange(): Promise<any>;
 
   // './applications/app-errors.js'
-  export function addErrorHandler(handler: (error: Error) => void): void;
-  export function removeErrorHandler(handler: (error: Error) => void): void;
+  type AppError = Error & {
+    appOrParcelName: string;
+    message: string;
+  }
+  export function addErrorHandler(handler: (error: AppError) => void): void;
+  export function removeErrorHandler(handler: (error: AppError) => void): void;
+
 
   // './parcels/mount-parcel.js'
   export function mountRootParcel(parcelConfig: ParcelConfig, parcelProps: object): Parcel;
