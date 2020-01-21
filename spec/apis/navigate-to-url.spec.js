@@ -122,7 +122,7 @@ describe("navigateToUrl", function() {
 });
 
 describe("window.history.pushState", () => {
-  // https://github.com/CanopyTax/single-spa/issues/224 and https://github.com/CanopyTax/single-spa-angular/issues/49
+  // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
   // We need a popstate event even though the browser doesn't do one by default when you call pushState, so that
   // all the applications can reroute.
   it("should fire a popstate event when history.pushState is called", function() {
@@ -142,7 +142,7 @@ describe("window.history.pushState", () => {
     });
   });
 
-  // https://github.com/CanopyTax/single-spa/issues/224 and https://github.com/CanopyTax/single-spa-angular/issues/49
+  // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
   // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
   // all the applications can reroute.
   it("should fire a popstate event when history.replaceState is called", function() {

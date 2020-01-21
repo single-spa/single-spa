@@ -69,7 +69,7 @@ describe(`event listeners after single-spa is started`, () => {
     /* This will first trigger a PopStateEvent, and then a HashChangeEvent. The
      * hashchange event will be queued and not actually given to any event listeners
      * until single-spa is sure that those event listeners won't screw anything up.
-     * The bug described in https://github.com/CanopyTax/single-spa/issues/74 explains
+     * The bug described in https://github.com/single-spa/single-spa/issues/74 explains
      * why this test is necessary.
      */
     window.location.hash = "#/a-hash-single-spa-is-started";

@@ -126,13 +126,13 @@ window.history.replaceState = function(state) {
 };
 
 function createPopStateEvent(state) {
-  // https://github.com/CanopyTax/single-spa/issues/224 and https://github.com/CanopyTax/single-spa-angular/issues/49
+  // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
   // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
   // all the applications can reroute.
   try {
     return new PopStateEvent("popstate", { state });
   } catch (err) {
-    // IE 11 compatibility https://github.com/CanopyTax/single-spa/issues/299
+    // IE 11 compatibility https://github.com/single-spa/single-spa/issues/299
     // https://docs.microsoft.com/en-us/openspecs/ie_standards/ms-html5e/bd560f47-b349-4d2c-baa8-f1560fb489dd
     const evt = document.createEvent("PopStateEvent");
     evt.initPopStateEvent("popstate", false, false, state);
