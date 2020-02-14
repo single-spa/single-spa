@@ -232,6 +232,42 @@ describe("applications mounting parcels :", () => {
         expect(app.unmountCalls).toBe(1);
       });
   });
+
+  it(`correctly unmounts multiple parcels`, () => {
+    let shouldAppBeMounted = false, parcel, parcel2
+    singleSpa.registerApplication('multiple-parcels', app, () => shouldAppBeMounted);
+    parcelConfig = createParcelConfig();
+    const parcelConfig2 = createParcelConfig();
+
+    shouldAppBeMounted = true;
+
+    return singleSpa
+      .triggerAppChange()
+      .then(() => {
+        parcel = app.mountProps.mountParcel(parcelConfig, {domElement: document.createElement('div')})
+        parcel2 = app.mountProps.mountParcel(parcelConfig2, {domElement: document.createElement('div')})
+        return Promise.all([parcel.mountPromise, parcel2.mountPromise]).then(() => [parcel, parcel2])
+      })
+      .then(([p, p2]) => {
+        expect(p.getStatus()).toBe(singleSpa.MOUNTED)
+        expect(p2.getStatus()).toBe(singleSpa.MOUNTED)
+        return [p, p2]
+      })
+      .then(([p, p2]) => {
+        shouldAppBeMounted = false
+        expect(p.getStatus()).toBe(singleSpa.MOUNTED)
+        expect(p2.getStatus()).toBe(singleSpa.MOUNTED)
+        return singleSpa.triggerAppChange()
+          .then(() => {
+            return Promise.all([p.unmountPromise, p2.unmountPromise])
+          })
+          .then(() => ([p, p2]))
+      })
+      .then(([p, p2]) => {
+        expect(p.getStatus()).toBe(singleSpa.NOT_MOUNTED)
+        expect(p2.getStatus()).toBe(singleSpa.NOT_MOUNTED)
+      })
+  });
 });
 
 function createParcelConfig() {
