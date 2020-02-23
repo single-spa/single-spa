@@ -1,6 +1,5 @@
 # Examples
 
-<<<<<<< HEAD
 There are a variety of single-spa example repositories, each for different use cases:
 
 - [single-spa-examples](https://github.com/CanopyTax/single-spa-examples) is where you can find a large example showcasing what single-spa can do. You can also visit the [live demo](http://single-spa.surge.sh) for single-spa-examples.
@@ -9,4 +8,3 @@ There are a variety of single-spa example repositories, each for different use c
 - [single-spa-es5-angularjs](https://github.com/joeldenning/single-spa-es5-angularjs) is a very tiny es5 example with angularjs.
 - # [single-spa-portal-example](https://gitlab.com/TheMcMurder/single-spa-portal-example/) is a complete example with SystemJS, common dependencies, and inter-app communication.
   [See list of examples](https://single-spa.js.org/docs/examples).
-  > > > > > > > single-spa-org
