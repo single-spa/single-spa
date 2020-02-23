@@ -3,7 +3,7 @@ let bootstrapCalled, mountCalled;
 export function bootstrap() {
   return new Promise((resolve, reject) => {
     bootstrapCalled = true;
-    reject(new Error('the bootstrap-rejects app failed to bootstrap'));
+    reject(new Error("the bootstrap-rejects app failed to bootstrap"));
   });
 }
 

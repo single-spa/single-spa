@@ -1,43 +1,51 @@
-import { find } from '../utils/find.js';
+import { find } from "../utils/find.js";
+import { objectType, toName } from "../applications/app.helpers.js";
+import { formatErrorMessage } from "../applications/app-errors.js";
 
 export function validLifecycleFn(fn) {
-  return fn && (typeof fn === 'function' || isArrayOfFns(fn));
+  return fn && (typeof fn === "function" || isArrayOfFns(fn));
 
   function isArrayOfFns(arr) {
-    return Array.isArray(arr) && !find(arr, item => typeof item !== 'function');
+    return Array.isArray(arr) && !find(arr, item => typeof item !== "function");
   }
 }
 
-export function flattenFnArray(fns, description) {
+export function flattenFnArray(appOrParcel, lifecycle) {
+  let fns = appOrParcel[lifecycle] || [];
   fns = Array.isArray(fns) ? fns : [fns];
   if (fns.length === 0) {
     fns = [() => Promise.resolve()];
   }
 
-  return function(props) {
-    return new Promise((resolve, reject) => {
-      waitForPromises(0);
+  const type = objectType(appOrParcel);
+  const name = toName(appOrParcel);
 
-      function waitForPromises(index) {
-        const promise = fns[index](props);
-        if (!smellsLikeAPromise(promise)) {
-          reject(`${description} at index ${index} did not return a promise`);
-        } else {
-          promise
-            .then(() => {
-              if (index === fns.length - 1) {
-                resolve();
-              } else {
-                waitForPromises(index + 1);
-              }
-            })
-            .catch(reject);
-        }
-      }
-    });
-  }
+  return function(props) {
+    return fns.reduce((resultPromise, fn, index) => {
+      return resultPromise.then(() => {
+        const thisPromise = fn(props);
+        return smellsLikeAPromise(thisPromise)
+          ? thisPromise
+          : Promise.reject(
+              formatErrorMessage(
+                15,
+                __DEV__ &&
+                  `Within ${type} ${name}, the lifecycle function ${lifecycle} at array index ${index} did not return a promise`,
+                type,
+                name,
+                lifecycle,
+                index
+              )
+            );
+      });
+    }, Promise.resolve());
+  };
 }
 
 export function smellsLikeAPromise(promise) {
-  return promise && typeof promise.then === 'function' && typeof promise.catch === 'function';
+  return (
+    promise &&
+    typeof promise.then === "function" &&
+    typeof promise.catch === "function"
+  );
 }

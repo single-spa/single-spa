@@ -8,15 +8,15 @@ export function bootstrap() {
 
 export function mount() {
   return Promise.resolve().then(() => {
-    mounted = true
-    throw Error('mount failed')
+    mounted = true;
+    throw Error("mount failed");
   });
 }
 
 export function unmount() {
   return Promise.resolve().then(() => {
-    unmounted = true
-  })
+    unmounted = true;
+  });
 }
 
 export function reset() {

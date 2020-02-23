@@ -1,40 +1,51 @@
 declare module "single-spa" {
-
   type Splat<T> = {
-  	[p in keyof T]: Array<T[p]>
+    [p in keyof T]: Array<T[p]>;
   };
 
   export type AppProps = {
-    name: string,
-    singleSpa: any,
-    mountParcel(parcelConfig: ParcelConfig, customProps: object): Parcel,
+    name: string;
+    singleSpa: any;
+    mountParcel(parcelConfig: ParcelConfig, customProps: object): Parcel;
   };
 
-  export type ParcelConfig = ParcelConfigObject | (() => Promise<ParcelConfigObject>);
+  export type ParcelConfig =
+    | ParcelConfigObject
+    | (() => Promise<ParcelConfigObject>);
 
   type ParcelConfigObject = {
-    name?: string,
-    customProps: object,
-    domElement: HTMLElement,
-  } & LifeCycles
+    name?: string;
+    customProps: object;
+    domElement: HTMLElement;
+  } & LifeCycles;
 
   type Parcel = {
-    mount(): Promise<null>,
-    unmount(): Promise<null>,
-    getStatus(): "NOT_LOADED" | "LOADING_SOURCE_CODE" | "NOT_BOOTSTRAPPED"
-      | "BOOTSTRAPPING" | "NOT_MOUNTED" | "MOUNTING" | "MOUNTED" | "UPDATING"
-      | "UNMOUNTING" | "UNLOADING" | "SKIP_BECAUSE_BROKEN" | "LOAD_ERROR",
-    loadPromise: Promise<null>,
-    bootstrapPromise: Promise<null>,
-    mountPromise: Promise<null>,
-    unmountPromise: Promise<null>,
-  }
+    mount(): Promise<null>;
+    unmount(): Promise<null>;
+    getStatus():
+      | "NOT_LOADED"
+      | "LOADING_SOURCE_CODE"
+      | "NOT_BOOTSTRAPPED"
+      | "BOOTSTRAPPING"
+      | "NOT_MOUNTED"
+      | "MOUNTING"
+      | "MOUNTED"
+      | "UPDATING"
+      | "UNMOUNTING"
+      | "UNLOADING"
+      | "SKIP_BECAUSE_BROKEN"
+      | "LOAD_ERROR";
+    loadPromise: Promise<null>;
+    bootstrapPromise: Promise<null>;
+    mountPromise: Promise<null>;
+    unmountPromise: Promise<null>;
+  };
 
   export type LifeCycles<T = {}> = {
-  	bootstrap: (config: T & AppProps) => Promise<any>,
-  	mount: (config: T & AppProps) => Promise<any>,
-    unmount: (config: T & AppProps) => Promise<any>,
-    update?: (config: T & AppProps) => Promise<any>,
+    bootstrap: (config: T & AppProps) => Promise<any>;
+    mount: (config: T & AppProps) => Promise<any>;
+    unmount: (config: T & AppProps) => Promise<any>;
+    update?: (config: T & AppProps) => Promise<any>;
   };
 
   // ./start.js
@@ -56,9 +67,13 @@ declare module "single-spa" {
   // ./applications/apps.js
   export function registerApplication<T extends object = {}>(
     appName: string,
-    applicationOrLoadingFn: LifeCycles<T> | ((config: T & AppProps) => Promise<LifeCycles<T> | Splat<LifeCycles<T>>>),
+    applicationOrLoadingFn:
+      | LifeCycles<T>
+      | ((
+          config: T & AppProps
+        ) => Promise<LifeCycles<T> | Splat<LifeCycles<T>>>),
     activityFn: (location: Location) => boolean,
-    customProps?: T,
+    customProps?: T
   ): void;
 
   export function getMountedApps(): string[];
@@ -76,7 +91,7 @@ declare module "single-spa" {
     UNLOADING = "UNLOADING",
     SKIP_BECAUSE_BROKEN = "SKIP_BECAUSE_BROKEN",
     LOAD_ERROR = "LOAD_ERROR"
-  }
+  };
 
   export function getAppStatus(appName: string): string | null;
 
@@ -107,11 +122,13 @@ declare module "single-spa" {
   // './applications/app-errors.js'
   type AppError = Error & {
     appOrParcelName: string;
-  }
+  };
   export function addErrorHandler(handler: (error: AppError) => void): void;
   export function removeErrorHandler(handler: (error: AppError) => void): void;
 
-
   // './parcels/mount-parcel.js'
-  export function mountRootParcel(parcelConfig: ParcelConfig, parcelProps: object): Parcel;
+  export function mountRootParcel(
+    parcelConfig: ParcelConfig,
+    parcelProps: object
+  ): Parcel;
 }

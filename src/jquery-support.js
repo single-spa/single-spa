@@ -1,4 +1,4 @@
-import { routingEventsListeningTo } from './navigation/navigation-events.js';
+import { routingEventsListeningTo } from "./navigation/navigation-events.js";
 
 let hasInitialized = false;
 
@@ -14,19 +14,39 @@ export function ensureJQuerySupport(jQuery = window.jQuery) {
     const originalJQueryOff = jQuery.fn.off;
 
     jQuery.fn.on = function(eventString, fn) {
-      return captureRoutingEvents.call(this, originalJQueryOn, window.addEventListener, eventString, fn, arguments);
-    }
+      return captureRoutingEvents.call(
+        this,
+        originalJQueryOn,
+        window.addEventListener,
+        eventString,
+        fn,
+        arguments
+      );
+    };
 
     jQuery.fn.off = function(eventString, fn) {
-      return captureRoutingEvents.call(this, originalJQueryOff, window.removeEventListener, eventString, fn, arguments);
-    }
+      return captureRoutingEvents.call(
+        this,
+        originalJQueryOff,
+        window.removeEventListener,
+        eventString,
+        fn,
+        arguments
+      );
+    };
 
     hasInitialized = true;
   }
 }
 
-function captureRoutingEvents(originalJQueryFunction, nativeFunctionToCall, eventString, fn, originalArgs) {
-  if (typeof eventString !== 'string') {
+function captureRoutingEvents(
+  originalJQueryFunction,
+  nativeFunctionToCall,
+  eventString,
+  fn,
+  originalArgs
+) {
+  if (typeof eventString !== "string") {
     return originalJQueryFunction.apply(this, originalArgs);
   }
 
@@ -34,11 +54,11 @@ function captureRoutingEvents(originalJQueryFunction, nativeFunctionToCall, even
   eventNames.forEach(eventName => {
     if (routingEventsListeningTo.indexOf(eventName) >= 0) {
       nativeFunctionToCall(eventName, fn);
-      eventString = eventString.replace(eventName, '');
+      eventString = eventString.replace(eventName, "");
     }
   });
 
-  if (eventString.trim() === '') {
+  if (eventString.trim() === "") {
     return this;
   } else {
     return originalJQueryFunction.apply(this, originalArgs);

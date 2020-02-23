@@ -1,25 +1,25 @@
 {
   "name": "single-spa",
-  "version": "4.4.3",
-  "description": "Multiple applications, one page",
+  "version": "5.0.0-beta.1",
+  "description": "Microfrontends made easy",
   "main": "lib/umd/single-spa.min.js",
   "types": "typings/single-spa.d.ts",
   "module": "lib/esm/single-spa.min.js",
   "scripts": {
-    "build": "yarn clean && npm run build:prod && npm run build:dev",
+    "build": "yarn clean && concurrently yarn:build:dev yarn:build:prod",
     "build:prod": "rollup -c --environment NODE_ENV:'production'",
     "build:dev": "rollup -c",
     "build:analyze": "rollup -c --environment ANALYZER:'analyzer'",
     "watch": "rollup -c -w",
     "prepublishOnly": "yarn build",
-    "clean": "rm -rf lib",
+    "clean": "rimraf lib",
     "test": "BABEL_ENV=test jest --config jest.config.json",
-    "test:watch": "BABEL_ENV=test jest --config jest.config.json --watch",
+    "prettier": "prettier './**' --write",
     "lint": "eslint src"
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn test && yarn lint"
+      "pre-commit": "pretty-quick --staged && concurrently yarn:test yarn:lint"
     }
   },
   "files": [
@@ -30,6 +30,7 @@
   "repository": "https://github.com/single-spa/single-spa",
   "bugs": "https://github.com/single-spa/single-spa/issues",
   "keywords": [
+    "microfrontends",
     "single",
     "page",
     "application",
@@ -45,15 +46,21 @@
     "@babel/core": "^7.5.5",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.5.5",
+    "@rollup/plugin-replace": "^2.2.1",
+    "@types/jest": "^24.0.23",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
-    "babel-loader": "^8.0.4",
     "babel-plugin-dynamic-import-node": "^2.3.0",
+    "concurrently": "^5.0.0",
     "custom-event": "^1.0.1",
     "eslint": "6.3.0",
     "eslint-config-canopy": "2.3.0",
+    "eslint-config-important-stuff": "^1.1.0",
     "husky": "^3.0.5",
     "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
+    "rimraf": "^3.0.0",
     "rollup": "^1.20.3",
     "rollup-plugin-analyzer": "^3.1.2",
     "rollup-plugin-babel": "^4.3.3",

@@ -1,4 +1,7 @@
-let numBootstrapCalls = 0, numMountCalls = 0, numUnloadCalls = 0, numUnmountCalls = 0;
+let numBootstrapCalls = 0,
+  numMountCalls = 0,
+  numUnloadCalls = 0,
+  numUnmountCalls = 0;
 
 export function reset() {
   numBootstrapCalls = 0;
@@ -9,15 +12,15 @@ export function reset() {
 
 export function bootstrap() {
   numBootstrapCalls++;
-  return Promise.resolve()
+  return Promise.resolve();
 }
 export function mount() {
   numMountCalls++;
-  return Promise.resolve()
+  return Promise.resolve();
 }
 export function unmount() {
   numUnmountCalls++;
-  return Promise.resolve()
+  return Promise.resolve();
 }
 export function unload() {
   numUnloadCalls++;

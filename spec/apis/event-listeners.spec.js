@@ -1,44 +1,43 @@
-import * as singleSpa from 'single-spa';
+import * as singleSpa from "single-spa";
 
 describe(`event listeners before single-spa is started :`, () => {
-  beforeEach(ensureCleanSlate)
+  beforeEach(ensureCleanSlate);
 
   it(`calls hashchange and popstate event listeners even when single-spa is not started`, done => {
-    let hashchangeCalled = false, popstateCalled = false;
+    let hashchangeCalled = false,
+      popstateCalled = false;
 
     function hashchange() {
-      if (window.location.hash === '#/a-new-hash')
-        hashchangeCalled = true;
-
-      checkTestComplete();
-    };
-
-    function popstate() {
-      if (window.location.hash === '#/a-new-hash')
-        popstateCalled = true;
+      if (window.location.hash === "#/a-new-hash") hashchangeCalled = true;
 
       checkTestComplete();
     }
 
-    window.addEventListener('hashchange', hashchange)
-    window.addEventListener('popstate', popstate)
+    function popstate() {
+      if (window.location.hash === "#/a-new-hash") popstateCalled = true;
 
-    window.location.hash = '#/a-new-hash';
+      checkTestComplete();
+    }
+
+    window.addEventListener("hashchange", hashchange);
+    window.addEventListener("popstate", popstate);
+
+    window.location.hash = "#/a-new-hash";
 
     function checkTestComplete() {
       if (isIE()) {
         // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/3740423/
-        cleanupAndFinish()
+        cleanupAndFinish();
       } else if (hashchangeCalled && popstateCalled) {
         // Wait for both hashchange and popstate events
-        cleanupAndFinish()
+        cleanupAndFinish();
       }
     }
 
     function cleanupAndFinish() {
-      window.removeEventListener('hashchange', hashchange)
-      window.removeEventListener('popstate', popstate)
-      done()
+      window.removeEventListener("hashchange", hashchange);
+      window.removeEventListener("popstate", popstate);
+      done();
     }
   });
 });
@@ -51,20 +50,21 @@ describe(`event listeners after single-spa is started`, () => {
   beforeEach(ensureCleanSlate);
 
   it(`calls all of the enqueued hashchange listeners even when the first event given to singleSpa is a popstate event`, done => {
-    let hashchangeCalled = false, popstateCalled = false;
+    let hashchangeCalled = false,
+      popstateCalled = false;
 
     function hashchange() {
       hashchangeCalled = true;
       checkTestComplete();
-    };
+    }
 
     function popstate() {
       popstateCalled = true;
       checkTestComplete();
-    };
+    }
 
-    window.addEventListener('hashchange', hashchange)
-    window.addEventListener('popstate', popstate)
+    window.addEventListener("hashchange", hashchange);
+    window.addEventListener("popstate", popstate);
 
     /* This will first trigger a PopStateEvent, and then a HashChangeEvent. The
      * hashchange event will be queued and not actually given to any event listeners
@@ -72,7 +72,7 @@ describe(`event listeners after single-spa is started`, () => {
      * The bug described in https://github.com/single-spa/single-spa/issues/74 explains
      * why this test is necessary.
      */
-    window.location.hash = '#/a-hash-single-spa-is-started';
+    window.location.hash = "#/a-hash-single-spa-is-started";
 
     function checkTestComplete() {
       if (isIE()) {
@@ -85,9 +85,9 @@ describe(`event listeners after single-spa is started`, () => {
     }
 
     function cleanupAndFinish() {
-      window.removeEventListener('hashchange', hashchange)
-      window.removeEventListener('popstate', popstate)
-      done()
+      window.removeEventListener("hashchange", hashchange);
+      window.removeEventListener("popstate", popstate);
+      done();
     }
   });
 
@@ -102,10 +102,10 @@ describe(`event listeners after single-spa is started`, () => {
     const boundListener1 = listener1.bind(null);
     const boundListener2 = listener2.bind(null);
 
-    window.addEventListener('hashchange', boundListener1);
-    window.addEventListener('hashchange', boundListener2);
+    window.addEventListener("hashchange", boundListener1);
+    window.addEventListener("hashchange", boundListener2);
 
-    window.removeEventListener('hashchange', boundListener1);
+    window.removeEventListener("hashchange", boundListener1);
 
     // This should trigger listener2 to be called
     window.location.hash = `#/nowhere`;
@@ -115,20 +115,18 @@ describe(`event listeners after single-spa is started`, () => {
     }
 
     function listener2() {
-      window.removeEventListener('hashchange', boundListener2); // cleanup after ourselves
+      window.removeEventListener("hashchange", boundListener2); // cleanup after ourselves
       done();
     }
   });
 });
-
 
 function ensureCleanSlate() {
   /* First we need to make sure we have a clean slate where single-spa is not queueing up events or app changes.
    * Otherwise, the event listeners might be called because of a different spec that causes hashchange and popstate
    * events
    */
-  return singleSpa
-    .triggerAppChange()
+  return singleSpa.triggerAppChange();
 }
 
 function isIE() {

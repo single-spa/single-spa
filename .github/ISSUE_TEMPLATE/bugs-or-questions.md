@@ -1,10 +1,8 @@
 ---
+
 name: Bugs or questions
 about: Create a report to help us improve
-
----
-
-**Describe the bug or question**
+---**Describe the bug or question**
 A clear and concise description of what the bug or question is.
 
 **To Reproduce**
