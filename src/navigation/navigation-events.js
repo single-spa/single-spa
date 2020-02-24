@@ -64,17 +64,17 @@ export function callCapturedEventListeners(eventArguments) {
   if (eventArguments) {
     const eventType = eventArguments[0].type;
     if (routingEventsListeningTo.indexOf(eventType) >= 0) {
-      // The error thrown by application event listener should not break single-spa down.
-      // Just like https://github.com/single-spa/single-spa/blob/85f5042dff960e40936f3a5069d56fc9477fac04/src/navigation/reroute.js#L140-L146 did
-      try {
-        capturedEventListeners[eventType].forEach(listener => {
+      capturedEventListeners[eventType].forEach(listener => {
+        try {
+          // The error thrown by application event listener should not break single-spa down.
+          // Just like https://github.com/single-spa/single-spa/blob/85f5042dff960e40936f3a5069d56fc9477fac04/src/navigation/reroute.js#L140-L146 did
           listener.apply(this, eventArguments);
-        });
-      } catch (e) {
-        setTimeout(() => {
-          throw e;
-        });
-      }
+        } catch (e) {
+          setTimeout(() => {
+            throw e;
+          });
+        }
+      });
     }
   }
 }
