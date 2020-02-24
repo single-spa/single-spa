@@ -66,29 +66,54 @@ describe(`events api :`, () => {
         });
     });
 
-    it(`doesn't destroy single-spa when you throw an error inside of an event listener`, () => {
+    it(`doesn't destroy single-spa when you throw an error inside of an event listener`, done => {
       const ogOnError = window.onerror;
+      const counterFn = jest.fn();
+
       window.onerror = function(err) {
-        // We expect this to be called exactly once when we throw the error
+        counterFn();
         console.error(err);
-        window.onerror = ogOnError;
+        doneIfAllListenerHadBeenInvoked();
       };
+
+      // If the counterFn had been called thrice, it means all listener be invoked.
+      function doneIfAllListenerHadBeenInvoked() {
+        if (counterFn.mock.calls.length === 3) {
+          window.onerror = ogOnError;
+          done();
+        }
+      }
 
       function listener() {
         window.removeEventListener("single-spa:routing-event", listener);
         throw Error("Mwahaha I threw an error in an event listener");
       }
-
       window.addEventListener("single-spa:routing-event", listener);
 
-      return singleSpa
+      function hashchangeListenerWithErr() {
+        window.removeEventListener("hashchange", hashchangeListenerWithErr);
+        throw Error("Mwahaha I threw an error in an hashchange event listener");
+      }
+      window.addEventListener("hashchange", hashchangeListenerWithErr);
+
+      function hashchangeListener() {
+        counterFn();
+        window.removeEventListener("hashchange", hashchangeListener);
+        doneIfAllListenerHadBeenInvoked();
+      }
+      window.addEventListener("hashchange", hashchangeListener);
+
+      singleSpa
         .triggerAppChange()
-        .then(() => (window.onerror = ogOnError))
+        .then(() => (window.location.hash = "#/hashchange"))
         .catch(err => {
           // If single-spa died because of the thrown error above, we've got a problem
           window.removeEventListener("single-spa:routing-event", listener);
+          window.removeEventListener("hashchange", hashchangeListener);
+          window.removeEventListener("hashchange", hashchangeListenerWithErr);
           window.onerror = ogOnError;
-          throw err;
+          fail(err);
+          done();
         });
     });
   });
