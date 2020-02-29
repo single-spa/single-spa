@@ -32,10 +32,10 @@ export function reroute(pendingPromises = [], eventArguments) {
     });
   }
 
-  appChangeUnderway = true;
   let wasNoOp = true;
 
   if (isStarted()) {
+    appChangeUnderway = true;
     return performAppChanges();
   } else {
     return loadApps();
@@ -50,7 +50,7 @@ export function reroute(pendingPromises = [], eventArguments) {
       }
 
       return Promise.all(loadPromises)
-        .then(finishUpAndReturn)
+        .then(callAllEventListeners)
         .catch(err => {
           callAllEventListeners();
           throw err;
