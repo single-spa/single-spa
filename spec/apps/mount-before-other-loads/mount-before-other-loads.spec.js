@@ -73,7 +73,6 @@ describe(`mount-before-other-loads`, () => {
     singleSpa.start();
     await singleSpa.triggerAppChange();
     expect(errs.length).toBe(0);
-    console.log("order", order);
     expect(order).toEqual([
       "fast:load",
       "fast:bootstrap",
