@@ -126,17 +126,13 @@ export function reroute(pendingPromises = [], eventArguments) {
               pendingPromises.forEach(promise => promise.reject(err));
               throw err;
             })
-            .then(() => finishUpAndReturn(false));
+            .then(finishUpAndReturn);
         });
     });
   }
 
-  function finishUpAndReturn(callEventListeners = true) {
+  function finishUpAndReturn() {
     const returnValue = getMountedApps();
-
-    if (callEventListeners) {
-      callAllEventListeners();
-    }
     pendingPromises.forEach(promise => promise.resolve(returnValue));
 
     try {
