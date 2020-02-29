@@ -19,7 +19,8 @@ describe(`mount-before-other-loads`, () => {
   it(`will mount an application before loading another application finishes`, async () => {
     location.hash = "#mount-before-other-loads";
 
-    await singleSpa.triggerAppChange();
+    const appChangeResultBeforeStart = await singleSpa.triggerAppChange();
+    expect(appChangeResultBeforeStart).toEqual([]);
 
     let order = [];
 

@@ -49,12 +49,16 @@ export function reroute(pendingPromises = [], eventArguments) {
         wasNoOp = false;
       }
 
-      return Promise.all(loadPromises)
-        .then(callAllEventListeners)
-        .catch(err => {
-          callAllEventListeners();
-          throw err;
-        });
+      return (
+        Promise.all(loadPromises)
+          .then(callAllEventListeners)
+          // there are no mounted apps, before start() is called, so we always return []
+          .then(() => [])
+          .catch(err => {
+            callAllEventListeners();
+            throw err;
+          })
+      );
     });
   }
 
