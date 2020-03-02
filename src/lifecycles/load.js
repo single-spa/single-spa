@@ -22,6 +22,10 @@ import { assign } from "../utils/assign.js";
 
 export function toLoadPromise(app) {
   return Promise.resolve().then(() => {
+    if (app.loadPromise) {
+      return app.loadPromise;
+    }
+
     if (app.status !== NOT_LOADED && app.status !== LOAD_ERROR) {
       return app;
     }
@@ -30,7 +34,7 @@ export function toLoadPromise(app) {
 
     let appOpts, isUserErr;
 
-    return Promise.resolve()
+    return (app.loadPromise = Promise.resolve()
       .then(() => {
         const loadPromise = app.loadImpl(getProps(app));
         if (!smellsLikeAPromise(loadPromise)) {
@@ -122,10 +126,14 @@ export function toLoadPromise(app) {
           app.unload = flattenFnArray(appOpts, "unload");
           app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
 
+          delete app.loadPromise;
+
           return app;
         });
       })
       .catch(err => {
+        delete app.loadPromise;
+
         handleAppError(err, app);
         if (isUserErr) {
           app.status = SKIP_BECAUSE_BROKEN;
@@ -135,6 +143,6 @@ export function toLoadPromise(app) {
         }
 
         return app;
-      });
+      }));
   });
 }

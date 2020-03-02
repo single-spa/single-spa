@@ -32,10 +32,10 @@ export function reroute(pendingPromises = [], eventArguments) {
     });
   }
 
-  appChangeUnderway = true;
   let wasNoOp = true;
 
   if (isStarted()) {
+    appChangeUnderway = true;
     return performAppChanges();
   } else {
     return loadApps();
@@ -49,12 +49,16 @@ export function reroute(pendingPromises = [], eventArguments) {
         wasNoOp = false;
       }
 
-      return Promise.all(loadPromises)
-        .then(finishUpAndReturn)
-        .catch(err => {
-          callAllEventListeners();
-          throw err;
-        });
+      return (
+        Promise.all(loadPromises)
+          .then(callAllEventListeners)
+          // there are no mounted apps, before start() is called, so we always return []
+          .then(() => [])
+          .catch(err => {
+            callAllEventListeners();
+            throw err;
+          })
+      );
     });
   }
 
@@ -126,17 +130,13 @@ export function reroute(pendingPromises = [], eventArguments) {
               pendingPromises.forEach(promise => promise.reject(err));
               throw err;
             })
-            .then(() => finishUpAndReturn(false));
+            .then(finishUpAndReturn);
         });
     });
   }
 
-  function finishUpAndReturn(callEventListeners = true) {
+  function finishUpAndReturn() {
     const returnValue = getMountedApps();
-
-    if (callEventListeners) {
-      callAllEventListeners();
-    }
     pendingPromises.forEach(promise => promise.resolve(returnValue));
 
     try {
