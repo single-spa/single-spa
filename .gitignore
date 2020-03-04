@@ -7,3 +7,5 @@ coverage/
 dist/
 .DS_Store
 yarn-error.log
+.history
+.vscode

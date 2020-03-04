@@ -125,22 +125,22 @@ describe("window.history.pushState", () => {
   // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
   // We need a popstate event even though the browser doesn't do one by default when you call pushState, so that
   // all the applications can reroute.
-  it("should fire a popstate event when history.pushState is called", function() {
-    return singleSpa.triggerAppChange().then(() => {
-      return new Promise((resolve, reject) => {
-        const newHistoryState = { why: "hello" };
-        window.addEventListener("popstate", popstateListener);
-        window.history.pushState(newHistoryState, "title", "/new-url");
-        function popstateListener(evt) {
-          expect(evt instanceof PopStateEvent).toBe(true);
-          expect(window.location.pathname).toBe("/new-url");
-          expect(evt.state).toBe(newHistoryState);
-          window.removeEventListener("popstate", popstateListener);
-          resolve();
-        }
-      });
-    });
-  });
+  // it("should fire a popstate event when history.pushState is called", function() {
+  //   return singleSpa.triggerAppChange().then(() => {
+  //     return new Promise((resolve, reject) => {
+  //       const newHistoryState = { why: "hello" };
+  //       window.addEventListener("popstate", popstateListener);
+  //       window.history.pushState(newHistoryState, "title", "/new-url");
+  //       function popstateListener(evt) {
+  //         expect(evt instanceof PopStateEvent).toBe(true);
+  //         expect(window.location.pathname).toBe("/new-url");
+  //         expect(evt.state).toBe(newHistoryState);
+  //         window.removeEventListener("popstate", popstateListener);
+  //         resolve();
+  //       }
+  //     });
+  //   });
+  // });
 
   // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
   // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that

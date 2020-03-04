@@ -61,7 +61,7 @@ export function navigateToUrl(obj) {
 }
 
 export function callCapturedEventListeners(eventArguments) {
-  if (eventArguments) {
+  if (eventArguments && eventArguments.length > 0) {
     const eventType = eventArguments[0].type;
     if (routingEventsListeningTo.indexOf(eventType) >= 0) {
       capturedEventListeners[eventType].forEach(listener => {
@@ -121,7 +121,8 @@ const originalPushState = window.history.pushState;
 window.history.pushState = function(state) {
   const result = originalPushState.apply(this, arguments);
 
-  urlReroute(createPopStateEvent(state));
+  // urlReroute(createPopStateEvent(state));
+  urlReroute();
 
   return result;
 };
