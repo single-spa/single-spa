@@ -32,11 +32,9 @@ describe("error handlers api", () => {
     return singleSpa.triggerAppChange().then(() => {
       expect(errs.length).toBe(1);
       expect(errs[0].appOrParcelName).toBe("load-error");
-      expect(
-        errs[0].message.indexOf(
-          `'load-error' died in status LOADING_SOURCE_CODE: "Could not load this one"`
-        )
-      ).toBeGreaterThan(-1);
+      expect(errs[0].message).toMatch(
+        `'load-error' died in status LOAD_ERROR: "Could not load this one"`
+      );
     });
   });
 

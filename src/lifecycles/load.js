@@ -134,13 +134,13 @@ export function toLoadPromise(app) {
       .catch(err => {
         delete app.loadPromise;
 
-        handleAppError(err, app);
         if (isUserErr) {
           app.status = SKIP_BECAUSE_BROKEN;
         } else {
           app.status = LOAD_ERROR;
           app.loadErrorTime = new Date().getTime();
         }
+        handleAppError(err, app);
 
         return app;
       }));
