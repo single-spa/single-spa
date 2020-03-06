@@ -21,12 +21,8 @@ const terserOpts = {
   compress: {
     passes: 2
   },
-  mangle: {
-    safari10: true
-  },
   module: true,
   output: {
-    safari10: true,
     comments(node, comment) {
       return comment.value.trim().startsWith("single-spa@");
     }
