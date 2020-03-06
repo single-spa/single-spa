@@ -66,6 +66,9 @@ describe("error handlers api", () => {
       expect(errs[0].message).toMatch(
         `'bootstrap-error' died in status BOOTSTRAPPING: couldn't bootstrap`
       );
+      expect(singleSpa.getAppStatus("bootstrap-error")).toBe(
+        singleSpa.SKIP_BECAUSE_BROKEN
+      );
     });
   });
 

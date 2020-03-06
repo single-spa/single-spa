@@ -22,9 +22,7 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
       })
       .catch(err => {
         if (hardFail) {
-          const transformedErr = transformErr(err, appOrParcel);
-          appOrParcel.status = SKIP_BECAUSE_BROKEN;
-          throw transformedErr;
+          throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
         } else {
           handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
           return appOrParcel;

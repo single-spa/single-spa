@@ -3,11 +3,7 @@ import { objectType, toName } from "./app.helpers";
 let errorHandlers = [];
 
 export function handleAppError(err, app, newStatus) {
-  const transformedErr = transformErr(err, app);
-
-  // We set the status after transforming the error so that the error message
-  // references the state the application was in before the status change.
-  app.status = newStatus;
+  const transformedErr = transformErr(err, app, newStatus);
 
   if (errorHandlers.length) {
     errorHandlers.forEach(handler => handler(transformedErr));
@@ -59,7 +55,7 @@ export function formatErrorMessage(code, msg, ...args) {
   }`;
 }
 
-export function transformErr(ogErr, appOrParcel) {
+export function transformErr(ogErr, appOrParcel, newStatus) {
   const errPrefix = `${objectType(appOrParcel)} '${toName(
     appOrParcel
   )}' died in status ${appOrParcel.status}: `;
@@ -96,6 +92,10 @@ export function transformErr(ogErr, appOrParcel) {
   }
 
   result.appOrParcelName = toName(appOrParcel);
+
+  // We set the status after transforming the error so that the error message
+  // references the state the application was in before the status change.
+  appOrParcel.status = newStatus;
 
   return result;
 }

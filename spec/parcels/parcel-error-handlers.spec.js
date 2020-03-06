@@ -52,14 +52,11 @@ describe("parcel errors", () => {
           const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
             domElement: document.createElement("div")
           });
-          return parcel1.mountPromise
-            .catch(err => {
-              expect(err.appOrParcelName).toBe("mount-error");
-              expect(err.message).toMatch("NOT_MOUNTED");
-            })
-            .then(() => {
-              expect(parcel1.getStatus()).toBe("SKIP_BECAUSE_BROKEN");
-            });
+          return parcel1.mountPromise.catch(err => {
+            expect(err.appOrParcelName).toBe("mount-error");
+            expect(err.message).toMatch("NOT_MOUNTED");
+            expect(parcel1.getStatus()).toBe(singleSpa.SKIP_BECAUSE_BROKEN);
+          });
         });
       });
     });

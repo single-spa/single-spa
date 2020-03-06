@@ -48,9 +48,7 @@ export function toMountPromise(appOrParcel, hardFail) {
             handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
             return appOrParcel;
           } else {
-            const transformedErr = transformErr(err, appOrParcel);
-            appOrParcel.status = SKIP_BECAUSE_BROKEN;
-            throw transformedErr;
+            throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
           }
         }
       });

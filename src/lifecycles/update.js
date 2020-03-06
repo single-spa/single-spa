@@ -33,9 +33,7 @@ export function toUpdatePromise(parcel) {
         return parcel;
       })
       .catch(err => {
-        const transformedErr = transformErr(err, parcel);
-        parcel.status = SKIP_BECAUSE_BROKEN;
-        throw transformedErr;
+        throw transformErr(err, parcel, SKIP_BECAUSE_BROKEN);
       });
   });
 }
