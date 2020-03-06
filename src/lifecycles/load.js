@@ -106,8 +106,7 @@ export function toLoadPromise(app) {
               ),
               appOpts
             );
-            handleAppError(validationErrMessage, app);
-            app.status = SKIP_BECAUSE_BROKEN;
+            handleAppError(validationErrMessage, app, SKIP_BECAUSE_BROKEN);
             return app;
           }
 
@@ -134,13 +133,14 @@ export function toLoadPromise(app) {
       .catch(err => {
         delete app.loadPromise;
 
+        let newStatus;
         if (isUserErr) {
-          app.status = SKIP_BECAUSE_BROKEN;
+          newStatus = SKIP_BECAUSE_BROKEN;
         } else {
-          app.status = LOAD_ERROR;
+          newStatus = LOAD_ERROR;
           app.loadErrorTime = new Date().getTime();
         }
-        handleAppError(err, app);
+        handleAppError(err, app, newStatus);
 
         return app;
       }));

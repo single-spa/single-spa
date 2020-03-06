@@ -31,8 +31,7 @@ export function toUnmountPromise(appOrParcel, hardFail) {
             appOrParcel.status = SKIP_BECAUSE_BROKEN;
             throw transformedErr;
           } else {
-            handleAppError(parentError, appOrParcel);
-            appOrParcel.status = SKIP_BECAUSE_BROKEN;
+            handleAppError(parentError, appOrParcel, SKIP_BECAUSE_BROKEN);
           }
         });
       })
@@ -50,11 +49,9 @@ export function toUnmountPromise(appOrParcel, hardFail) {
         .catch(err => {
           if (hardFail) {
             const transformedErr = transformErr(err, appOrParcel);
-            appOrParcel.status = SKIP_BECAUSE_BROKEN;
             throw transformedErr;
           } else {
-            handleAppError(err, appOrParcel);
-            appOrParcel.status = SKIP_BECAUSE_BROKEN;
+            handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
           }
         });
     }

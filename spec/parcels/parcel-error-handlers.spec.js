@@ -24,19 +24,12 @@ describe("parcel errors", () => {
           const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
             domElement: document.createElement("div")
           });
-          return parcel1.bootstrapPromise
-            .catch(err => {
-              expect(err.appOrParcelName).toBe("bootstrap-error");
-              expect(
-                err.message.indexOf(`SKIP_BECAUSE_BROKEN`)
-              ).toBeGreaterThan(-1);
-              expect(err.message.indexOf(`bootstrap-error`)).toBeGreaterThan(
-                -1
-              );
-            })
-            .then(() => {
-              expect(parcel1.getStatus()).toBe("SKIP_BECAUSE_BROKEN");
-            });
+          return parcel1.bootstrapPromise.catch(err => {
+            expect(err.appOrParcelName).toBe("bootstrap-error");
+            expect(err.message).toMatch(`BOOTSTRAPPING`);
+            expect(err.message.indexOf(`bootstrap-error`)).toBeGreaterThan(-1);
+            expect(parcel1.getStatus()).toBe("SKIP_BECAUSE_BROKEN");
+          });
         });
       });
     });
@@ -62,7 +55,7 @@ describe("parcel errors", () => {
           return parcel1.mountPromise
             .catch(err => {
               expect(err.appOrParcelName).toBe("mount-error");
-              expect(err.message.indexOf(`NOT_MOUNTED`)).toBeGreaterThan(-1);
+              expect(err.message).toMatch("NOT_MOUNTED");
             })
             .then(() => {
               expect(parcel1.getStatus()).toBe("SKIP_BECAUSE_BROKEN");

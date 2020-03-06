@@ -81,8 +81,7 @@ function errorUnloadingApp(app, unloadInfo, err) {
   delete app.unmount;
   delete app.unload;
 
-  handleAppError(err, app);
-  app.status = SKIP_BECAUSE_BROKEN;
+  handleAppError(err, app, SKIP_BECAUSE_BROKEN);
   unloadInfo.reject(err);
 }
 

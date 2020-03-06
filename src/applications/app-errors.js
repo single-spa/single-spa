@@ -2,8 +2,12 @@ import { objectType, toName } from "./app.helpers";
 
 let errorHandlers = [];
 
-export function handleAppError(err, app) {
+export function handleAppError(err, app, newStatus) {
   const transformedErr = transformErr(err, app);
+
+  // We set the status after transforming the error so that the error message
+  // references the state the application was in before the status change.
+  app.status = newStatus;
 
   if (errorHandlers.length) {
     errorHandlers.forEach(handler => handler(transformedErr));
