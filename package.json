@@ -1,6 +1,6 @@
 {
   "name": "single-spa",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Microfrontends made easy",
   "main": "lib/umd/single-spa.min.js",
   "types": "typings/single-spa.d.ts",
