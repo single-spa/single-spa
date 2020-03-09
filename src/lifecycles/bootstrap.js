@@ -21,11 +21,10 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
         return appOrParcel;
       })
       .catch(err => {
-        appOrParcel.status = SKIP_BECAUSE_BROKEN;
         if (hardFail) {
-          throw transformErr(err, appOrParcel);
+          throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
         } else {
-          handleAppError(err, appOrParcel);
+          handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
           return appOrParcel;
         }
       });

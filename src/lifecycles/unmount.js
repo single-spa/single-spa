@@ -27,12 +27,9 @@ export function toUnmountPromise(appOrParcel, hardFail) {
           // Unmounting the app/parcel succeeded, but unmounting its children parcels did not
           const parentError = Error(parcelError.message);
           if (hardFail) {
-            const transformedErr = transformErr(parentError, appOrParcel);
-            appOrParcel.status = SKIP_BECAUSE_BROKEN;
-            throw transformedErr;
+            throw transformErr(parentError, appOrParcel, SKIP_BECAUSE_BROKEN);
           } else {
-            handleAppError(parentError, appOrParcel);
-            appOrParcel.status = SKIP_BECAUSE_BROKEN;
+            handleAppError(parentError, appOrParcel, SKIP_BECAUSE_BROKEN);
           }
         });
       })
@@ -49,12 +46,9 @@ export function toUnmountPromise(appOrParcel, hardFail) {
         })
         .catch(err => {
           if (hardFail) {
-            const transformedErr = transformErr(err, appOrParcel);
-            appOrParcel.status = SKIP_BECAUSE_BROKEN;
-            throw transformedErr;
+            throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
           } else {
-            handleAppError(err, appOrParcel);
-            appOrParcel.status = SKIP_BECAUSE_BROKEN;
+            handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
           }
         });
     }

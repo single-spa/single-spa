@@ -32,11 +32,10 @@ describe("error handlers api", () => {
     return singleSpa.triggerAppChange().then(() => {
       expect(errs.length).toBe(1);
       expect(errs[0].appOrParcelName).toBe("load-error");
-      expect(
-        errs[0].message.indexOf(
-          `'load-error' died in status LOADING_SOURCE_CODE: "Could not load this one"`
-        )
-      ).toBeGreaterThan(-1);
+      expect(errs[0].message).toMatch(
+        `'load-error' died in status LOADING_SOURCE_CODE: "Could not load this one"`
+      );
+      expect(singleSpa.getAppStatus("load-error")).toBe(singleSpa.LOAD_ERROR);
     });
   });
 
@@ -64,11 +63,12 @@ describe("error handlers api", () => {
     return singleSpa.triggerAppChange().then(() => {
       expect(errs.length).toBe(1);
       expect(errs[0].appOrParcelName).toBe("bootstrap-error");
-      expect(
-        errs[0].message.indexOf(
-          `'bootstrap-error' died in status SKIP_BECAUSE_BROKEN: couldn't bootstrap`
-        )
-      ).toBeGreaterThan(-1);
+      expect(errs[0].message).toMatch(
+        `'bootstrap-error' died in status BOOTSTRAPPING: couldn't bootstrap`
+      );
+      expect(singleSpa.getAppStatus("bootstrap-error")).toBe(
+        singleSpa.SKIP_BECAUSE_BROKEN
+      );
     });
   });
 
