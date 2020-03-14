@@ -38,7 +38,7 @@ export function toMountPromise(appOrParcel, hardFail) {
         // We temporarily put the appOrParcel into MOUNTED status so that toUnmountPromise actually attempts to unmount it
         // instead of just doing a no-op.
         appOrParcel.status = MOUNTED;
-        return toUnmountPromise(appOrParcel).then(
+        return toUnmountPromise(appOrParcel, true).then(
           setSkipBecauseBroken,
           setSkipBecauseBroken
         );

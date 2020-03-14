@@ -171,4 +171,27 @@ describe("error handlers api", () => {
       ).toBeGreaterThan(-1);
     });
   });
+
+  it(`only throws one error when the application or parcel fails to mount`, async () => {
+    const app = {
+      async bootstrap() {},
+      async mount() {
+        throw Error("the mount failed");
+      },
+      async unmount() {
+        throw Error("the unmount failed");
+      }
+    };
+    location.hash = "#";
+    await singleSpa.triggerAppChange();
+    singleSpa.registerApplication("one-error-only", app, location =>
+      location.hash.startsWith("#one-error-only")
+    );
+    location.hash = "#one-error-only";
+    await singleSpa.triggerAppChange();
+
+    expect(errs.length).toBe(1);
+    expect(errs[0].message).toMatch("the mount failed");
+    expect(errs[0].message).not.toMatch("the unmount");
+  });
 });
