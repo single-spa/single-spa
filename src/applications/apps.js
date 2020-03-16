@@ -9,7 +9,8 @@ import {
   shouldntBeActive,
   isntActive,
   notSkipped,
-  withoutLoadErrors
+  withoutLoadErrors,
+  sanitizeAPI
 } from "./app.helpers.js";
 import { reroute } from "../navigation/reroute.js";
 import { find } from "../utils/find.js";
@@ -42,61 +43,21 @@ export function getAppStatus(appName) {
   return app ? app.status : null;
 }
 
-export function registerApplication(
-  appName,
-  applicationOrLoadingFn,
-  activityFn,
-  customProps = {}
-) {
-  if (typeof appName !== "string" || appName.length === 0)
-    throw Error(
-      formatErrorMessage(
-        20,
-        __DEV__ &&
-          `The first argument to registerApplication must be a non-empty string 'appName'`
-      )
-    );
-  if (getAppNames().indexOf(appName) !== -1)
+export function registerApplication(...args) {
+  const { name, loadImpl, activityFn, customProps } = sanitizeAPI(args);
+
+  if (getAppNames().indexOf(name) !== -1)
     throw Error(
       formatErrorMessage(
         21,
-        __DEV__ && `There is already an app declared with name ${appName}`,
-        appName
-      )
-    );
-  if (typeof customProps !== "object" || Array.isArray(customProps))
-    throw Error(
-      formatErrorMessage(22, __DEV__ && "customProps must be an object")
-    );
-
-  if (!applicationOrLoadingFn)
-    throw Error(
-      formatErrorMessage(
-        23,
-        __DEV__ && "The application or loading function is required"
-      )
-    );
-
-  let loadImpl;
-  if (typeof applicationOrLoadingFn !== "function") {
-    // applicationOrLoadingFn is an application
-    loadImpl = () => Promise.resolve(applicationOrLoadingFn);
-  } else {
-    // applicationOrLoadingFn is a loadingFn
-    loadImpl = applicationOrLoadingFn;
-  }
-
-  if (typeof activityFn !== "function")
-    throw Error(
-      formatErrorMessage(
-        24,
-        __DEV__ && `The activityFunction argument must be a function`
+        __DEV__ && `There is already an app declared with name ${name}`,
+        name
       )
     );
 
   apps.push({
     loadErrorTime: null,
-    name: appName,
+    name,
     loadImpl,
     activeWhen: activityFn,
     status: NOT_LOADED,
