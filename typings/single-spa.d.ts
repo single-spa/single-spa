@@ -69,15 +69,24 @@ declare module "single-spa" {
   export function setUnmountMaxTime(time: number, dieOnTimeout?: boolean): void;
   export function setUnloadMaxTime(time: number, dieOnTimeout?: boolean): void;
 
+  type Application<T = {}> =
+    | LifeCycles<T>
+    | ((config: T & AppProps) => Promise<LifeCycles<T> | Splat<LifeCycles<T>>>);
+
+  type Activity = (location: Location) => boolean;
+
+  export type RegisterApplicationConfig<T = {}> = {
+    name: string;
+    load: Application<T>;
+    isActive: Activity;
+    customProps?: T;
+  };
+
   // ./applications/apps.js
   export function registerApplication<T extends object = {}>(
-    appName: string,
-    applicationOrLoadingFn:
-      | LifeCycles<T>
-      | ((
-          config: T & AppProps
-        ) => Promise<LifeCycles<T> | Splat<LifeCycles<T>>>),
-    activityFn: (location: Location) => boolean,
+    appNameOrObjectConfiguration: string | RegisterApplicationConfig<T>,
+    applicationOrLoadingFn?: Application<T>,
+    activityFn?: Activity,
     customProps?: T
   ): void;
 
