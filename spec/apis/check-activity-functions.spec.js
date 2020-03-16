@@ -42,11 +42,11 @@ describe(`checkActivityFunctionsApi`, () => {
       () => Promise.resolve(dummyApp1),
       activityFunctions[1]
     );
-    singleSpa.registerApplication(
-      "test2",
-      () => Promise.resolve(dummyApp2),
-      activityFunctions[2]
-    );
+    singleSpa.registerApplication({
+      name: "test2",
+      load: Promise.resolve(dummyApp2),
+      isActive: activityFunctions[2]
+    });
   });
 
   beforeEach(() => {

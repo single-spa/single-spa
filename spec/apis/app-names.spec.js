@@ -14,14 +14,22 @@ describe(`app-names`, () => {
       }
     };
     singleSpa.registerApplication(
-      "./app-names.app.js",
+      "usingArgumentAPI",
       app,
       location => location.hash === "#app-names"
     );
+    singleSpa.registerApplication({
+      name: "usingObjectAPI",
+      load: app,
+      isActive: location => location.hash === "#app-names"
+    });
     singleSpa.start();
   });
 
   it(`should return all registered app names up to this point regardless of activity`, () => {
-    expect(singleSpa.getAppNames()).toEqual(["./app-names.app.js"]);
+    expect(singleSpa.getAppNames()).toEqual([
+      "usingArgumentAPI",
+      "usingObjectAPI"
+    ]);
   });
 });

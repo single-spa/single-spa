@@ -19,7 +19,7 @@ describe("registerApplication", function() {
   describe(`Application name errors`, () => {
     it(`should throw an error if the name isn't a non empty string`, () => {
       expect(() => {
-        singleSpa.registerApplication(app);
+        singleSpa.registerApplication(null);
       }).toThrowError(
         `The first argument to registerApplication must be a non-empty string 'appName'`
       );
@@ -28,12 +28,30 @@ describe("registerApplication", function() {
       }).toThrowError(
         `The first argument to registerApplication must be a non-empty string 'appName'`
       );
+      expect(() => {
+        singleSpa.registerApplication({
+          name: null
+        });
+      }).toThrowError(
+        `The first argument to registerApplication must be a non-empty string 'appName'`
+      );
+      expect(() => {
+        singleSpa.registerApplication({
+          name: ""
+        });
+      }).toThrowError(
+        `The first argument to registerApplication must be a non-empty string 'appName'`
+      );
     });
 
     it("should throw when I register the same application name twice", () => {
       singleSpa.registerApplication("duplicateApp", app, () => true);
       expect(() => {
-        singleSpa.registerApplication("duplicateApp", app, () => true);
+        singleSpa.registerApplication({
+          name: "duplicateApp",
+          load: app,
+          isActive: () => true
+        });
       }).toThrowError(
         "There is already an app declared with name duplicateApp"
       );
@@ -44,6 +62,11 @@ describe("registerApplication", function() {
     it(`should throw an error when I attempt to register an application without the application or loading function`, () => {
       expect(() => {
         singleSpa.registerApplication("no-app-will-throw-error-app");
+      }).toThrowError("The application or loading function is required");
+      expect(() => {
+        singleSpa.registerApplication({
+          name: "no-app-will-throw-error-app"
+        });
       }).toThrowError("The application or loading function is required");
     });
   });
@@ -56,6 +79,12 @@ describe("registerApplication", function() {
           app
         );
       }).toThrowError(`The activityFunction argument must be a function`);
+      expect(() => {
+        singleSpa.registerApplication({
+          name: "no-loading-fn-will-throw-error-app",
+          load: app
+        });
+      }).toThrowError(`The activityFunction argument must be a function`);
     });
 
     it(`should throw an error when the activity Function isn't a function`, () => {
@@ -65,6 +94,13 @@ describe("registerApplication", function() {
           app,
           app
         );
+      }).toThrowError(`The activityFunction argument must be a function`);
+      expect(() => {
+        singleSpa.registerApplication({
+          name: "bad-loading-fn-will-throw-error-app",
+          load: app,
+          isActive: app
+        });
       }).toThrowError(`The activityFunction argument must be a function`);
     });
   });
@@ -79,6 +115,14 @@ describe("registerApplication", function() {
           () => {}
         );
       }).toThrowError("customProps must be an object");
+      expect(() => {
+        singleSpa.registerApplication({
+          name: "bad-custom-props-will-throw-error-app",
+          load: app,
+          isActive: () => true,
+          customProps: () => {}
+        });
+      }).toThrowError("customProps must be an object");
     });
 
     it("should throw when I pass in an array for custom props", () => {
@@ -90,6 +134,26 @@ describe("registerApplication", function() {
           []
         );
       }).toThrowError("customProps must be an object");
+      expect(() => {
+        singleSpa.registerApplication({
+          name: "bad-custom-props-will-throw-error-app",
+          load: app,
+          isActive: () => true,
+          customProps: []
+        });
+      }).toThrowError("customProps must be an object");
+    });
+
+    it("should throw when I pass invalid keys to object configuration ", () => {
+      expect(() => {
+        singleSpa.registerApplication({
+          name: "invalid-key-in-object-config",
+          load: app,
+          isActive: () => true,
+          invalidKey: "invalidKey",
+          superInvalidKey: {}
+        });
+      }).toThrowError("Invalid keys: invalidKey, superInvalidKey.");
     });
   });
 });
