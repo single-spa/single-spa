@@ -79,6 +79,12 @@ export function callCapturedEventListeners(eventArguments) {
   }
 }
 
+let urlRerouteOnly;
+
+export function setUrlRerouteOnly(val) {
+  urlRerouteOnly = val;
+}
+
 function urlReroute() {
   reroute([], arguments);
 }
@@ -117,21 +123,22 @@ window.removeEventListener = function(eventName, listenerFn) {
   return originalRemoveEventListener.apply(this, arguments);
 };
 
-const originalPushState = window.history.pushState;
-window.history.pushState = function(state) {
-  const result = originalPushState.apply(this, arguments);
+window.history.pushState = patchedUpdateState(window.history.pushState);
+window.history.replaceState = patchedUpdateState(window.history.replaceState);
 
-  urlReroute(createPopStateEvent(state));
+function patchedUpdateState(updateState) {
+  return function() {
+    const urlBefore = window.location.href;
+    const result = updateState.apply(this, arguments);
+    const urlAfter = window.location.href;
 
-  return result;
-};
+    if (!urlRerouteOnly || urlBefore !== urlAfter) {
+      urlReroute(createPopStateEvent(window.history.state));
+    }
 
-const originalReplaceState = window.history.replaceState;
-window.history.replaceState = function(state) {
-  const result = originalReplaceState.apply(this, arguments);
-  urlReroute(createPopStateEvent(state));
-  return result;
-};
+    return result;
+  };
+}
 
 function createPopStateEvent(state) {
   // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49

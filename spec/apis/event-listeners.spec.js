@@ -119,6 +119,31 @@ describe(`event listeners after single-spa is started`, () => {
       done();
     }
   });
+
+  it(`Does trigger a reroute when the URL changes and urlRerouteOnly is set to false`, async () => {
+    let activeWhenCalls = 0,
+      popstateCalls = 0;
+    const activeWhen = () => activeWhenCalls++;
+    const popstateListener = () => popstateCalls++;
+    const app = { async bootstrap() {}, async mount() {}, async unmount() {} };
+
+    window.addEventListener("popstate", popstateListener);
+    singleSpa.registerApplication("urlRerouteOnly test", app, activeWhen);
+
+    await singleSpa.triggerAppChange();
+
+    const numPopstatesBefore = popstateCalls;
+    const numActiveWhensBefore = activeWhenCalls;
+    history.replaceState({ some: "state" }, document.title);
+    // calling triggerAppChange forcibly increments the counters which is weird for this test
+    // but it also ensures we wait for the reroute to finish (if it's taking place)
+    await singleSpa.triggerAppChange();
+
+    // The 1 comes from replaceState
+    expect(numPopstatesBefore).toBe(popstateCalls - 1);
+    // The 2 comes from triggerAppChange and from replaceState
+    expect(numActiveWhensBefore).toBe(activeWhenCalls - 2);
+  });
 });
 
 function ensureCleanSlate() {
