@@ -139,7 +139,7 @@ describe(`event listeners after single-spa is started`, () => {
     // but it also ensures we wait for the reroute to finish (if it's taking place)
     await singleSpa.triggerAppChange();
 
-    // The 1 comes from triggerAppChange
+    // The 1 comes from replaceState
     expect(numPopstatesBefore).toBe(popstateCalls - 1);
     // The 2 comes from triggerAppChange and from replaceState
     expect(numActiveWhensBefore).toBe(activeWhenCalls - 2);
