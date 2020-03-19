@@ -12,6 +12,14 @@ const capturedEventListeners = {
   popstate: []
 };
 
+/**
+ * Flag indicating if 'popstate' event was emitted which means
+ * that user used browser-back-button.
+ * Single-spa used with Angular Router triggers too many stateReplace in this case
+ * which results in invalid behaviour when using CanDeactivate guards
+ */
+let isAfterPopstate = false;
+
 export const routingEventsListeningTo = ["hashchange", "popstate"];
 
 export function navigateToUrl(obj) {
@@ -85,7 +93,10 @@ function urlReroute() {
 
 // We will trigger an app change for any routing events.
 window.addEventListener("hashchange", urlReroute);
-window.addEventListener("popstate", urlReroute);
+window.addEventListener("popstate", (args) => {
+  isAfterPopstate = true;
+  urlReroute(args);
+});
 
 // Monkeypatch addEventListener so that we can ensure correct timing
 const originalAddEventListener = window.addEventListener;
@@ -127,11 +138,23 @@ window.history.pushState = function(state) {
 };
 
 const originalReplaceState = window.history.replaceState;
-window.history.replaceState = function(state) {
+window.history.replaceState = function (state) {
   const result = originalReplaceState.apply(this, arguments);
-  urlReroute(createPopStateEvent(state));
+
+  // We need setTimeout here as we need to be in the next cycle than `popstate` trigger
+  setTimeout(() => {
+    // if not after popstate - reroute as usual
+    if (!isAfterPopstate) {
+      urlReroute(createPopStateEvent(state));
+      return null;
+    }
+    
+    // if after popstate - we omitted one urlReroute - set flag to false and behave as usual
+    isAfterPopstate = false;
+  });
+
   return result;
-};
+}
 
 function createPopStateEvent(state) {
   // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
