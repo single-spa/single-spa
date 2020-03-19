@@ -44,9 +44,7 @@ describe(`event listeners before single-spa is started :`, () => {
 
 describe(`event listeners after single-spa is started`, () => {
   beforeAll(() => {
-    singleSpa.start({
-      urlRerouteOnly: true
-    });
+    singleSpa.start();
   });
 
   beforeEach(ensureCleanSlate);
@@ -122,7 +120,7 @@ describe(`event listeners after single-spa is started`, () => {
     }
   });
 
-  it(`Doesn't trigger a reroute when the URL changes and urlRerouteOnly is set to true`, async () => {
+  it(`Does trigger a reroute when the URL changes and urlRerouteOnly is set to false`, async () => {
     let activeWhenCalls = 0,
       popstateCalls = 0;
     const activeWhen = () => activeWhenCalls++;
@@ -137,10 +135,14 @@ describe(`event listeners after single-spa is started`, () => {
     const numPopstatesBefore = popstateCalls;
     const numActiveWhensBefore = activeWhenCalls;
     history.replaceState({ some: "state" }, document.title);
-    await Promise.resolve().then(() => {
-      expect(numPopstatesBefore).toBe(popstateCalls);
-      expect(numActiveWhensBefore).toBe(activeWhenCalls);
-    });
+    // calling triggerAppChange forcibly increments the counters which is weird for this test
+    // but it also ensures we wait for the reroute to finish (if it's taking place)
+    await singleSpa.triggerAppChange();
+
+    // The 1 comes from triggerAppChange
+    expect(numPopstatesBefore).toBe(popstateCalls - 1);
+    // The 2 comes from triggerAppChange and from replaceState
+    expect(numActiveWhensBefore).toBe(activeWhenCalls - 2);
   });
 });
 
