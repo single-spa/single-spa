@@ -1,10 +1,14 @@
 import { reroute } from "./navigation/reroute.js";
 import { formatErrorMessage } from "./applications/app-errors.js";
+import { setUrlRerouteOnly } from "./navigation/navigation-events.js";
 
 let started = false;
 
-export function start() {
+export function start(opts) {
   started = true;
+  if (opts && opts.urlRerouteOnly) {
+    setUrlRerouteOnly(opts.urlRerouteOnly);
+  }
   reroute();
 }
 

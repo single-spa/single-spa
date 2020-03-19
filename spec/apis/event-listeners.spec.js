@@ -44,7 +44,9 @@ describe(`event listeners before single-spa is started :`, () => {
 
 describe(`event listeners after single-spa is started`, () => {
   beforeAll(() => {
-    singleSpa.start();
+    singleSpa.start({
+      urlRerouteOnly: true
+    });
   });
 
   beforeEach(ensureCleanSlate);
@@ -118,6 +120,27 @@ describe(`event listeners after single-spa is started`, () => {
       window.removeEventListener("hashchange", boundListener2); // cleanup after ourselves
       done();
     }
+  });
+
+  it(`Doesn't trigger a reroute when the URL changes and urlRerouteOnly is set to true`, async () => {
+    let activeWhenCalls = 0,
+      popstateCalls = 0;
+    const activeWhen = () => activeWhenCalls++;
+    const popstateListener = () => popstateCalls++;
+    const app = { async bootstrap() {}, async mount() {}, async unmount() {} };
+
+    window.addEventListener("popstate", popstateListener);
+    singleSpa.registerApplication("urlRerouteOnly test", app, activeWhen);
+
+    await singleSpa.triggerAppChange();
+
+    const numPopstatesBefore = popstateCalls;
+    const numActiveWhensBefore = activeWhenCalls;
+    history.replaceState({ some: "state" }, document.title);
+    await Promise.resolve().then(() => {
+      expect(numPopstatesBefore).toBe(popstateCalls);
+      expect(numActiveWhensBefore).toBe(activeWhenCalls);
+    });
   });
 });
 
