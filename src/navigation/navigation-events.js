@@ -1,6 +1,7 @@
 import { reroute } from "./reroute.js";
 import { find } from "../utils/find.js";
 import { formatErrorMessage } from "../applications/app-errors.js";
+import { isInBrowser } from "../utils/runtime-environment.js";
 
 /* We capture navigation event listeners so that we can make sure
  * that application navigation listeners are not called until
@@ -89,76 +90,78 @@ function urlReroute() {
   reroute([], arguments);
 }
 
-// We will trigger an app change for any routing events.
-window.addEventListener("hashchange", urlReroute);
-window.addEventListener("popstate", urlReroute);
+if (isInBrowser) {
+  // We will trigger an app change for any routing events.
+  window.addEventListener("hashchange", urlReroute);
+  window.addEventListener("popstate", urlReroute);
 
-// Monkeypatch addEventListener so that we can ensure correct timing
-const originalAddEventListener = window.addEventListener;
-const originalRemoveEventListener = window.removeEventListener;
-window.addEventListener = function(eventName, fn) {
-  if (typeof fn === "function") {
-    if (
-      routingEventsListeningTo.indexOf(eventName) >= 0 &&
-      !find(capturedEventListeners[eventName], listener => listener === fn)
-    ) {
-      capturedEventListeners[eventName].push(fn);
-      return;
-    }
-  }
-
-  return originalAddEventListener.apply(this, arguments);
-};
-
-window.removeEventListener = function(eventName, listenerFn) {
-  if (typeof listenerFn === "function") {
-    if (routingEventsListeningTo.indexOf(eventName) >= 0) {
-      capturedEventListeners[eventName] = capturedEventListeners[
-        eventName
-      ].filter(fn => fn !== listenerFn);
-      return;
-    }
-  }
-
-  return originalRemoveEventListener.apply(this, arguments);
-};
-
-window.history.pushState = patchedUpdateState(window.history.pushState);
-window.history.replaceState = patchedUpdateState(window.history.replaceState);
-
-function patchedUpdateState(updateState) {
-  return function() {
-    const urlBefore = window.location.href;
-    const result = updateState.apply(this, arguments);
-    const urlAfter = window.location.href;
-
-    if (!urlRerouteOnly || urlBefore !== urlAfter) {
-      urlReroute(createPopStateEvent(window.history.state));
+  // Monkeypatch addEventListener so that we can ensure correct timing
+  const originalAddEventListener = window.addEventListener;
+  const originalRemoveEventListener = window.removeEventListener;
+  window.addEventListener = function(eventName, fn) {
+    if (typeof fn === "function") {
+      if (
+        routingEventsListeningTo.indexOf(eventName) >= 0 &&
+        !find(capturedEventListeners[eventName], listener => listener === fn)
+      ) {
+        capturedEventListeners[eventName].push(fn);
+        return;
+      }
     }
 
-    return result;
+    return originalAddEventListener.apply(this, arguments);
   };
-}
 
-function createPopStateEvent(state) {
-  // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
-  // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
-  // all the applications can reroute.
-  try {
-    return new PopStateEvent("popstate", { state });
-  } catch (err) {
-    // IE 11 compatibility https://github.com/single-spa/single-spa/issues/299
-    // https://docs.microsoft.com/en-us/openspecs/ie_standards/ms-html5e/bd560f47-b349-4d2c-baa8-f1560fb489dd
-    const evt = document.createEvent("PopStateEvent");
-    evt.initPopStateEvent("popstate", false, false, state);
-    return evt;
+  window.removeEventListener = function(eventName, listenerFn) {
+    if (typeof listenerFn === "function") {
+      if (routingEventsListeningTo.indexOf(eventName) >= 0) {
+        capturedEventListeners[eventName] = capturedEventListeners[
+          eventName
+        ].filter(fn => fn !== listenerFn);
+        return;
+      }
+    }
+
+    return originalRemoveEventListener.apply(this, arguments);
+  };
+
+  window.history.pushState = patchedUpdateState(window.history.pushState);
+  window.history.replaceState = patchedUpdateState(window.history.replaceState);
+
+  function patchedUpdateState(updateState) {
+    return function() {
+      const urlBefore = window.location.href;
+      const result = updateState.apply(this, arguments);
+      const urlAfter = window.location.href;
+
+      if (!urlRerouteOnly || urlBefore !== urlAfter) {
+        urlReroute(createPopStateEvent(window.history.state));
+      }
+
+      return result;
+    };
   }
-}
 
-/* For convenience in `onclick` attributes, we expose a global function for navigating to
- * whatever an <a> tag's href is.
- */
-window.singleSpaNavigate = navigateToUrl;
+  function createPopStateEvent(state) {
+    // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
+    // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
+    // all the applications can reroute.
+    try {
+      return new PopStateEvent("popstate", { state });
+    } catch (err) {
+      // IE 11 compatibility https://github.com/single-spa/single-spa/issues/299
+      // https://docs.microsoft.com/en-us/openspecs/ie_standards/ms-html5e/bd560f47-b349-4d2c-baa8-f1560fb489dd
+      const evt = document.createEvent("PopStateEvent");
+      evt.initPopStateEvent("popstate", false, false, state);
+      return evt;
+    }
+  }
+
+  /* For convenience in `onclick` attributes, we expose a global function for navigating to
+   * whatever an <a> tag's href is.
+   */
+  window.singleSpaNavigate = navigateToUrl;
+}
 
 function parseUri(str) {
   const anchor = document.createElement("a");

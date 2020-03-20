@@ -13,7 +13,9 @@
     "watch": "rollup -c -w",
     "prepublishOnly": "yarn build",
     "clean": "rimraf lib",
-    "test": "cross-env BABEL_ENV=test jest --config jest.config.json",
+    "test": "concurrently -n w: 'yarn:test:*'",
+    "test:browser": "cross-env BABEL_ENV=test jest --config jest-browser.config.js",
+    "test:node": "cross-env BABEL_ENV=test jest --config jest-node.config.js",
     "prettier": "prettier './**' --write",
     "lint": "eslint src"
   },
