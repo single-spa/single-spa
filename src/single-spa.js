@@ -37,6 +37,8 @@ export {
 } from "./applications/app.helpers.js";
 
 import devtools from "./devtools/devtools";
-if (window && window.__SINGLE_SPA_DEVTOOLS__) {
+import { isInBrowser } from "./utils/runtime-environment.js";
+
+if (isInBrowser && window.__SINGLE_SPA_DEVTOOLS__) {
   window.__SINGLE_SPA_DEVTOOLS__.exposedMethods = devtools;
 }
