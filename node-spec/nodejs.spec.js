@@ -1,4 +1,4 @@
-import * as singleSpa from "single-spa";
+const singleSpa = require("single-spa");
 
 describe(`nodejs spec`, () => {
   describe("activity functions", () => {
