@@ -30,9 +30,25 @@ const dummyApp2 = {
   }
 };
 
+const dummyApp3 = {
+  bootstrap() {
+    return Promise.resolve();
+  },
+  mount() {
+    return Promise.resolve();
+  },
+  unmount() {
+    return Promise.resolve();
+  },
+  unload() {
+    return Promise.resolve();
+  }
+};
+
 const activityFunctions = {
   1: activityFunction1,
-  2: activityFunction2
+  2: activityFunction2,
+  3: activityFunction3
 };
 
 describe(`checkActivityFunctionsApi`, () => {
@@ -42,16 +58,22 @@ describe(`checkActivityFunctionsApi`, () => {
       () => Promise.resolve(dummyApp1),
       activityFunctions[1]
     );
+    singleSpa.registerApplication(
+      "test2",
+      () => Promise.resolve(dummyApp2),
+      activityFunctions[2]
+    );
     singleSpa.registerApplication({
-      name: "test2",
-      app: Promise.resolve(dummyApp2),
-      activeWhen: activityFunctions[2]
+      name: "test3",
+      app: Promise.resolve(dummyApp3),
+      activeWhen: activityFunctions[3]
     });
   });
 
   beforeEach(() => {
     jest.spyOn(activityFunctions, 1);
     jest.spyOn(activityFunctions, 2);
+    jest.spyOn(activityFunctions, 3);
   });
 
   it(`returns 'test1' when the locationContains 'one'`, () => {
@@ -64,11 +86,17 @@ describe(`checkActivityFunctionsApi`, () => {
     expect(singleSpa.checkActivityFunctions(wLocation)).toEqual(["test2"]);
   });
 
-  it(`returns both when the locationContains both`, () => {
-    const wLocation = mockWindowLocation("something.com/two/one");
+  it(`returns 'test3' when the locationContains 'three'`, () => {
+    const wLocation = mockWindowLocation("google.com/three");
+    expect(singleSpa.checkActivityFunctions(wLocation)).toEqual(["test3"]);
+  });
+
+  it(`returns both when the locationContains all`, () => {
+    const wLocation = mockWindowLocation("something.com/two/one/three");
     expect(singleSpa.checkActivityFunctions(wLocation)).toEqual([
       "test1",
-      "test2"
+      "test2",
+      "test3"
     ]);
   });
 });
@@ -79,6 +107,10 @@ function activityFunction1(location) {
 
 function activityFunction2(location) {
   return location.href.indexOf("two") !== -1;
+}
+
+function activityFunction3(location) {
+  return location.href.indexOf("three") !== -1;
 }
 
 function mockWindowLocation(url) {

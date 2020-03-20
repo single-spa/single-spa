@@ -87,37 +87,74 @@ describe("registerApplication", function() {
     });
   });
 
-  describe(`activity function errors`, () => {
-    it(`should throw an error when I attempt to register an application without the activity function`, () => {
+  describe(`activeWhen errors`, () => {
+    it(`should throw an error when I attempt to register an application without the activeWhen function`, () => {
       expect(() => {
-        singleSpa.registerApplication(
-          "no-loading-fn-will-throw-error-app",
-          app
-        );
+        singleSpa.registerApplication("no-active-when-throw-error-app", app);
       }).toThrowError(errorsMessages.activeWhen.args);
       expect(() => {
         singleSpa.registerApplication({
-          name: "no-loading-fn-will-throw-error-app",
+          name: "no-active-when-throw-error-app",
           app
         });
       }).toThrowError(errorsMessages.activeWhen.config);
     });
 
-    it(`should throw an error when the activity Function isn't a function`, () => {
+    it(`should throw an error when activeWhen isn't a function`, () => {
       expect(() => {
         singleSpa.registerApplication(
-          "bad-loading-fn-will-throw-error-app",
+          "bad-active-when-args-throw-error-app",
           app,
           app
         );
       }).toThrowError(errorsMessages.activeWhen.args);
       expect(() => {
         singleSpa.registerApplication({
-          name: "bad-loading-fn-will-throw-error-app",
+          name: "bad-active-when-config-throw-error-app",
           app,
           activeWhen: app
         });
       }).toThrowError(errorsMessages.activeWhen.config);
+    });
+
+    it(`should throw an error when activeWhen is given an array with values that are not string or function`, () => {
+      expect(() => {
+        singleSpa.registerApplication("bad-active-when-throw-error-app", app, [
+          "/valid-only-in-object-config"
+        ]);
+      }).toThrowError(errorsMessages.activeWhen.args);
+      expect(() => {
+        singleSpa.registerApplication(
+          "bad-active-when-throw-error-app",
+          app,
+          "/valid-only-in-object-config"
+        );
+      }).toThrowError(errorsMessages.activeWhen.args);
+      expect(() => {
+        singleSpa.registerApplication({
+          name: "bad-active-when-throw-error-app",
+          app,
+          activeWhen: ["/valid", true]
+        });
+      }).toThrowError(errorsMessages.activeWhen.config);
+    });
+
+    it(`should succeed when activeWhen is given a single string or an array with string or function`, () => {
+      expect(() => {
+        singleSpa.registerApplication({
+          name: "valid-active-when-multiple-throw-error-app",
+          app,
+          activeWhen: ["/valid", () => true]
+        });
+      }).not.toThrow();
+
+      expect(() => {
+        singleSpa.registerApplication({
+          name: "valid-active-when-single-throw-error-app",
+          app,
+          activeWhen: "/short"
+        });
+      }).not.toThrow();
     });
   });
 
