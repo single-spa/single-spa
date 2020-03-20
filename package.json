@@ -13,7 +13,7 @@
     "watch": "rollup -c -w",
     "prepublishOnly": "yarn build",
     "clean": "rimraf lib",
-    "test": "BABEL_ENV=test jest --config jest.config.json",
+    "test": "cross-env BABEL_ENV=test jest --config jest.config.json",
     "prettier": "prettier './**' --write",
     "lint": "eslint src"
   },
@@ -52,6 +52,7 @@
     "babel-jest": "^25.1.0",
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "concurrently": "^5.1.0",
+    "cross-env": "^7.0.2",
     "custom-event": "^1.0.1",
     "eslint": "6.8.0",
     "eslint-config-canopy": "2.3.0",
