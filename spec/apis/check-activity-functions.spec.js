@@ -44,8 +44,8 @@ describe(`checkActivityFunctionsApi`, () => {
     );
     singleSpa.registerApplication({
       name: "test2",
-      load: Promise.resolve(dummyApp2),
-      isActive: activityFunctions[2]
+      app: Promise.resolve(dummyApp2),
+      activeWhen: activityFunctions[2]
     });
   });
 

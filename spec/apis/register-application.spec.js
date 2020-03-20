@@ -2,6 +2,32 @@ import * as singleSpa from "single-spa";
 
 describe("registerApplication", function() {
   let app;
+  let errorsMessages = {
+    invalidConfig: "Configuration object can't be an Array or null!",
+    name: {
+      args:
+        "The 1st argument to registerApplication must be a non-empty string 'appName'",
+      config:
+        "The config.name on registerApplication must be a non-empty string"
+    },
+    app: {
+      args:
+        "The 2nd argument to registerApplication must be an application or loading application function",
+      config:
+        "The config.app on registerApplication must be an application or a loading fuinction"
+    },
+    activeWhen: {
+      args:
+        "The 3rd argument to registerApplication must be an activeWhen function",
+      config:
+        "The config.activeWhen on registerApplication must be a string, function or an array with string/function/both"
+    },
+    customProps: {
+      args: "The optional 4th argument is a customProps and must be an object",
+      config: "The optional config.customProps must be an object"
+    },
+    duplicateApp: "There is already an app declared with name"
+  };
   beforeEach(() => {
     app = {
       mount() {
@@ -20,28 +46,22 @@ describe("registerApplication", function() {
     it(`should throw an error if the name isn't a non empty string`, () => {
       expect(() => {
         singleSpa.registerApplication(null);
-      }).toThrowError(
-        `The first argument to registerApplication must be a non-empty string 'appName'`
-      );
+      }).toThrowError(errorsMessages.name.invalidConfig);
+      expect(() => {
+        singleSpa.registerApplication();
+      }).toThrowError(errorsMessages.name.args);
       expect(() => {
         singleSpa.registerApplication("");
-      }).toThrowError(
-        `The first argument to registerApplication must be a non-empty string 'appName'`
-      );
+      }).toThrowError(errorsMessages.name.args);
       expect(() => {
-        singleSpa.registerApplication({
-          name: null
-        });
-      }).toThrowError(
-        `The first argument to registerApplication must be a non-empty string 'appName'`
-      );
+        singleSpa.registerApplication({ name: null });
+      }).toThrowError(errorsMessages.name.config);
       expect(() => {
-        singleSpa.registerApplication({
-          name: ""
-        });
-      }).toThrowError(
-        `The first argument to registerApplication must be a non-empty string 'appName'`
-      );
+        singleSpa.registerApplication({ name: "" });
+      }).toThrowError(errorsMessages.name.config);
+      expect(() => {
+        singleSpa.registerApplication({});
+      }).toThrowError(errorsMessages.name.config);
     });
 
     it("should throw when I register the same application name twice", () => {
@@ -49,12 +69,10 @@ describe("registerApplication", function() {
       expect(() => {
         singleSpa.registerApplication({
           name: "duplicateApp",
-          load: app,
-          isActive: () => true
+          app,
+          activeWhen: () => true
         });
-      }).toThrowError(
-        "There is already an app declared with name duplicateApp"
-      );
+      }).toThrowError(errorsMessages.duplicateApp);
     });
   });
 
@@ -62,12 +80,10 @@ describe("registerApplication", function() {
     it(`should throw an error when I attempt to register an application without the application or loading function`, () => {
       expect(() => {
         singleSpa.registerApplication("no-app-will-throw-error-app");
-      }).toThrowError("The application or loading function is required");
+      }).toThrowError(errorsMessages.app.args);
       expect(() => {
-        singleSpa.registerApplication({
-          name: "no-app-will-throw-error-app"
-        });
-      }).toThrowError("The application or loading function is required");
+        singleSpa.registerApplication({ name: "no-app-will-throw-error-app" });
+      }).toThrowError(errorsMessages.app.config);
     });
   });
 
@@ -78,13 +94,13 @@ describe("registerApplication", function() {
           "no-loading-fn-will-throw-error-app",
           app
         );
-      }).toThrowError(`The activityFunction argument must be a function`);
+      }).toThrowError(errorsMessages.activeWhen.args);
       expect(() => {
         singleSpa.registerApplication({
           name: "no-loading-fn-will-throw-error-app",
-          load: app
+          app
         });
-      }).toThrowError(`The activityFunction argument must be a function`);
+      }).toThrowError(errorsMessages.activeWhen.config);
     });
 
     it(`should throw an error when the activity Function isn't a function`, () => {
@@ -94,14 +110,14 @@ describe("registerApplication", function() {
           app,
           app
         );
-      }).toThrowError(`The activityFunction argument must be a function`);
+      }).toThrowError(errorsMessages.activeWhen.args);
       expect(() => {
         singleSpa.registerApplication({
           name: "bad-loading-fn-will-throw-error-app",
-          load: app,
-          isActive: app
+          app,
+          activeWhen: app
         });
-      }).toThrowError(`The activityFunction argument must be a function`);
+      }).toThrowError(errorsMessages.activeWhen.config);
     });
   });
 
@@ -114,15 +130,15 @@ describe("registerApplication", function() {
           () => true,
           () => {}
         );
-      }).toThrowError("customProps must be an object");
+      }).toThrowError(errorsMessages.customProps.args);
       expect(() => {
         singleSpa.registerApplication({
           name: "bad-custom-props-will-throw-error-app",
-          load: app,
-          isActive: () => true,
+          app,
+          activeWhen: () => true,
           customProps: () => {}
         });
-      }).toThrowError("customProps must be an object");
+      }).toThrowError(errorsMessages.customProps.config);
     });
 
     it("should throw when I pass in an array for custom props", () => {
@@ -133,23 +149,23 @@ describe("registerApplication", function() {
           () => true,
           []
         );
-      }).toThrowError("customProps must be an object");
+      }).toThrowError(errorsMessages.customProps.args);
       expect(() => {
         singleSpa.registerApplication({
           name: "bad-custom-props-will-throw-error-app",
-          load: app,
-          isActive: () => true,
+          app,
+          activeWhen: () => true,
           customProps: []
         });
-      }).toThrowError("customProps must be an object");
+      }).toThrowError(errorsMessages.customProps.config);
     });
 
     it("should throw when I pass invalid keys to object configuration ", () => {
       expect(() => {
         singleSpa.registerApplication({
           name: "invalid-key-in-object-config",
-          load: app,
-          isActive: () => true,
+          app,
+          activeWhen: () => true,
           invalidKey: "invalidKey",
           superInvalidKey: {}
         });

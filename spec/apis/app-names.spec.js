@@ -20,8 +20,8 @@ describe(`app-names`, () => {
     );
     singleSpa.registerApplication({
       name: "usingObjectAPI",
-      load: app,
-      isActive: location => location.hash === "#app-names"
+      app,
+      activeWhen: location => location.hash === "#app-names"
     });
     singleSpa.start();
   });
