@@ -67,8 +67,19 @@ describe("registerApplication", function() {
     it("should throw when I register the same application name twice", () => {
       singleSpa.registerApplication("duplicateApp", app, () => true);
       expect(() => {
+        singleSpa.registerApplication("duplicateApp", app, () => true);
+      }).toThrowError(errorsMessages.duplicateApp);
+    });
+
+    it("should throw when I register the same application name twice using config", () => {
+      singleSpa.registerApplication({
+        name: "duplicateUsingConfigApp",
+        app,
+        activeWhen: () => true
+      });
+      expect(() => {
         singleSpa.registerApplication({
-          name: "duplicateApp",
+          name: "duplicateUsingConfigApp",
           app,
           activeWhen: () => true
         });
