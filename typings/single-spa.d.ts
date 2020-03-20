@@ -77,17 +77,21 @@ declare module "single-spa" {
 
   export type RegisterApplicationConfig<T = {}> = {
     name: string;
-    load: Application<T>;
-    isActive: Activity;
+    app: Application<T>;
+    activeWhen: Activity;
     customProps?: T;
   };
 
   // ./applications/apps.js
   export function registerApplication<T extends object = {}>(
-    appNameOrObjectConfiguration: string | RegisterApplicationConfig<T>,
-    applicationOrLoadingFn?: Application<T>,
-    activityFn?: Activity,
+    appNameOrObjectConfiguration: string,
+    applicationOrLoadingFn: Application<T>,
+    activityFn: Activity,
     customProps?: T
+  ): void;
+
+  export function registerApplication<T extends object = {}>(
+    config: RegisterApplicationConfig<T>
   ): void;
 
   export function getMountedApps(): string[];
