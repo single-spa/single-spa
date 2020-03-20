@@ -21,6 +21,7 @@ import {
 } from "../lifecycles/unload.js";
 import { formatErrorMessage } from "./app-errors.js";
 import { isInBrowser } from "../utils/runtime-environment.js";
+import { assign } from "../utils/assign";
 
 const apps = [];
 
@@ -42,33 +43,45 @@ export function getAppStatus(appName) {
   return app ? app.status : null;
 }
 
-export function registerApplication(...args) {
-  const { name, loadImpl, activityFn, customProps } = sanitizeAPI(args);
+export function registerApplication(
+  appNameOrConfig,
+  appOrLoadApp,
+  activeWhen,
+  customProps
+) {
+  const registration = sanitizeArguments(
+    appNameOrConfig,
+    appOrLoadApp,
+    activeWhen,
+    customProps
+  );
 
-  if (getAppNames().indexOf(name) !== -1)
+  if (getAppNames().indexOf(registration.name) !== -1)
     throw Error(
       formatErrorMessage(
         21,
-        __DEV__ && `There is already an app declared with name ${name}`,
-        name
+        __DEV__ &&
+          `There is already an app declared with name ${registration.name}`,
+        registration.name
       )
     );
 
-  apps.push({
-    loadErrorTime: null,
-    name,
-    loadImpl,
-    activeWhen: activityFn,
-    status: NOT_LOADED,
-    parcels: {},
-    devtools: {
-      overlays: {
-        options: {},
-        selectors: []
-      }
-    },
-    customProps
-  });
+  apps.push(
+    assign(
+      {
+        loadErrorTime: null,
+        status: NOT_LOADED,
+        parcels: {},
+        devtools: {
+          overlays: {
+            options: {},
+            selectors: []
+          }
+        }
+      },
+      registration
+    )
+  );
 
   if (isInBrowser) {
     ensureJQuerySupport();
@@ -191,34 +204,36 @@ function immediatelyUnloadApp(app, resolve, reject) {
     .catch(reject);
 }
 
-export function validateArgumentsTypeAPI(
-  appName,
-  applicationOrLoadingFn,
-  activityFn,
+function validateRegisterWithArguments(
+  name,
+  appOrLoadApp,
+  activeWhen,
   customProps
 ) {
-  if (typeof appName !== "string" || appName.length === 0)
+  if (typeof name !== "string" || name.length === 0)
     throw Error(
       formatErrorMessage(
         20,
         __DEV__ &&
-          `The first argument to registerApplication must be a non-empty string 'appName'`
+          `The 1st argument to registerApplication must be a non-empty string 'appName'`
       )
     );
 
-  if (!applicationOrLoadingFn)
+  if (!appOrLoadApp)
     throw Error(
       formatErrorMessage(
         23,
-        __DEV__ && "The application or loading function is required"
+        __DEV__ &&
+          "The 2nd argument to registerApplication must be an application or loading application function"
       )
     );
 
-  if (typeof activityFn !== "function")
+  if (typeof activeWhen !== "function")
     throw Error(
       formatErrorMessage(
         24,
-        __DEV__ && `The activityFunction argument must be a function`
+        __DEV__ &&
+          "The 3rd argument to registerApplication must be an activeWhen function"
       )
     );
 
@@ -229,72 +244,131 @@ export function validateArgumentsTypeAPI(
     throw Error(
       formatErrorMessage(
         22,
-        __DEV__ && "optional customProps must be an object"
+        __DEV__ &&
+          "The optional 4th argument is a customProps and must be an object"
       )
     );
 }
 
-export function validateRegisterObjectAPI(configurationObject) {
-  const validKeys = ["name", "load", "isActive", "customProps"];
+export function validateRegisterWithConfig(config) {
+  if (Array.isArray(config) || config === null)
+    throw Error(
+      formatErrorMessage(
+        31,
+        __DEV__ && "Configuration object can't be an Array or null!"
+      )
+    );
 
-  const invalidPassedKeys = Object.keys(configurationObject).reduce(
+  const validKeys = ["name", "app", "activeWhen", "customProps"];
+
+  const invalidKeys = Object.keys(config).reduce(
     (invalidKeys, prop) =>
       validKeys.includes(prop) ? invalidKeys : invalidKeys.concat(prop),
     []
   );
 
-  if (invalidPassedKeys.length !== 0)
+  if (invalidKeys.length !== 0)
     throw Error(
       formatErrorMessage(
         30,
         __DEV__ &&
-          `The configuration object valid keys is: ${validKeys.join(
+          `The configuration object accepts only: ${validKeys.join(
             ", "
-          )}. Invalid keys: ${invalidPassedKeys.join(", ")}.`
+          )}. Invalid keys: ${invalidKeys.join(", ")}.`
       )
     );
 
-  validateArgumentsTypeAPI(
-    configurationObject.name,
-    configurationObject.load,
-    configurationObject.isActive,
-    configurationObject.customProps
-  );
+  if (typeof config.name !== "string" || config.name.length === 0)
+    throw Error(
+      formatErrorMessage(
+        20,
+        __DEV__ &&
+          "The config.name on registerApplication must be a non-empty string"
+      )
+    );
+
+  if (!config.app)
+    throw Error(
+      formatErrorMessage(
+        20,
+        __DEV__ &&
+          "The config.app on registerApplication must be an application or a loading fuinction"
+      )
+    );
+
+  // @TODO this is now yet implemented
+  const allowsStringAndFunction = activeWhen =>
+    typeof activeWhen === "string" || typeof activeWhen === "function";
+  if (
+    !allowsStringAndFunction(config.activeWhen) &&
+    !(
+      Array.isArray(config.activeWhen) &&
+      config.activeWhen.every(allowsStringAndFunction)
+    )
+  )
+    throw Error(
+      formatErrorMessage(
+        24,
+        __DEV__ &&
+          "The config.activeWhen on registerApplication must be a string, function or an array with string/function/both"
+      )
+    );
+
+  if (
+    !(
+      !config.customProps ||
+      (typeof config.customProps === "object" &&
+        !Array.isArray(config.customProps))
+    )
+  )
+    throw Error(
+      formatErrorMessage(
+        22,
+        __DEV__ && "The optional config.customProps must be an object"
+      )
+    );
 }
 
-function sanitizeAPI(args) {
-  let name;
-  let activityFn;
-  let applicationOrLoadingFn;
-  let customProps;
-  const usingObjectAPI =
-    typeof args[0] === "object" && args[0] !== null && !Array.isArray(args[0]);
+function sanitizeArguments(
+  appNameOrConfig,
+  appOrLoadApp,
+  activeWhen,
+  customProps
+) {
+  const usingObjectAPI = typeof appNameOrConfig === "object";
+
+  const registration = {
+    name: null,
+    loadApp: null,
+    activeWhen: null,
+    customProps: null
+  };
 
   if (usingObjectAPI) {
-    const [objectAPI] = args;
-    validateRegisterObjectAPI(objectAPI);
-    name = objectAPI.name;
-    activityFn = objectAPI.isActive;
-    applicationOrLoadingFn = objectAPI.load;
-    customProps = objectAPI.customProps;
+    validateRegisterWithConfig(appNameOrConfig);
+    registration.name = appNameOrConfig.name;
+    registration.loadApp = appNameOrConfig.app;
+    registration.activeWhen = appNameOrConfig.activeWhen;
+    registration.customProps = appNameOrConfig.customProps;
   } else {
-    validateArgumentsTypeAPI(...args);
-    [name, applicationOrLoadingFn, activityFn, customProps] = args;
+    validateRegisterWithArguments(
+      appNameOrConfig,
+      appOrLoadApp,
+      activeWhen,
+      customProps
+    );
+    registration.name = appNameOrConfig;
+    registration.loadApp = appOrLoadApp;
+    registration.activeWhen = activeWhen;
+    registration.customProps = customProps;
   }
 
-  let loadImpl;
-  if (typeof applicationOrLoadingFn !== "function") {
-    // applicationOrLoadingFn is an application
-    loadImpl = () => Promise.resolve(applicationOrLoadingFn);
-  } else {
-    // applicationOrLoadingFn is a loadingFn
-    loadImpl = applicationOrLoadingFn;
+  if (typeof registration.loadApp !== "function") {
+    const { loadApp } = registration;
+    registration.loadApp = () => Promise.resolve(loadApp);
   }
 
-  return {
-    name,
-    loadImpl,
-    activityFn,
-    customProps: customProps || {}
-  };
+  if (!registration.customProps) registration.customProps = {};
+
+  return registration;
 }
