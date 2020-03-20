@@ -10,7 +10,9 @@ export function start(opts) {
   if (opts && opts.urlRerouteOnly) {
     setUrlRerouteOnly(opts.urlRerouteOnly);
   }
-  reroute();
+  if (isInBrowser) {
+    reroute();
+  }
 }
 
 export function isStarted() {

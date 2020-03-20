@@ -31,5 +31,9 @@ describe(`nodejs spec`, () => {
         "navbar"
       ]);
     });
+
+    it("doesn't die if you call singleSpa.start()", () => {
+      singleSpa.start();
+    });
   });
 });
