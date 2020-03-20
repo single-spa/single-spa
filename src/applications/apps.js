@@ -296,7 +296,7 @@ export function validateRegisterWithConfig(config) {
       )
     );
 
-  // @TODO this is now yet implemented
+  // @TODO this is not yet implemented
   const allowsStringAndFunction = activeWhen =>
     typeof activeWhen === "string" || typeof activeWhen === "function";
   if (
