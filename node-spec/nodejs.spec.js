@@ -5,6 +5,9 @@ describe(`nodejs spec`, () => {
     it("can still check activity functions in nodejs with a mocked Location object", () => {
       singleSpa.registerApplication(
         "app1",
+        /* Note that on the server, System is likely undefined. But this is okay and doesn't cause problems
+         * because single-spa doesn't call the loading functions when checking activity functions
+         */
         () => System.import("app1"),
         location => location.pathname.startsWith("/app1")
       );
