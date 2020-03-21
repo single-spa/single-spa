@@ -84,7 +84,7 @@ declare module "single-spa" {
 
   // ./applications/apps.js
   export function registerApplication<T extends object = {}>(
-    appNameOrObjectConfiguration: string,
+    appName: string,
     applicationOrLoadingFn: Application<T>,
     activityFn: Activity,
     customProps?: T
