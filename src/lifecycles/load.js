@@ -36,7 +36,7 @@ export function toLoadPromise(app) {
 
     return (app.loadPromise = Promise.resolve()
       .then(() => {
-        const loadPromise = app.loadImpl(getProps(app));
+        const loadPromise = app.loadApp(getProps(app));
         if (!smellsLikeAPromise(loadPromise)) {
           // The name of the app will be prepended to this error message inside of the handleAppError function
           isUserErr = true;

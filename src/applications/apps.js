@@ -21,6 +21,7 @@ import {
 } from "../lifecycles/unload.js";
 import { formatErrorMessage } from "./app-errors.js";
 import { isInBrowser } from "../utils/runtime-environment.js";
+import { assign } from "../utils/assign";
 
 const apps = [];
 
@@ -43,72 +44,44 @@ export function getAppStatus(appName) {
 }
 
 export function registerApplication(
-  appName,
-  applicationOrLoadingFn,
-  activityFn,
-  customProps = {}
+  appNameOrConfig,
+  appOrLoadApp,
+  activeWhen,
+  customProps
 ) {
-  if (typeof appName !== "string" || appName.length === 0)
-    throw Error(
-      formatErrorMessage(
-        20,
-        __DEV__ &&
-          `The first argument to registerApplication must be a non-empty string 'appName'`
-      )
-    );
-  if (getAppNames().indexOf(appName) !== -1)
+  const registration = sanitizeArguments(
+    appNameOrConfig,
+    appOrLoadApp,
+    activeWhen,
+    customProps
+  );
+
+  if (getAppNames().indexOf(registration.name) !== -1)
     throw Error(
       formatErrorMessage(
         21,
-        __DEV__ && `There is already an app declared with name ${appName}`,
-        appName
-      )
-    );
-  if (typeof customProps !== "object" || Array.isArray(customProps))
-    throw Error(
-      formatErrorMessage(22, __DEV__ && "customProps must be an object")
-    );
-
-  if (!applicationOrLoadingFn)
-    throw Error(
-      formatErrorMessage(
-        23,
-        __DEV__ && "The application or loading function is required"
+        __DEV__ &&
+          `There is already an app registered with name ${registration.name}`,
+        registration.name
       )
     );
 
-  let loadImpl;
-  if (typeof applicationOrLoadingFn !== "function") {
-    // applicationOrLoadingFn is an application
-    loadImpl = () => Promise.resolve(applicationOrLoadingFn);
-  } else {
-    // applicationOrLoadingFn is a loadingFn
-    loadImpl = applicationOrLoadingFn;
-  }
-
-  if (typeof activityFn !== "function")
-    throw Error(
-      formatErrorMessage(
-        24,
-        __DEV__ && `The activityFunction argument must be a function`
-      )
-    );
-
-  apps.push({
-    loadErrorTime: null,
-    name: appName,
-    loadImpl,
-    activeWhen: activityFn,
-    status: NOT_LOADED,
-    parcels: {},
-    devtools: {
-      overlays: {
-        options: {},
-        selectors: []
-      }
-    },
-    customProps
-  });
+  apps.push(
+    assign(
+      {
+        loadErrorTime: null,
+        status: NOT_LOADED,
+        parcels: {},
+        devtools: {
+          overlays: {
+            options: {},
+            selectors: []
+          }
+        }
+      },
+      registration
+    )
+  );
 
   if (isInBrowser) {
     ensureJQuerySupport();
@@ -229,4 +202,163 @@ function immediatelyUnloadApp(app, resolve, reject) {
       });
     })
     .catch(reject);
+}
+
+function validateRegisterWithArguments(
+  name,
+  appOrLoadApp,
+  activeWhen,
+  customProps
+) {
+  if (typeof name !== "string" || name.length === 0)
+    throw Error(
+      formatErrorMessage(
+        20,
+        __DEV__ &&
+          `The 1st argument to registerApplication must be a non-empty string 'appName'`
+      )
+    );
+
+  if (!appOrLoadApp)
+    throw Error(
+      formatErrorMessage(
+        23,
+        __DEV__ &&
+          "The 2nd argument to registerApplication must be an application or loading application function"
+      )
+    );
+
+  if (typeof activeWhen !== "function")
+    throw Error(
+      formatErrorMessage(
+        24,
+        __DEV__ &&
+          "The 3rd argument to registerApplication must be an activeWhen function"
+      )
+    );
+
+  if (
+    !!customProps &&
+    (typeof customProps !== "object" || Array.isArray(customProps))
+  )
+    throw Error(
+      formatErrorMessage(
+        22,
+        __DEV__ &&
+          "The optional 4th argument is a customProps and must be an object"
+      )
+    );
+}
+
+export function validateRegisterWithConfig(config) {
+  if (Array.isArray(config) || config === null)
+    throw Error(
+      formatErrorMessage(
+        31,
+        __DEV__ && "Configuration object can't be an Array or null!"
+      )
+    );
+
+  const validKeys = ["name", "app", "activeWhen", "customProps"];
+
+  const invalidKeys = Object.keys(config).reduce(
+    (invalidKeys, prop) =>
+      validKeys.includes(prop) ? invalidKeys : invalidKeys.concat(prop),
+    []
+  );
+
+  if (invalidKeys.length !== 0)
+    throw Error(
+      formatErrorMessage(
+        30,
+        __DEV__ &&
+          `The configuration object accepts only: ${validKeys.join(
+            ", "
+          )}. Invalid keys: ${invalidKeys.join(", ")}.`
+      )
+    );
+
+  if (typeof config.name !== "string" || config.name.length === 0)
+    throw Error(
+      formatErrorMessage(
+        20,
+        __DEV__ &&
+          "The config.name on registerApplication must be a non-empty string"
+      )
+    );
+
+  if (!config.app)
+    throw Error(
+      formatErrorMessage(
+        20,
+        __DEV__ &&
+          "The config.app on registerApplication must be an application or a loading function"
+      )
+    );
+  if (typeof config.activeWhen !== "function")
+    throw Error(
+      formatErrorMessage(
+        24,
+        __DEV__ &&
+          "The config.activeWhen on registerApplication must be a function"
+      )
+    );
+
+  if (
+    !(
+      !config.customProps ||
+      (typeof config.customProps === "object" &&
+        !Array.isArray(config.customProps))
+    )
+  )
+    throw Error(
+      formatErrorMessage(
+        22,
+        __DEV__ && "The optional config.customProps must be an object"
+      )
+    );
+}
+
+function sanitizeArguments(
+  appNameOrConfig,
+  appOrLoadApp,
+  activeWhen,
+  customProps
+) {
+  const usingObjectAPI = typeof appNameOrConfig === "object";
+
+  const registration = {
+    name: null,
+    loadApp: null,
+    activeWhen: null,
+    customProps: null
+  };
+
+  if (usingObjectAPI) {
+    validateRegisterWithConfig(appNameOrConfig);
+    registration.name = appNameOrConfig.name;
+    registration.loadApp = appNameOrConfig.app;
+    registration.activeWhen = appNameOrConfig.activeWhen;
+    registration.customProps = appNameOrConfig.customProps;
+  } else {
+    validateRegisterWithArguments(
+      appNameOrConfig,
+      appOrLoadApp,
+      activeWhen,
+      customProps
+    );
+    registration.name = appNameOrConfig;
+    registration.loadApp = appOrLoadApp;
+    registration.activeWhen = activeWhen;
+    registration.customProps = customProps;
+  }
+
+  if (typeof registration.loadApp !== "function") {
+    const { loadApp } = registration;
+    registration.loadApp = () => Promise.resolve(loadApp);
+  }
+
+  if (!registration.customProps) registration.customProps = {};
+
+  return registration;
 }
