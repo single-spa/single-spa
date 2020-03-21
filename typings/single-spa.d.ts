@@ -73,7 +73,9 @@ declare module "single-spa" {
     | LifeCycles<T>
     | ((config: T & AppProps) => Promise<LifeCycles<T> | Splat<LifeCycles<T>>>);
 
-  type Activity = (location: Location) => boolean;
+  type ActivityFn = (location: Location) => boolean;
+
+  type Activity = ActivityFn | string | (ActivityFn | string)[];
 
   export type RegisterApplicationConfig<T = {}> = {
     name: string;
@@ -86,7 +88,7 @@ declare module "single-spa" {
   export function registerApplication<T extends object = {}>(
     appName: string,
     applicationOrLoadingFn: Application<T>,
-    activityFn: Activity,
+    activityFn: ActivityFn,
     customProps?: T
   ): void;
 
