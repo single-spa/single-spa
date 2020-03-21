@@ -20,6 +20,7 @@ import {
   addAppToUnload
 } from "../lifecycles/unload.js";
 import { formatErrorMessage } from "./app-errors.js";
+import { isInBrowser } from "../utils/runtime-environment.js";
 
 const apps = [];
 
@@ -109,9 +110,10 @@ export function registerApplication(
     customProps
   });
 
-  ensureJQuerySupport();
-
-  reroute();
+  if (isInBrowser) {
+    ensureJQuerySupport();
+    reroute();
+  }
 }
 
 export function checkActivityFunctions(location) {

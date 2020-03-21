@@ -49,8 +49,12 @@ declare module "single-spa" {
     update?: (config: T & AppProps) => Promise<any>;
   };
 
+  type StartOpts = {
+    urlRerouteOnly?: boolean;
+  };
+
   // ./start.js
-  export function start(): void;
+  export function start(opts?: StartOpts): void;
   export function isStarted(): boolean;
 
   // ./jquery-support.js
