@@ -295,22 +295,12 @@ export function validateRegisterWithConfig(config) {
           "The config.app on registerApplication must be an application or a loading function"
       )
     );
-
-  // @TODO this is not yet implemented
-  const allowsStringAndFunction = activeWhen =>
-    typeof activeWhen === "string" || typeof activeWhen === "function";
-  if (
-    !allowsStringAndFunction(config.activeWhen) &&
-    !(
-      Array.isArray(config.activeWhen) &&
-      config.activeWhen.every(allowsStringAndFunction)
-    )
-  )
+  if (typeof config.activeWhen !== "function")
     throw Error(
       formatErrorMessage(
         24,
         __DEV__ &&
-          "The config.activeWhen on registerApplication must be a string, function or an array with string/function/both"
+          "The config.activeWhen on registerApplication must be a function"
       )
     );
 
