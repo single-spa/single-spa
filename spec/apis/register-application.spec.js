@@ -127,7 +127,7 @@ describe("registerApplication", function() {
       }).toThrowError(errorsMessages.activeWhen.config);
     });
 
-    it(`should throw an error when activeWhen is given an array with values that are not string or function`, () => {
+    it(`should throw an error when activeWhen is given not a function`, () => {
       expect(() => {
         singleSpa.registerApplication("bad-active-when-throw-error-app", app, [
           "/valid-only-in-object-config"
@@ -147,17 +147,16 @@ describe("registerApplication", function() {
           activeWhen: ["/valid", true]
         });
       }).toThrowError(errorsMessages.activeWhen.config);
-    });
-
-    it(`should not succeed when activeWhen is given a single string or an array with string or function`, () => {
       expect(() => {
         singleSpa.registerApplication({
-          name: "valid-active-when-multiple-throw-error-app",
+          name: "bad-active-when-multiple-throw-error-app",
           app,
           activeWhen: ["/valid", () => true]
         });
       }).toThrow();
+    });
 
+    it(`should succeed when activeWhen is given a function`, () => {
       expect(() => {
         singleSpa.registerApplication({
           name: "valid-active-when-single-throw-error-app",
