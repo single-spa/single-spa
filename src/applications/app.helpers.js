@@ -1,4 +1,4 @@
-import { handleAppError, formatErrorMessage } from "./app-errors.js";
+import { handleAppError } from "./app-errors.js";
 
 // App statuses
 export const NOT_LOADED = "NOT_LOADED";

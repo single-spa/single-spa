@@ -61,7 +61,7 @@ export function registerApplication(
       formatErrorMessage(
         21,
         __DEV__ &&
-          `There is already an app declared with name ${registration.name}`,
+          `There is already an app registered with name ${registration.name}`,
         registration.name
       )
     );
@@ -292,7 +292,7 @@ export function validateRegisterWithConfig(config) {
       formatErrorMessage(
         20,
         __DEV__ &&
-          "The config.app on registerApplication must be an application or a loading fuinction"
+          "The config.app on registerApplication must be an application or a loading function"
       )
     );
 

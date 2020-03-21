@@ -14,7 +14,7 @@ describe("registerApplication", function() {
       args:
         "The 2nd argument to registerApplication must be an application or loading application function",
       config:
-        "The config.app on registerApplication must be an application or a loading fuinction"
+        "The config.app on registerApplication must be an application or a loading function"
     },
     activeWhen: {
       args:
@@ -26,7 +26,7 @@ describe("registerApplication", function() {
       args: "The optional 4th argument is a customProps and must be an object",
       config: "The optional config.customProps must be an object"
     },
-    duplicateApp: "There is already an app declared with name"
+    duplicateApp: "There is already an app registered with name"
   };
   beforeEach(() => {
     app = {
