@@ -7,7 +7,7 @@ export function getProps(appOrParcel) {
   const result = assign({}, appOrParcel.customProps, {
     name: toName(appOrParcel),
     mountParcel: mountParcel.bind(appOrParcel),
-    singleSpa
+    singleSpa,
   });
 
   if (isParcel(appOrParcel)) {

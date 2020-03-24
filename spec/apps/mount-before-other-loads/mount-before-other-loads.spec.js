@@ -33,7 +33,7 @@ describe(`mount-before-other-loads`, () => {
       },
       unmount: async () => {
         order.push("slow:unmount");
-      }
+      },
     };
 
     const fastApp = {
@@ -45,19 +45,19 @@ describe(`mount-before-other-loads`, () => {
       },
       unmount: async () => {
         order.push("fast:unmount");
-      }
+      },
     };
 
     singleSpa.registerApplication(
       "slow-load",
       () =>
-        new Promise(resolve => {
+        new Promise((resolve) => {
           setTimeout(() => {
             order.push("slow:load");
             resolve(slowApp);
           }, 30);
         }),
-      location => location.hash.startsWith("#mount-before-other-loads")
+      (location) => location.hash.startsWith("#mount-before-other-loads")
     );
 
     singleSpa.registerApplication(
@@ -66,7 +66,7 @@ describe(`mount-before-other-loads`, () => {
         order.push("fast:load");
         return fastApp;
       },
-      location => location.hash.startsWith("#mount-before-other-loads")
+      (location) => location.hash.startsWith("#mount-before-other-loads")
     );
 
     expect(errs.length).toBe(0);
@@ -80,7 +80,7 @@ describe(`mount-before-other-loads`, () => {
       "fast:mount",
       "slow:load",
       "slow:bootstrap",
-      "slow:mount"
+      "slow:mount",
     ]);
   });
 });

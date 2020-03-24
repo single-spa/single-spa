@@ -12,7 +12,7 @@ const dummyApp = {
   },
   unload() {
     return Promise.resolve();
-  }
+  },
 };
 
 describe(`events api :`, () => {
@@ -30,7 +30,7 @@ describe(`events api :`, () => {
       window.location.hash = ``;
     });
 
-    it(`is fired on the window whenever the hash changes`, done => {
+    it(`is fired on the window whenever the hash changes`, (done) => {
       singleSpa
         .triggerAppChange() // start with a clean slate (no previous tests doing anything)
         .then(() => {
@@ -42,13 +42,13 @@ describe(`events api :`, () => {
             done();
           }
         })
-        .catch(err => {
+        .catch((err) => {
           fail(err);
           done();
         });
     });
 
-    it(`is fired on the window whenever the url changes`, done => {
+    it(`is fired on the window whenever the url changes`, (done) => {
       singleSpa
         .triggerAppChange() // start with a clean slate (no previous tests doing anything)
         .then(() => {
@@ -60,17 +60,17 @@ describe(`events api :`, () => {
             done();
           }
         })
-        .catch(err => {
+        .catch((err) => {
           fail(err);
           done();
         });
     });
 
-    it(`doesn't destroy single-spa when you throw an error inside of an event listener`, done => {
+    it(`doesn't destroy single-spa when you throw an error inside of an event listener`, (done) => {
       const ogOnError = window.onerror;
       const counterFn = jest.fn();
 
-      window.onerror = function(err) {
+      window.onerror = function (err) {
         counterFn();
         console.error(err);
         doneIfAllListenerHadBeenInvoked();
@@ -106,7 +106,7 @@ describe(`events api :`, () => {
       singleSpa
         .triggerAppChange()
         .then(() => (window.location.hash = "#/hashchange"))
-        .catch(err => {
+        .catch((err) => {
           // If single-spa died because of the thrown error above, we've got a problem
           window.removeEventListener("single-spa:routing-event", listener);
           window.removeEventListener("hashchange", hashchangeListener);
@@ -119,7 +119,7 @@ describe(`events api :`, () => {
   });
 
   describe(`single-spa:app-change`, () => {
-    it(`is fired when an app is unmounted`, done => {
+    it(`is fired when an app is unmounted`, (done) => {
       window.location.hash = `#`;
 
       singleSpa
@@ -135,13 +135,13 @@ describe(`events api :`, () => {
 
           return singleSpa.triggerAppChange();
         })
-        .catch(err => {
+        .catch((err) => {
           fail(err);
           done();
         });
     });
 
-    it(`is not fired when no app is mounted`, done => {
+    it(`is not fired when no app is mounted`, (done) => {
       function failTest() {
         fail(`single-spa:app-change should not be called when no apps change`);
         window.removeEventListener("single-spa:app-change", failTest);
@@ -165,7 +165,7 @@ describe(`events api :`, () => {
           // If failTest wasn't called, then we're good
           done();
         })
-        .catch(err => {
+        .catch((err) => {
           fail(err);
           done();
         });
@@ -173,7 +173,7 @@ describe(`events api :`, () => {
   });
 
   describe(`single-spa:no-app-change`, () => {
-    it(`is fired when no app is loaded, bootstrapped, mounted, unmounted, or unloaded`, done => {
+    it(`is fired when no app is loaded, bootstrapped, mounted, unmounted, or unloaded`, (done) => {
       window.location.hash = `#`;
 
       singleSpa
@@ -187,7 +187,7 @@ describe(`events api :`, () => {
             done();
           }
         })
-        .catch(err => {
+        .catch((err) => {
           fail(err);
           done();
         });

@@ -9,28 +9,28 @@ const globalTimeoutConfig = {
   bootstrap: {
     millis: 4000,
     dieOnTimeout: false,
-    warningMillis: defaultWarningMillis
+    warningMillis: defaultWarningMillis,
   },
   mount: {
     millis: 3000,
     dieOnTimeout: false,
-    warningMillis: defaultWarningMillis
+    warningMillis: defaultWarningMillis,
   },
   unmount: {
     millis: 3000,
     dieOnTimeout: false,
-    warningMillis: defaultWarningMillis
+    warningMillis: defaultWarningMillis,
   },
   unload: {
     millis: 3000,
     dieOnTimeout: false,
-    warningMillis: defaultWarningMillis
+    warningMillis: defaultWarningMillis,
   },
   update: {
     millis: 3000,
     dieOnTimeout: false,
-    warningMillis: defaultWarningMillis
-  }
+    warningMillis: defaultWarningMillis,
+  },
 };
 
 export function setBootstrapMaxTime(time, dieOnTimeout, warningMillis) {
@@ -47,7 +47,7 @@ export function setBootstrapMaxTime(time, dieOnTimeout, warningMillis) {
   globalTimeoutConfig.bootstrap = {
     millis: time,
     dieOnTimeout,
-    warningMillis: warningMillis || defaultWarningMillis
+    warningMillis: warningMillis || defaultWarningMillis,
   };
 }
 
@@ -65,7 +65,7 @@ export function setMountMaxTime(time, dieOnTimeout, warningMillis) {
   globalTimeoutConfig.mount = {
     millis: time,
     dieOnTimeout,
-    warningMillis: warningMillis || defaultWarningMillis
+    warningMillis: warningMillis || defaultWarningMillis,
   };
 }
 
@@ -83,7 +83,7 @@ export function setUnmountMaxTime(time, dieOnTimeout, warningMillis) {
   globalTimeoutConfig.unmount = {
     millis: time,
     dieOnTimeout,
-    warningMillis: warningMillis || defaultWarningMillis
+    warningMillis: warningMillis || defaultWarningMillis,
   };
 }
 
@@ -101,7 +101,7 @@ export function setUnloadMaxTime(time, dieOnTimeout, warningMillis) {
   globalTimeoutConfig.unload = {
     millis: time,
     dieOnTimeout,
-    warningMillis: warningMillis || defaultWarningMillis
+    warningMillis: warningMillis || defaultWarningMillis,
   };
 }
 
@@ -115,11 +115,11 @@ export function reasonableTime(appOrParcel, lifecycle) {
     let errored = false;
 
     appOrParcel[lifecycle](getProps(appOrParcel))
-      .then(val => {
+      .then((val) => {
         finished = true;
         resolve(val);
       })
-      .catch(val => {
+      .catch((val) => {
         finished = true;
         reject(val);
       });

@@ -11,17 +11,17 @@ describe(`app-names`, () => {
       },
       unmount() {
         return Promise.resolve();
-      }
+      },
     };
     singleSpa.registerApplication(
       "usingArgumentAPI",
       app,
-      location => location.hash === "#app-names"
+      (location) => location.hash === "#app-names"
     );
     singleSpa.registerApplication({
       name: "usingObjectAPI",
       app,
-      activeWhen: location => location.hash === "#app-names"
+      activeWhen: (location) => location.hash === "#app-names",
     });
     singleSpa.start();
   });
@@ -29,7 +29,7 @@ describe(`app-names`, () => {
   it(`should return all registered app names up to this point regardless of activity`, () => {
     expect(singleSpa.getAppNames()).toEqual([
       "usingArgumentAPI",
-      "usingObjectAPI"
+      "usingObjectAPI",
     ]);
   });
 });

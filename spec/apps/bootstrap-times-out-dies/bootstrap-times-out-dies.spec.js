@@ -12,7 +12,7 @@ describe(`bootstrap-times-out-dies`, () => {
     singleSpa.registerApplication(
       "./bootstrap-times-out-dies.app.js",
       () => import("./bootstrap-times-out-dies.app.js"),
-      location => location.hash === "#bootstrap-times-out-dies"
+      (location) => location.hash === "#bootstrap-times-out-dies"
     );
     singleSpa.start();
   });
@@ -24,8 +24,8 @@ describe(`bootstrap-times-out-dies`, () => {
     singleSpa.addErrorHandler(handleError);
 
     return import("./bootstrap-times-out-dies.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => {

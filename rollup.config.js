@@ -10,23 +10,23 @@ const useAnalyzer = process.env.ANALYZER === "analyzer";
 
 const replaceOpts = {
   "process.env.BABEL_ENV": null,
-  __DEV__: !isProduction
+  __DEV__: !isProduction,
 };
 
 const babelOpts = {
-  exclude: "node_modules/**"
+  exclude: "node_modules/**",
 };
 
 const terserOpts = {
   compress: {
-    passes: 2
+    passes: 2,
   },
   module: true,
   output: {
     comments(node, comment) {
       return comment.value.trim().startsWith("single-spa@");
-    }
-  }
+    },
+  },
 };
 
 export default (async () => [
@@ -38,14 +38,14 @@ export default (async () => [
         format: "umd",
         name: "singleSpa",
         sourcemap: true,
-        banner: generateBanner("UMD")
+        banner: generateBanner("UMD"),
       },
       {
         file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
         format: "system",
         sourcemap: true,
-        banner: generateBanner("SystemJS")
-      }
+        banner: generateBanner("SystemJS"),
+      },
     ],
     plugins: [
       replace(replaceOpts),
@@ -53,8 +53,8 @@ export default (async () => [
       commonjs(),
       babel(babelOpts),
       isProduction && (await import("rollup-plugin-terser")).terser(terserOpts),
-      useAnalyzer && analyzer()
-    ]
+      useAnalyzer && analyzer(),
+    ],
   },
   {
     input: "./src/single-spa.js",
@@ -62,7 +62,7 @@ export default (async () => [
       file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
       format: "esm",
       sourcemap: true,
-      banner: generateBanner("ESM")
+      banner: generateBanner("ESM"),
     },
     plugins: [
       replace(replaceOpts),
@@ -70,18 +70,18 @@ export default (async () => [
       commonjs(),
       babel(
         Object.assign({}, babelOpts, {
-          envName: "esm"
+          envName: "esm",
         })
       ),
       isProduction &&
         (await import("rollup-plugin-terser")).terser(
           Object.assign({}, terserOpts, {
-            ecma: 6
+            ecma: 6,
           })
         ),
-      useAnalyzer && analyzer()
-    ]
-  }
+      useAnalyzer && analyzer(),
+    ],
+  },
 ])();
 
 function generateBanner(format) {

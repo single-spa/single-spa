@@ -1,7 +1,7 @@
 let bootstrapCalled, mountCalled, unmountCalled;
 
 export function bootstrap() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     bootstrapCalled = true;
     resolve();
   });
@@ -13,7 +13,7 @@ export function mount() {
 }
 
 export function unmount() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     unmountCalled = true;
     resolve();
   });

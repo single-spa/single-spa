@@ -22,9 +22,9 @@ describe("parcel errors", () => {
           const parcelConfig1 = createParcelConfig("bootstrap");
           parcelConfig1.name = "bootstrap-error";
           const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
-            domElement: document.createElement("div")
+            domElement: document.createElement("div"),
           });
-          return parcel1.bootstrapPromise.catch(err => {
+          return parcel1.bootstrapPromise.catch((err) => {
             expect(err.appOrParcelName).toBe("bootstrap-error");
             expect(err.message).toMatch(`BOOTSTRAPPING`);
             expect(err.message.indexOf(`bootstrap-error`)).toBeGreaterThan(-1);
@@ -50,9 +50,9 @@ describe("parcel errors", () => {
           const parcelConfig1 = createParcelConfig("mount");
           parcelConfig1.name = "mount-error";
           const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
-            domElement: document.createElement("div")
+            domElement: document.createElement("div"),
           });
-          return parcel1.mountPromise.catch(err => {
+          return parcel1.mountPromise.catch((err) => {
             expect(err.appOrParcelName).toBe("mount-error");
             expect(err.message).toMatch("NOT_MOUNTED");
             expect(parcel1.getStatus()).toBe(singleSpa.SKIP_BECAUSE_BROKEN);
@@ -65,7 +65,7 @@ describe("parcel errors", () => {
       it(`should throw an error if you call update on a parcel does not implement the 'update' lifecycle`, () => {
         const parcelConfig = createParcelConfig();
         const parcel = singleSpa.mountRootParcel(parcelConfig, {
-          domElement: document.createElement("div")
+          domElement: document.createElement("div"),
         });
 
         return parcel.mountPromise.then(() => {
@@ -91,7 +91,7 @@ describe("parcel errors", () => {
             const parcelConfig1 = createParcelConfig("unmount");
             parcelConfig1.name = "unmount-error";
             const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
-              domElement: document.createElement("div")
+              domElement: document.createElement("div"),
             });
             return parcel1.mountPromise.then(() => {
               expect(parcel1.getStatus()).toBe("MOUNTED");
@@ -102,7 +102,7 @@ describe("parcel errors", () => {
               parcel1.unmount();
               expect(parcelConfig1.unmountCalls).toBe(0);
               return parcel1.unmountPromise
-                .catch(err => {
+                .catch((err) => {
                   expect(err.appOrParcelName).toBe("unmount-error");
                   expect(err.message.indexOf(`UNMOUNTING`)).toBeGreaterThan(-1);
                   expect(err.message.indexOf(`unmount-error`)).toBeGreaterThan(
@@ -148,10 +148,10 @@ describe("parcel errors", () => {
             const parcelConfig1 = createParcelConfig("unmount");
             parcelConfig1.name = "unmount-error";
             const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
-              domElement: document.createElement("div")
+              domElement: document.createElement("div"),
             });
             return parcel1.mountPromise
-              .then(results => {
+              .then((results) => {
                 expect(parcelConfig1.bootstrapCalls).toBe(1);
                 expect(parcelConfig1.mountCalls).toBe(1);
                 expect(parcelConfig1.unmountCalls).toBe(0);
@@ -161,7 +161,7 @@ describe("parcel errors", () => {
                 return singleSpa.triggerAppChange();
               })
               .then(() => {
-                return parcel1.unmountPromise.catch(err => {
+                return parcel1.unmountPromise.catch((err) => {
                   expect(err.appOrParcelName).toBe("unmount-error");
                   expect(err.message.indexOf(`UNMOUNTING`)).toBeGreaterThan(-1);
                   expect(err.message.indexOf(`unmount-error`)).toBeGreaterThan(
@@ -188,7 +188,7 @@ describe("parcel errors", () => {
     it(`throws an error immediately if you don't provide a config object`, () => {
       expect(() => {
         singleSpa.mountRootParcel(null, {
-          domElement: document.createElement("div")
+          domElement: document.createElement("div"),
         });
       }).toThrow();
     });
@@ -197,20 +197,20 @@ describe("parcel errors", () => {
       expect(() => {
         // loading function should return promise
         singleSpa.mountRootParcel(() => createParcelConfig(), {
-          domElement: document.createElement("div")
+          domElement: document.createElement("div"),
         });
       }).toThrow();
     });
 
     it(`rejects the load promise if loading function returns a promise that resolves with undefined`, () => {
       const parcel = singleSpa.mountRootParcel(() => Promise.resolve(), {
-        domElement: document.createElement("div")
+        domElement: document.createElement("div"),
       });
       return parcel.loadPromise.then(
         () => {
           throw new Error("load promise should not have succeeded");
         },
-        err => {
+        (err) => {
           expect(
             err.message.indexOf("did not resolve with a parcel config")
           ).toBeGreaterThan(-1);
@@ -227,7 +227,7 @@ describe("parcel errors", () => {
         () => {
           throw new Error("load promise should not have succeeded");
         },
-        err => {
+        (err) => {
           expect(
             err.message.indexOf("must have a valid bootstrap function")
           ).toBeGreaterThan(-1);
@@ -244,7 +244,7 @@ describe("parcel errors", () => {
         () => {
           throw new Error("load promise should not have succeeded");
         },
-        err => {
+        (err) => {
           expect(
             err.message.indexOf("must have a valid mount function")
           ).toBeGreaterThan(-1);
@@ -261,7 +261,7 @@ describe("parcel errors", () => {
         () => {
           throw new Error("load promise should not have succeeded");
         },
-        err => {
+        (err) => {
           expect(
             err.message.indexOf("must have a valid unmount function")
           ).toBeGreaterThan(-1);
@@ -289,7 +289,7 @@ function createApp() {
     unmount() {
       app.unmountCalls++;
       return Promise.resolve();
-    }
+    },
   };
 
   return app;
@@ -325,7 +325,7 @@ function createParcelConfig(errLocation) {
         parcelConfig.unmountCalls++;
         return Promise.resolve();
       }
-    }
+    },
   };
 
   return parcelConfig;

@@ -12,7 +12,7 @@ const dummyApp1 = {
   },
   unload() {
     return Promise.resolve();
-  }
+  },
 };
 
 const dummyApp2 = {
@@ -27,7 +27,7 @@ const dummyApp2 = {
   },
   unload() {
     return Promise.resolve();
-  }
+  },
 };
 
 const dummyApp3 = {
@@ -42,13 +42,13 @@ const dummyApp3 = {
   },
   unload() {
     return Promise.resolve();
-  }
+  },
 };
 
 const activityFunctions = {
   1: activityFunction1,
   2: activityFunction2,
-  3: activityFunction3
+  3: activityFunction3,
 };
 
 describe(`checkActivityFunctionsApi`, () => {
@@ -66,7 +66,7 @@ describe(`checkActivityFunctionsApi`, () => {
     singleSpa.registerApplication({
       name: "test3",
       app: Promise.resolve(dummyApp3),
-      activeWhen: activityFunctions[3]
+      activeWhen: activityFunctions[3],
     });
   });
 
@@ -96,7 +96,7 @@ describe(`checkActivityFunctionsApi`, () => {
     expect(singleSpa.checkActivityFunctions(wLocation)).toEqual([
       "test1",
       "test2",
-      "test3"
+      "test3",
     ]);
   });
 });
@@ -115,6 +115,6 @@ function activityFunction3(location) {
 
 function mockWindowLocation(url) {
   return {
-    href: url
+    href: url,
   };
 }

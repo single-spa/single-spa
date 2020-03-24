@@ -14,7 +14,7 @@ describe(`invalid-bootstrap app`, () => {
     singleSpa.registerApplication(
       "./invalid-bootstrap.app.js",
       () => import("./invalid-bootstrap.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
@@ -26,8 +26,8 @@ describe(`invalid-bootstrap app`, () => {
     singleSpa.addErrorHandler(handleError);
 
     return import("./invalid-bootstrap.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => {

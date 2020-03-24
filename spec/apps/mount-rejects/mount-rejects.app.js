@@ -1,7 +1,7 @@
 let bootstrapped, mounted, unmounted;
 
 export function bootstrap() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     bootstrapped = true;
     resolve();
   });
@@ -15,7 +15,7 @@ export function mount() {
 }
 
 export function unmount() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     unmounted = true;
     resolve();
   });

@@ -13,7 +13,7 @@ export function ensureJQuerySupport(jQuery = window.jQuery) {
     const originalJQueryOn = jQuery.fn.on;
     const originalJQueryOff = jQuery.fn.off;
 
-    jQuery.fn.on = function(eventString, fn) {
+    jQuery.fn.on = function (eventString, fn) {
       return captureRoutingEvents.call(
         this,
         originalJQueryOn,
@@ -24,7 +24,7 @@ export function ensureJQuerySupport(jQuery = window.jQuery) {
       );
     };
 
-    jQuery.fn.off = function(eventString, fn) {
+    jQuery.fn.off = function (eventString, fn) {
       return captureRoutingEvents.call(
         this,
         originalJQueryOff,
@@ -51,7 +51,7 @@ function captureRoutingEvents(
   }
 
   const eventNames = eventString.split(/\s+/);
-  eventNames.forEach(eventName => {
+  eventNames.forEach((eventName) => {
     if (routingEventsListeningTo.indexOf(eventName) >= 0) {
       nativeFunctionToCall(eventName, fn);
       eventString = eventString.replace(eventName, "");

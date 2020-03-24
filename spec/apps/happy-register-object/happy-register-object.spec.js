@@ -7,7 +7,7 @@ describe(`happy-register-object`, () => {
     singleSpa.registerApplication({
       name: "./happy-register-object.app.js",
       app: () => import("./happy-register-object.app.js"),
-      activeWhen: location => location.hash === "#happy-register-object"
+      activeWhen: (location) => location.hash === "#happy-register-object",
     });
     singleSpa.start();
   });
@@ -16,8 +16,8 @@ describe(`happy-register-object`, () => {
     location.hash = "#";
 
     return import("./happy-register-object.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   it(`goes through the whole lifecycle successfully`, () => {
@@ -30,7 +30,7 @@ describe(`happy-register-object`, () => {
       expect(myApp.wasBootstrapped()).toEqual(true);
       expect(myApp.isMounted()).toEqual(true);
       expect(singleSpa.getMountedApps()).toEqual([
-        "./happy-register-object.app.js"
+        "./happy-register-object.app.js",
       ]);
 
       location.hash = "#not-happy-register-object";

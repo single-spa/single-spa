@@ -4,7 +4,7 @@ describe(`root parcels`, () => {
   it(`can mount and unmount root parcels`, () => {
     const parcelConfig = createParcelConfig();
     const parcel = singleSpa.mountRootParcel(parcelConfig, {
-      domElement: document.createElement("div")
+      domElement: document.createElement("div"),
     });
     expect(parcel.getStatus()).toBe(singleSpa.NOT_BOOTSTRAPPED);
 
@@ -27,20 +27,20 @@ describe(`root parcels`, () => {
   it(`doesn't resolve bootstrapPromise, mountPromise, or unmountPromise with any values`, () => {
     const parcelConfig = createParcelConfig();
     const parcel = singleSpa.mountRootParcel(parcelConfig, {
-      domElement: document.createElement("div")
+      domElement: document.createElement("div"),
     });
     expect(parcel.getStatus()).toBe(singleSpa.NOT_BOOTSTRAPPED);
 
     return parcel.bootstrapPromise
-      .then(value => {
+      .then((value) => {
         expect(value).toBe(null);
         return parcel.mountPromise;
       })
-      .then(value => {
+      .then((value) => {
         expect(value).toBe(null);
         return Promise.all([parcel.unmountPromise, parcel.unmount()]);
       })
-      .then(values => {
+      .then((values) => {
         const [unmountPromiseValue, unmountValue] = values;
         expect(unmountPromiseValue).toBe(null);
         expect(unmountValue).toBe(null);
@@ -51,11 +51,11 @@ describe(`root parcels`, () => {
     const parcelConfig = createParcelConfig();
     let resolveConfigLoading;
     const configLoadingFunction = () =>
-      new Promise(resolve => {
+      new Promise((resolve) => {
         resolveConfigLoading = () => resolve(parcelConfig);
       });
     const parcel = singleSpa.mountRootParcel(configLoadingFunction, {
-      domElement: document.createElement("div")
+      domElement: document.createElement("div"),
     });
     expect(parcel.getStatus()).toBe(singleSpa.LOADING_SOURCE_CODE);
     return Promise.resolve()
@@ -77,21 +77,21 @@ describe(`root parcels`, () => {
   it(`allows you to update a parcel that has implemented the update lifecycle`, () => {
     const parcelConfig = createParcelConfig({ withUpdate: true });
     const parcel = singleSpa.mountRootParcel(parcelConfig, {
-      domElement: document.createElement("div")
+      domElement: document.createElement("div"),
     });
 
     return parcel.mountPromise
       .then(() => expect(typeof parcel.update).toBe("function"))
       .then(() => expect(parcelConfig.updateCalls).toBe(0))
       .then(() => parcel.update({}))
-      .then(resolvedVal => expect(resolvedVal).toBe(null))
+      .then((resolvedVal) => expect(resolvedVal).toBe(null))
       .then(() => expect(parcelConfig.updateCalls).toBe(1));
   });
 
   it(`does not allow you to call update on a parcel that does not implement the update lifecycle`, () => {
     const parcelConfig = createParcelConfig();
     const parcel = singleSpa.mountRootParcel(parcelConfig, {
-      domElement: document.createElement("div")
+      domElement: document.createElement("div"),
     });
 
     return parcel.mountPromise.then(() =>
@@ -118,12 +118,12 @@ function createParcelConfig(opts = {}) {
     unmount() {
       parcelConfig.unmountCalls++;
       return Promise.resolve();
-    }
+    },
   };
 
   if (opts.withUpdate) {
     parcelConfig.updateCalls = 0;
-    parcelConfig.update = function(props) {
+    parcelConfig.update = function (props) {
       parcelConfig.updateCalls++;
       return Promise.resolve();
     };

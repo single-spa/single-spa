@@ -13,7 +13,7 @@ describe(`unmount-times-out app`, () => {
     singleSpa.registerApplication(
       "./unmount-times-out.app.js",
       () => import("./unmount-times-out.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
@@ -31,8 +31,8 @@ describe(`unmount-times-out app`, () => {
     location.hash = "#";
 
     return import("./unmount-times-out.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => {
@@ -48,7 +48,7 @@ describe(`unmount-times-out app`, () => {
       expect(myApp.numBootstraps()).toEqual(1);
       expect(myApp.numMounts()).toEqual(1);
       expect(singleSpa.getMountedApps()).toEqual([
-        "./unmount-times-out.app.js"
+        "./unmount-times-out.app.js",
       ]);
       expect(singleSpa.getAppStatus("./unmount-times-out.app.js")).toEqual(
         "MOUNTED"

@@ -108,7 +108,7 @@ declare module "single-spa" {
     UNMOUNTING = "UNMOUNTING",
     UNLOADING = "UNLOADING",
     SKIP_BECAUSE_BROKEN = "SKIP_BECAUSE_BROKEN",
-    LOAD_ERROR = "LOAD_ERROR"
+    LOAD_ERROR = "LOAD_ERROR",
   };
 
   export function getAppStatus(appName: string): string | null;

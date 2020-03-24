@@ -21,7 +21,7 @@ describe(`parcels mounting parcels`, () => {
       const parcelConfig1 = createParcelConfig();
       const parcelConfig2 = createParcelConfig();
       const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
-        domElement: document.createElement("div")
+        domElement: document.createElement("div"),
       });
 
       return parcel1.mountPromise
@@ -31,7 +31,7 @@ describe(`parcels mounting parcels`, () => {
           expect(parcelConfig1.unmountCalls).toBe(0);
 
           const parcel2 = parcelConfig1.mountProps.mountParcel(parcelConfig2, {
-            domElement: document.createElement("div")
+            domElement: document.createElement("div"),
           });
           return parcel2.mountPromise.then(() => {
             expect(parcelConfig2.bootstrapCalls).toBe(1);
@@ -66,13 +66,13 @@ describe(`parcels mounting parcels`, () => {
       const parcelConfig2 = createParcelConfig();
       const parcelConfig3 = createParcelConfig();
       const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
-        domElement: document.createElement("div")
+        domElement: document.createElement("div"),
       });
 
       return parcel1.mountPromise
         .then(() => {
           const parcel2 = parcelConfig1.mountProps.mountParcel(parcelConfig2, {
-            domElement: document.createElement("div")
+            domElement: document.createElement("div"),
           });
           return parcel2.mountPromise.then(() => {
             const parcel3 = parcelConfig2.mountProps.mountParcel(
@@ -114,7 +114,7 @@ function createApp() {
     unmount() {
       app.unmountCalls++;
       return Promise.resolve();
-    }
+    },
   };
 
   return app;
@@ -138,7 +138,7 @@ function createParcelConfig() {
     unmount() {
       parcelConfig.unmountCalls++;
       return Promise.resolve();
-    }
+    },
   };
 
   return parcelConfig;

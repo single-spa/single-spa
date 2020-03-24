@@ -13,7 +13,7 @@ describe(`invalid-mount app`, () => {
     singleSpa.registerApplication(
       "./invalid-mount.app.js",
       () => import("./invalid-mount.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
@@ -23,8 +23,8 @@ describe(`invalid-mount app`, () => {
     singleSpa.addErrorHandler(handleError);
 
     return import("./invalid-mount.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => {

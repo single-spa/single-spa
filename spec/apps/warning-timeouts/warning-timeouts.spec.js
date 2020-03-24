@@ -13,7 +13,7 @@ describe(`warning-timeouts app`, () => {
     singleSpa.registerApplication(
       "warning-timeouts",
       () => import("./warning-timeouts.app"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
     consoleWarnSpy = jest.spyOn(console, "warn");
@@ -32,8 +32,8 @@ describe(`warning-timeouts app`, () => {
     location.hash = "#";
 
     return import("./warning-timeouts.app")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => {
@@ -80,7 +80,7 @@ describe(`warning-timeouts app`, () => {
 
   function expectWarning(message) {
     expect(consoleWarnSpy).toHaveBeenCalled();
-    const found = consoleWarnSpy.mock.calls.some(call => call[0] === message);
+    const found = consoleWarnSpy.mock.calls.some((call) => call[0] === message);
     if (!found) {
       expect(consoleWarnSpy).toHaveBeenCalledWith(message);
     }
@@ -109,5 +109,5 @@ async function controlledAppChange() {
 
 // https://github.com/facebook/jest/issues/2157#issuecomment-279171856
 function flushPromises() {
-  return new Promise(resolve => setImmediate(resolve));
+  return new Promise((resolve) => setImmediate(resolve));
 }
