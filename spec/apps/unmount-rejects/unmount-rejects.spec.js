@@ -13,7 +13,7 @@ describe(`unmount-rejects app`, () => {
     singleSpa.registerApplication(
       "./unmount-rejects.app.js",
       () => import("./unmount-rejects.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
@@ -25,8 +25,8 @@ describe(`unmount-rejects app`, () => {
     singleSpa.addErrorHandler(handleError);
 
     return import("./unmount-rejects.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));

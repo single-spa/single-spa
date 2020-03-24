@@ -1,6 +1,6 @@
 import {
   validLifecycleFn,
-  flattenFnArray
+  flattenFnArray,
 } from "../lifecycles/lifecycle.helpers.js";
 import {
   NOT_BOOTSTRAPPED,
@@ -8,7 +8,7 @@ import {
   MOUNTED,
   LOADING_SOURCE_CODE,
   SKIP_BECAUSE_BROKEN,
-  toName
+  toName,
 } from "../applications/app.helpers.js";
 import { toBootstrapPromise } from "../lifecycles/bootstrap.js";
 import { toMountPromise } from "../lifecycles/mount.js";
@@ -103,23 +103,23 @@ export function mountParcel(config, customProps) {
       }
 
       return toUnmountPromise(parcel, true)
-        .then(value => {
+        .then((value) => {
           if (parcel.parentName) {
             delete owningAppOrParcel.parcels[parcel.id];
           }
 
           return value;
         })
-        .then(value => {
+        .then((value) => {
           resolveUnmount(value);
           return value;
         })
-        .catch(err => {
+        .catch((err) => {
           parcel.status = SKIP_BECAUSE_BROKEN;
           rejectUnmount(err);
           throw err;
         });
-    }
+    },
   };
 
   // We return an external representation
@@ -140,7 +140,7 @@ export function mountParcel(config, customProps) {
     );
   }
 
-  loadPromise = loadPromise.then(config => {
+  loadPromise = loadPromise.then((config) => {
     if (!config) {
       throw Error(
         formatErrorMessage(
@@ -206,7 +206,7 @@ export function mountParcel(config, customProps) {
 
     if (config.update) {
       parcel.update = flattenFnArray(config, "update");
-      externalRepresentation.update = function(customProps) {
+      externalRepresentation.update = function (customProps) {
         parcel.customProps = customProps;
 
         return promiseWithoutReturnValue(toUpdatePromise(parcel));
@@ -262,7 +262,7 @@ export function mountParcel(config, customProps) {
     loadPromise: promiseWithoutReturnValue(loadPromise),
     bootstrapPromise: promiseWithoutReturnValue(bootstrapPromise),
     mountPromise: promiseWithoutReturnValue(mountPromise),
-    unmountPromise: promiseWithoutReturnValue(unmountPromise)
+    unmountPromise: promiseWithoutReturnValue(unmountPromise),
   };
 
   return externalRepresentation;

@@ -12,7 +12,7 @@ const dummyApp = {
   },
   unload() {
     return Promise.resolve();
-  }
+  },
 };
 
 describe(`single-spa:first-mount events`, () => {

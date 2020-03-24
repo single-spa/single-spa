@@ -3,26 +3,26 @@ let _numBootstraps, _numMounts, _numUnmounts;
 export const timeouts = {
   unmount: {
     dieOnTimeout: true,
-    millis: 20
-  }
+    millis: 20,
+  },
 };
 
 export function bootstrap() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     _numBootstraps++;
     resolve();
   });
 }
 
 export function mount() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     _numMounts++;
     resolve();
   });
 }
 
 export function unmount() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     _numUnmounts++;
     setTimeout(resolve, 40);
   });

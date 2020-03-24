@@ -12,7 +12,7 @@ describe(`bootstrap-rejects`, () => {
     singleSpa.registerApplication(
       "./bootstrap-rejects.app.js",
       () => import("./bootstrap-rejects.app.js"),
-      location => location.hash === "#bootstrap-rejects"
+      (location) => location.hash === "#bootstrap-rejects"
     );
     singleSpa.start();
   });
@@ -22,8 +22,8 @@ describe(`bootstrap-rejects`, () => {
     singleSpa.addErrorHandler(handleError);
 
     return import("./bootstrap-rejects.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => {

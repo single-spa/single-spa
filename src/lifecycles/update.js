@@ -2,11 +2,11 @@ import {
   UPDATING,
   MOUNTED,
   SKIP_BECAUSE_BROKEN,
-  toName
+  toName,
 } from "../applications/app.helpers.js";
 import {
   transformErr,
-  formatErrorMessage
+  formatErrorMessage,
 } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
 
@@ -32,7 +32,7 @@ export function toUpdatePromise(parcel) {
         parcel.status = MOUNTED;
         return parcel;
       })
-      .catch(err => {
+      .catch((err) => {
         throw transformErr(err, parcel, SKIP_BECAUSE_BROKEN);
       });
   });

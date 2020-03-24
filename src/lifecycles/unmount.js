@@ -2,7 +2,7 @@ import {
   UNMOUNTING,
   NOT_MOUNTED,
   MOUNTED,
-  SKIP_BECAUSE_BROKEN
+  SKIP_BECAUSE_BROKEN,
 } from "../applications/app.helpers.js";
 import { handleAppError, transformErr } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
@@ -16,12 +16,12 @@ export function toUnmountPromise(appOrParcel, hardFail) {
 
     const unmountChildrenParcels = Object.keys(
       appOrParcel.parcels
-    ).map(parcelId => appOrParcel.parcels[parcelId].unmountThisParcel());
+    ).map((parcelId) => appOrParcel.parcels[parcelId].unmountThisParcel());
 
     let parcelError;
 
     return Promise.all(unmountChildrenParcels)
-      .then(unmountAppOrParcel, parcelError => {
+      .then(unmountAppOrParcel, (parcelError) => {
         // There is a parcel unmount error
         return unmountAppOrParcel().then(() => {
           // Unmounting the app/parcel succeeded, but unmounting its children parcels did not
@@ -44,7 +44,7 @@ export function toUnmountPromise(appOrParcel, hardFail) {
             appOrParcel.status = NOT_MOUNTED;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           if (hardFail) {
             throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
           } else {

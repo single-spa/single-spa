@@ -14,7 +14,7 @@ describe(`invalid-no-unmount app`, () => {
     singleSpa.registerApplication(
       "./invalid-no-unmount.app.js",
       () => import("./invalid-no-unmount.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
@@ -26,8 +26,8 @@ describe(`invalid-no-unmount app`, () => {
     singleSpa.addErrorHandler(handleError);
 
     return import("./invalid-no-unmount.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));

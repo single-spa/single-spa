@@ -14,7 +14,7 @@ describe(`invalid-no-mount app`, () => {
     singleSpa.registerApplication(
       "./invalid-no-mount.app.js",
       import("./invalid-no-mount.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
@@ -25,8 +25,8 @@ describe(`invalid-no-mount app`, () => {
     singleSpa.addErrorHandler(handleError);
 
     return import("./invalid-no-mount.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));

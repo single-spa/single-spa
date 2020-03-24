@@ -6,14 +6,14 @@ export function bootstrap() {
 }
 
 export function mount() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     mountCalled = true;
     resolve();
   });
 }
 
 export function unmount() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     unmountCalled = true;
     resolve();
   });

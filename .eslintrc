@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "canopy",
-    "important-stuff"
-  ],
+  "extends": ["canopy", "important-stuff"],
   "env": {
     "browser": true,
     "node": true

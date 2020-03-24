@@ -25,7 +25,7 @@ describe(`invalid-load-function`, () => {
     singleSpa.registerApplication(
       "invalid-load-1",
       loadFunction,
-      location => location.hash === "#invalid-load-function"
+      (location) => location.hash === "#invalid-load-function"
     );
 
     location.hash = "#invalid-load-function";
@@ -51,7 +51,7 @@ describe(`invalid-load-function`, () => {
     singleSpa.registerApplication(
       "invalid-load-2",
       loadFunction,
-      location => location.hash === "#invalid-load-function"
+      (location) => location.hash === "#invalid-load-function"
     );
 
     location.hash = "#invalid-load-function";
@@ -77,7 +77,7 @@ describe(`invalid-load-function`, () => {
     singleSpa.registerApplication(
       "invalid-load-3",
       loadFunction,
-      location => location.hash === "#invalid-load-function"
+      (location) => location.hash === "#invalid-load-function"
     );
 
     location.hash = "#invalid-load-function";
@@ -105,10 +105,10 @@ describe(`invalid-load-function`, () => {
         return Promise.resolve({
           bootstrap: () => new Promise(),
           mount: () => new Promise(),
-          unmount: () => new Promise()
+          unmount: () => new Promise(),
         });
     }
-    singleSpa.registerApplication("invalid-load-4", loadFunction, location =>
+    singleSpa.registerApplication("invalid-load-4", loadFunction, (location) =>
       location.hash.includes("#invalid-load-function")
     );
 
@@ -121,7 +121,7 @@ describe(`invalid-load-function`, () => {
 
       location.hash = "#invalid-load-function-1";
 
-      return new Promise(resolve => setTimeout(resolve, 201)).then(() =>
+      return new Promise((resolve) => setTimeout(resolve, 201)).then(() =>
         singleSpa.triggerAppChange().then(() => {
           expect(singleSpa.getAppStatus("invalid-load-4")).toBe(
             singleSpa.NOT_BOOTSTRAPPED

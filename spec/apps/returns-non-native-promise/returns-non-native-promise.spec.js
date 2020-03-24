@@ -7,7 +7,7 @@ describe(`returns-non-native-promise`, () => {
     singleSpa.registerApplication(
       "./returns-non-native-promise.app.js",
       () => import("./returns-non-native-promise.app.js"),
-      location => location.hash === "#returns-non-native-promise"
+      (location) => location.hash === "#returns-non-native-promise"
     );
     singleSpa.start();
   });
@@ -16,8 +16,8 @@ describe(`returns-non-native-promise`, () => {
     location.hash = "#";
 
     return import("./returns-non-native-promise.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   it(`goes through the whole lifecycle successfully`, () => {
@@ -30,7 +30,7 @@ describe(`returns-non-native-promise`, () => {
       expect(myApp.wasBootstrapped()).toEqual(true);
       expect(myApp.wasMounted()).toEqual(true);
       expect(singleSpa.getMountedApps()).toEqual([
-        "./returns-non-native-promise.app.js"
+        "./returns-non-native-promise.app.js",
       ]);
 
       location.hash = "#something-else";

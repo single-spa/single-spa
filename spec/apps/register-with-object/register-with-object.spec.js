@@ -14,7 +14,7 @@ const app = {
   unmount() {
     mounted = false;
     return Promise.resolve();
-  }
+  },
 };
 
 describe(`register-with-object`, () => {
@@ -22,7 +22,7 @@ describe(`register-with-object`, () => {
     singleSpa.registerApplication(
       "register-with-object",
       app,
-      location => location.hash === "#register-with-object"
+      (location) => location.hash === "#register-with-object"
     );
     singleSpa.start();
   });

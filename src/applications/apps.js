@@ -9,7 +9,7 @@ import {
   shouldntBeActive,
   isntActive,
   notSkipped,
-  withoutLoadErrors
+  withoutLoadErrors,
 } from "./app.helpers.js";
 import { reroute } from "../navigation/reroute.js";
 import { find } from "../utils/find.js";
@@ -17,7 +17,7 @@ import { toUnmountPromise } from "../lifecycles/unmount.js";
 import {
   toUnloadPromise,
   getAppUnloadInfo,
-  addAppToUnload
+  addAppToUnload,
 } from "../lifecycles/unload.js";
 import { formatErrorMessage } from "./app-errors.js";
 import { isInBrowser } from "../utils/runtime-environment.js";
@@ -39,7 +39,7 @@ export function getRawAppData() {
 }
 
 export function getAppStatus(appName) {
-  const app = find(apps, app => toName(app) === appName);
+  const app = find(apps, (app) => toName(app) === appName);
   return app ? app.status : null;
 }
 
@@ -75,9 +75,9 @@ export function registerApplication(
         devtools: {
           overlays: {
             options: {},
-            selectors: []
-          }
-        }
+            selectors: [],
+          },
+        },
       },
       registration
     )
@@ -90,7 +90,7 @@ export function registerApplication(
 }
 
 export function checkActivityFunctions(location) {
-  return apps.filter(app => app.activeWhen(location)).map(toName);
+  return apps.filter((app) => app.activeWhen(location)).map(toName);
 }
 
 export function getAppsToLoad() {
@@ -102,10 +102,7 @@ export function getAppsToLoad() {
 }
 
 export function getAppsToUnmount() {
-  return apps
-    .filter(notSkipped)
-    .filter(isActive)
-    .filter(shouldntBeActive);
+  return apps.filter(notSkipped).filter(isActive).filter(shouldntBeActive);
 }
 
 export function getAppsToMount() {
@@ -117,7 +114,7 @@ export function getAppsToMount() {
 }
 
 export function unregisterApplication(appName) {
-  if (!apps.find(app => toName(app) === appName)) {
+  if (!apps.find((app) => toName(app) === appName)) {
     throw Error(
       formatErrorMessage(
         25,
@@ -129,7 +126,7 @@ export function unregisterApplication(appName) {
   }
 
   return unloadApplication(appName).then(() => {
-    const appIndex = apps.findIndex(app => toName(app) === appName);
+    const appIndex = apps.findIndex((app) => toName(app) === appName);
     apps.splice(appIndex, 1);
   });
 }
@@ -143,7 +140,7 @@ export function unloadApplication(appName, opts = { waitForUnmount: false }) {
       )
     );
   }
-  const app = find(apps, App => toName(App) === appName);
+  const app = find(apps, (App) => toName(App) === appName);
   if (!app) {
     throw Error(
       formatErrorMessage(
@@ -331,7 +328,7 @@ function sanitizeArguments(
     name: null,
     loadApp: null,
     activeWhen: null,
-    customProps: null
+    customProps: null,
   };
 
   if (usingObjectAPI) {

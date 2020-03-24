@@ -10,7 +10,7 @@ import { isInBrowser } from "../utils/runtime-environment.js";
  */
 const capturedEventListeners = {
   hashchange: [],
-  popstate: []
+  popstate: [],
 };
 
 export const routingEventsListeningTo = ["hashchange", "popstate"];
@@ -65,7 +65,7 @@ export function callCapturedEventListeners(eventArguments) {
   if (eventArguments) {
     const eventType = eventArguments[0].type;
     if (routingEventsListeningTo.indexOf(eventType) >= 0) {
-      capturedEventListeners[eventType].forEach(listener => {
+      capturedEventListeners[eventType].forEach((listener) => {
         try {
           // The error thrown by application event listener should not break single-spa down.
           // Just like https://github.com/single-spa/single-spa/blob/85f5042dff960e40936f3a5069d56fc9477fac04/src/navigation/reroute.js#L140-L146 did
@@ -98,11 +98,11 @@ if (isInBrowser) {
   // Monkeypatch addEventListener so that we can ensure correct timing
   const originalAddEventListener = window.addEventListener;
   const originalRemoveEventListener = window.removeEventListener;
-  window.addEventListener = function(eventName, fn) {
+  window.addEventListener = function (eventName, fn) {
     if (typeof fn === "function") {
       if (
         routingEventsListeningTo.indexOf(eventName) >= 0 &&
-        !find(capturedEventListeners[eventName], listener => listener === fn)
+        !find(capturedEventListeners[eventName], (listener) => listener === fn)
       ) {
         capturedEventListeners[eventName].push(fn);
         return;
@@ -112,12 +112,12 @@ if (isInBrowser) {
     return originalAddEventListener.apply(this, arguments);
   };
 
-  window.removeEventListener = function(eventName, listenerFn) {
+  window.removeEventListener = function (eventName, listenerFn) {
     if (typeof listenerFn === "function") {
       if (routingEventsListeningTo.indexOf(eventName) >= 0) {
         capturedEventListeners[eventName] = capturedEventListeners[
           eventName
-        ].filter(fn => fn !== listenerFn);
+        ].filter((fn) => fn !== listenerFn);
         return;
       }
     }
@@ -129,7 +129,7 @@ if (isInBrowser) {
   window.history.replaceState = patchedUpdateState(window.history.replaceState);
 
   function patchedUpdateState(updateState) {
-    return function() {
+    return function () {
       const urlBefore = window.location.href;
       const result = updateState.apply(this, arguments);
       const urlAfter = window.location.href;

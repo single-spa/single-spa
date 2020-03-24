@@ -1,6 +1,6 @@
 import * as singleSpa from "single-spa";
 
-describe("registerApplication", function() {
+describe("registerApplication", function () {
   let app;
   let errorsMessages = {
     invalidConfig: "Configuration object can't be an Array or null!",
@@ -8,24 +8,24 @@ describe("registerApplication", function() {
       args:
         "The 1st argument to registerApplication must be a non-empty string 'appName'",
       config:
-        "The config.name on registerApplication must be a non-empty string"
+        "The config.name on registerApplication must be a non-empty string",
     },
     app: {
       args:
         "The 2nd argument to registerApplication must be an application or loading application function",
       config:
-        "The config.app on registerApplication must be an application or a loading function"
+        "The config.app on registerApplication must be an application or a loading function",
     },
     activeWhen: {
       args:
         "The 3rd argument to registerApplication must be an activeWhen function",
-      config: "The config.activeWhen on registerApplication must be a function"
+      config: "The config.activeWhen on registerApplication must be a function",
     },
     customProps: {
       args: "The optional 4th argument is a customProps and must be an object",
-      config: "The optional config.customProps must be an object"
+      config: "The optional config.customProps must be an object",
     },
-    duplicateApp: "There is already an app registered with name"
+    duplicateApp: "There is already an app registered with name",
   };
   beforeEach(() => {
     app = {
@@ -37,7 +37,7 @@ describe("registerApplication", function() {
       },
       bootstrap() {
         return Promise.resolve();
-      }
+      },
     };
   });
 
@@ -74,13 +74,13 @@ describe("registerApplication", function() {
       singleSpa.registerApplication({
         name: "duplicateUsingConfigApp",
         app,
-        activeWhen: () => true
+        activeWhen: () => true,
       });
       expect(() => {
         singleSpa.registerApplication({
           name: "duplicateUsingConfigApp",
           app,
-          activeWhen: () => true
+          activeWhen: () => true,
         });
       }).toThrowError(errorsMessages.duplicateApp);
     });
@@ -105,7 +105,7 @@ describe("registerApplication", function() {
       expect(() => {
         singleSpa.registerApplication({
           name: "no-active-when-throw-error-app",
-          app
+          app,
         });
       }).toThrowError(errorsMessages.activeWhen.config);
     });
@@ -122,7 +122,7 @@ describe("registerApplication", function() {
         singleSpa.registerApplication({
           name: "bad-active-when-config-throw-error-app",
           app,
-          activeWhen: app
+          activeWhen: app,
         });
       }).toThrowError(errorsMessages.activeWhen.config);
     });
@@ -130,7 +130,7 @@ describe("registerApplication", function() {
     it(`should throw an error when activeWhen is given not a function`, () => {
       expect(() => {
         singleSpa.registerApplication("bad-active-when-throw-error-app", app, [
-          "/valid-only-in-object-config"
+          "/valid-only-in-object-config",
         ]);
       }).toThrowError(errorsMessages.activeWhen.args);
       expect(() => {
@@ -144,14 +144,14 @@ describe("registerApplication", function() {
         singleSpa.registerApplication({
           name: "bad-active-when-throw-error-app",
           app,
-          activeWhen: ["/valid", true]
+          activeWhen: ["/valid", true],
         });
       }).toThrowError(errorsMessages.activeWhen.config);
       expect(() => {
         singleSpa.registerApplication({
           name: "bad-active-when-multiple-throw-error-app",
           app,
-          activeWhen: ["/valid", () => true]
+          activeWhen: ["/valid", () => true],
         });
       }).toThrow();
     });
@@ -161,7 +161,7 @@ describe("registerApplication", function() {
         singleSpa.registerApplication({
           name: "valid-active-when-single-throw-error-app",
           app,
-          activeWhen: () => true
+          activeWhen: () => true,
         });
       }).not.toThrow();
     });
@@ -182,7 +182,7 @@ describe("registerApplication", function() {
           name: "bad-custom-props-will-throw-error-app",
           app,
           activeWhen: () => true,
-          customProps: () => {}
+          customProps: () => {},
         });
       }).toThrowError(errorsMessages.customProps.config);
     });
@@ -201,7 +201,7 @@ describe("registerApplication", function() {
           name: "bad-custom-props-will-throw-error-app",
           app,
           activeWhen: () => true,
-          customProps: []
+          customProps: [],
         });
       }).toThrowError(errorsMessages.customProps.config);
     });
@@ -213,7 +213,7 @@ describe("registerApplication", function() {
           app,
           activeWhen: () => true,
           invalidKey: "invalidKey",
-          superInvalidKey: {}
+          superInvalidKey: {},
         });
       }).toThrowError("Invalid keys: invalidKey, superInvalidKey.");
     });

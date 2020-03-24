@@ -11,15 +11,15 @@ describe(`lifecycle-props app`, () => {
 
   beforeEach(() => {
     return import("./lifecycle-props.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   it(`is given the correct props for each lifecycle function`, () => {
     singleSpa.registerApplication(
       "lifecycle-props",
       () => import("./lifecycle-props.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
 
     // This mounts the app
@@ -52,7 +52,7 @@ describe(`lifecycle-props app`, () => {
     singleSpa.registerApplication(
       "lifecycle-props-customProps",
       () => import("./lifecycle-props.app.js"),
-      location => location.hash === activeHash,
+      (location) => location.hash === activeHash,
       { test: "test" }
     );
 

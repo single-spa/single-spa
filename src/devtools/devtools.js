@@ -10,5 +10,5 @@ export default {
   NOT_LOADED,
   toLoadPromise,
   toBootstrapPromise,
-  unregisterApplication
+  unregisterApplication,
 };

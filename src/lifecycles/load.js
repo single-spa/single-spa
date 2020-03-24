@@ -5,17 +5,17 @@ import {
   SKIP_BECAUSE_BROKEN,
   NOT_LOADED,
   objectType,
-  toName
+  toName,
 } from "../applications/app.helpers.js";
 import { ensureValidAppTimeouts } from "../applications/timeouts.js";
 import {
   handleAppError,
-  formatErrorMessage
+  formatErrorMessage,
 } from "../applications/app-errors.js";
 import {
   flattenFnArray,
   smellsLikeAPromise,
-  validLifecycleFn
+  validLifecycleFn,
 } from "./lifecycle.helpers.js";
 import { getProps } from "./prop.helpers.js";
 import { assign } from "../utils/assign.js";
@@ -51,7 +51,7 @@ export function toLoadPromise(app) {
             )
           );
         }
-        return loadPromise.then(val => {
+        return loadPromise.then((val) => {
           app.loadErrorTime = null;
 
           appOpts = val;
@@ -130,7 +130,7 @@ export function toLoadPromise(app) {
           return app;
         });
       })
-      .catch(err => {
+      .catch((err) => {
         delete app.loadPromise;
 
         let newStatus;

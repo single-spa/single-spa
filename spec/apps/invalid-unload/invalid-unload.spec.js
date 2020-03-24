@@ -13,7 +13,7 @@ describe(`invalid-unload app :`, () => {
     singleSpa.registerApplication(
       "./invalid-unload.app.js",
       () => import("./invalid-unload.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
@@ -60,7 +60,7 @@ describe(`invalid-unload app :`, () => {
           `unloadApplication() should have rejected the promise it returned because the app has a bad implementation of the unload lifecycle`
         );
       })
-      .catch(err => {
+      .catch((err) => {
         // Now the unload lifecycle has been called and has been determined to be invalid
         expect(singleSpa.getAppStatus("./invalid-unload.app.js")).toBe(
           "SKIP_BECAUSE_BROKEN"
