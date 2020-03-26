@@ -47,9 +47,31 @@ export function shouldBeActive(app) {
     const { location } = window;
     if (typeof pathPrefixOrActivityFn === "string") {
       const hashRouting = pathPrefixOrActivityFn.startsWith("/#/");
-      return hashRouting
-        ? location.hash.startsWith(pathPrefixOrActivityFn.replace("/", "")) // prefix: /#/prefix location.hash: #/prefix
-        : location.pathname.startsWith(pathPrefixOrActivityFn);
+      const [
+        dynamicIndexes,
+        pathPrefixWithoutDynamic,
+      ] = pathPrefixOrActivityFn.split("/").reduce(
+        ([dynamicIndexes, pathPrefixWithoutDynamic], path, index) => {
+          if (path.includes(":")) {
+            return [
+              dynamicIndexes.concat(index),
+              pathPrefixWithoutDynamic.concat(""),
+            ];
+          }
+
+          return [dynamicIndexes, pathPrefixWithoutDynamic.concat(path)];
+        },
+        [[], []]
+      );
+      const currentPath = hashRouting ? `/${location.hash}` : location.pathname;
+      const replaceDynamicWitEmptyString = (path) =>
+        path
+          .split("/")
+          .map((item, index) => (dynamicIndexes.includes(index) ? "" : item))
+          .join("/");
+      return replaceDynamicWitEmptyString(currentPath).startsWith(
+        pathPrefixWithoutDynamic.join("/")
+      );
     }
 
     if (typeof pathPrefixOrActivityFn === "function") {

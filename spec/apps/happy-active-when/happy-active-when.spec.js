@@ -11,15 +11,17 @@ describe(`happy-active-when`, () => {
       activeWhen: [
         "/#/appWithRegularPrefix",
         "/pathname",
-        location => location.pathname === "/specificCriterea"
-      ]
+        (location) => location.pathname === "/specificCriterea",
+        "/#/hashResource/:id/hashSubResource/:hashSubResourceId",
+        "/resource/:id/subresource/:subId",
+      ],
     });
   });
 
   beforeEach(() => {
     return import("./happy-active-when.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => {
@@ -43,6 +45,18 @@ describe(`happy-active-when`, () => {
     await singleSpa.triggerAppChange();
     expectMyAppToBeUnMmounted();
     newLocation("http://mock.com/specificCriterea");
+    await singleSpa.triggerAppChange();
+    expectMyAppToBeMounted();
+    newLocation("http://mock.com/#/unregisteredPath");
+    await singleSpa.triggerAppChange();
+    expectMyAppToBeUnMmounted();
+    newLocation("http://mock.com/resource/1/subresource/1");
+    await singleSpa.triggerAppChange();
+    expectMyAppToBeMounted();
+    newLocation("http://mock.com/#/unregisteredPath");
+    await singleSpa.triggerAppChange();
+    expectMyAppToBeUnMmounted();
+    newLocation("http://mock.com/#/hashResource/1/hashSubResource/1");
     await singleSpa.triggerAppChange();
     expectMyAppToBeMounted();
   });
