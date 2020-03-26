@@ -11,7 +11,7 @@ describe(`happy-active-when`, () => {
       activeWhen: [
         "/#/appWithRegularPrefix",
         "/pathname",
-        (location) => location.pathname === "/specificCriterea",
+        (location) => location.pathname === "/specificCriteria",
         "/#/hashResource/:id/hashSubResource/:hashSubResourceId",
         "/resource/:id/subresource/:subId",
       ],
@@ -44,7 +44,7 @@ describe(`happy-active-when`, () => {
     newLocation("http://mock.com/#/unregisteredPath");
     await singleSpa.triggerAppChange();
     expectMyAppToBeUnMmounted();
-    newLocation("http://mock.com/specificCriterea");
+    newLocation("http://mock.com/specificCriteria");
     await singleSpa.triggerAppChange();
     expectMyAppToBeMounted();
     newLocation("http://mock.com/#/unregisteredPath");
