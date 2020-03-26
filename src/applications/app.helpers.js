@@ -36,15 +36,31 @@ export function isntLoaded(app) {
 
 export function shouldBeActive(app) {
   try {
-    return app.activeWhen(window.location);
+    if (Array.isArray(app.activeWhen))
+      return app.activeWhen.some(conditionForAppActivationMet);
+    return conditionForAppActivationMet(app.activeWhen);
   } catch (err) {
     handleAppError(err, app, SKIP_BECAUSE_BROKEN);
+  }
+
+  function conditionForAppActivationMet(pathPrefixOrActivityFn) {
+    const { location } = window;
+    if (typeof pathPrefixOrActivityFn === "string") {
+      const hashRouting = pathPrefixOrActivityFn.startsWith("/#/");
+      return hashRouting
+        ? location.hash.startsWith(pathPrefixOrActivityFn.replace("/", "")) // prefix: /#/prefix location.hash: #/prefix
+        : location.pathname.startsWith(pathPrefixOrActivityFn);
+    }
+
+    if (typeof pathPrefixOrActivityFn === "function") {
+      return pathPrefixOrActivityFn(location);
+    }
   }
 }
 
 export function shouldntBeActive(app) {
   try {
-    return !app.activeWhen(window.location);
+    return !shouldBeActive(app);
   } catch (err) {
     handleAppError(err, app, SKIP_BECAUSE_BROKEN);
   }

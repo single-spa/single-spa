@@ -292,7 +292,16 @@ export function validateRegisterWithConfig(config) {
           "The config.app on registerApplication must be an application or a loading function"
       )
     );
-  if (typeof config.activeWhen !== "function")
+
+  const allowsStringAndFunction = activeWhen =>
+    typeof activeWhen === "string" || typeof activeWhen === "function";
+  if (
+    !allowsStringAndFunction(config.activeWhen) &&
+    !(
+      Array.isArray(config.activeWhen) &&
+      config.activeWhen.every(allowsStringAndFunction)
+    )
+  )
     throw Error(
       formatErrorMessage(
         24,
