@@ -19,7 +19,8 @@ describe("registerApplication", function () {
     activeWhen: {
       args:
         "The 3rd argument to registerApplication must be an activeWhen function",
-      config: "The config.activeWhen on registerApplication must be a function",
+      config:
+        "The config.activeWhen on registerApplication must be a string, function or an array with both",
     },
     customProps: {
       args: "The optional 4th argument is a customProps and must be an object",
@@ -147,21 +148,21 @@ describe("registerApplication", function () {
           activeWhen: ["/valid", true],
         });
       }).toThrowError(errorsMessages.activeWhen.config);
-      expect(() => {
-        singleSpa.registerApplication({
-          name: "bad-active-when-multiple-throw-error-app",
-          app,
-          activeWhen: ["/valid", () => true],
-        });
-      }).toThrow();
     });
 
-    it(`should succeed when activeWhen is given a function`, () => {
+    it(`should succeed when activeWhen is given correct values`, () => {
       expect(() => {
         singleSpa.registerApplication({
           name: "valid-active-when-single-throw-error-app",
           app,
           activeWhen: () => true,
+        });
+      }).not.toThrow();
+      expect(() => {
+        singleSpa.registerApplication({
+          name: "valid-active-when-multiple-throw-error-app",
+          app,
+          activeWhen: ["/valid", () => true],
         });
       }).not.toThrow();
     });

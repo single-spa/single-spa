@@ -293,7 +293,7 @@ export function validateRegisterWithConfig(config) {
       )
     );
 
-  const allowsStringAndFunction = activeWhen =>
+  const allowsStringAndFunction = (activeWhen) =>
     typeof activeWhen === "string" || typeof activeWhen === "function";
   if (
     !allowsStringAndFunction(config.activeWhen) &&
@@ -306,7 +306,7 @@ export function validateRegisterWithConfig(config) {
       formatErrorMessage(
         24,
         __DEV__ &&
-          "The config.activeWhen on registerApplication must be a function"
+          "The config.activeWhen on registerApplication must be a string, function or an array with both"
       )
     );
 
