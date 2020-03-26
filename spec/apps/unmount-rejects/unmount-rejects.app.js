@@ -1,14 +1,14 @@
 let _numBootstraps, _numMounts, _numUnmounts;
 
 export function bootstrap() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     _numBootstraps++;
     resolve();
   });
 }
 
 export function mount() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     _numMounts++;
     resolve();
   });

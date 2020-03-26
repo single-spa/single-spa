@@ -4,7 +4,7 @@ export {
   setBootstrapMaxTime,
   setMountMaxTime,
   setUnmountMaxTime,
-  setUnloadMaxTime
+  setUnloadMaxTime,
 } from "./applications/timeouts.js";
 export {
   registerApplication,
@@ -12,13 +12,13 @@ export {
   getAppStatus,
   unloadApplication,
   checkActivityFunctions,
-  getAppNames
+  getAppNames,
 } from "./applications/apps.js";
 export { navigateToUrl } from "./navigation/navigation-events.js";
 export { triggerAppChange } from "./navigation/reroute.js";
 export {
   addErrorHandler,
-  removeErrorHandler
+  removeErrorHandler,
 } from "./applications/app-errors.js";
 export { mountRootParcel } from "./parcels/mount-parcel.js";
 
@@ -33,7 +33,7 @@ export {
   LOAD_ERROR,
   MOUNTED,
   UNMOUNTING,
-  SKIP_BECAUSE_BROKEN
+  SKIP_BECAUSE_BROKEN,
 } from "./applications/app.helpers.js";
 
 import devtools from "./devtools/devtools";

@@ -13,7 +13,7 @@ describe(`mount-times-out-dies app`, () => {
     singleSpa.registerApplication(
       "./mount-times-out-dies.app.js",
       () => import("./mount-times-out-dies.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
@@ -25,8 +25,8 @@ describe(`mount-times-out-dies app`, () => {
     singleSpa.addErrorHandler(handleError);
 
     return import("./mount-times-out-dies.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));

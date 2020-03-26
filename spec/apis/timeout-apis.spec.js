@@ -31,14 +31,14 @@ describe("global timeout configuration", () => {
       singleSpa.setBootstrapMaxTime(5, false, 1000);
 
       await controlledParcelActions(
-        parcel => parcel.bootstrapPromise,
+        (parcel) => parcel.bootstrapPromise,
         "bootstrap-0",
         3
       );
       expect(consoleErrSpy).not.toHaveBeenCalled();
 
       await controlledParcelActions(
-        parcel => parcel.bootstrapPromise,
+        (parcel) => parcel.bootstrapPromise,
         "bootstrap-1",
         10
       );
@@ -51,14 +51,14 @@ describe("global timeout configuration", () => {
       singleSpa.setBootstrapMaxTime(15, false, 5);
 
       await controlledParcelActions(
-        parcel => parcel.bootstrapPromise,
+        (parcel) => parcel.bootstrapPromise,
         "bootstrap-2",
         0
       );
       expect(consoleWarnSpy).not.toHaveBeenCalled();
 
       await controlledParcelActions(
-        parcel => parcel.bootstrapPromise,
+        (parcel) => parcel.bootstrapPromise,
         "bootstrap-3",
         10
       );
@@ -77,7 +77,7 @@ describe("global timeout configuration", () => {
       singleSpa.setMountMaxTime(5, false, 1000);
 
       await controlledParcelActions(
-        parcel => parcel.mountPromise,
+        (parcel) => parcel.mountPromise,
         "mount-0",
         0,
         3
@@ -85,7 +85,7 @@ describe("global timeout configuration", () => {
       expect(consoleErrSpy).not.toHaveBeenCalled();
 
       await controlledParcelActions(
-        parcel => parcel.mountPromise,
+        (parcel) => parcel.mountPromise,
         "mount-1",
         0,
         10
@@ -99,7 +99,7 @@ describe("global timeout configuration", () => {
       singleSpa.setMountMaxTime(15, false, 5);
 
       await controlledParcelActions(
-        parcel => parcel.mountPromise,
+        (parcel) => parcel.mountPromise,
         "mount-2",
         0,
         3
@@ -107,7 +107,7 @@ describe("global timeout configuration", () => {
       expect(consoleWarnSpy).not.toHaveBeenCalled();
 
       await controlledParcelActions(
-        parcel => parcel.mountPromise,
+        (parcel) => parcel.mountPromise,
         "mount-3",
         0,
         10
@@ -119,7 +119,7 @@ describe("global timeout configuration", () => {
   });
 
   describe("setUnmountMaxTime", () => {
-    const unmount = async parcel => {
+    const unmount = async (parcel) => {
       await parcel.mountPromise;
       await parcel.unmount();
     };
@@ -155,7 +155,7 @@ describe("global timeout configuration", () => {
 
   function expectWarning(message) {
     expect(consoleWarnSpy).toHaveBeenCalled();
-    const found = consoleWarnSpy.mock.calls.some(call => call[0] === message);
+    const found = consoleWarnSpy.mock.calls.some((call) => call[0] === message);
     if (!found) {
       expect(consoleWarnSpy).toHaveBeenCalledWith(message);
     }
@@ -163,7 +163,7 @@ describe("global timeout configuration", () => {
 
   function expectError(message) {
     expect(consoleErrSpy).toHaveBeenCalled();
-    const found = consoleErrSpy.mock.calls.some(call => call[0] === message);
+    const found = consoleErrSpy.mock.calls.some((call) => call[0] === message);
     if (!found) {
       expect(consoleErrSpy).toHaveBeenCalledWith(message);
     }
@@ -182,29 +182,29 @@ function generateParcel(
     {
       name,
       bootstrap: () =>
-        new Promise(resolve => {
+        new Promise((resolve) => {
           setTimeout(resolve, bootstrapDelay);
         }),
       mount: () =>
-        new Promise(resolve => {
+        new Promise((resolve) => {
           setTimeout(resolve, mountDelay);
         }),
       update: () =>
-        new Promise(resolve => {
+        new Promise((resolve) => {
           setTimeout(resolve, updateDelay);
         }),
       unmount: () =>
-        new Promise(resolve => {
+        new Promise((resolve) => {
           setTimeout(resolve, unmountDelay);
         }),
       unload: () =>
-        new Promise(resolve => {
+        new Promise((resolve) => {
           setTimeout(resolve, unloadDelay);
-        })
+        }),
     },
     {
-      domElement: document.createElement("div")
-    }
+      domElement: document.createElement("div"),
+    },
   ];
 }
 
@@ -228,5 +228,5 @@ async function controlledParcelActions(action, ...parcelArgs) {
 
 // https://github.com/facebook/jest/issues/2157#issuecomment-279171856
 function flushPromises() {
-  return new Promise(resolve => setImmediate(resolve));
+  return new Promise((resolve) => setImmediate(resolve));
 }

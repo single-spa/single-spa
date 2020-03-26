@@ -1,14 +1,14 @@
 let bootstrapCalled, mountCalled, unmountCalled;
 
 export function bootstrap() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     bootstrapCalled++;
     resolve();
   });
 }
 
 export function mount() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     mountCalled++;
     resolve();
   });

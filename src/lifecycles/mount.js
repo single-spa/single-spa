@@ -1,7 +1,7 @@
 import {
   NOT_MOUNTED,
   MOUNTED,
-  SKIP_BECAUSE_BROKEN
+  SKIP_BECAUSE_BROKEN,
 } from "../applications/app.helpers.js";
 import { handleAppError, transformErr } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
@@ -33,7 +33,7 @@ export function toMountPromise(appOrParcel, hardFail) {
 
         return appOrParcel;
       })
-      .catch(err => {
+      .catch((err) => {
         // If we fail to mount the appOrParcel, we should attempt to unmount it before putting in SKIP_BECAUSE_BROKEN
         // We temporarily put the appOrParcel into MOUNTED status so that toUnmountPromise actually attempts to unmount it
         // instead of just doing a no-op.

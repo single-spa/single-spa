@@ -3,7 +3,7 @@ import * as singleSpa from "single-spa";
 describe(`urlRerouteOnly option`, () => {
   beforeAll(() => {
     singleSpa.start({
-      urlRerouteOnly: true
+      urlRerouteOnly: true,
     });
   });
 

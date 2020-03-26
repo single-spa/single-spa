@@ -8,7 +8,7 @@ import {
   getMountedApps,
   getAppsToLoad,
   getAppsToUnmount,
-  getAppsToMount
+  getAppsToMount,
 } from "../applications/apps.js";
 import { callCapturedEventListeners } from "./navigation-events.js";
 import { getAppsToUnload, toUnloadPromise } from "../lifecycles/unload.js";
@@ -27,7 +27,7 @@ export function reroute(pendingPromises = [], eventArguments) {
       peopleWaitingOnAppChange.push({
         resolve,
         reject,
-        eventArguments
+        eventArguments,
       });
     });
   }
@@ -54,7 +54,7 @@ export function reroute(pendingPromises = [], eventArguments) {
           .then(callAllEventListeners)
           // there are no mounted apps, before start() is called, so we always return []
           .then(() => [])
-          .catch(err => {
+          .catch((err) => {
             callAllEventListeners();
             throw err;
           })
@@ -74,7 +74,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 
       const unmountUnloadPromises = getAppsToUnmount()
         .map(toUnmountPromise)
-        .map(unmountPromise => unmountPromise.then(toUnloadPromise));
+        .map((unmountPromise) => unmountPromise.then(toUnloadPromise));
 
       const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
       if (allUnmountPromises.length > 0) {
@@ -88,10 +88,10 @@ export function reroute(pendingPromises = [], eventArguments) {
       /* We load and bootstrap apps while other apps are unmounting, but we
        * wait to mount the app until all apps are finishing unmounting
        */
-      const loadThenMountPromises = appsToLoad.map(app => {
+      const loadThenMountPromises = appsToLoad.map((app) => {
         return toLoadPromise(app)
           .then(toBootstrapPromise)
-          .then(app => {
+          .then((app) => {
             return unmountAllPromise.then(() => toMountPromise(app));
           });
       });
@@ -104,8 +104,8 @@ export function reroute(pendingPromises = [], eventArguments) {
        * before they mount.
        */
       const mountPromises = getAppsToMount()
-        .filter(appToMount => appsToLoad.indexOf(appToMount) < 0)
-        .map(appToMount => {
+        .filter((appToMount) => appsToLoad.indexOf(appToMount) < 0)
+        .map((appToMount) => {
           return toBootstrapPromise(appToMount)
             .then(() => unmountAllPromise)
             .then(() => toMountPromise(appToMount));
@@ -114,7 +114,7 @@ export function reroute(pendingPromises = [], eventArguments) {
         wasNoOp = false;
       }
       return unmountAllPromise
-        .catch(err => {
+        .catch((err) => {
           callAllEventListeners();
           throw err;
         })
@@ -126,8 +126,8 @@ export function reroute(pendingPromises = [], eventArguments) {
           callAllEventListeners();
 
           return Promise.all(loadThenMountPromises.concat(mountPromises))
-            .catch(err => {
-              pendingPromises.forEach(promise => promise.reject(err));
+            .catch((err) => {
+              pendingPromises.forEach((promise) => promise.reject(err));
               throw err;
             })
             .then(finishUpAndReturn);
@@ -137,7 +137,7 @@ export function reroute(pendingPromises = [], eventArguments) {
 
   function finishUpAndReturn() {
     const returnValue = getMountedApps();
-    pendingPromises.forEach(promise => promise.resolve(returnValue));
+    pendingPromises.forEach((promise) => promise.resolve(returnValue));
 
     try {
       const appChangeEventName = wasNoOp
@@ -185,7 +185,7 @@ export function reroute(pendingPromises = [], eventArguments) {
    * single-spa, which means queued ones first and then the most recent one.
    */
   function callAllEventListeners() {
-    pendingPromises.forEach(pendingPromise => {
+    pendingPromises.forEach((pendingPromise) => {
       callCapturedEventListeners(pendingPromise.eventArguments);
     });
 

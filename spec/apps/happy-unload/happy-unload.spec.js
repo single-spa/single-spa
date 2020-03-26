@@ -9,7 +9,7 @@ describe(`happy-unload app :`, () => {
     singleSpa.registerApplication(
       "./happy-unload.app.js",
       () => import("./happy-unload.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
@@ -18,7 +18,7 @@ describe(`happy-unload app :`, () => {
     location.hash = "";
 
     return import("./happy-unload.app.js")
-      .then(app => (myApp = app))
+      .then((app) => (myApp = app))
       .then(() => singleSpa.unloadApplication("./happy-unload.app.js"))
       .then(() => singleSpa.triggerAppChange())
       .then(() => myApp.reset());
@@ -208,7 +208,7 @@ describe(`happy-unload app :`, () => {
 
           originalUnloadPromise = singleSpa
             .unloadApplication("./happy-unload.app.js", {
-              waitForUnmount: true
+              waitForUnmount: true,
             })
             .then(() => {
               /* This will get called only once the app is unloaded. And it will not
@@ -276,12 +276,12 @@ describe(`happy-unload app :`, () => {
       .then(() => {
         // First caller to unloadApplication wants to waitForUnmount
         const promise1 = singleSpa.unloadApplication("./happy-unload.app.js", {
-          waitForUnmount: true
+          waitForUnmount: true,
         });
 
         // Second caller to unloadApplication doesn't want to waitForUnmount
         const promise2 = singleSpa.unloadApplication("./happy-unload.app.js", {
-          waitForUnmount: false
+          waitForUnmount: false,
         });
 
         return Promise.all([promise1, promise2]);

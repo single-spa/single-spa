@@ -1,21 +1,21 @@
 import * as singleSpa from "single-spa";
 
-describe(`happy-basic`, () => {
+describe(`happy-register-object`, () => {
   let myApp;
 
   beforeAll(() => {
-    singleSpa.registerApplication(
-      "./happy-basic.app.js",
-      () => import("./happy-basic.app.js"),
-      (location) => location.hash === "#happy-basic"
-    );
+    singleSpa.registerApplication({
+      name: "./happy-register-object.app.js",
+      app: () => import("./happy-register-object.app.js"),
+      activeWhen: (location) => location.hash === "#happy-register-object",
+    });
     singleSpa.start();
   });
 
   beforeEach(() => {
     location.hash = "#";
 
-    return import("./happy-basic.app.js")
+    return import("./happy-register-object.app.js")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -24,14 +24,16 @@ describe(`happy-basic`, () => {
     expect(myApp.isMounted()).toEqual(false);
     expect(singleSpa.getMountedApps()).toEqual([]);
 
-    location.hash = "happy-basic";
+    location.hash = "#happy-register-object";
 
     return singleSpa.triggerAppChange().then(() => {
       expect(myApp.wasBootstrapped()).toEqual(true);
       expect(myApp.isMounted()).toEqual(true);
-      expect(singleSpa.getMountedApps()).toEqual(["./happy-basic.app.js"]);
+      expect(singleSpa.getMountedApps()).toEqual([
+        "./happy-register-object.app.js",
+      ]);
 
-      location.hash = "#not-happy-basic";
+      location.hash = "#not-happy-register-object";
 
       return singleSpa.triggerAppChange().then(() => {
         expect(myApp.wasBootstrapped()).toEqual(true);

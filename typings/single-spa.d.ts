@@ -69,16 +69,29 @@ declare module "single-spa" {
   export function setUnmountMaxTime(time: number, dieOnTimeout?: boolean): void;
   export function setUnloadMaxTime(time: number, dieOnTimeout?: boolean): void;
 
+  type Application<T = {}> =
+    | LifeCycles<T>
+    | ((config: T & AppProps) => Promise<LifeCycles<T> | Splat<LifeCycles<T>>>);
+
+  type Activity = (location: Location) => boolean;
+
+  export type RegisterApplicationConfig<T = {}> = {
+    name: string;
+    app: Application<T>;
+    activeWhen: Activity;
+    customProps?: T;
+  };
+
   // ./applications/apps.js
   export function registerApplication<T extends object = {}>(
     appName: string,
-    applicationOrLoadingFn:
-      | LifeCycles<T>
-      | ((
-          config: T & AppProps
-        ) => Promise<LifeCycles<T> | Splat<LifeCycles<T>>>),
-    activityFn: (location: Location) => boolean,
+    applicationOrLoadingFn: Application<T>,
+    activityFn: Activity,
     customProps?: T
+  ): void;
+
+  export function registerApplication<T extends object = {}>(
+    config: RegisterApplicationConfig<T>
   ): void;
 
   export function getMountedApps(): string[];
@@ -95,7 +108,7 @@ declare module "single-spa" {
     UNMOUNTING = "UNMOUNTING",
     UNLOADING = "UNLOADING",
     SKIP_BECAUSE_BROKEN = "SKIP_BECAUSE_BROKEN",
-    LOAD_ERROR = "LOAD_ERROR"
+    LOAD_ERROR = "LOAD_ERROR",
   };
 
   export function getAppStatus(appName: string): string | null;

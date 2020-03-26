@@ -6,7 +6,9 @@ export function validLifecycleFn(fn) {
   return fn && (typeof fn === "function" || isArrayOfFns(fn));
 
   function isArrayOfFns(arr) {
-    return Array.isArray(arr) && !find(arr, item => typeof item !== "function");
+    return (
+      Array.isArray(arr) && !find(arr, (item) => typeof item !== "function")
+    );
   }
 }
 
@@ -20,7 +22,7 @@ export function flattenFnArray(appOrParcel, lifecycle) {
   const type = objectType(appOrParcel);
   const name = toName(appOrParcel);
 
-  return function(props) {
+  return function (props) {
     return fns.reduce((resultPromise, fn, index) => {
       return resultPromise.then(() => {
         const thisPromise = fn(props);

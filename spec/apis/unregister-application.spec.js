@@ -1,6 +1,6 @@
 import * as singleSpa from "single-spa";
 
-describe("unregisterApplication", function() {
+describe("unregisterApplication", function () {
   let app;
   beforeEach(() => {
     app = {
@@ -12,7 +12,7 @@ describe("unregisterApplication", function() {
       },
       bootstrap() {
         return Promise.resolve();
-      }
+      },
     };
   });
 

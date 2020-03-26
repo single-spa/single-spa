@@ -4,7 +4,7 @@ import {
   NOT_LOADED,
   SKIP_BECAUSE_BROKEN,
   isntActive,
-  toName
+  toName,
 } from "../applications/app.helpers.js";
 import { handleAppError } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
@@ -48,7 +48,7 @@ export function toUnloadPromise(app) {
         finishUnloadingApp(app, unloadInfo);
         return app;
       })
-      .catch(err => {
+      .catch((err) => {
         errorUnloadingApp(app, unloadInfo, err);
         return app;
       });
@@ -88,7 +88,7 @@ function errorUnloadingApp(app, unloadInfo, err) {
 export function addAppToUnload(app, promiseGetter, resolve, reject) {
   appsToUnload[toName(app)] = { app, resolve, reject };
   Object.defineProperty(appsToUnload[toName(app)], "promise", {
-    get: promiseGetter
+    get: promiseGetter,
   });
 }
 
@@ -98,6 +98,6 @@ export function getAppUnloadInfo(appName) {
 
 export function getAppsToUnload() {
   return Object.keys(appsToUnload)
-    .map(appName => appsToUnload[appName].app)
+    .map((appName) => appsToUnload[appName].app)
     .filter(isntActive);
 }

@@ -39,6 +39,6 @@ function nonNativePromise() {
     },
     catch(callback) {
       return this;
-    }
+    },
   };
 }

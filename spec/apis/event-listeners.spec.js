@@ -3,7 +3,7 @@ import * as singleSpa from "single-spa";
 describe(`event listeners before single-spa is started :`, () => {
   beforeEach(ensureCleanSlate);
 
-  it(`calls hashchange and popstate event listeners even when single-spa is not started`, done => {
+  it(`calls hashchange and popstate event listeners even when single-spa is not started`, (done) => {
     let hashchangeCalled = false,
       popstateCalled = false;
 
@@ -49,7 +49,7 @@ describe(`event listeners after single-spa is started`, () => {
 
   beforeEach(ensureCleanSlate);
 
-  it(`calls all of the enqueued hashchange listeners even when the first event given to singleSpa is a popstate event`, done => {
+  it(`calls all of the enqueued hashchange listeners even when the first event given to singleSpa is a popstate event`, (done) => {
     let hashchangeCalled = false,
       popstateCalled = false;
 
@@ -98,7 +98,7 @@ describe(`event listeners after single-spa is started`, () => {
    *
    * This test ensures that single-spa is checking triple equals equality instead of string equality when comparing functions to removeEventListener
    */
-  it(`window.removeEventListener only removes exactly one event listener, which must === the originally added listener. Even if the listener is a bound function`, done => {
+  it(`window.removeEventListener only removes exactly one event listener, which must === the originally added listener. Even if the listener is a bound function`, (done) => {
     const boundListener1 = listener1.bind(null);
     const boundListener2 = listener2.bind(null);
 

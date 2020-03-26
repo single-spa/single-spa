@@ -28,7 +28,7 @@ describe("applications mounting parcels :", () => {
       unmount() {
         app.unmountCalls++;
         return Promise.resolve();
-      }
+      },
     };
   });
 
@@ -63,7 +63,7 @@ describe("applications mounting parcels :", () => {
         expect(app.unmountCalls).toBe(0);
 
         parcel = app.mountProps.mountParcel(parcelConfig, {
-          domElement: document.createElement("div")
+          domElement: document.createElement("div"),
         });
 
         parcel.unmountPromise.then(() => (unmountPromiseHasResolved = true));
@@ -135,7 +135,7 @@ describe("applications mounting parcels :", () => {
       )
       .then(() => {
         const parcel = app.mountProps.mountParcel(parcelConfig, {
-          domElement: document.createElement("div")
+          domElement: document.createElement("div"),
         });
         return parcel.mountPromise;
       })
@@ -175,7 +175,7 @@ describe("applications mounting parcels :", () => {
       .triggerAppChange()
       .then(() => {
         const parcel = app.mountProps.mountParcel(parcelConfig, {
-          domElement: document.createElement("div")
+          domElement: document.createElement("div"),
         });
         return parcel.mountPromise.then(() => parcel.unmount());
       })
@@ -205,19 +205,19 @@ describe("applications mounting parcels :", () => {
       .triggerAppChange()
       .then(() => {
         parcel = app.mountProps.mountParcel(parcelConfig, {
-          domElement: document.createElement("div")
+          domElement: document.createElement("div"),
         });
         return parcel.mountPromise;
       })
       .then(() =>
-        parcel.unmount().then(value => {
+        parcel.unmount().then((value) => {
           // The mount promise isn't resolved with anything in particular
           expect(value).toBe(null);
         })
       )
       .then(() => {
         expect(parcel.getStatus()).toBe(singleSpa.NOT_MOUNTED);
-        return parcel.mount().then(value => {
+        return parcel.mount().then((value) => {
           // The mount promise isn't resolved with anything in particular
           expect(value).toBe(null);
         });
@@ -251,16 +251,16 @@ describe("applications mounting parcels :", () => {
       .triggerAppChange()
       .then(() => {
         parcel = app.mountProps.mountParcel(parcelConfig, {
-          domElement: document.createElement("div")
+          domElement: document.createElement("div"),
         });
         parcel2 = app.mountProps.mountParcel(parcelConfig2, {
-          domElement: document.createElement("div")
+          domElement: document.createElement("div"),
         });
         expect(parcelConfig.mountCalls).toBe(0);
         expect(parcelConfig2.mountCalls).toBe(0);
         return Promise.all([
           parcel.mountPromise,
-          parcel2.mountPromise
+          parcel2.mountPromise,
         ]).then(() => [parcel, parcel2]);
       })
       .then(([p, p2]) => {
@@ -314,7 +314,7 @@ function createParcelConfig() {
     unmount() {
       parcelConfig.unmountCalls++;
       return Promise.resolve();
-    }
+    },
   };
 
   return parcelConfig;

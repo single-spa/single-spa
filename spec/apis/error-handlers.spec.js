@@ -24,7 +24,7 @@ describe("error handlers api", () => {
     singleSpa.registerApplication(
       "load-error",
       () => Promise.reject("Could not load this one"),
-      location => location.hash === "#load-error"
+      (location) => location.hash === "#load-error"
     );
 
     location.hash = "#load-error";
@@ -49,13 +49,13 @@ describe("error handlers api", () => {
       },
       unmount() {
         return Promise.resolve();
-      }
+      },
     };
 
     singleSpa.registerApplication(
       "bootstrap-error",
       app,
-      location => location.hash === "#bootstrap-error"
+      (location) => location.hash === "#bootstrap-error"
     );
 
     location.hash = "#bootstrap-error";
@@ -82,13 +82,13 @@ describe("error handlers api", () => {
       },
       unmount() {
         return Promise.resolve();
-      }
+      },
     };
 
     singleSpa.registerApplication(
       "mount-error",
       app,
-      location => location.hash === "#mount-error"
+      (location) => location.hash === "#mount-error"
     );
 
     location.hash = "#mount-error";
@@ -114,13 +114,13 @@ describe("error handlers api", () => {
       },
       unmount() {
         return Promise.reject(new Error(`couldn't unmount`));
-      }
+      },
     };
 
     singleSpa.registerApplication(
       "unmount-error",
       app,
-      location => location.hash === "#unmount-error"
+      (location) => location.hash === "#unmount-error"
     );
 
     location.hash = "#unmount-error";
@@ -152,10 +152,10 @@ describe("error handlers api", () => {
       },
       unmount() {
         return Promise.resolve();
-      }
+      },
     };
 
-    singleSpa.registerApplication("activity-error", app, location => {
+    singleSpa.registerApplication("activity-error", app, (location) => {
       throw new Error("bad activity function");
     });
 
@@ -180,11 +180,11 @@ describe("error handlers api", () => {
       },
       async unmount() {
         throw Error("the unmount failed");
-      }
+      },
     };
     location.hash = "#";
     await singleSpa.triggerAppChange();
-    singleSpa.registerApplication("one-error-only", app, location =>
+    singleSpa.registerApplication("one-error-only", app, (location) =>
       location.hash.startsWith("#one-error-only")
     );
     location.hash = "#one-error-only";

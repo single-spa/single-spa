@@ -9,29 +9,29 @@ describe(`nodejs spec`, () => {
          * because single-spa doesn't call the loading functions when checking activity functions
          */
         () => System.import("app1"),
-        location => location.pathname.startsWith("/app1")
+        (location) => location.pathname.startsWith("/app1")
       );
       singleSpa.registerApplication(
         "app2",
         () => System.import("app2"),
-        location => location.pathname.startsWith("/app2")
+        (location) => location.pathname.startsWith("/app2")
       );
       singleSpa.registerApplication(
         "navbar",
         () => System.import("navbar"),
-        location => true
+        (location) => true
       );
 
       expect(singleSpa.checkActivityFunctions({ pathname: "/app1" })).toEqual([
         "app1",
-        "navbar"
+        "navbar",
       ]);
       expect(singleSpa.checkActivityFunctions({ pathname: "/app2" })).toEqual([
         "app2",
-        "navbar"
+        "navbar",
       ]);
       expect(singleSpa.checkActivityFunctions({ pathname: "/app3" })).toEqual([
-        "navbar"
+        "navbar",
       ]);
     });
 

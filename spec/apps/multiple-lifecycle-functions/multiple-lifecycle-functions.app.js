@@ -14,7 +14,7 @@ let _unmount3Called = false;
 
 export const bootstrap = [
   function bootstrap1() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         if (_bootstrap2Called)
           _bootstrapsCalledOutOfOrder = `bootstrap 2 called before bootstrap 1`;
@@ -27,7 +27,7 @@ export const bootstrap = [
   },
 
   function bootstrap2() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (_bootstrap3Called)
         _bootstrapsCalledOutOfOrder = `bootstrap 2 called before bootstrap 3`;
       _bootstrap2Called = true;
@@ -36,16 +36,16 @@ export const bootstrap = [
   },
 
   function bootstrap3() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       _bootstrap3Called = true;
       resolve();
     });
-  }
+  },
 ];
 
 export const mount = [
   function mount1() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         if (_mount2Called)
           _mountsCalledOutOfOrder = `mount 2 called before mount 1`;
@@ -58,7 +58,7 @@ export const mount = [
   },
 
   function mount2() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (_mount3Called)
         _mountsCalledOutOfOrder = `mount 2 called before mount 3`;
       _mount2Called = true;
@@ -67,16 +67,16 @@ export const mount = [
   },
 
   function mount3() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       _mount3Called = true;
       resolve();
     });
-  }
+  },
 ];
 
 export const unmount = [
   function unmount1() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         if (_unmount2Called)
           _unmountsCalledOutOfOrder = `unmount 2 called before unmount 1`;
@@ -89,7 +89,7 @@ export const unmount = [
   },
 
   function unmount2() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (_unmount3Called)
         _unmountsCalledOutOfOrder = `unmount 2 called before unmount 3`;
       _unmount2Called = true;
@@ -98,11 +98,11 @@ export const unmount = [
   },
 
   function unmount3() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       _unmount3Called = true;
       resolve();
     });
-  }
+  },
 ];
 
 export function reset() {

@@ -6,7 +6,7 @@ export function handleAppError(err, app, newStatus) {
   const transformedErr = transformErr(err, app, newStatus);
 
   if (errorHandlers.length) {
-    errorHandlers.forEach(handler => handler(transformedErr));
+    errorHandlers.forEach((handler) => handler(transformedErr));
   } else {
     setTimeout(() => {
       throw transformedErr;
@@ -38,7 +38,7 @@ export function removeErrorHandler(handler) {
   }
 
   let removedSomething = false;
-  errorHandlers = errorHandlers.filter(h => {
+  errorHandlers = errorHandlers.filter((h) => {
     const isHandler = h === handler;
     removedSomething = removedSomething || isHandler;
     return !isHandler;

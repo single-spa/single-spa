@@ -13,7 +13,7 @@ describe(`mount-fails app`, () => {
     singleSpa.registerApplication(
       "./mount-fails.app.js",
       () => import("./mount-fails.app.js"),
-      location => location.hash === activeHash
+      (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
@@ -25,8 +25,8 @@ describe(`mount-fails app`, () => {
     singleSpa.addErrorHandler(handleError);
 
     return import("./mount-fails.app.js")
-      .then(app => (myApp = app))
-      .then(app => app.reset());
+      .then((app) => (myApp = app))
+      .then((app) => app.reset());
   });
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));
