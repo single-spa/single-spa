@@ -255,15 +255,12 @@ export function validateRegisterWithConfig(config) {
         __DEV__ && "Configuration object can't be an Array or null!"
       )
     );
-
   const validKeys = ["name", "app", "activeWhen", "customProps"];
-
   const invalidKeys = Object.keys(config).reduce(
     (invalidKeys, prop) =>
       validKeys.includes(prop) ? invalidKeys : invalidKeys.concat(prop),
     []
   );
-
   if (invalidKeys.length !== 0)
     throw Error(
       formatErrorMessage(
@@ -274,7 +271,6 @@ export function validateRegisterWithConfig(config) {
           )}. Invalid keys: ${invalidKeys.join(", ")}.`
       )
     );
-
   if (typeof config.name !== "string" || config.name.length === 0)
     throw Error(
       formatErrorMessage(
@@ -283,7 +279,6 @@ export function validateRegisterWithConfig(config) {
           "The config.name on registerApplication must be a non-empty string"
       )
     );
-
   if (!config.app)
     throw Error(
       formatErrorMessage(
@@ -292,7 +287,6 @@ export function validateRegisterWithConfig(config) {
           "The config.app on registerApplication must be an application or a loading function"
       )
     );
-
   const allowsStringAndFunction = (activeWhen) =>
     typeof activeWhen === "string" || typeof activeWhen === "function";
   if (
@@ -309,7 +303,6 @@ export function validateRegisterWithConfig(config) {
           "The config.activeWhen on registerApplication must be a string, function or an array with both"
       )
     );
-
   if (
     !(
       !config.customProps ||
@@ -391,7 +384,7 @@ function sanitizeActiveWhen(activeWhen) {
     });
 }
 
-export function pathToActiveWhen(path) {
+function pathToActiveWhen(path) {
   const regex = toDynamicPathValidatorRegex(path);
 
   return (location) => {
@@ -420,11 +413,11 @@ export function toDynamicPathValidatorRegex(path) {
 
   function appendToRegex(index) {
     const anyCharMaybeTrailingSlashRegex = ".+/?";
-    const commonStringSubPath = path.slice(lastIndex, index);
+    const commonStringSubPath = escapeStrRegex(path.slice(lastIndex, index));
 
     regexStr += inDynamic
       ? anyCharMaybeTrailingSlashRegex
-      : escapeStrRegex(commonStringSubPath);
+      : commonStringSubPath;
     inDynamic = !inDynamic;
     lastIndex = index;
   }
