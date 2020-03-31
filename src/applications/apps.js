@@ -359,12 +359,78 @@ function sanitizeArguments(
     registration.customProps = customProps;
   }
 
-  if (typeof registration.loadApp !== "function") {
-    const { loadApp } = registration;
-    registration.loadApp = () => Promise.resolve(loadApp);
-  }
-
-  if (!registration.customProps) registration.customProps = {};
+  registration.loadApp = sanitizeLoadApp(registration.loadApp);
+  registration.customProps = sanitizeCustomProps(registration.customProps);
+  registration.activeWhen = sanitizeActiveWhen(registration.activeWhen);
 
   return registration;
+}
+
+function sanitizeLoadApp(loadApp) {
+  if (typeof loadApp !== "function") {
+    return () => Promise.resolve(loadApp);
+  }
+
+  return loadApp;
+}
+
+function sanitizeCustomProps(customProps) {
+  return customProps ? customProps : {};
+}
+
+function sanitizeActiveWhen(activeWhen) {
+  let activeWhenArray = Array.isArray(activeWhen) ? activeWhen : [activeWhen];
+
+  return (location) =>
+    activeWhenArray.some((activeWhenOrPath) => {
+      const activeWhen =
+        typeof activeWhenOrPath === "function"
+          ? activeWhenOrPath
+          : pathToActiveWhen(activeWhenOrPath);
+      return activeWhen(location);
+    });
+}
+
+export function pathToActiveWhen(path) {
+  const regex = toDynamicPathValidatorRegex(path);
+
+  return (location) => {
+    const route = location.href.replace(location.origin, "");
+    return regex.test(route);
+  };
+}
+
+export function toDynamicPathValidatorRegex(path) {
+  let lastIndex = 0,
+    inDynamic = false,
+    regexStr = "^";
+
+  for (let charIndex = 0; charIndex < path.length; charIndex++) {
+    const char = path[charIndex];
+    const startOfDynamic = !inDynamic && char === ":";
+    const endOfDynamic = inDynamic && char === "/";
+    if (startOfDynamic || endOfDynamic) {
+      appendToRegex(charIndex);
+    }
+  }
+
+  appendToRegex(path.length);
+
+  return new RegExp(regexStr, "i");
+
+  function appendToRegex(index) {
+    const anyCharMaybeTrailingSlashRegex = ".+/?";
+    const commonStringSubPath = path.slice(lastIndex, index);
+
+    regexStr += inDynamic
+      ? anyCharMaybeTrailingSlashRegex
+      : escapeStrRegex(commonStringSubPath);
+    inDynamic = !inDynamic;
+    lastIndex = index;
+  }
+
+  function escapeStrRegex(str) {
+    // borrowed from https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
+    return str.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&");
+  }
 }

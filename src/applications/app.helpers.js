@@ -36,47 +36,9 @@ export function isntLoaded(app) {
 
 export function shouldBeActive(app) {
   try {
-    if (Array.isArray(app.activeWhen))
-      return app.activeWhen.some(conditionForAppActivationMet);
-    return conditionForAppActivationMet(app.activeWhen);
+    return app.activeWhen(window.location);
   } catch (err) {
     handleAppError(err, app, SKIP_BECAUSE_BROKEN);
-  }
-
-  function conditionForAppActivationMet(pathPrefixOrActivityFn) {
-    const { location } = window;
-    if (typeof pathPrefixOrActivityFn === "string") {
-      const hashRouting = pathPrefixOrActivityFn.startsWith("/#/");
-      const [
-        dynamicIndexes,
-        pathPrefixWithoutDynamic,
-      ] = pathPrefixOrActivityFn.split("/").reduce(
-        ([dynamicIndexes, pathPrefixWithoutDynamic], path, index) => {
-          if (path.includes(":")) {
-            return [
-              dynamicIndexes.concat(index),
-              pathPrefixWithoutDynamic.concat(""),
-            ];
-          }
-
-          return [dynamicIndexes, pathPrefixWithoutDynamic.concat(path)];
-        },
-        [[], []]
-      );
-      const currentPath = hashRouting ? `/${location.hash}` : location.pathname;
-      const replaceDynamicWitEmptyString = (path) =>
-        path
-          .split("/")
-          .map((item, index) => (dynamicIndexes.includes(index) ? "" : item))
-          .join("/");
-      return replaceDynamicWitEmptyString(currentPath).startsWith(
-        pathPrefixWithoutDynamic.join("/")
-      );
-    }
-
-    if (typeof pathPrefixOrActivityFn === "function") {
-      return pathPrefixOrActivityFn(location);
-    }
   }
 }
 
