@@ -10,7 +10,8 @@ describe(`happy-active-when`, () => {
       activeWhen: [
         "/#/appWithRegularPrefix",
         "/pathname",
-        (location) => location.pathname === "/specificCriteria",
+        (location) =>
+          location.pathname === "/specificCriteria/anything/everything",
         "/#/hashResource/:id/hashSubResource/:hashSubResourceId",
         "/resource/:id/subresource/:subId",
       ],
@@ -30,25 +31,21 @@ describe(`happy-active-when`, () => {
 
     const validPaths = [
       "/pathname",
-      "/pathname/",
       "/#/appWithRegularPrefix",
-      "/#/appWithRegularPrefix/",
       "/specificCriteria",
       "/resource/1/subresource/1",
-      "/resource/1/subresource/1/",
       "/#/hashResource/1/hashSubResource/1",
-      "/#/hashResource/1/hashSubResource/1/",
     ];
 
-    validPaths.forEach(async (validPath) => {
-      singleSpa.navigateToUrl(validPath + "anything/everything");
+    for (let index = 0; index < validPaths.length; index++) {
+      singleSpa.navigateToUrl(validPaths[index] + "/anything/everything");
       await singleSpa.triggerAppChange();
       expectMyAppToBeMounted();
 
       singleSpa.navigateToUrl("/#/unregisteredPath");
       await singleSpa.triggerAppChange();
       expectMyAppToBeUnMmounted();
-    });
+    }
   });
 
   function expectMyAppToBeMounted() {
