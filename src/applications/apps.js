@@ -412,7 +412,7 @@ export function toDynamicPathValidatorRegex(path) {
   return new RegExp(regexStr, "i");
 
   function appendToRegex(index) {
-    const anyCharMaybeTrailingSlashRegex = ".+/?";
+    const anyCharMaybeTrailingSlashRegex = "[^/]+/?";
     const commonStringSubPath = escapeStrRegex(path.slice(lastIndex, index));
 
     regexStr += inDynamic
