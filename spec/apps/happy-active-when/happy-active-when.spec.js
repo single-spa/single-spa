@@ -2,7 +2,6 @@ import * as singleSpa from "single-spa";
 
 describe(`happy-active-when`, () => {
   let myApp;
-  const realLocation = global.location;
 
   beforeAll(() => {
     singleSpa.registerApplication({
@@ -24,41 +23,32 @@ describe(`happy-active-when`, () => {
       .then((app) => app.reset());
   });
 
-  afterEach(() => {
-    global.location = realLocation;
-  });
-
   it(`goes through the whole lifecycle successfully on multiple activeWhen conditions`, async () => {
     singleSpa.start();
     expect(myApp.isMounted()).toEqual(false);
     expect(singleSpa.getMountedApps()).toEqual([]);
-    newLocation("http://mock.com/pathname");
-    await singleSpa.triggerAppChange();
-    expectMyAppToBeMounted();
-    newLocation("http://mock.com/#/unregisteredPath");
-    await singleSpa.triggerAppChange();
-    expectMyAppToBeUnMmounted();
-    newLocation("http://mock.com/#/appWithRegularPrefix");
-    await singleSpa.triggerAppChange();
-    expectMyAppToBeMounted();
-    newLocation("http://mock.com/#/unregisteredPath");
-    await singleSpa.triggerAppChange();
-    expectMyAppToBeUnMmounted();
-    newLocation("http://mock.com/specificCriteria");
-    await singleSpa.triggerAppChange();
-    expectMyAppToBeMounted();
-    newLocation("http://mock.com/#/unregisteredPath");
-    await singleSpa.triggerAppChange();
-    expectMyAppToBeUnMmounted();
-    newLocation("http://mock.com/resource/1/subresource/1");
-    await singleSpa.triggerAppChange();
-    expectMyAppToBeMounted();
-    newLocation("http://mock.com/#/unregisteredPath");
-    await singleSpa.triggerAppChange();
-    expectMyAppToBeUnMmounted();
-    newLocation("http://mock.com/#/hashResource/1/hashSubResource/1");
-    await singleSpa.triggerAppChange();
-    expectMyAppToBeMounted();
+
+    const validPaths = [
+      "/pathname",
+      "/pathname/",
+      "/#/appWithRegularPrefix",
+      "/#/appWithRegularPrefix/",
+      "/specificCriteria",
+      "/resource/1/subresource/1",
+      "/resource/1/subresource/1/",
+      "/#/hashResource/1/hashSubResource/1",
+      "/#/hashResource/1/hashSubResource/1/",
+    ];
+
+    validPaths.forEach(async (validPath) => {
+      singleSpa.navigateToUrl(validPath);
+      await singleSpa.triggerAppChange();
+      expectMyAppToBeMounted();
+
+      singleSpa.navigateToUrl("/#/unregisteredPath");
+      await singleSpa.triggerAppChange();
+      expectMyAppToBeUnMmounted();
+    });
   });
 
   function expectMyAppToBeMounted() {
@@ -71,10 +61,5 @@ describe(`happy-active-when`, () => {
     expect(myApp.wasBootstrapped()).toEqual(true);
     expect(myApp.isMounted()).toEqual(false);
     expect(singleSpa.getMountedApps()).toEqual([]);
-  }
-
-  function newLocation(url) {
-    delete global.location;
-    global.location = new URL(url); // Can't change location by mutating global location. See https://github.com/jsdom/jsdom/issues/2112
   }
 });
