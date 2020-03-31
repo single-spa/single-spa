@@ -82,13 +82,6 @@ describe(`checkActivityFunctionsApi`, () => {
       app: Promise.resolve(dummyApp4),
       activeWhen: [
         "/pathname",
-        "/pathname/",
-        "/resource/1/subresource/1",
-        "/resource/1/subresource/1/",
-        "/#/appWithRegularPrefix",
-        "/#/appWithRegularPrefix/",
-        "/#/hashResource/1/hashSubResource/1",
-        "/#/hashResource/1/hashSubResource/1/",
         (location) => location.href.indexOf("four") !== -1,
       ],
     });
@@ -120,7 +113,9 @@ describe(`checkActivityFunctionsApi`, () => {
     const wLocationWithTrailingSlash = mockWindowLocation(
       "http://google.com/pathname/"
     );
-    expect(singleSpa.checkActivityFunctions(wLocation)).toEqual(["test4"]);
+    expect(
+      singleSpa.checkActivityFunctions(wLocationWithTrailingSlash)
+    ).toEqual(["test4"]);
   });
 
   it(`returns both when the location contains all`, () => {
