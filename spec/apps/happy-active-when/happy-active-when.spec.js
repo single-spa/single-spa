@@ -41,7 +41,7 @@ describe(`happy-active-when`, () => {
     ];
 
     validPaths.forEach(async (validPath) => {
-      singleSpa.navigateToUrl(validPath);
+      singleSpa.navigateToUrl(validPath + "anything/everything");
       await singleSpa.triggerAppChange();
       expectMyAppToBeMounted();
 

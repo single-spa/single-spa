@@ -8,15 +8,11 @@ describe("toDynamicPathValidatorRegex", () => {
     expect(toDynamicPathValidatorRegex("/pathname").test("/pathname/")).toBe(
       true
     );
-  });
-
-  it("Should generate correct regex for '/pathname/'", () => {
-    expect(toDynamicPathValidatorRegex("/pathname").test("/pathname")).toBe(
-      true
-    );
-    expect(toDynamicPathValidatorRegex("/pathname").test("/pathname/")).toBe(
-      true
-    );
+    expect(
+      toDynamicPathValidatorRegex("/pathname").test(
+        "/pathname/anything/everything"
+      )
+    ).toBe(true);
   });
 
   it("Should generate correct regex for '/#/pathname'", () => {
@@ -26,14 +22,10 @@ describe("toDynamicPathValidatorRegex", () => {
     expect(
       toDynamicPathValidatorRegex("/#/pathname").test("/#/pathname/")
     ).toBe(true);
-  });
-
-  it("Should generate correct regex for '/#/pathname/'", () => {
-    expect(toDynamicPathValidatorRegex("/#/pathname").test("/#/pathname")).toBe(
-      true
-    );
     expect(
-      toDynamicPathValidatorRegex("/#/pathname").test("/#/pathname/")
+      toDynamicPathValidatorRegex("/#/pathname").test(
+        "/#/pathname/anything/everything"
+      )
     ).toBe(true);
   });
 
@@ -50,25 +42,7 @@ describe("toDynamicPathValidatorRegex", () => {
     ).toBe(true);
     expect(
       toDynamicPathValidatorRegex("/#/pathname/:dynamic/notDynamic").test(
-        "/#/pathname//notDynamic/"
-      )
-    ).toBe(false);
-  });
-
-  it("Should generate correct regex for '/#/pathname/:dynamic/notDynamic/'", () => {
-    expect(
-      toDynamicPathValidatorRegex("/#/pathname/:dynamic/notDynamic").test(
-        "/#/pathname/1/notDynamic"
-      )
-    ).toBe(true);
-    expect(
-      toDynamicPathValidatorRegex("/#/pathname/:dynamic/notDynamic").test(
-        "/#/pathname/1/notDynamic/"
-      )
-    ).toBe(true);
-    expect(
-      toDynamicPathValidatorRegex("/#/pathname/:dynamic/notDynamic").test(
-        "/#/pathname//notDynamic/"
+        "/#/pathname//notDynamic/anything/everything"
       )
     ).toBe(false);
   });
@@ -81,30 +55,12 @@ describe("toDynamicPathValidatorRegex", () => {
     ).toBe(true);
     expect(
       toDynamicPathValidatorRegex("/pathname/:dynamic/notDynamic").test(
-        "/pathname/1/notDynamic/"
+        "/pathname/1/notDynamic/anything/everything"
       )
     ).toBe(true);
     expect(
       toDynamicPathValidatorRegex("/pathname/:dynamic/notDynamic").test(
-        "/pathname//notDynamic/"
-      )
-    ).toBe(false);
-  });
-
-  it("Should generate correct regex for '/pathname/:dynamic/notDynamic/'", () => {
-    expect(
-      toDynamicPathValidatorRegex("/pathname/:dynamic/notDynamic").test(
-        "/pathname/1/notDynamic"
-      )
-    ).toBe(true);
-    expect(
-      toDynamicPathValidatorRegex("/pathname/:dynamic/notDynamic").test(
-        "/pathname/1/notDynamic/"
-      )
-    ).toBe(true);
-    expect(
-      toDynamicPathValidatorRegex("/pathname/:dynamic/notDynamic").test(
-        "/pathname//notDynamic/"
+        "/pathname//notDynamic"
       )
     ).toBe(false);
   });
@@ -112,11 +68,17 @@ describe("toDynamicPathValidatorRegex", () => {
   it("Should generate correct regex for ''", () => {
     expect(toDynamicPathValidatorRegex("").test("")).toBe(true);
     expect(toDynamicPathValidatorRegex("").test("/")).toBe(true);
+    expect(toDynamicPathValidatorRegex("").test("/anything/everything")).toBe(
+      true
+    );
   });
 
   it("Should generate correct regex for '/'", () => {
     expect(toDynamicPathValidatorRegex("").test("")).toBe(true);
     expect(toDynamicPathValidatorRegex("").test("/")).toBe(true);
+    expect(toDynamicPathValidatorRegex("").test("/anything/everything")).toBe(
+      true
+    );
   });
 
   it("Should generate correct regex for ':dynamic/:dynamic'", () => {
@@ -126,5 +88,33 @@ describe("toDynamicPathValidatorRegex", () => {
     expect(toDynamicPathValidatorRegex(":dynamic/:dynamic").test("1/1/")).toBe(
       true
     );
+    expect(
+      toDynamicPathValidatorRegex(":dynamic/:dynamic/anything/everything").test(
+        "1/1/anything/everything"
+      )
+    ).toBe(true);
+    expect(toDynamicPathValidatorRegex(":dynamic/:dynamic").test("1//")).toBe(
+      false
+    );
+    expect(toDynamicPathValidatorRegex(":dynamic/:dynamic").test("1/")).toBe(
+      false
+    );
+    expect(toDynamicPathValidatorRegex(":dynamic/:dynamic").test("1")).toBe(
+      false
+    );
+  });
+
+  it("Should generate correct regex for '$🎉/:dynamic$🎉'", () => {
+    expect(toDynamicPathValidatorRegex("$🎉/:dynamic$🎉").test("$🎉/1")).toBe(
+      true
+    );
+    expect(toDynamicPathValidatorRegex("$🎉/:dynamic$🎉").test("$🎉/1/")).toBe(
+      true
+    );
+    expect(
+      toDynamicPathValidatorRegex("$🎉/:dynamic$🎉").test(
+        "$🎉/1/anything/everything"
+      )
+    ).toBe(true);
   });
 });
