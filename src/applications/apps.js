@@ -373,15 +373,14 @@ function sanitizeCustomProps(customProps) {
 
 function sanitizeActiveWhen(activeWhen) {
   let activeWhenArray = Array.isArray(activeWhen) ? activeWhen : [activeWhen];
+  activeWhenArray = activeWhenArray.map((activeWhenOrPath) =>
+    typeof activeWhenOrPath === "function"
+      ? activeWhenOrPath
+      : pathToActiveWhen(activeWhenOrPath)
+  );
 
   return (location) =>
-    activeWhenArray.some((activeWhenOrPath) => {
-      const activeWhen =
-        typeof activeWhenOrPath === "function"
-          ? activeWhenOrPath
-          : pathToActiveWhen(activeWhenOrPath);
-      return activeWhen(location);
-    });
+    activeWhenArray.some((activeWhen) => activeWhen(location));
 }
 
 function pathToActiveWhen(path) {
