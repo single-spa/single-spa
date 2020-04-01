@@ -74,12 +74,12 @@ describe(`checkActivityFunctionsApi`, () => {
     );
     singleSpa.registerApplication({
       name: "test3",
-      app: Promise.resolve(dummyApp3),
+      app: dummyApp3,
       activeWhen: (location) => location.href.indexOf("three") !== -1,
     });
     singleSpa.registerApplication({
       name: "test4",
-      app: Promise.resolve(dummyApp4),
+      app: dummyApp4,
       activeWhen: [
         "/pathname",
         (location) => location.href.indexOf("four") !== -1,

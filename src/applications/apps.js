@@ -279,7 +279,7 @@ export function validateRegisterWithConfig(config) {
           "The config.name on registerApplication must be a non-empty string"
       )
     );
-  if (!config.app)
+  if (typeof config.app !== "object" && typeof config.app !== "function")
     throw Error(
       formatErrorMessage(
         20,
