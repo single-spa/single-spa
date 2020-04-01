@@ -44,7 +44,7 @@ export function shouldBeActive(app) {
 
 export function shouldntBeActive(app) {
   try {
-    return !app.activeWhen(window.location);
+    return !shouldBeActive(app);
   } catch (err) {
     handleAppError(err, app, SKIP_BECAUSE_BROKEN);
   }

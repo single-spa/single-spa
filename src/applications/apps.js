@@ -255,15 +255,12 @@ export function validateRegisterWithConfig(config) {
         __DEV__ && "Configuration object can't be an Array or null!"
       )
     );
-
   const validKeys = ["name", "app", "activeWhen", "customProps"];
-
   const invalidKeys = Object.keys(config).reduce(
     (invalidKeys, prop) =>
       validKeys.includes(prop) ? invalidKeys : invalidKeys.concat(prop),
     []
   );
-
   if (invalidKeys.length !== 0)
     throw Error(
       formatErrorMessage(
@@ -274,7 +271,6 @@ export function validateRegisterWithConfig(config) {
           )}. Invalid keys: ${invalidKeys.join(", ")}.`
       )
     );
-
   if (typeof config.name !== "string" || config.name.length === 0)
     throw Error(
       formatErrorMessage(
@@ -283,8 +279,7 @@ export function validateRegisterWithConfig(config) {
           "The config.name on registerApplication must be a non-empty string"
       )
     );
-
-  if (!config.app)
+  if (typeof config.app !== "object" && typeof config.app !== "function")
     throw Error(
       formatErrorMessage(
         20,
@@ -292,15 +287,22 @@ export function validateRegisterWithConfig(config) {
           "The config.app on registerApplication must be an application or a loading function"
       )
     );
-  if (typeof config.activeWhen !== "function")
+  const allowsStringAndFunction = (activeWhen) =>
+    typeof activeWhen === "string" || typeof activeWhen === "function";
+  if (
+    !allowsStringAndFunction(config.activeWhen) &&
+    !(
+      Array.isArray(config.activeWhen) &&
+      config.activeWhen.every(allowsStringAndFunction)
+    )
+  )
     throw Error(
       formatErrorMessage(
         24,
         __DEV__ &&
-          "The config.activeWhen on registerApplication must be a function"
+          "The config.activeWhen on registerApplication must be a string, function or an array with both"
       )
     );
-
   if (
     !(
       !config.customProps ||
@@ -350,12 +352,77 @@ function sanitizeArguments(
     registration.customProps = customProps;
   }
 
-  if (typeof registration.loadApp !== "function") {
-    const { loadApp } = registration;
-    registration.loadApp = () => Promise.resolve(loadApp);
-  }
-
-  if (!registration.customProps) registration.customProps = {};
+  registration.loadApp = sanitizeLoadApp(registration.loadApp);
+  registration.customProps = sanitizeCustomProps(registration.customProps);
+  registration.activeWhen = sanitizeActiveWhen(registration.activeWhen);
 
   return registration;
+}
+
+function sanitizeLoadApp(loadApp) {
+  if (typeof loadApp !== "function") {
+    return () => Promise.resolve(loadApp);
+  }
+
+  return loadApp;
+}
+
+function sanitizeCustomProps(customProps) {
+  return customProps ? customProps : {};
+}
+
+function sanitizeActiveWhen(activeWhen) {
+  let activeWhenArray = Array.isArray(activeWhen) ? activeWhen : [activeWhen];
+  activeWhenArray = activeWhenArray.map((activeWhenOrPath) =>
+    typeof activeWhenOrPath === "function"
+      ? activeWhenOrPath
+      : pathToActiveWhen(activeWhenOrPath)
+  );
+
+  return (location) =>
+    activeWhenArray.some((activeWhen) => activeWhen(location));
+}
+
+function pathToActiveWhen(path) {
+  const regex = toDynamicPathValidatorRegex(path);
+
+  return (location) => {
+    const route = location.href.replace(location.origin, "");
+    return regex.test(route);
+  };
+}
+
+export function toDynamicPathValidatorRegex(path) {
+  let lastIndex = 0,
+    inDynamic = false,
+    regexStr = "^";
+
+  for (let charIndex = 0; charIndex < path.length; charIndex++) {
+    const char = path[charIndex];
+    const startOfDynamic = !inDynamic && char === ":";
+    const endOfDynamic = inDynamic && char === "/";
+    if (startOfDynamic || endOfDynamic) {
+      appendToRegex(charIndex);
+    }
+  }
+
+  appendToRegex(path.length);
+
+  return new RegExp(regexStr, "i");
+
+  function appendToRegex(index) {
+    const anyCharMaybeTrailingSlashRegex = "[^/]+/?";
+    const commonStringSubPath = escapeStrRegex(path.slice(lastIndex, index));
+
+    regexStr += inDynamic
+      ? anyCharMaybeTrailingSlashRegex
+      : commonStringSubPath;
+    inDynamic = !inDynamic;
+    lastIndex = index;
+  }
+
+  function escapeStrRegex(str) {
+    // borrowed from https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
+    return str.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&");
+  }
 }
