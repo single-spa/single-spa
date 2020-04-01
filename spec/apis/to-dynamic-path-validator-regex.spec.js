@@ -117,4 +117,17 @@ describe("toDynamicPathValidatorRegex", () => {
       )
     ).toBe(true);
   });
+
+  it("Should generate correct regex for 'pathname#/subpath/:dynamic'", () => {
+    expect(
+      toDynamicPathValidatorRegex("pathname#/subpath/:dynamic").test(
+        "pathname#/subpath/1/with/other/things"
+      )
+    ).toBe(true);
+    expect(
+      toDynamicPathValidatorRegex("pathname#/subpath/:dynamic").test(
+        "#/subpath/1/with/other/things"
+      )
+    ).toBe(false);
+  });
 });

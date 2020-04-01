@@ -14,6 +14,7 @@ describe(`happy-active-when`, () => {
           location.pathname === "/specificCriteria/anything/everything",
         "/#/hashResource/:id/hashSubResource/:hashSubResourceId",
         "/resource/:id/subresource/:subId",
+        "pathname/#/subpath/:dynamic/another",
       ],
     });
   });
@@ -35,6 +36,7 @@ describe(`happy-active-when`, () => {
       "/specificCriteria",
       "/resource/1/subresource/1",
       "/#/hashResource/1/hashSubResource/1",
+      "pathname/#/subpath/1/another",
     ];
 
     for (let index = 0; index < validPaths.length; index++) {
@@ -44,7 +46,7 @@ describe(`happy-active-when`, () => {
 
       singleSpa.navigateToUrl("/#/unregisteredPath");
       await singleSpa.triggerAppChange();
-      expectMyAppToBeUnMmounted();
+      expectMyAppToBeUnmounted();
     }
   });
 
@@ -54,7 +56,7 @@ describe(`happy-active-when`, () => {
     expect(singleSpa.getMountedApps()).toEqual(["myApp"]);
   }
 
-  function expectMyAppToBeUnMmounted() {
+  function expectMyAppToBeUnmounted() {
     expect(myApp.wasBootstrapped()).toEqual(true);
     expect(myApp.isMounted()).toEqual(false);
     expect(singleSpa.getMountedApps()).toEqual([]);
