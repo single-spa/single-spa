@@ -38,12 +38,12 @@ declare module "single-spa" {
     unmountPromise: Promise<null>;
   };
 
-  type Hook<T> = (config: T & AppProps) => Promise<any>;
+  type LifeCycleFn<T> = (config: T & AppProps) => Promise<any>;
   export type LifeCycles<T = {}> = {
-    bootstrap: Hook<T> | Array<Hook<T>>;
-    mount: Hook<T> | Array<Hook<T>>;
-    unmount: Hook<T> | Array<Hook<T>>;
-    update?: Hook<T> | Array<Hook<T>>;
+    bootstrap: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
+    mount: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
+    unmount: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
+    update?: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
   };
 
   type StartOpts = {
