@@ -6,18 +6,18 @@ declare module "single-spa" {
   export type AppProps = {
     name: string;
     singleSpa: any;
-    mountParcel(parcelConfig: ParcelConfig, customProps: object): Parcel;
+    mountParcel(
+      parcelConfig: ParcelConfig,
+      customProps: ParcelProps & object
+    ): Parcel;
   };
 
   export type ParcelConfig =
     | ParcelConfigObject
     | (() => Promise<ParcelConfigObject>);
 
-  type ParcelConfigObject = {
-    name?: string;
-    customProps: object;
-    domElement: HTMLElement;
-  } & LifeCycles;
+  type ParcelProps = { domElement: HTMLElement };
+  type ParcelConfigObject = { name?: string } & LifeCycles;
 
   type Parcel = {
     mount(): Promise<null>;
@@ -149,6 +149,6 @@ declare module "single-spa" {
   // './parcels/mount-parcel.js'
   export function mountRootParcel(
     parcelConfig: ParcelConfig,
-    parcelProps: object
+    parcelProps: ParcelProps & object
   ): Parcel;
 }
