@@ -1,8 +1,4 @@
 declare module "single-spa" {
-  type Splat<T> = {
-    [p in keyof T]: Array<T[p]>;
-  };
-
   export type AppProps = {
     name: string;
     singleSpa: any;
@@ -42,11 +38,12 @@ declare module "single-spa" {
     unmountPromise: Promise<null>;
   };
 
+  type LifeCycleFn<T> = (config: T & AppProps) => Promise<any>;
   export type LifeCycles<T = {}> = {
-    bootstrap: (config: T & AppProps) => Promise<any>;
-    mount: (config: T & AppProps) => Promise<any>;
-    unmount: (config: T & AppProps) => Promise<any>;
-    update?: (config: T & AppProps) => Promise<any>;
+    bootstrap: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
+    mount: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
+    unmount: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
+    update?: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
   };
 
   export type StartOpts = {
@@ -71,7 +68,7 @@ declare module "single-spa" {
 
   type Application<T = {}> =
     | LifeCycles<T>
-    | ((config: T & AppProps) => Promise<LifeCycles<T> | Splat<LifeCycles<T>>>);
+    | ((config: T & AppProps) => Promise<LifeCycles<T>>);
 
   type ActivityFn = (location: Location) => boolean;
 
