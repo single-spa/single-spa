@@ -49,7 +49,7 @@ declare module "single-spa" {
     update?: (config: T & AppProps) => Promise<any>;
   };
 
-  type StartOpts = {
+  export type StartOpts = {
     urlRerouteOnly?: boolean;
   };
 
