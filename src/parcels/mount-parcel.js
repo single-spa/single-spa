@@ -207,7 +207,7 @@ export function mountParcel(config, customProps) {
     if (config.update) {
       parcel.update = flattenFnArray(config, "update");
       externalRepresentation.update = function (customProps) {
-        parcel.customProps = { ...parcel.customProps, ...customProps };
+        parcel.customProps = customProps;
 
         return promiseWithoutReturnValue(toUpdatePromise(parcel));
       };
