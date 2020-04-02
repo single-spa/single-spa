@@ -251,7 +251,7 @@ export function validateRegisterWithConfig(config) {
   if (Array.isArray(config) || config === null)
     throw Error(
       formatErrorMessage(
-        31,
+        39,
         __DEV__ && "Configuration object can't be an Array or null!"
       )
     );
@@ -264,11 +264,13 @@ export function validateRegisterWithConfig(config) {
   if (invalidKeys.length !== 0)
     throw Error(
       formatErrorMessage(
-        30,
+        38,
         __DEV__ &&
           `The configuration object accepts only: ${validKeys.join(
             ", "
-          )}. Invalid keys: ${invalidKeys.join(", ")}.`
+          )}. Invalid keys: ${invalidKeys.join(", ")}.`,
+        validKeys.join(", "),
+        invalidKeys.join(", ")
       )
     );
   if (typeof config.name !== "string" || config.name.length === 0)
