@@ -21,7 +21,6 @@ const terserOpts = {
   compress: {
     passes: 2,
   },
-  module: true,
   output: {
     comments(node, comment) {
       return comment.value.trim().startsWith("single-spa@");
@@ -77,6 +76,7 @@ export default (async () => [
         (await import("rollup-plugin-terser")).terser(
           Object.assign({}, terserOpts, {
             ecma: 6,
+            module: true,
           })
         ),
       useAnalyzer && analyzer(),
