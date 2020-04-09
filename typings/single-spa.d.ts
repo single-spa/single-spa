@@ -18,7 +18,7 @@ declare module "single-spa" {
   type Parcel = {
     mount(): Promise<null>;
     unmount(): Promise<null>;
-    update(customProps: object): Promise<any>;
+    update?(customProps: object): Promise<any>;
     getStatus():
       | "NOT_LOADED"
       | "LOADING_SOURCE_CODE"
