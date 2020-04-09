@@ -127,9 +127,18 @@ describe(`events api :`, () => {
 
           function finishTest(evt) {
             window.removeEventListener("single-spa:app-change", finishTest);
-            expect(evt.detail.appsThatChanged).toEqual({
-              MOUNTED: ["russell"],
-            });
+            expect(
+              evt.detail.appsThatChanged[singleSpa.NOT_LOADED].sort()
+            ).toEqual([]);
+            expect(
+              evt.detail.appsThatChanged[singleSpa.SKIP_BECAUSE_BROKEN].sort()
+            ).toEqual([]);
+            expect(
+              evt.detail.appsThatChanged[singleSpa.NOT_MOUNTED].sort()
+            ).toEqual([]);
+            expect(
+              evt.detail.appsThatChanged[singleSpa.MOUNTED].sort()
+            ).toEqual(["russell"].sort());
             done();
           }
 
@@ -150,9 +159,15 @@ describe(`events api :`, () => {
 
           function finishTest(evt) {
             window.removeEventListener("single-spa:app-change", finishTest);
-            expect(Object.keys(evt.detail.appsThatChanged)).toEqual([
-              singleSpa.MOUNTED,
-            ]);
+            expect(
+              evt.detail.appsThatChanged[singleSpa.NOT_LOADED].sort()
+            ).toEqual([]);
+            expect(
+              evt.detail.appsThatChanged[singleSpa.SKIP_BECAUSE_BROKEN].sort()
+            ).toEqual([]);
+            expect(
+              evt.detail.appsThatChanged[singleSpa.NOT_MOUNTED].sort()
+            ).toEqual([]);
             expect(
               evt.detail.appsThatChanged[singleSpa.MOUNTED].sort()
             ).toEqual(["russell", "boom"].sort());
@@ -175,9 +190,15 @@ describe(`events api :`, () => {
 
           function finishTest(evt) {
             window.removeEventListener("single-spa:app-change", finishTest);
-            expect(Object.keys(evt.detail.appsThatChanged)).toEqual([
-              singleSpa.NOT_MOUNTED,
-            ]);
+            expect(
+              evt.detail.appsThatChanged[singleSpa.NOT_LOADED].sort()
+            ).toEqual([]);
+            expect(
+              evt.detail.appsThatChanged[singleSpa.SKIP_BECAUSE_BROKEN].sort()
+            ).toEqual([]);
+            expect(
+              evt.detail.appsThatChanged[singleSpa.MOUNTED].sort()
+            ).toEqual([]);
             expect(
               evt.detail.appsThatChanged[singleSpa.NOT_MOUNTED].sort()
             ).toEqual(["russell"].sort());
@@ -201,9 +222,12 @@ describe(`events api :`, () => {
 
           function finishTest(evt) {
             window.removeEventListener("single-spa:app-change", finishTest);
-            expect(Object.keys(evt.detail.appsThatChanged).sort()).toEqual(
-              [singleSpa.NOT_MOUNTED, singleSpa.MOUNTED].sort()
-            );
+            expect(
+              evt.detail.appsThatChanged[singleSpa.NOT_LOADED].sort()
+            ).toEqual([]);
+            expect(
+              evt.detail.appsThatChanged[singleSpa.SKIP_BECAUSE_BROKEN].sort()
+            ).toEqual([]);
             expect(
               evt.detail.appsThatChanged[singleSpa.NOT_MOUNTED].sort()
             ).toEqual(["boom"].sort());

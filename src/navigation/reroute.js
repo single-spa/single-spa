@@ -13,7 +13,13 @@ import {
 } from "../applications/apps.js";
 import { callCapturedEventListeners } from "./navigation-events.js";
 import { getAppsToUnload, toUnloadPromise } from "../lifecycles/unload.js";
-import { toName } from "../applications/app.helpers.js";
+import {
+  toName,
+  NOT_MOUNTED,
+  MOUNTED,
+  NOT_LOADED,
+  SKIP_BECAUSE_BROKEN,
+} from "../applications/app.helpers.js";
 
 let appChangeUnderway = false,
   peopleWaitingOnAppChange = [];
@@ -191,13 +197,25 @@ export function reroute(pendingPromises = [], eventArguments) {
   }
 
   function getCustomEventDetail() {
-    const appChangeDetail = appsThatChanged.reduce((result, app) => {
-      const appName = toName(app);
-      const status = getAppStatus(appName);
-      const statusArr = (result[status] = result[status] || []);
-      statusArr.push(appName);
-      return result;
-    }, {});
+    const appChangeDetail = appsThatChanged.reduce(
+      (result, app) => {
+        const appName = toName(app);
+        const status = getAppStatus(appName);
+        const statusArr = (result[status] = result[status] || []);
+        statusArr.push(appName);
+        return result;
+      },
+      {
+        // for apps that were mounted
+        [MOUNTED]: [],
+        // for apps that were unmounted
+        [NOT_MOUNTED]: [],
+        // apps that were forcibly unloaded
+        [NOT_LOADED]: [],
+        // apps that attempted to do something but are broken now
+        [SKIP_BECAUSE_BROKEN]: [],
+      }
+    );
     const result = { detail: { appsThatChanged: appChangeDetail } };
 
     if (eventArguments && eventArguments[0]) {
