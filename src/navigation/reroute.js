@@ -222,7 +222,7 @@ export function reroute(pendingPromises = [], eventArguments) {
         newAppStatuses,
         appsByNewStatus,
         totalAppChanges: appsThatChanged.length,
-        originalEvent: (eventArguments && eventArguments[0]) || null,
+        originalEvent: eventArguments?.[0],
       },
     };
   }
