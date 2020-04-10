@@ -221,12 +221,9 @@ export function reroute(pendingPromises = [], eventArguments) {
         newAppStatuses,
         appsByNewStatus,
         totalAppChanges: appsThatChanged.length,
+        originalEvent: (eventArguments && eventArguments[0]) || null,
       },
     };
-
-    if (eventArguments && eventArguments[0]) {
-      result.detail.originalEvent = eventArguments[0];
-    }
 
     return result;
   }
