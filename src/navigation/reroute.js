@@ -216,7 +216,8 @@ export function reroute(pendingPromises = [], eventArguments) {
         appsByNewStatus[status] || []);
       statusArr.push(appName);
     });
-    const result = {
+
+    return {
       detail: {
         newAppStatuses,
         appsByNewStatus,
@@ -224,7 +225,5 @@ export function reroute(pendingPromises = [], eventArguments) {
         originalEvent: (eventArguments && eventArguments[0]) || null,
       },
     };
-
-    return result;
   }
 }
