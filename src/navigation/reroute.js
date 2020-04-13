@@ -9,9 +9,17 @@ import {
   getAppsToLoad,
   getAppsToUnmount,
   getAppsToMount,
+  getAppStatus,
 } from "../applications/apps.js";
 import { callCapturedEventListeners } from "./navigation-events.js";
 import { getAppsToUnload, toUnloadPromise } from "../lifecycles/unload.js";
+import {
+  toName,
+  NOT_MOUNTED,
+  MOUNTED,
+  NOT_LOADED,
+  SKIP_BECAUSE_BROKEN,
+} from "../applications/app.helpers.js";
 
 let appChangeUnderway = false,
   peopleWaitingOnAppChange = [];
@@ -32,7 +40,7 @@ export function reroute(pendingPromises = [], eventArguments) {
     });
   }
 
-  let wasNoOp = true;
+  const appsThatChanged = [];
 
   if (isStarted()) {
     appChangeUnderway = true;
@@ -41,13 +49,14 @@ export function reroute(pendingPromises = [], eventArguments) {
     return loadApps();
   }
 
+  function addChangedApps(apps) {
+    appsThatChanged.push(...apps);
+    return apps;
+  }
+
   function loadApps() {
     return Promise.resolve().then(() => {
-      const loadPromises = getAppsToLoad().map(toLoadPromise);
-
-      if (loadPromises.length > 0) {
-        wasNoOp = false;
-      }
+      const loadPromises = addChangedApps(getAppsToLoad()).map(toLoadPromise);
 
       return (
         Promise.all(loadPromises)
@@ -70,20 +79,19 @@ export function reroute(pendingPromises = [], eventArguments) {
           getCustomEventDetail()
         )
       );
-      const unloadPromises = getAppsToUnload().map(toUnloadPromise);
+      const unloadPromises = addChangedApps(getAppsToUnload()).map(
+        toUnloadPromise
+      );
 
-      const unmountUnloadPromises = getAppsToUnmount()
+      const unmountUnloadPromises = addChangedApps(getAppsToUnmount())
         .map(toUnmountPromise)
         .map((unmountPromise) => unmountPromise.then(toUnloadPromise));
 
       const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
-      if (allUnmountPromises.length > 0) {
-        wasNoOp = false;
-      }
 
       const unmountAllPromise = Promise.all(allUnmountPromises);
 
-      const appsToLoad = getAppsToLoad();
+      const appsToLoad = addChangedApps(getAppsToLoad());
 
       /* We load and bootstrap apps while other apps are unmounting, but we
        * wait to mount the app until all apps are finishing unmounting
@@ -95,9 +103,6 @@ export function reroute(pendingPromises = [], eventArguments) {
             return unmountAllPromise.then(() => toMountPromise(app));
           });
       });
-      if (loadThenMountPromises.length > 0) {
-        wasNoOp = false;
-      }
 
       /* These are the apps that are already bootstrapped and just need
        * to be mounted. They each wait for all unmounting apps to finish up
@@ -106,13 +111,11 @@ export function reroute(pendingPromises = [], eventArguments) {
       const mountPromises = getAppsToMount()
         .filter((appToMount) => appsToLoad.indexOf(appToMount) < 0)
         .map((appToMount) => {
+          appsThatChanged.push(appToMount);
           return toBootstrapPromise(appToMount)
             .then(() => unmountAllPromise)
             .then(() => toMountPromise(appToMount));
         });
-      if (mountPromises.length > 0) {
-        wasNoOp = false;
-      }
       return unmountAllPromise
         .catch((err) => {
           callAllEventListeners();
@@ -140,9 +143,10 @@ export function reroute(pendingPromises = [], eventArguments) {
     pendingPromises.forEach((promise) => promise.resolve(returnValue));
 
     try {
-      const appChangeEventName = wasNoOp
-        ? "single-spa:no-app-change"
-        : "single-spa:app-change";
+      const appChangeEventName =
+        appsThatChanged.length === 0
+          ? "single-spa:no-app-change"
+          : "single-spa:app-change";
       window.dispatchEvent(
         new CustomEvent(appChangeEventName, getCustomEventDetail())
       );
@@ -193,12 +197,33 @@ export function reroute(pendingPromises = [], eventArguments) {
   }
 
   function getCustomEventDetail() {
-    const result = { detail: {} };
+    const newAppStatuses = {};
+    const appsByNewStatus = {
+      // for apps that were mounted
+      [MOUNTED]: [],
+      // for apps that were unmounted
+      [NOT_MOUNTED]: [],
+      // apps that were forcibly unloaded
+      [NOT_LOADED]: [],
+      // apps that attempted to do something but are broken now
+      [SKIP_BECAUSE_BROKEN]: [],
+    };
+    appsThatChanged.forEach((app) => {
+      const appName = toName(app);
+      const status = getAppStatus(appName);
+      newAppStatuses[appName] = status;
+      const statusArr = (appsByNewStatus[status] =
+        appsByNewStatus[status] || []);
+      statusArr.push(appName);
+    });
 
-    if (eventArguments && eventArguments[0]) {
-      result.detail.originalEvent = eventArguments[0];
-    }
-
-    return result;
+    return {
+      detail: {
+        newAppStatuses,
+        appsByNewStatus,
+        totalAppChanges: appsThatChanged.length,
+        originalEvent: eventArguments?.[0],
+      },
+    };
   }
 }

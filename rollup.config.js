@@ -49,8 +49,8 @@ export default (async () => [
     plugins: [
       replace(replaceOpts),
       resolve(),
-      commonjs(),
       babel(babelOpts),
+      commonjs(),
       isProduction && (await import("rollup-plugin-terser")).terser(terserOpts),
       useAnalyzer && analyzer(),
     ],
@@ -66,12 +66,12 @@ export default (async () => [
     plugins: [
       replace(replaceOpts),
       resolve(),
-      commonjs(),
       babel(
         Object.assign({}, babelOpts, {
           envName: "esm",
         })
       ),
+      commonjs(),
       isProduction &&
         (await import("rollup-plugin-terser")).terser(
           Object.assign({}, terserOpts, {
