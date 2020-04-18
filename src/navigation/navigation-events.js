@@ -52,7 +52,7 @@ export function navigateToUrl(obj) {
     }
   } else if (
     destination.pathname === current.pathname &&
-    destination.search === current.pathname
+    destination.search === current.search
   ) {
     window.location.hash = destination.hash;
   } else {
