@@ -66,6 +66,15 @@ describe("navigateToUrl", function () {
     singleSpa.navigateToUrl("/start-path#a/other");
     expectPathAndHashToEqual("/start-path#a/other");
   });
+  
+  it(`should update hash when destination doesn't contain domain, but same path and same query`, function () {
+    window.history.pushState(null, null, "/start-path?yoshi=best#a/other");
+    singleSpa.navigateToUrl("/start-path?yoshi=best#a/other");
+
+    location.hash = "#not-the-start-hash";
+    singleSpa.navigateToUrl("/start-path?yoshi=best#a/other");
+    expect(location.hash).toBe("#a/other");
+  });
 
   it(`should call push state when the destination doesn't contain domain and has different path 1`, function () {
     singleSpa.navigateToUrl("somethinger#b/my-route");
