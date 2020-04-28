@@ -125,29 +125,39 @@ if (isInBrowser) {
     return originalRemoveEventListener.apply(this, arguments);
   };
 
-  window.history.pushState = patchedUpdateState(window.history.pushState);
-  window.history.replaceState = patchedUpdateState(window.history.replaceState);
+  window.history.pushState = patchedUpdateState(
+    window.history.pushState,
+    "pushState"
+  );
+  window.history.replaceState = patchedUpdateState(
+    window.history.replaceState,
+    "replaceState"
+  );
 
-  function patchedUpdateState(updateState) {
+  function patchedUpdateState(updateState, methodName) {
     return function () {
       const urlBefore = window.location.href;
       const result = updateState.apply(this, arguments);
       const urlAfter = window.location.href;
 
       if (!urlRerouteOnly || urlBefore !== urlAfter) {
-        urlReroute(createPopStateEvent(window.history.state));
+        urlReroute(createPopStateEvent(window.history.state, methodName));
       }
 
       return result;
     };
   }
 
-  function createPopStateEvent(state) {
+  function createPopStateEvent(state, originalMethodName) {
     // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
     // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
-    // all the applications can reroute.
+    // all the applications can reroute. We explicitly identify this extraneous event by setting singleSpa=true and
+    // originalMethodName=<pushState|replaceState> on the event instance.
     try {
-      return new PopStateEvent("popstate", { state });
+      const evt = new PopStateEvent("popstate", { state });
+      evt.singleSpa = true;
+      evt.originalMethodName = originalMethodName;
+      return evt;
     } catch (err) {
       // IE 11 compatibility https://github.com/single-spa/single-spa/issues/299
       // https://docs.microsoft.com/en-us/openspecs/ie_standards/ms-html5e/bd560f47-b349-4d2c-baa8-f1560fb489dd

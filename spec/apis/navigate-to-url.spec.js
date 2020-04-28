@@ -66,7 +66,7 @@ describe("navigateToUrl", function () {
     singleSpa.navigateToUrl("/start-path#a/other");
     expectPathAndHashToEqual("/start-path#a/other");
   });
-  
+
   it(`should update hash when destination doesn't contain domain, but same path and same query`, function () {
     window.history.pushState(null, null, "/start-path?yoshi=best#a/other");
     singleSpa.navigateToUrl("/start-path?yoshi=best#a/other");
@@ -133,7 +133,8 @@ describe("navigateToUrl", function () {
 describe("window.history.pushState", () => {
   // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
   // We need a popstate event even though the browser doesn't do one by default when you call pushState, so that
-  // all the applications can reroute.
+  // all the applications can reroute. We explicitly identify this extraneous event by setting singleSpa=true and
+  // originalMethodName=<pushState|replaceState> on the event instance.
   it("should fire a popstate event when history.pushState is called", function () {
     return singleSpa.triggerAppChange().then(() => {
       return new Promise((resolve, reject) => {
@@ -144,6 +145,8 @@ describe("window.history.pushState", () => {
           expect(evt instanceof PopStateEvent).toBe(true);
           expect(window.location.pathname).toBe("/new-url");
           expect(evt.state).toBe(newHistoryState);
+          expect(evt.singleSpa).toBe(true);
+          expect(evt.originalMethodName).toBe("pushState");
           window.removeEventListener("popstate", popstateListener);
           resolve();
         }
@@ -153,7 +156,8 @@ describe("window.history.pushState", () => {
 
   // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
   // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
-  // all the applications can reroute.
+  // all the applications can reroute. We explicitly identify this extraneous event by setting singleSpa=true and
+  // originalMethodName=<pushState|replaceState> on the event instance.
   it("should fire a popstate event when history.replaceState is called", function () {
     return singleSpa.triggerAppChange().then(() => {
       return new Promise((resolve, reject) => {
@@ -164,6 +168,8 @@ describe("window.history.pushState", () => {
           expect(evt instanceof PopStateEvent).toBe(true);
           expect(window.location.pathname).toBe("/new-url");
           expect(evt.state).toBe(newHistoryState);
+          expect(evt.singleSpa).toBe(true);
+          expect(evt.originalMethodName).toBe("replaceState");
           window.removeEventListener("popstate", popstateListener);
           resolve();
         }
