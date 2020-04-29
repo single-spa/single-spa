@@ -92,6 +92,15 @@ export function reroute(pendingPromises = [], eventArguments) {
 
       const unmountAllPromise = Promise.all(allUnmountPromises);
 
+      unmountAllPromise.then(() => {
+        window.dispatchEvent(
+          new CustomEvent(
+            "single-spa:before-mount-routing-event",
+            getCustomEventDetail()
+          )
+        );
+      });
+
       const appsToLoad = addChangedApps(getAppsToLoad());
 
       /* We load and bootstrap apps while other apps are unmounting, but we
