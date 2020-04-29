@@ -1,10 +1,22 @@
 declare module "single-spa" {
+  interface CustomProps {
+    [str: string]: any;
+    [num: number]: any;
+  }
+
+  type CustomPropsFn<T extends CustomProps = CustomProps> = (
+    name: string,
+    location: Location
+  ) => T;
+
   export type AppProps = {
     name: string;
     singleSpa: any;
     mountParcel(
       parcelConfig: ParcelConfig,
-      customProps: ParcelProps & object
+      customProps:
+        | (ParcelProps & CustomProps)
+        | CustomPropsFn<ParcelProps & CustomProps>
     ): Parcel;
   };
 
@@ -18,7 +30,7 @@ declare module "single-spa" {
   type Parcel = {
     mount(): Promise<null>;
     unmount(): Promise<null>;
-    update?(customProps: object): Promise<any>;
+    update?(customProps: CustomProps | CustomPropsFn): Promise<any>;
     getStatus():
       | "NOT_LOADED"
       | "LOADING_SOURCE_CODE"
@@ -74,11 +86,11 @@ declare module "single-spa" {
 
   type Activity = ActivityFn | string | (ActivityFn | string)[];
 
-  export type RegisterApplicationConfig<T = {}> = {
+  export type RegisterApplicationConfig<T extends CustomProps = {}> = {
     name: string;
     app: Application<T>;
     activeWhen: Activity;
-    customProps?: T;
+    customProps?: T | CustomPropsFn<T>;
   };
 
   // ./applications/apps.js
@@ -86,7 +98,7 @@ declare module "single-spa" {
     appName: string,
     applicationOrLoadingFn: Application<T>,
     activityFn: ActivityFn,
-    customProps?: T
+    customProps?: T | CustomPropsFn<T>
   ): void;
 
   export function registerApplication<T extends object = {}>(
@@ -146,6 +158,8 @@ declare module "single-spa" {
   // './parcels/mount-parcel.js'
   export function mountRootParcel(
     parcelConfig: ParcelConfig,
-    parcelProps: ParcelProps & object
+    parcelProps:
+      | (ParcelProps & CustomProps)
+      | CustomPropsFn<ParcelProps & CustomProps>
   ): Parcel;
 }

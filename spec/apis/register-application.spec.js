@@ -169,23 +169,23 @@ describe("registerApplication", function () {
   });
 
   describe(`custom prop errors`, () => {
-    it("should throw when I pass in a function for custom props", () => {
+    it("should succeed when I pass in a function for custom props", () => {
       expect(() => {
         singleSpa.registerApplication(
-          "bad-custom-props-will-throw-error-app",
+          "custom-props-fn-1",
           app,
           () => true,
           () => {}
         );
-      }).toThrowError(errorsMessages.customProps.args);
+      }).not.toThrow();
       expect(() => {
         singleSpa.registerApplication({
-          name: "bad-custom-props-will-throw-error-app",
+          name: "custom-props-fn-2",
           app,
           activeWhen: () => true,
           customProps: () => {},
         });
-      }).toThrowError(errorsMessages.customProps.config);
+      }).not.toThrow();
     });
 
     it("should throw when I pass in an array for custom props", () => {
