@@ -234,10 +234,7 @@ function validateRegisterWithArguments(
       )
     );
 
-  if (
-    !!customProps &&
-    (typeof customProps !== "object" || Array.isArray(customProps))
-  )
+  if (!validCustomProps(customProps))
     throw Error(
       formatErrorMessage(
         22,
@@ -305,19 +302,23 @@ export function validateRegisterWithConfig(config) {
           "The config.activeWhen on registerApplication must be a string, function or an array with both"
       )
     );
-  if (
-    !(
-      !config.customProps ||
-      (typeof config.customProps === "object" &&
-        !Array.isArray(config.customProps))
-    )
-  )
+  if (!validCustomProps(config.customProps))
     throw Error(
       formatErrorMessage(
         22,
         __DEV__ && "The optional config.customProps must be an object"
       )
     );
+}
+
+function validCustomProps(customProps) {
+  return (
+    !customProps ||
+    typeof customProps === "function" ||
+    (typeof customProps === "object" &&
+      customProps !== null &&
+      !Array.isArray(customProps))
+  );
 }
 
 function sanitizeArguments(
