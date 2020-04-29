@@ -155,7 +155,7 @@ describe(`events api :`, () => {
   });
 
   describe("single-spa:before-mount-routing-event", () => {
-    it(`is fired after before-routing-event but before after-routing-event`, async () => {
+    it(`is fired after before-routing-event but before routing-event`, async () => {
       let firedEvents = [];
 
       await singleSpa.triggerAppChange(); // start with a clean slate (no previous tests doing anything)
