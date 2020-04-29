@@ -148,4 +148,6 @@ declare module "single-spa" {
     parcelConfig: ParcelConfig,
     parcelProps: ParcelProps & object
   ): Parcel;
+
+  export function pathToActiveWhen(path: string): ActivityFn;
 }
