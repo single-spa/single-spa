@@ -39,15 +39,12 @@ export function shouldBeActive(app) {
     return app.activeWhen(window.location);
   } catch (err) {
     handleAppError(err, app, SKIP_BECAUSE_BROKEN);
+    return false;
   }
 }
 
 export function shouldntBeActive(app) {
-  try {
-    return !shouldBeActive(app);
-  } catch (err) {
-    handleAppError(err, app, SKIP_BECAUSE_BROKEN);
-  }
+  return !shouldBeActive(app);
 }
 
 export function notSkipped(item) {

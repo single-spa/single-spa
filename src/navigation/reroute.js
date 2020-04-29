@@ -15,6 +15,7 @@ import { callCapturedEventListeners } from "./navigation-events.js";
 import { getAppsToUnload, toUnloadPromise } from "../lifecycles/unload.js";
 import {
   toName,
+  shouldBeActive,
   NOT_MOUNTED,
   MOUNTED,
   NOT_LOADED,
@@ -97,11 +98,9 @@ export function reroute(pendingPromises = [], eventArguments) {
        * wait to mount the app until all apps are finishing unmounting
        */
       const loadThenMountPromises = appsToLoad.map((app) => {
-        return toLoadPromise(app)
-          .then(toBootstrapPromise)
-          .then((app) => {
-            return unmountAllPromise.then(() => toMountPromise(app));
-          });
+        return toLoadPromise(app).then((app) =>
+          tryToBootstrapAndMount(app, unmountAllPromise)
+        );
       });
 
       /* These are the apps that are already bootstrapped and just need
@@ -112,9 +111,7 @@ export function reroute(pendingPromises = [], eventArguments) {
         .filter((appToMount) => appsToLoad.indexOf(appToMount) < 0)
         .map((appToMount) => {
           appsThatChanged.push(appToMount);
-          return toBootstrapPromise(appToMount)
-            .then(() => unmountAllPromise)
-            .then(() => toMountPromise(appToMount));
+          return tryToBootstrapAndMount(appToMount, unmountAllPromise);
         });
       return unmountAllPromise
         .catch((err) => {
@@ -225,5 +222,24 @@ export function reroute(pendingPromises = [], eventArguments) {
         originalEvent: eventArguments?.[0],
       },
     };
+  }
+}
+
+/**
+ * Let's imagine that some kind of delay occurred during application loading.
+ * The user without waiting for the application to load switched to another route,
+ * this means that we shouldn't bootstrap and mount that application, thus we check
+ * twice if that application should be active before bootstrapping and mounting.
+ * https://github.com/single-spa/single-spa/issues/524
+ */
+function tryToBootstrapAndMount(app, unmountAllPromise) {
+  if (shouldBeActive(app)) {
+    return toBootstrapPromise(app).then((app) =>
+      unmountAllPromise.then(() =>
+        shouldBeActive(app) ? toMountPromise(app) : app
+      )
+    );
+  } else {
+    return unmountAllPromise.then(() => app);
   }
 }
