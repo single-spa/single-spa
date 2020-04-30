@@ -1,17 +1,40 @@
 import * as singleSpa from "single-spa";
 
-const dummyApp = {
-  bootstrap() {
-    return Promise.resolve();
+const russellApp = {
+  bootstrapCount: 0,
+  mountCount: 0,
+  unmountCount: 0,
+  unloadCount: 0,
+  bootstrap: async () => {
+    russellApp.bootstrapCount++;
   },
-  mount() {
-    return Promise.resolve();
+  mount: async () => {
+    russellApp.mountCount++;
   },
-  unmount() {
-    return Promise.resolve();
+  unmount: async () => {
+    russellApp.unmountCount++;
   },
-  unload() {
-    return Promise.resolve();
+  unload: async () => {
+    russellApp.unloadCount++;
+  },
+};
+
+const boomApp = {
+  bootstrapCount: 0,
+  mountCount: 0,
+  unmountCount: 0,
+  unloadCount: 0,
+  bootstrap: async () => {
+    boomApp.bootstrapCount++;
+  },
+  mount: async () => {
+    boomApp.mountCount++;
+  },
+  unmount: async () => {
+    boomApp.unmountCount++;
+  },
+  unload: async () => {
+    boomApp.unloadCount++;
   },
 };
 
@@ -21,11 +44,27 @@ describe(`events api :`, () => {
   beforeAll(() => {
     singleSpa.registerApplication(
       "russell",
-      dummyApp,
+      russellApp,
       () => window.location.hash.indexOf("#/russell") === 0
     );
-    singleSpa.registerApplication("boom", dummyApp, () => boom);
+    singleSpa.registerApplication("boom", boomApp, () => boom);
     singleSpa.start();
+  });
+
+  afterEach(async () => {
+    russellApp.bootstrapCount = 0;
+    russellApp.mountCount = 0;
+    russellApp.unmountCount = 0;
+    russellApp.unloadCount = 0;
+
+    boomApp.bootstrapCount = 0;
+    boomApp.mountCount = 0;
+    boomApp.unmountCount = 0;
+    boomApp.unloadCount = 0;
+
+    boom = false;
+    location.hash = "#/";
+    await singleSpa.triggerAppChange();
   });
 
   describe(`single-spa:routing-event`, () => {
@@ -112,6 +151,97 @@ describe(`events api :`, () => {
           window.onerror = ogOnError;
           fail(err);
         });
+    });
+  });
+
+  describe("single-spa:before-mount-routing-event", () => {
+    it(`is fired after before-routing-event but before routing-event`, async () => {
+      let firedEvents = [];
+
+      await singleSpa.triggerAppChange(); // start with a clean slate (no previous tests doing anything)
+      window.addEventListener(
+        "single-spa:before-routing-event",
+        beforeRoutingEvent
+      );
+      window.addEventListener(
+        "single-spa:before-mount-routing-event",
+        beforeMountRoutingEvent
+      );
+      window.addEventListener("single-spa:routing-event", afterRoutingEvent);
+
+      window.location.hash = `#/hash-was-changed`;
+      await singleSpa.triggerAppChange();
+
+      expect(firedEvents).toEqual([
+        "before-routing-event",
+        "before-mount-routing-event",
+        "routing-event",
+      ]);
+
+      function beforeRoutingEvent() {
+        window.removeEventListener(
+          "single-spa:before-routing-event",
+          beforeRoutingEvent
+        );
+        firedEvents.push("before-routing-event");
+      }
+
+      function beforeMountRoutingEvent() {
+        window.removeEventListener(
+          "single-spa:before-mount-routing-event",
+          beforeMountRoutingEvent
+        );
+        firedEvents.push("before-mount-routing-event");
+      }
+
+      function afterRoutingEvent() {
+        window.removeEventListener(
+          "single-spa:routing-event",
+          afterRoutingEvent
+        );
+        firedEvents.push("routing-event");
+      }
+    });
+
+    it(`is fired after all applications have been unmounted, and before any have been mounted`, async () => {
+      await singleSpa.triggerAppChange(); // start with a clean slate (no previous tests doing anything)
+
+      // make sure boomApp is not mounted
+      boom = false;
+
+      location.hash = "#/russell";
+      await singleSpa.triggerAppChange();
+
+      window.addEventListener(
+        "single-spa:before-mount-routing-event",
+        listener
+      );
+
+      expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
+      expect(russellApp.unmountCount).toBe(0);
+      expect(boomApp.mountCount).toBe(0);
+
+      // now mount boomApp
+      boom = true;
+      location.hash = "#/other";
+      await singleSpa.triggerAppChange();
+
+      expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.NOT_MOUNTED);
+      expect(russellApp.unmountCount).toBe(1);
+      expect(boomApp.mountCount).toBe(1);
+
+      function listener() {
+        window.removeEventListener(
+          "single-spa:before-mount-routing-event",
+          listener
+        );
+
+        // unmounts have been called
+        expect(russellApp.unmountCount).toBe(1);
+
+        // but mounts have not
+        expect(boomApp.mountCount).toBe(0);
+      }
     });
   });
 
