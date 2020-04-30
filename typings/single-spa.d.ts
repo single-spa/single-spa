@@ -162,4 +162,6 @@ declare module "single-spa" {
       | (ParcelProps & CustomProps)
       | CustomPropsFn<ParcelProps & CustomProps>
   ): Parcel;
+
+  export function pathToActiveWhen(path: string): ActivityFn;
 }

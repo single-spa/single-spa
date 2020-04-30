@@ -1,5 +1,10 @@
 import "..";
-import { mountRootParcel, registerApplication } from "single-spa";
+import {
+  mountRootParcel,
+  registerApplication,
+  pathToActiveWhen,
+} from "single-spa";
+import { expectType } from "tsd";
 
 const appOrParcel = {
   async bootstrap() {},
@@ -34,3 +39,6 @@ registerApplication({
     hi: "there",
   }),
 });
+
+const activeWhen = pathToActiveWhen("/users/:id");
+expectType<boolean>(activeWhen(window.location));

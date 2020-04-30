@@ -386,7 +386,7 @@ function sanitizeActiveWhen(activeWhen) {
     activeWhenArray.some((activeWhen) => activeWhen(location));
 }
 
-function pathToActiveWhen(path) {
+export function pathToActiveWhen(path) {
   const regex = toDynamicPathValidatorRegex(path);
 
   return (location) => {
