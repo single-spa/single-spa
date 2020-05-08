@@ -1,15 +1,14 @@
 import { ensureJQuerySupport } from "../jquery-support.js";
 import {
   isActive,
-  isLoaded,
-  isntLoaded,
   toName,
   NOT_LOADED,
+  NOT_BOOTSTRAPPED,
+  NOT_MOUNTED,
+  MOUNTED,
+  LOAD_ERROR,
+  SKIP_BECAUSE_BROKEN,
   shouldBeActive,
-  shouldntBeActive,
-  isntActive,
-  notSkipped,
-  withoutLoadErrors,
 } from "./app.helpers.js";
 import { reroute } from "../navigation/reroute.js";
 import { find } from "../utils/find.js";
@@ -24,6 +23,46 @@ import { isInBrowser } from "../utils/runtime-environment.js";
 import { assign } from "../utils/assign";
 
 const apps = [];
+
+export function getAppChanges() {
+  const appsToUnload = [],
+    appsToUnmount = [],
+    appsToLoad = [],
+    appsToMount = [];
+  const currentTime = new Date().getTime();
+  apps.forEach((app) => {
+    const appShouldBeActive =
+      app.status !== SKIP_BECAUSE_BROKEN && shouldBeActive(app);
+    switch (app.status) {
+      case LOAD_ERROR:
+        if (currentTime - app.loadErrorTime >= 200) {
+          appsToLoad.push(app);
+        }
+        break;
+      case NOT_LOADED:
+        if (appShouldBeActive) {
+          appsToLoad.push(app);
+        }
+        break;
+      case NOT_BOOTSTRAPPED:
+      case NOT_MOUNTED:
+        if (!appShouldBeActive && getAppUnloadInfo(toName(app))) {
+          appsToUnload.push(app);
+        } else if (appShouldBeActive) {
+          appsToMount.push(app);
+        }
+        break;
+      case MOUNTED:
+        if (!appShouldBeActive) {
+          appsToUnmount.push(app);
+        }
+        break;
+      // all other statuses are ignored
+    }
+  });
+
+  return [appsToUnload, appsToUnmount, appsToLoad, appsToMount];
+}
 
 export function getMountedApps() {
   return apps.filter(isActive).map(toName);
@@ -91,26 +130,6 @@ export function registerApplication(
 
 export function checkActivityFunctions(location) {
   return apps.filter((app) => app.activeWhen(location)).map(toName);
-}
-
-export function getAppsToLoad() {
-  return apps
-    .filter(notSkipped)
-    .filter(withoutLoadErrors)
-    .filter(isntLoaded)
-    .filter(shouldBeActive);
-}
-
-export function getAppsToUnmount() {
-  return apps.filter(notSkipped).filter(isActive).filter(shouldntBeActive);
-}
-
-export function getAppsToMount() {
-  return apps
-    .filter(notSkipped)
-    .filter(isntActive)
-    .filter(isLoaded)
-    .filter(shouldBeActive);
 }
 
 export function unregisterApplication(appName) {

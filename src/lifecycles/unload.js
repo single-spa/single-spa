@@ -3,7 +3,6 @@ import {
   UNLOADING,
   NOT_LOADED,
   SKIP_BECAUSE_BROKEN,
-  isntActive,
   toName,
 } from "../applications/app.helpers.js";
 import { handleAppError } from "../applications/app-errors.js";
@@ -94,10 +93,4 @@ export function addAppToUnload(app, promiseGetter, resolve, reject) {
 
 export function getAppUnloadInfo(appName) {
   return appsToUnload[appName];
-}
-
-export function getAppsToUnload() {
-  return Object.keys(appsToUnload)
-    .map((appName) => appsToUnload[appName].app)
-    .filter(isntActive);
 }

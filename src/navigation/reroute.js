@@ -6,13 +6,11 @@ import { toMountPromise } from "../lifecycles/mount.js";
 import { toUnmountPromise } from "../lifecycles/unmount.js";
 import {
   getMountedApps,
-  getAppsToLoad,
-  getAppsToUnmount,
-  getAppsToMount,
   getAppStatus,
+  getAppChanges,
 } from "../applications/apps.js";
 import { callCapturedEventListeners } from "./navigation-events.js";
-import { getAppsToUnload, toUnloadPromise } from "../lifecycles/unload.js";
+import { toUnloadPromise } from "../lifecycles/unload.js";
 import {
   toName,
   shouldBeActive,
@@ -41,23 +39,29 @@ export function reroute(pendingPromises = [], eventArguments) {
     });
   }
 
-  const appsThatChanged = [];
+  const [
+    appsToUnload,
+    appsToUnmount,
+    appsToLoad,
+    appsToMount,
+  ] = getAppChanges();
+  let appsThatChanged;
 
   if (isStarted()) {
     appChangeUnderway = true;
+    appsThatChanged = appsToUnload
+      .concat(appsToLoad)
+      .concat(appsToUnmount)
+      .concat(appsToMount);
     return performAppChanges();
   } else {
+    appsThatChanged = appsToLoad;
     return loadApps();
-  }
-
-  function addChangedApps(apps) {
-    appsThatChanged.push(...apps);
-    return apps;
   }
 
   function loadApps() {
     return Promise.resolve().then(() => {
-      const loadPromises = addChangedApps(getAppsToLoad()).map(toLoadPromise);
+      const loadPromises = appsToLoad.map(toLoadPromise);
 
       return (
         Promise.all(loadPromises)
@@ -80,11 +84,9 @@ export function reroute(pendingPromises = [], eventArguments) {
           getCustomEventDetail()
         )
       );
-      const unloadPromises = addChangedApps(getAppsToUnload()).map(
-        toUnloadPromise
-      );
+      const unloadPromises = appsToUnload.map(toUnloadPromise);
 
-      const unmountUnloadPromises = addChangedApps(getAppsToUnmount())
+      const unmountUnloadPromises = appsToUnmount
         .map(toUnmountPromise)
         .map((unmountPromise) => unmountPromise.then(toUnloadPromise));
 
@@ -101,8 +103,6 @@ export function reroute(pendingPromises = [], eventArguments) {
         );
       });
 
-      const appsToLoad = addChangedApps(getAppsToLoad());
-
       /* We load and bootstrap apps while other apps are unmounting, but we
        * wait to mount the app until all apps are finishing unmounting
        */
@@ -116,10 +116,9 @@ export function reroute(pendingPromises = [], eventArguments) {
        * to be mounted. They each wait for all unmounting apps to finish up
        * before they mount.
        */
-      const mountPromises = getAppsToMount()
+      const mountPromises = appsToMount
         .filter((appToMount) => appsToLoad.indexOf(appToMount) < 0)
         .map((appToMount) => {
-          appsThatChanged.push(appToMount);
           return tryToBootstrapAndMount(appToMount, unmountAllPromise);
         });
       return unmountAllPromise
@@ -145,7 +144,10 @@ export function reroute(pendingPromises = [], eventArguments) {
   }
 
   function finishUpAndReturn() {
-    const returnValue = getMountedApps();
+    const returnValue = appsToLoad
+      .concat(appsToMount)
+      .filter((app) => getAppStatus(app) === MOUNTED)
+      .map(toName);
     pendingPromises.forEach((promise) => promise.resolve(returnValue));
 
     try {
