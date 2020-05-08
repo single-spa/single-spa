@@ -89,7 +89,7 @@ export function registerApplication(
   }
 }
 
-export function checkActivityFunctions(location) {
+export function checkActivityFunctions(location = window.location) {
   return apps.filter((app) => app.activeWhen(location)).map(toName);
 }
 

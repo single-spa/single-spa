@@ -87,6 +87,11 @@ describe(`checkActivityFunctionsApi`, () => {
     });
   });
 
+  it(`uses the window.location by default`, () => {
+    window.location.hash = "#one";
+    expect(singleSpa.checkActivityFunctions()).toEqual(["test1"]);
+  });
+
   it(`returns 'test1' when the location contains 'one'`, () => {
     const wLocation = mockWindowLocation("http://google.com/one");
     expect(singleSpa.checkActivityFunctions(wLocation)).toEqual(["test1"]);
