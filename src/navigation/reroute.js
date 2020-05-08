@@ -4,7 +4,11 @@ import { toLoadPromise } from "../lifecycles/load.js";
 import { toBootstrapPromise } from "../lifecycles/bootstrap.js";
 import { toMountPromise } from "../lifecycles/mount.js";
 import { toUnmountPromise } from "../lifecycles/unmount.js";
-import { getAppStatus, getAppChanges } from "../applications/apps.js";
+import {
+  getAppStatus,
+  getAppChanges,
+  getMountedApps,
+} from "../applications/apps.js";
 import { callCapturedEventListeners } from "./navigation-events.js";
 import { toUnloadPromise } from "../lifecycles/unload.js";
 import {
@@ -140,10 +144,7 @@ export function reroute(pendingPromises = [], eventArguments) {
   }
 
   function finishUpAndReturn() {
-    const returnValue = appsToLoad
-      .concat(appsToMount)
-      .filter((app) => getAppStatus(app) === MOUNTED)
-      .map(toName);
+    const returnValue = getMountedApps();
     pendingPromises.forEach((promise) => promise.resolve(returnValue));
 
     try {
