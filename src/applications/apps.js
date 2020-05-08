@@ -29,10 +29,14 @@ export function getAppChanges() {
     appsToUnmount = [],
     appsToLoad = [],
     appsToMount = [];
+
+  // We re-attempt to download applications in LOAD_ERROR after a timeout of 200 milliseconds
   const currentTime = new Date().getTime();
+
   apps.forEach((app) => {
     const appShouldBeActive =
       app.status !== SKIP_BECAUSE_BROKEN && shouldBeActive(app);
+
     switch (app.status) {
       case LOAD_ERROR:
         if (currentTime - app.loadErrorTime >= 200) {

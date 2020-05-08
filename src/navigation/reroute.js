@@ -4,11 +4,7 @@ import { toLoadPromise } from "../lifecycles/load.js";
 import { toBootstrapPromise } from "../lifecycles/bootstrap.js";
 import { toMountPromise } from "../lifecycles/mount.js";
 import { toUnmountPromise } from "../lifecycles/unmount.js";
-import {
-  getMountedApps,
-  getAppStatus,
-  getAppChanges,
-} from "../applications/apps.js";
+import { getAppStatus, getAppChanges } from "../applications/apps.js";
 import { callCapturedEventListeners } from "./navigation-events.js";
 import { toUnloadPromise } from "../lifecycles/unload.js";
 import {
