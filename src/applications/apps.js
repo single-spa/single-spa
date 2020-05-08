@@ -65,7 +65,7 @@ export function getAppChanges() {
     }
   });
 
-  return [appsToUnload, appsToUnmount, appsToLoad, appsToMount];
+  return { appsToUnload, appsToUnmount, appsToLoad, appsToMount };
 }
 
 export function getMountedApps() {

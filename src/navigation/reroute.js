@@ -39,20 +39,21 @@ export function reroute(pendingPromises = [], eventArguments) {
     });
   }
 
-  const [
+  const {
     appsToUnload,
     appsToUnmount,
     appsToLoad,
     appsToMount,
-  ] = getAppChanges();
+  } = getAppChanges();
   let appsThatChanged;
 
   if (isStarted()) {
     appChangeUnderway = true;
-    appsThatChanged = appsToUnload
-      .concat(appsToLoad)
-      .concat(appsToUnmount)
-      .concat(appsToMount);
+    appsThatChanged = appsToUnload.concat(
+      appsToLoad,
+      appsToUnmount,
+      appsToMount
+    );
     return performAppChanges();
   } else {
     appsThatChanged = appsToLoad;
