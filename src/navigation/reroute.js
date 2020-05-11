@@ -79,10 +79,20 @@ export function reroute(pendingPromises = [], eventArguments) {
 
   function performAppChanges() {
     return Promise.resolve().then(() => {
+      // https://github.com/single-spa/single-spa/issues/545
+      window.dispatchEvent(
+        new CustomEvent(
+          appsThatChanged.length === 0
+            ? "single-spa:before-no-app-change"
+            : "single-spa:before-app-change",
+          getCustomEventDetail(true)
+        )
+      );
+
       window.dispatchEvent(
         new CustomEvent(
           "single-spa:before-routing-event",
-          getCustomEventDetail()
+          getCustomEventDetail(true)
         )
       );
       const unloadPromises = appsToUnload.map(toUnloadPromise);
@@ -99,7 +109,7 @@ export function reroute(pendingPromises = [], eventArguments) {
         window.dispatchEvent(
           new CustomEvent(
             "single-spa:before-mount-routing-event",
-            getCustomEventDetail()
+            getCustomEventDetail(true)
           )
         );
       });
@@ -202,7 +212,7 @@ export function reroute(pendingPromises = [], eventArguments) {
     callCapturedEventListeners(eventArguments);
   }
 
-  function getCustomEventDetail() {
+  function getCustomEventDetail(isBeforeChanges = false) {
     const newAppStatuses = {};
     const appsByNewStatus = {
       // for apps that were mounted
@@ -214,14 +224,22 @@ export function reroute(pendingPromises = [], eventArguments) {
       // apps that attempted to do something but are broken now
       [SKIP_BECAUSE_BROKEN]: [],
     };
-    appsThatChanged.forEach((app) => {
-      const appName = toName(app);
-      const status = getAppStatus(appName);
-      newAppStatuses[appName] = status;
-      const statusArr = (appsByNewStatus[status] =
-        appsByNewStatus[status] || []);
-      statusArr.push(appName);
-    });
+
+    if (isBeforeChanges) {
+      appsToLoad.concat(appsToMount).forEach((app, index) => {
+        addApp(app, MOUNTED);
+      });
+      appsToUnload.forEach((app) => {
+        addApp(app, NOT_LOADED);
+      });
+      appsToUnmount.forEach((app) => {
+        addApp(app, NOT_MOUNTED);
+      });
+    } else {
+      appsThatChanged.forEach((app) => {
+        addApp(app);
+      });
+    }
 
     return {
       detail: {
@@ -231,6 +249,15 @@ export function reroute(pendingPromises = [], eventArguments) {
         originalEvent: eventArguments?.[0],
       },
     };
+
+    function addApp(app, status) {
+      const appName = toName(app);
+      status = status || getAppStatus(appName);
+      newAppStatuses[appName] = status;
+      const statusArr = (appsByNewStatus[status] =
+        appsByNewStatus[status] || []);
+      statusArr.push(appName);
+    }
   }
 }
 
