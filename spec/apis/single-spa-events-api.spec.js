@@ -47,9 +47,7 @@ describe(`events api :`, () => {
       russellApp,
       () => window.location.hash.indexOf("#/russell") === 0
     );
-    singleSpa.registerApplication("boom", boomApp, () => {
-      return boom;
-    });
+    singleSpa.registerApplication("boom", boomApp, () => boom);
     singleSpa.start();
   });
 
