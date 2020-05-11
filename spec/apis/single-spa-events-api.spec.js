@@ -454,6 +454,10 @@ describe(`events api :`, () => {
           );
           expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
           window.addEventListener("single-spa:before-app-change", finishTest);
+          window.addEventListener(
+            "single-spa:before-no-app-change",
+            finishTest
+          );
           boom = true;
           window.location.hash = `#not-a-real-app`;
 
@@ -462,6 +466,11 @@ describe(`events api :`, () => {
               "single-spa:before-app-change",
               finishTest
             );
+            window.removeEventListener(
+              "single-spa:before-no-app-change",
+              finishTest
+            );
+            expect(evt.type).toBe("single-spa:before-app-change");
             expect(singleSpa.getAppStatus("boom")).toMatch(
               /NOT_MOUNTED|NOT_LOADED/
             );
