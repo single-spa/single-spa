@@ -443,7 +443,7 @@ describe(`events api :`, () => {
   });
 
   describe(`single-spa:before-app-change`, () => {
-    it(`is fired when before apps will change, and not fired if no apps are changing`, (done) => {
+    it(`is fired before apps will change, and not fired if no apps are changing`, (done) => {
       window.location.hash = `#/russell`;
 
       singleSpa
@@ -489,7 +489,7 @@ describe(`events api :`, () => {
   });
 
   describe(`single-spa:before-no-app-change`, () => {
-    it(`is fired when before apps will not change, and not fired if apps are changing`, (done) => {
+    it(`is fired before apps will not change, and not fired if apps are changing`, (done) => {
       window.location.hash = `#/russell`;
 
       singleSpa
