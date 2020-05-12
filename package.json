@@ -1,7 +1,7 @@
 {
   "name": "single-spa",
   "version": "5.4.0",
-  "description": "Microfrontends made easy",
+  "description": "The router for easy microfrontends",
   "main": "lib/umd/single-spa.min.js",
   "types": "typings/single-spa.d.ts",
   "module": "lib/esm/single-spa.min.js",
@@ -48,7 +48,10 @@
     "framework",
     "react",
     "angular",
-    "vue"
+    "vue",
+    "router",
+    "microservices",
+    "frontend"
   ],
   "author": "Joel Denning",
   "license": "MIT",
