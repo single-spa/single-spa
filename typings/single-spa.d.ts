@@ -1,28 +1,36 @@
 declare module "single-spa" {
-  type Splat<T> = {
-    [p in keyof T]: Array<T[p]>;
-  };
+  interface CustomProps {
+    [str: string]: any;
+    [num: number]: any;
+  }
+
+  type CustomPropsFn<T extends CustomProps = CustomProps> = (
+    name: string,
+    location: Location
+  ) => T;
 
   export type AppProps = {
     name: string;
     singleSpa: any;
-    mountParcel(parcelConfig: ParcelConfig, customProps: object): Parcel;
+    mountParcel(
+      parcelConfig: ParcelConfig,
+      customProps:
+        | (ParcelProps & CustomProps)
+        | CustomPropsFn<ParcelProps & CustomProps>
+    ): Parcel;
   };
 
   export type ParcelConfig =
     | ParcelConfigObject
     | (() => Promise<ParcelConfigObject>);
 
-  type ParcelConfigObject = {
-    name?: string;
-    customProps: object;
-    domElement: HTMLElement;
-  } & LifeCycles;
+  type ParcelProps = { domElement: HTMLElement };
+  type ParcelConfigObject = { name?: string } & LifeCycles;
 
   type Parcel = {
     mount(): Promise<null>;
     unmount(): Promise<null>;
-    update(customProps: object): Promise<any>;
+    update?(customProps: CustomProps | CustomPropsFn): Promise<any>;
     getStatus():
       | "NOT_LOADED"
       | "LOADING_SOURCE_CODE"
@@ -42,14 +50,15 @@ declare module "single-spa" {
     unmountPromise: Promise<null>;
   };
 
+  type LifeCycleFn<T> = (config: T & AppProps) => Promise<any>;
   export type LifeCycles<T = {}> = {
-    bootstrap: (config: T & AppProps) => Promise<any>;
-    mount: (config: T & AppProps) => Promise<any>;
-    unmount: (config: T & AppProps) => Promise<any>;
-    update?: (config: T & AppProps) => Promise<any>;
+    bootstrap: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
+    mount: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
+    unmount: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
+    update?: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
   };
 
-  type StartOpts = {
+  export type StartOpts = {
     urlRerouteOnly?: boolean;
   };
 
@@ -71,17 +80,17 @@ declare module "single-spa" {
 
   type Application<T = {}> =
     | LifeCycles<T>
-    | ((config: T & AppProps) => Promise<LifeCycles<T> | Splat<LifeCycles<T>>>);
+    | ((config: T & AppProps) => Promise<LifeCycles<T>>);
 
   type ActivityFn = (location: Location) => boolean;
 
   type Activity = ActivityFn | string | (ActivityFn | string)[];
 
-  export type RegisterApplicationConfig<T = {}> = {
+  export type RegisterApplicationConfig<T extends CustomProps = {}> = {
     name: string;
     app: Application<T>;
     activeWhen: Activity;
-    customProps?: T;
+    customProps?: T | CustomPropsFn<T>;
   };
 
   // ./applications/apps.js
@@ -89,7 +98,7 @@ declare module "single-spa" {
     appName: string,
     applicationOrLoadingFn: Application<T>,
     activityFn: ActivityFn,
-    customProps?: T
+    customProps?: T | CustomPropsFn<T>
   ): void;
 
   export function registerApplication<T extends object = {}>(
@@ -149,6 +158,10 @@ declare module "single-spa" {
   // './parcels/mount-parcel.js'
   export function mountRootParcel(
     parcelConfig: ParcelConfig,
-    parcelProps: object
+    parcelProps:
+      | (ParcelProps & CustomProps)
+      | CustomPropsFn<ParcelProps & CustomProps>
   ): Parcel;
+
+  export function pathToActiveWhen(path: string): ActivityFn;
 }

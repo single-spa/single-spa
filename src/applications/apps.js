@@ -1,15 +1,14 @@
 import { ensureJQuerySupport } from "../jquery-support.js";
 import {
   isActive,
-  isLoaded,
-  isntLoaded,
   toName,
   NOT_LOADED,
+  NOT_BOOTSTRAPPED,
+  NOT_MOUNTED,
+  MOUNTED,
+  LOAD_ERROR,
+  SKIP_BECAUSE_BROKEN,
   shouldBeActive,
-  shouldntBeActive,
-  isntActive,
-  notSkipped,
-  withoutLoadErrors,
 } from "./app.helpers.js";
 import { reroute } from "../navigation/reroute.js";
 import { find } from "../utils/find.js";
@@ -24,6 +23,50 @@ import { isInBrowser } from "../utils/runtime-environment.js";
 import { assign } from "../utils/assign";
 
 const apps = [];
+
+export function getAppChanges() {
+  const appsToUnload = [],
+    appsToUnmount = [],
+    appsToLoad = [],
+    appsToMount = [];
+
+  // We re-attempt to download applications in LOAD_ERROR after a timeout of 200 milliseconds
+  const currentTime = new Date().getTime();
+
+  apps.forEach((app) => {
+    const appShouldBeActive =
+      app.status !== SKIP_BECAUSE_BROKEN && shouldBeActive(app);
+
+    switch (app.status) {
+      case LOAD_ERROR:
+        if (currentTime - app.loadErrorTime >= 200) {
+          appsToLoad.push(app);
+        }
+        break;
+      case NOT_LOADED:
+        if (appShouldBeActive) {
+          appsToLoad.push(app);
+        }
+        break;
+      case NOT_BOOTSTRAPPED:
+      case NOT_MOUNTED:
+        if (!appShouldBeActive && getAppUnloadInfo(toName(app))) {
+          appsToUnload.push(app);
+        } else if (appShouldBeActive) {
+          appsToMount.push(app);
+        }
+        break;
+      case MOUNTED:
+        if (!appShouldBeActive) {
+          appsToUnmount.push(app);
+        }
+        break;
+      // all other statuses are ignored
+    }
+  });
+
+  return { appsToUnload, appsToUnmount, appsToLoad, appsToMount };
+}
 
 export function getMountedApps() {
   return apps.filter(isActive).map(toName);
@@ -89,28 +132,8 @@ export function registerApplication(
   }
 }
 
-export function checkActivityFunctions(location) {
+export function checkActivityFunctions(location = window.location) {
   return apps.filter((app) => app.activeWhen(location)).map(toName);
-}
-
-export function getAppsToLoad() {
-  return apps
-    .filter(notSkipped)
-    .filter(withoutLoadErrors)
-    .filter(isntLoaded)
-    .filter(shouldBeActive);
-}
-
-export function getAppsToUnmount() {
-  return apps.filter(notSkipped).filter(isActive).filter(shouldntBeActive);
-}
-
-export function getAppsToMount() {
-  return apps
-    .filter(notSkipped)
-    .filter(isntActive)
-    .filter(isLoaded)
-    .filter(shouldBeActive);
 }
 
 export function unregisterApplication(appName) {
@@ -234,10 +257,7 @@ function validateRegisterWithArguments(
       )
     );
 
-  if (
-    !!customProps &&
-    (typeof customProps !== "object" || Array.isArray(customProps))
-  )
+  if (!validCustomProps(customProps))
     throw Error(
       formatErrorMessage(
         22,
@@ -251,24 +271,26 @@ export function validateRegisterWithConfig(config) {
   if (Array.isArray(config) || config === null)
     throw Error(
       formatErrorMessage(
-        31,
+        39,
         __DEV__ && "Configuration object can't be an Array or null!"
       )
     );
   const validKeys = ["name", "app", "activeWhen", "customProps"];
   const invalidKeys = Object.keys(config).reduce(
     (invalidKeys, prop) =>
-      validKeys.includes(prop) ? invalidKeys : invalidKeys.concat(prop),
+      validKeys.indexOf(prop) >= 0 ? invalidKeys : invalidKeys.concat(prop),
     []
   );
   if (invalidKeys.length !== 0)
     throw Error(
       formatErrorMessage(
-        30,
+        38,
         __DEV__ &&
           `The configuration object accepts only: ${validKeys.join(
             ", "
-          )}. Invalid keys: ${invalidKeys.join(", ")}.`
+          )}. Invalid keys: ${invalidKeys.join(", ")}.`,
+        validKeys.join(", "),
+        invalidKeys.join(", ")
       )
     );
   if (typeof config.name !== "string" || config.name.length === 0)
@@ -303,19 +325,23 @@ export function validateRegisterWithConfig(config) {
           "The config.activeWhen on registerApplication must be a string, function or an array with both"
       )
     );
-  if (
-    !(
-      !config.customProps ||
-      (typeof config.customProps === "object" &&
-        !Array.isArray(config.customProps))
-    )
-  )
+  if (!validCustomProps(config.customProps))
     throw Error(
       formatErrorMessage(
         22,
         __DEV__ && "The optional config.customProps must be an object"
       )
     );
+}
+
+function validCustomProps(customProps) {
+  return (
+    !customProps ||
+    typeof customProps === "function" ||
+    (typeof customProps === "object" &&
+      customProps !== null &&
+      !Array.isArray(customProps))
+  );
 }
 
 function sanitizeArguments(
@@ -383,7 +409,7 @@ function sanitizeActiveWhen(activeWhen) {
     activeWhenArray.some((activeWhen) => activeWhen(location));
 }
 
-function pathToActiveWhen(path) {
+export function pathToActiveWhen(path) {
   const regex = toDynamicPathValidatorRegex(path);
 
   return (location) => {
