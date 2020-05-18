@@ -278,7 +278,7 @@ export function validateRegisterWithConfig(config) {
   const validKeys = ["name", "app", "activeWhen", "customProps"];
   const invalidKeys = Object.keys(config).reduce(
     (invalidKeys, prop) =>
-      validKeys.includes(prop) ? invalidKeys : invalidKeys.concat(prop),
+      validKeys.indexOf(prop) >= 0 ? invalidKeys : invalidKeys.concat(prop),
     []
   );
   if (invalidKeys.length !== 0)
