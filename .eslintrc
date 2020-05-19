@@ -6,5 +6,32 @@
   },
   "globals": {
     "__DEV__": true
+  },
+  "plugins": [
+    "es5"
+  ],
+  "rules": {
+    "es5/no-es6-methods": "error",
+    "es5/no-es6-static-methods": "error",
+    "es5/no-binary-and-octal-literals": "error",
+    "es5/no-classes": "error",
+    "es5/no-for-of": "error",
+    "es5/no-generators": "error",
+    "es5/no-object-super": "error",
+    "es5/no-typeof-symbol": "error",
+    "es5/no-unicode-code-point-escape": "error",
+    "es5/no-unicode-regex": "error",
+    "es5/no-computed-properties": "off",
+    "es5/no-destructuring": "off",
+    "es5/no-default-parameters": "off",
+    "es5/no-spread": "off",
+    "es5/no-modules": "off",
+    "es5/no-exponentiation-operator": "off",
+    "es5/no-block-scoping": "off",
+    "es5/no-arrow-functions": "off",
+    "es5/no-shorthand-properties": "off",
+    "es5/no-rest-parameters": "off",
+    "es5/no-template-literals": "off"
+
   }
 }
