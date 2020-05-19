@@ -137,7 +137,7 @@ export function checkActivityFunctions(location = window.location) {
 }
 
 export function unregisterApplication(appName) {
-  if (!apps.find((app) => toName(app) === appName)) {
+  if (apps.filter((app) => toName(app) === appName).length === 0) {
     throw Error(
       formatErrorMessage(
         25,
@@ -149,7 +149,7 @@ export function unregisterApplication(appName) {
   }
 
   return unloadApplication(appName).then(() => {
-    const appIndex = apps.findIndex((app) => toName(app) === appName);
+    const appIndex = apps.map(toName).indexOf(appName);
     apps.splice(appIndex, 1);
   });
 }
