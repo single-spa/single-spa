@@ -24,6 +24,11 @@ describe(`pathToActiveWhen`, () => {
           "/pathname/anything/everything"
         )
       ).toBe(true);
+      expect(
+        toDynamicPathValidatorRegex("/pathname").test(
+          "/pathnameExtraShouldNotMatch"
+        )
+      ).toBe(false);
     });
 
     it("Should generate correct regex for '/#/pathname'", () => {
@@ -46,6 +51,11 @@ describe(`pathToActiveWhen`, () => {
           "/#/pathname/1/notDynamic"
         )
       ).toBe(true);
+      expect(
+        toDynamicPathValidatorRegex("/#/pathname/:dynamic/notDynamic").test(
+          "/#/pathname/1/notDynamicExtra"
+        )
+      ).toBe(false);
       expect(
         toDynamicPathValidatorRegex("/#/pathname/:dynamic/notDynamic").test(
           "/#/pathname/1/notDynamic/"
