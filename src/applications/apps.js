@@ -443,6 +443,15 @@ export function toDynamicPathValidatorRegex(path) {
     regexStr += inDynamic
       ? anyCharMaybeTrailingSlashRegex
       : commonStringSubPath;
+
+    if (index === path.length && !inDynamic) {
+      regexStr =
+        // use charAt instead as we could not use es6 method endsWith
+        regexStr.charAt(regexStr.length - 1) === "/"
+          ? `${regexStr}.*$`
+          : `${regexStr}(\/.*)?$`;
+    }
+
     inDynamic = !inDynamic;
     lastIndex = index;
   }
