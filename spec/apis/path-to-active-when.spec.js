@@ -31,6 +31,34 @@ describe(`pathToActiveWhen`, () => {
       ).toBe(false);
     });
 
+    it("Should generate correct regex for '/pathname/'", () => {
+      expect(toDynamicPathValidatorRegex("/pathname/").test("/pathname")).toBe(
+        false
+      );
+      expect(toDynamicPathValidatorRegex("/pathname/").test("/pathname/")).toBe(
+        true
+      );
+      expect(
+        toDynamicPathValidatorRegex("/pathname/").test("/pathname/extra")
+      ).toBe(true);
+    });
+
+    it("Should generate correct regex for '/pathname/:dynamic/'", () => {
+      expect(
+        toDynamicPathValidatorRegex("/pathname/:dynamic/").test("/pathname/123")
+      ).toBe(false);
+      expect(
+        toDynamicPathValidatorRegex("/pathname/:dynamic/").test(
+          "/pathname/123/"
+        )
+      ).toBe(true);
+      expect(
+        toDynamicPathValidatorRegex("/pathname/:dynamic/").test(
+          "/pathname/123/extra"
+        )
+      ).toBe(true);
+    });
+
     it("Should generate correct regex for '/#/pathname'", () => {
       expect(
         toDynamicPathValidatorRegex("/#/pathname").test("/#/pathname")
