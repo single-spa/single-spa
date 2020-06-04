@@ -28,6 +28,10 @@ describe(`delayed-start`, () => {
 
     await singleSpa.triggerAppChange();
 
+    expect(singleSpa.getAppStatus("delayed-start")).toBe(
+      singleSpa.NOT_BOOTSTRAPPED
+    );
+
     singleSpa.start();
 
     await Promise.all([loadPromise, routingEvent()]);
