@@ -8,6 +8,7 @@ import {
   MOUNTED,
   LOAD_ERROR,
   SKIP_BECAUSE_BROKEN,
+  LOADING_SOURCE_CODE,
   shouldBeActive,
 } from "./app.helpers.js";
 import { reroute } from "../navigation/reroute.js";
@@ -44,6 +45,7 @@ export function getAppChanges() {
         }
         break;
       case NOT_LOADED:
+      case LOADING_SOURCE_CODE:
         if (appShouldBeActive) {
           appsToLoad.push(app);
         }
