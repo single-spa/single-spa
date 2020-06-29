@@ -167,10 +167,20 @@ if (isInBrowser) {
     "replaceState"
   );
 
-  /* For convenience in `onclick` attributes, we expose a global function for navigating to
-   * whatever an <a> tag's href is.
-   */
-  window.singleSpaNavigate = navigateToUrl;
+  if (window.singleSpaNavigate) {
+    console.warn(
+      formatErrorMessage(
+        41,
+        __DEV__ &&
+          "single-spa has been loaded twice on the page. This can result in unexpected behavior."
+      )
+    );
+  } else {
+    /* For convenience in `onclick` attributes, we expose a global function for navigating to
+     * whatever an <a> tag's href is.
+     */
+    window.singleSpaNavigate = navigateToUrl;
+  }
 }
 
 function parseUri(str) {

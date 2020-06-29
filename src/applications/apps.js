@@ -8,6 +8,7 @@ import {
   MOUNTED,
   LOAD_ERROR,
   SKIP_BECAUSE_BROKEN,
+  LOADING_SOURCE_CODE,
   shouldBeActive,
 } from "./app.helpers.js";
 import { reroute } from "../navigation/reroute.js";
@@ -44,6 +45,7 @@ export function getAppChanges() {
         }
         break;
       case NOT_LOADED:
+      case LOADING_SOURCE_CODE:
         if (appShouldBeActive) {
           appsToLoad.push(app);
         }
@@ -137,7 +139,7 @@ export function checkActivityFunctions(location = window.location) {
 }
 
 export function unregisterApplication(appName) {
-  if (!apps.find((app) => toName(app) === appName)) {
+  if (apps.filter((app) => toName(app) === appName).length === 0) {
     throw Error(
       formatErrorMessage(
         25,
@@ -149,7 +151,7 @@ export function unregisterApplication(appName) {
   }
 
   return unloadApplication(appName).then(() => {
-    const appIndex = apps.findIndex((app) => toName(app) === appName);
+    const appIndex = apps.map(toName).indexOf(appName);
     apps.splice(appIndex, 1);
   });
 }
@@ -443,6 +445,15 @@ export function toDynamicPathValidatorRegex(path) {
     regexStr += inDynamic
       ? anyCharMaybeTrailingSlashRegex
       : commonStringSubPath;
+
+    if (index === path.length && !inDynamic) {
+      regexStr =
+        // use charAt instead as we could not use es6 method endsWith
+        regexStr.charAt(regexStr.length - 1) === "/"
+          ? `${regexStr}.*$`
+          : `${regexStr}(\/.*)?$`;
+    }
+
     inDynamic = !inDynamic;
     lastIndex = index;
   }
