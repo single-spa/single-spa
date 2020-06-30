@@ -415,7 +415,10 @@ export function pathToActiveWhen(path) {
   const regex = toDynamicPathValidatorRegex(path);
 
   return (location) => {
-    const route = location.href.replace(location.origin, "");
+    const route = location.href
+      .replace(location.origin, "")
+      .replace(location.search, "")
+      .split("?")[0];
     return regex.test(route);
   };
 }
@@ -435,7 +438,6 @@ export function toDynamicPathValidatorRegex(path) {
   }
 
   appendToRegex(path.length);
-
   return new RegExp(regexStr, "i");
 
   function appendToRegex(index) {
