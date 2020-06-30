@@ -15,20 +15,20 @@ describe(`pathToActiveWhen`, () => {
     });
 
     expectPathToMatch("/pathname/", {
-      "http://app.com/pathname": false,
-      "http://app.com/pathname?query-string=1": false,
       "http://app.com/pathname/": true,
       "http://app.com/pathname/?query-string=1": true,
       "http://app.com/pathname/extra": true,
+      "http://app.com/pathname": false,
+      "http://app.com/pathname?query-string=1": false,
     });
 
     expectPathToMatch("/pathname/:dynamic/", {
-      "http://app.com/pathname/123": false,
-      "http://app.com/pathname/123?query-string=1": false,
       "http://app.com/pathname/123/": true,
       "http://app.com/pathname/123/?query-string=1": true,
       "http://app.com/pathname/123/extra": true,
       "http://app.com/pathname/123/extra?query-string=1": true,
+      "http://app.com/pathname/123": false,
+      "http://app.com/pathname/123?query-string=1": false,
     });
 
     expectPathToMatch("/#/pathname", {
@@ -44,8 +44,8 @@ describe(`pathToActiveWhen`, () => {
 
     expectPathToMatch("/#/pathname/:dynamic/notDynamic", {
       "http://app.com/#/pathname/1/notDynamic": true,
-      "http://app.com/#/pathname/1/notDynamicExtra": false,
       "http://app.com/#/pathname/1/notDynamic/": true,
+      "http://app.com/#/pathname/1/notDynamicExtra": false,
       "http://app.com/#/pathname//notDynamic/anything/everything": false,
     });
 
@@ -84,9 +84,9 @@ describe(`pathToActiveWhen`, () => {
     });
 
     expectPathToMatch("/#/subpath/:dynamic", {
-      "http://app.com/subpath/1/with/other/things": false,
       "http://app.com/#/subpath/1/with/other/things": true,
       "http://app.com/#/subpath/1": true,
+      "http://app.com/subpath/1/with/other/things": false,
     });
 
     // Impossible paths due to URL always goin from root 'app.com' -> 'app.com/'
@@ -96,8 +96,8 @@ describe(`pathToActiveWhen`, () => {
     });
 
     expectPathToMatch("pathname", {
-      "http://app.com#/pathname": false,
-      "http://app.com#/pathname/bleus": false,
+      "http://app.com/pathname": false,
+      "http://app.com/pathname/bleus": false,
     });
 
     expectPathToMatch(":dynamic/:dynamic", {
@@ -113,7 +113,7 @@ describe(`pathToActiveWhen`, () => {
 function expectPathToMatch(dynamicPath, asserts) {
   const print = (path) => (path === "" ? "empty string ('')" : path);
   Object.entries(asserts).forEach(([path, expectTo]) => {
-    it(`expects dynamicPath ${print(dynamicPath)} to${
+    it(`expects path ${print(dynamicPath)} to${
       expectTo ? "" : " not"
     } match ${print(path)}`, () => {
       expect(pathToActiveWhen(dynamicPath)(new URL(path))).toBe(expectTo);
