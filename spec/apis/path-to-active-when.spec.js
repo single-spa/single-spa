@@ -2,92 +2,110 @@ import { pathToActiveWhen } from "single-spa";
 import { toDynamicPathValidatorRegex } from "../../src/applications/apps";
 
 describe(`pathToActiveWhen`, () => {
-  it(`allows you to create your own activeWhen functions using the single-spa public api`, () => {
-    const activeWhen = pathToActiveWhen("/users/:userId/settings");
-
-    expect(activeWhen(new URL("http://localhost/users/1/settings"))).toBe(true);
-    expect(activeWhen(new URL("http://localhost/users/1"))).toBe(false);
-    expect(activeWhen(new URL("http://localhost/users"))).toBe(false);
-    expect(activeWhen(new URL("http://localhost/cart"))).toBe(false);
-  });
-
-  describe("toDynamicPathValidatorRegex", () => {
+  describe("Validate URL on given activeWhen pathname/hashPathname/both", () => {
     expectPathToMatch("/pathname", {
-      "/pathname": true,
-      "/pathname/": true,
-      "/pathname/anything/everything": true,
-      "/pathnameExtraShouldNotMatch": false,
-      // "/pathname?query-string=1": true,
-      // "/pathname/?query-string=1": true,
+      "http://app.com/pathname": true,
+      "http://app.com/pathname?query-string=1": true,
+      "http://app.com/pathname/": true,
+      "http://app.com/pathname/?query-string=1": true,
+      "http://app.com/pathname/anything/everything": true,
+      "http://app.com/pathname/anything/everything?query-string=1": true,
+      "http://app.com/pathnameExtraShouldNotMatch": false,
+      "http://app.com/pathnameExtraShouldNotMatch?query-string=1": false,
     });
 
     expectPathToMatch("/pathname/", {
-      "/pathname": false,
-      "/pathname/": true,
-      "/pathname/extra": true,
-      // "/pathname?query-string=1": false,
-      // "/pathname/?query-string=1": true,
-      // "/pathname/extra?query-string=1": true,
+      "http://app.com/pathname": false,
+      "http://app.com/pathname?query-string=1": false,
+      "http://app.com/pathname/": true,
+      "http://app.com/pathname/?query-string=1": true,
+      "http://app.com/pathname/extra": true,
     });
 
     expectPathToMatch("/pathname/:dynamic/", {
-      "/pathname/123": false,
-      "/pathname/123/": true,
-      "/pathname/123/extra": true,
+      "http://app.com/pathname/123": false,
+      "http://app.com/pathname/123?query-string=1": false,
+      "http://app.com/pathname/123/": true,
+      "http://app.com/pathname/123/?query-string=1": true,
+      "http://app.com/pathname/123/extra": true,
+      "http://app.com/pathname/123/extra?query-string=1": true,
     });
 
     expectPathToMatch("/#/pathname", {
-      "/#/pathname": true,
-      "/#/pathname/": true,
-      "/#/pathname/anything/everything": true,
+      "http://app.com/#/pathname": true,
+      "http://app.com/#/pathname?query-string=1": true,
+      "http://app.com/#/pathname/": true,
+      "http://app.com/#/pathname/?query-string=1": true,
+      "http://app.com/#/pathname/anything/everything": true,
+      "http://app.com/#/pathname/anything/everything?query-string=1": true,
+      "http://app.com?query-string=1/#/pathname/anything/everything?query-string=1": true,
+      "http://app.com?query-string=1#/pathname/anything/everything?query-string=1": true,
     });
 
     expectPathToMatch("/#/pathname/:dynamic/notDynamic", {
-      "/#/pathname/1/notDynamic": true,
-      "/#/pathname/1/notDynamicExtra": false,
-      "/#/pathname/1/notDynamic/": true,
-      "/#/pathname//notDynamic/anything/everything": false,
+      "http://app.com/#/pathname/1/notDynamic": true,
+      "http://app.com/#/pathname/1/notDynamicExtra": false,
+      "http://app.com/#/pathname/1/notDynamic/": true,
+      "http://app.com/#/pathname//notDynamic/anything/everything": false,
     });
 
     expectPathToMatch("/pathname/:dynamic/notDynamic", {
-      "/pathname/1/notDynamic": true,
-      "/pathname/1/notDynamic/anything/everything": true,
-      "/pathname//notDynamic": false,
+      "http://app.com/pathname/1/notDynamic": true,
+      "http://app.com/pathname/1/notDynamic/anything/everything": true,
+      "http://app.com/pathname//notDynamic": false,
     });
 
     expectPathToMatch("", {
-      "": true,
-      "/": true,
-      "/anything/everything": true,
+      "http://app.com": true,
+      "http://app.com/": true,
+      "http://app.com/anything/everything": true,
     });
 
     expectPathToMatch("/", {
-      "": false,
-      "/": true,
-      "/anything/everything": true,
+      "http://app.com/": true,
+      "http://app.com/anything/everything": true,
+    });
+
+    expectPathToMatch("/:dynamic/:dynamic", {
+      "http://app.com/1/1": true,
+      "http://app.com/1/1/": true,
+      "http://app.com/1//": false,
+      "http://app.com/1/": false,
+      "http://app.com/1": false,
+    });
+
+    expectPathToMatch("/:dynamic/:dynamic/anything/everything", {
+      "http://app.com/1/1/anything/everything": true,
+    });
+
+    expectPathToMatch("/pathname#/subpath/:dynamic", {
+      "http://app.com/pathname#/subpath/1/with/other/things": true,
+      "http://app.com/#/subpath/1/with/other/things": false,
+    });
+
+    expectPathToMatch("/#/subpath/:dynamic", {
+      "http://app.com/subpath/1/with/other/things": false,
+      "http://app.com/#/subpath/1/with/other/things": true,
+      "http://app.com/#/subpath/1": true,
+    });
+
+    // Impossible paths due to URL always goin from root 'app.com' -> 'app.com/'
+    expectPathToMatch("#/subpath/:dynamic", {
+      "http://app.com#/subpath/1/with/other/things": false,
+      "http://app.com#/subpath/1": false,
+    });
+
+    expectPathToMatch("pathname", {
+      "http://app.com#/pathname": false,
+      "http://app.com#/pathname/bleus": false,
     });
 
     expectPathToMatch(":dynamic/:dynamic", {
-      "1/1": true,
-      "1/1/": true,
-      "1//": false,
-      "1/": false,
-      "1": false,
+      "http://app.com/1/1": false,
     });
 
-    expectPathToMatch(":dynamic/:dynamic/anything/everything", {
-      "1/1/anything/everything": true,
-    });
-
-    expectPathToMatch("$🎉/:dynamic$🎉", {
-      "$🎉/1": true,
-      "$🎉/1/": true,
-      "$🎉/1/anything/everything": true,
-    });
-
-    expectPathToMatch("pathname#/subpath/:dynamic", {
-      "pathname#/subpath/1/with/other/things": true,
-      "#/subpath/1/with/other/things": false,
+    expectPathToMatch("/", {
+      "http://app.com": true,
     });
   });
 });
@@ -95,12 +113,10 @@ describe(`pathToActiveWhen`, () => {
 function expectPathToMatch(dynamicPath, asserts) {
   const print = (path) => (path === "" ? "empty string ('')" : path);
   Object.entries(asserts).forEach(([path, expectTo]) => {
-    it(`expects dynamicPath ${print(dynamicPath)} to ${
-      expectTo ? "" : "not"
+    it(`expects dynamicPath ${print(dynamicPath)} to${
+      expectTo ? "" : " not"
     } match ${print(path)}`, () => {
-      expect(toDynamicPathValidatorRegex(dynamicPath).test(path)).toBe(
-        expectTo
-      );
+      expect(pathToActiveWhen(dynamicPath)(new URL(path))).toBe(expectTo);
     });
   });
 }
