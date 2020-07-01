@@ -17,11 +17,6 @@ mountRootParcel(appOrParcel, {
   domElement: document.createElement("div"),
 });
 
-mountRootParcel(appOrParcel, (name: string, location: Location) => ({
-  hi: "there",
-  domElement: document.createElement("div"),
-}));
-
 registerApplication({
   name: "app1",
   activeWhen: "/",
