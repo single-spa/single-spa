@@ -14,9 +14,7 @@ declare module "single-spa" {
     singleSpa: any;
     mountParcel(
       parcelConfig: ParcelConfig,
-      customProps:
-        | (ParcelProps & CustomProps)
-        | CustomPropsFn<ParcelProps & CustomProps>
+      customProps: ParcelProps & CustomProps
     ): Parcel;
   };
 
@@ -30,7 +28,7 @@ declare module "single-spa" {
   type Parcel = {
     mount(): Promise<null>;
     unmount(): Promise<null>;
-    update?(customProps: CustomProps | CustomPropsFn): Promise<any>;
+    update?(customProps: CustomProps): Promise<any>;
     getStatus():
       | "NOT_LOADED"
       | "LOADING_SOURCE_CODE"
@@ -158,9 +156,7 @@ declare module "single-spa" {
   // './parcels/mount-parcel.js'
   export function mountRootParcel(
     parcelConfig: ParcelConfig,
-    parcelProps:
-      | (ParcelProps & CustomProps)
-      | CustomPropsFn<ParcelProps & CustomProps>
+    parcelProps: ParcelProps & CustomProps
   ): Parcel;
 
   export function pathToActiveWhen(path: string): ActivityFn;
