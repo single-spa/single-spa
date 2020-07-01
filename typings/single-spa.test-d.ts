@@ -4,7 +4,7 @@ import {
   registerApplication,
   pathToActiveWhen,
 } from "single-spa";
-import { expectType } from "tsd";
+import { expectError, expectType } from "tsd";
 
 const appOrParcel = {
   async bootstrap() {},
@@ -16,6 +16,8 @@ mountRootParcel(appOrParcel, {
   hi: "there",
   domElement: document.createElement("div"),
 });
+
+expectError(mountRootParcel(appOrParcel, () => {}));
 
 registerApplication({
   name: "app1",
