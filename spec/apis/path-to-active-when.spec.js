@@ -63,6 +63,7 @@ describe(`pathToActiveWhen`, () => {
 
     expectPathToMatch("/", {
       "http://app.com/": true,
+      "http://app.com": true,
       "http://app.com/anything/everything": true,
     });
 
@@ -89,23 +90,19 @@ describe(`pathToActiveWhen`, () => {
       "http://app.com/subpath/1/with/other/things": false,
     });
 
-    // Impossible paths due to URL always goin from root 'app.com' -> 'app.com/'
     expectPathToMatch("#/subpath/:dynamic", {
-      "http://app.com#/subpath/1/with/other/things": false,
-      "http://app.com#/subpath/1": false,
+      "http://app.com#/subpath/1/with/other/things": true,
+      "http://app.com#/subpath/1": true,
+      "http://app.com/#/subpath/1": true,
     });
 
     expectPathToMatch("pathname", {
-      "http://app.com/pathname": false,
-      "http://app.com/pathname/bleus": false,
+      "http://app.com/pathname": true,
+      "http://app.com/pathname/bleus": true,
     });
 
     expectPathToMatch(":dynamic/:dynamic", {
-      "http://app.com/1/1": false,
-    });
-
-    expectPathToMatch("/", {
-      "http://app.com": true,
+      "http://app.com/1/1": true,
     });
   });
 });

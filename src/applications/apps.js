@@ -428,6 +428,10 @@ export function toDynamicPathValidatorRegex(path) {
     inDynamic = false,
     regexStr = "^";
 
+  if (path[0] !== "/") {
+    path = "/" + path;
+  }
+
   for (let charIndex = 0; charIndex < path.length; charIndex++) {
     const char = path[charIndex];
     const startOfDynamic = !inDynamic && char === ":";
