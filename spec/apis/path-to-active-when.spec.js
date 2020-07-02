@@ -2,182 +2,118 @@ import { pathToActiveWhen } from "single-spa";
 import { toDynamicPathValidatorRegex } from "../../src/applications/apps";
 
 describe(`pathToActiveWhen`, () => {
-  it(`allows you to create your own activeWhen functions using the single-spa public api`, () => {
-    const activeWhen = pathToActiveWhen("/users/:userId/settings");
-
-    expect(activeWhen(new URL("http://localhost/users/1/settings"))).toBe(true);
-    expect(activeWhen(new URL("http://localhost/users/1"))).toBe(false);
-    expect(activeWhen(new URL("http://localhost/users"))).toBe(false);
-    expect(activeWhen(new URL("http://localhost/cart"))).toBe(false);
-  });
-
-  describe("toDynamicPathValidatorRegex", () => {
-    it("Should generate correct regex for '/pathname'", () => {
-      expect(toDynamicPathValidatorRegex("/pathname").test("/pathname")).toBe(
-        true
-      );
-      expect(toDynamicPathValidatorRegex("/pathname").test("/pathname/")).toBe(
-        true
-      );
-      expect(
-        toDynamicPathValidatorRegex("/pathname").test(
-          "/pathname/anything/everything"
-        )
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex("/pathname").test(
-          "/pathnameExtraShouldNotMatch"
-        )
-      ).toBe(false);
+  describe("Validate URL on given activeWhen pathname/hashPathname/both", () => {
+    expectPathToMatch("/pathname", {
+      "http://app.com/pathname": true,
+      "http://app.com/pathname?query-string=1": true,
+      "http://app.com/pathname/": true,
+      "http://app.com/pathname/?query-string=1": true,
+      "http://app.com/pathname/anything/everything": true,
+      "http://app.com/pathname/anything/everything?query-string=1": true,
+      "http://app.com/pathnameExtraShouldNotMatch": false,
+      "http://app.com/pathnameExtraShouldNotMatch?query-string=1": false,
     });
 
-    it("Should generate correct regex for '/pathname/'", () => {
-      expect(toDynamicPathValidatorRegex("/pathname/").test("/pathname")).toBe(
-        false
-      );
-      expect(toDynamicPathValidatorRegex("/pathname/").test("/pathname/")).toBe(
-        true
-      );
-      expect(
-        toDynamicPathValidatorRegex("/pathname/").test("/pathname/extra")
-      ).toBe(true);
+    expectPathToMatch("/pathname/", {
+      "http://app.com/pathname/": true,
+      "http://app.com/pathname/?query-string=1": true,
+      "http://app.com/pathname/extra": true,
+      "http://app.com/pathname": false,
+      "http://app.com/pathname?query-string=1": false,
     });
 
-    it("Should generate correct regex for '/pathname/:dynamic/'", () => {
-      expect(
-        toDynamicPathValidatorRegex("/pathname/:dynamic/").test("/pathname/123")
-      ).toBe(false);
-      expect(
-        toDynamicPathValidatorRegex("/pathname/:dynamic/").test(
-          "/pathname/123/"
-        )
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex("/pathname/:dynamic/").test(
-          "/pathname/123/extra"
-        )
-      ).toBe(true);
+    expectPathToMatch("/pathname/:dynamic/", {
+      "http://app.com/pathname/123/": true,
+      "http://app.com/pathname/123/?query-string=1": true,
+      "http://app.com/pathname/123/extra": true,
+      "http://app.com/pathname/123/extra?query-string=1": true,
+      "http://app.com/pathname/123": false,
+      "http://app.com/pathname/123?query-string=1": false,
     });
 
-    it("Should generate correct regex for '/#/pathname'", () => {
-      expect(
-        toDynamicPathValidatorRegex("/#/pathname").test("/#/pathname")
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex("/#/pathname").test("/#/pathname/")
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex("/#/pathname").test(
-          "/#/pathname/anything/everything"
-        )
-      ).toBe(true);
+    expectPathToMatch("/#/pathname", {
+      "http://app.com/#/pathname": true,
+      "http://app.com/#/pathname?query-string=1": true,
+      "http://app.com/#/pathname/": true,
+      "http://app.com/#/pathname/?query-string=1": true,
+      "http://app.com/#/pathname/anything/everything": true,
+      "http://app.com/#/pathname/anything/everything?query-string=1": true,
+      "http://app.com?query-string=1/#/pathname/anything/everything?query-string=1": true,
+      "http://app.com?query-string=1#/pathname/anything/everything?query-string=1": true,
     });
 
-    it("Should generate correct regex for '/#/pathname/:dynamic/notDynamic'", () => {
-      expect(
-        toDynamicPathValidatorRegex("/#/pathname/:dynamic/notDynamic").test(
-          "/#/pathname/1/notDynamic"
-        )
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex("/#/pathname/:dynamic/notDynamic").test(
-          "/#/pathname/1/notDynamicExtra"
-        )
-      ).toBe(false);
-      expect(
-        toDynamicPathValidatorRegex("/#/pathname/:dynamic/notDynamic").test(
-          "/#/pathname/1/notDynamic/"
-        )
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex("/#/pathname/:dynamic/notDynamic").test(
-          "/#/pathname//notDynamic/anything/everything"
-        )
-      ).toBe(false);
+    expectPathToMatch("/#/pathname/:dynamic/notDynamic", {
+      "http://app.com/#/pathname/1/notDynamic": true,
+      "http://app.com/#/pathname/1/notDynamic/": true,
+      "http://app.com/#/pathname/1/notDynamicExtra": false,
+      "http://app.com/#/pathname//notDynamic/anything/everything": false,
     });
 
-    it("Should generate correct regex for '/pathname/:dynamic/notDynamic'", () => {
-      expect(
-        toDynamicPathValidatorRegex("/pathname/:dynamic/notDynamic").test(
-          "/pathname/1/notDynamic"
-        )
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex("/pathname/:dynamic/notDynamic").test(
-          "/pathname/1/notDynamic/anything/everything"
-        )
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex("/pathname/:dynamic/notDynamic").test(
-          "/pathname//notDynamic"
-        )
-      ).toBe(false);
+    expectPathToMatch("/pathname/:dynamic/notDynamic", {
+      "http://app.com/pathname/1/notDynamic": true,
+      "http://app.com/pathname/1/notDynamic/anything/everything": true,
+      "http://app.com/pathname//notDynamic": false,
     });
 
-    it("Should generate correct regex for ''", () => {
-      expect(toDynamicPathValidatorRegex("").test("")).toBe(true);
-      expect(toDynamicPathValidatorRegex("").test("/")).toBe(true);
-      expect(toDynamicPathValidatorRegex("").test("/anything/everything")).toBe(
-        true
-      );
+    expectPathToMatch("", {
+      "http://app.com": true,
+      "http://app.com/": true,
+      "http://app.com/anything/everything": true,
     });
 
-    it("Should generate correct regex for '/'", () => {
-      expect(toDynamicPathValidatorRegex("").test("")).toBe(true);
-      expect(toDynamicPathValidatorRegex("").test("/")).toBe(true);
-      expect(toDynamicPathValidatorRegex("").test("/anything/everything")).toBe(
-        true
-      );
+    expectPathToMatch("/", {
+      "http://app.com/": true,
+      "http://app.com": true,
+      "http://app.com/anything/everything": true,
     });
 
-    it("Should generate correct regex for ':dynamic/:dynamic'", () => {
-      expect(toDynamicPathValidatorRegex(":dynamic/:dynamic").test("1/1")).toBe(
-        true
-      );
-      expect(
-        toDynamicPathValidatorRegex(":dynamic/:dynamic").test("1/1/")
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex(
-          ":dynamic/:dynamic/anything/everything"
-        ).test("1/1/anything/everything")
-      ).toBe(true);
-      expect(toDynamicPathValidatorRegex(":dynamic/:dynamic").test("1//")).toBe(
-        false
-      );
-      expect(toDynamicPathValidatorRegex(":dynamic/:dynamic").test("1/")).toBe(
-        false
-      );
-      expect(toDynamicPathValidatorRegex(":dynamic/:dynamic").test("1")).toBe(
-        false
-      );
+    expectPathToMatch("/:dynamic/:dynamic", {
+      "http://app.com/1/1": true,
+      "http://app.com/1/1/": true,
+      "http://app.com/1//": false,
+      "http://app.com/1/": false,
+      "http://app.com/1": false,
     });
 
-    it("Should generate correct regex for '$🎉/:dynamic$🎉'", () => {
-      expect(toDynamicPathValidatorRegex("$🎉/:dynamic$🎉").test("$🎉/1")).toBe(
-        true
-      );
-      expect(
-        toDynamicPathValidatorRegex("$🎉/:dynamic$🎉").test("$🎉/1/")
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex("$🎉/:dynamic$🎉").test(
-          "$🎉/1/anything/everything"
-        )
-      ).toBe(true);
+    expectPathToMatch("/:dynamic/:dynamic/anything/everything", {
+      "http://app.com/1/1/anything/everything": true,
     });
 
-    it("Should generate correct regex for 'pathname#/subpath/:dynamic'", () => {
-      expect(
-        toDynamicPathValidatorRegex("pathname#/subpath/:dynamic").test(
-          "pathname#/subpath/1/with/other/things"
-        )
-      ).toBe(true);
-      expect(
-        toDynamicPathValidatorRegex("pathname#/subpath/:dynamic").test(
-          "#/subpath/1/with/other/things"
-        )
-      ).toBe(false);
+    expectPathToMatch("/pathname#/subpath/:dynamic", {
+      "http://app.com/pathname#/subpath/1/with/other/things": true,
+      "http://app.com/#/subpath/1/with/other/things": false,
+    });
+
+    expectPathToMatch("/#/subpath/:dynamic", {
+      "http://app.com/#/subpath/1/with/other/things": true,
+      "http://app.com/#/subpath/1": true,
+      "http://app.com/subpath/1/with/other/things": false,
+    });
+
+    expectPathToMatch("#/subpath/:dynamic", {
+      "http://app.com#/subpath/1/with/other/things": true,
+      "http://app.com#/subpath/1": true,
+      "http://app.com/#/subpath/1": true,
+    });
+
+    expectPathToMatch("pathname", {
+      "http://app.com/pathname": true,
+      "http://app.com/pathname/bleus": true,
+    });
+
+    expectPathToMatch(":dynamic/:dynamic", {
+      "http://app.com/1/1": true,
     });
   });
 });
+
+function expectPathToMatch(dynamicPath, asserts) {
+  const print = (path) => (path === "" ? "empty string ('')" : path);
+  Object.entries(asserts).forEach(([path, expectTo]) => {
+    it(`expects path ${print(dynamicPath)} to${
+      expectTo ? "" : " not"
+    } match ${print(path)}`, () => {
+      expect(pathToActiveWhen(dynamicPath)(new URL(path))).toBe(expectTo);
+    });
+  });
+}
