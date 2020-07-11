@@ -457,7 +457,7 @@ export function toDynamicPathValidatorRegex(path) {
         // use charAt instead as we could not use es6 method endsWith
         regexStr.charAt(regexStr.length - 1) === "/"
           ? `${regexStr}.*$`
-          : `${regexStr}(\/.*)?$`;
+          : `${regexStr}([/#?].*)?$`;
     }
 
     inDynamic = !inDynamic;
