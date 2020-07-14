@@ -6,6 +6,7 @@ describe(`pathToActiveWhen`, () => {
     expectPathToMatch("/pathname", {
       "http://app.com/pathname": true,
       "http://app.com/pathname?query-string=1": true,
+      "http://app.com/pathname#url-fragment": true,
       "http://app.com/pathname/": true,
       "http://app.com/pathname/?query-string=1": true,
       "http://app.com/pathname/anything/everything": true,
@@ -17,6 +18,7 @@ describe(`pathToActiveWhen`, () => {
     expectPathToMatch("/pathname/", {
       "http://app.com/pathname/": true,
       "http://app.com/pathname/?query-string=1": true,
+      "http://app.com/pathname/#url-fragment": true,
       "http://app.com/pathname/extra": true,
       "http://app.com/pathname": false,
       "http://app.com/pathname?query-string=1": false,
