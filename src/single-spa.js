@@ -8,6 +8,7 @@ export {
 } from "./applications/timeouts.js";
 export {
   registerApplication,
+  unregisterApplication,
   getMountedApps,
   getAppStatus,
   unloadApplication,
