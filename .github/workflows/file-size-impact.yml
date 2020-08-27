@@ -1,0 +1,29 @@
+name: file-size-impact
+
+on: pull_request_target
+
+jobs:
+  file-size-impact:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [13.12.0]
+    runs-on: ${{ matrix.os }}
+    name: report file size impact
+    steps:
+      - name: Setup git
+        uses: actions/checkout@v2
+      - name: Setup node ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: npm install
+        run: npm install
+      - name: npm run build
+        run: npm run build
+      - name: npm install jsenv-file-size
+        run: npm install --prefix ./.github/workflows/file-size-impact/
+      - name: Report file size impact
+        run: node ./.github/workflows/file-size-impact/report-file-size-impact.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
