@@ -1,7 +1,7 @@
-const {
+import {
   reportFileSizeImpact,
   readGithubWorkflowEnv,
-} = require("@jsenv/file-size-impact");
+} from "@jsenv/file-size-impact";
 
 reportFileSizeImpact({
   ...readGithubWorkflowEnv(),
