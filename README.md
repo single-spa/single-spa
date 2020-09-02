@@ -1,8 +1,9 @@
 <img src="https://single-spa.js.org/img/logo-white-bgblue.svg" width="50" height="50">
 
 [![npm version](https://img.shields.io/npm/v/single-spa.svg?style=flat-square)](https://www.npmjs.org/package/single-spa)
-[![Build Status](https://img.shields.io/travis/single-spa/single-spa/master.svg?style=flat-square)](https://travis-ci.org/single-spa/single-spa)
+[![Build Status](https://img.shields.io/travis/single-spa/single-spa/master.svg?style=flat-square)](https://travis-ci.com/single-spa/single-spa)
 [![](https://data.jsdelivr.com/v1/package/npm/single-spa/badge)](https://www.jsdelivr.com/package/npm/single-spa)
+[![NPM Downloads](https://badgen.net/npm/dm/single-spa)](https://npmjs.org/package/single-spa)
 
 # single-spa
 
@@ -15,7 +16,7 @@
 Build micro frontends that coexist and can ([but don't need to](https://single-spa.js.org/docs/faq.html#can-i-use-more-than-one-framework)) be written with their own framework. This allows you to:
 
 - [Use multiple frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) on the same page [without refreshing the page](/docs/applications.md)
-  ([React](https://github.com/single-spa/single-spa-react), [AngularJS](https://github.com/single-spa/single-spa-angular1), [Angular](https://github.com/single-spa/single-spa-angular2), [Ember](https://github.com/single-spa/single-spa-ember), or whatever you're using)
+  ([React](https://github.com/single-spa/single-spa-react), [AngularJS](https://github.com/single-spa/single-spa-angularjs), [Angular](https://github.com/single-spa/single-spa-angular), [Ember](https://github.com/single-spa/single-spa-ember), or whatever you're using)
 - Write new code, possibly with a new framework, without rewriting your existing app
 - Lazy load code for improved initial load time.
 

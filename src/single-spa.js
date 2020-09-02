@@ -13,6 +13,7 @@ export {
   unloadApplication,
   checkActivityFunctions,
   getAppNames,
+  pathToActiveWhen,
 } from "./applications/apps.js";
 export { navigateToUrl } from "./navigation/navigation-events.js";
 export { triggerAppChange } from "./navigation/reroute.js";

@@ -45,12 +45,18 @@ export default (async () => [
         sourcemap: true,
         banner: generateBanner("SystemJS"),
       },
+      {
+        file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        format: "esm",
+        sourcemap: true,
+        banner: generateBanner("ESM"),
+      },
     ],
     plugins: [
       replace(replaceOpts),
       resolve(),
-      commonjs(),
       babel(babelOpts),
+      commonjs(),
       isProduction && (await import("rollup-plugin-terser")).terser(terserOpts),
       useAnalyzer && analyzer(),
     ],
@@ -58,20 +64,20 @@ export default (async () => [
   {
     input: "./src/single-spa.js",
     output: {
-      file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
+      file: `./lib/es2015/single-spa${isProduction ? ".min" : ".dev"}.js`,
       format: "esm",
       sourcemap: true,
-      banner: generateBanner("ESM"),
+      banner: generateBanner("ES2015"),
     },
     plugins: [
       replace(replaceOpts),
       resolve(),
-      commonjs(),
       babel(
         Object.assign({}, babelOpts, {
           envName: "esm",
         })
       ),
+      commonjs(),
       isProduction &&
         (await import("rollup-plugin-terser")).terser(
           Object.assign({}, terserOpts, {

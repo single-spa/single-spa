@@ -1,7 +1,7 @@
 {
   "name": "single-spa",
-  "version": "5.3.1",
-  "description": "Microfrontends made easy",
+  "version": "5.5.5",
+  "description": "The router for easy microfrontends",
   "main": "lib/umd/single-spa.min.js",
   "types": "typings/single-spa.d.ts",
   "module": "lib/esm/single-spa.min.js",
@@ -16,8 +16,17 @@
     "test": "concurrently -n w: 'yarn:test:*'",
     "test:browser": "cross-env BABEL_ENV=test jest --config jest-browser.config.js",
     "test:node": "cross-env BABEL_ENV=test jest --config jest-node.config.js",
+    "test:types": "tsd",
     "prettier": "prettier './**' --write",
     "lint": "eslint src"
+  },
+  "tsd": {
+    "testDir": "spec/typings",
+    "compilerOptions": {
+      "lib": [
+        "dom"
+      ]
+    }
   },
   "husky": {
     "hooks": {
@@ -26,7 +35,7 @@
   },
   "files": [
     "lib",
-    "typings"
+    "typings/single-spa.d.ts"
   ],
   "homepage": "https://single-spa.js.org",
   "repository": "https://github.com/single-spa/single-spa",
@@ -39,7 +48,10 @@
     "framework",
     "react",
     "angular",
-    "vue"
+    "vue",
+    "router",
+    "microservices",
+    "frontend"
   ],
   "author": "Joel Denning",
   "license": "MIT",
@@ -59,6 +71,7 @@
     "eslint": "6.8.0",
     "eslint-config-canopy": "2.3.0",
     "eslint-config-important-stuff": "^1.1.0",
+    "eslint-plugin-es5": "^1.5.0",
     "husky": "^4.2.3",
     "jest": "^25.1.0",
     "prettier": "^2.0.2",
@@ -69,7 +82,8 @@
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^5.3.0"
+    "rollup-plugin-terser": "^5.3.0",
+    "tsd": "^0.11.0"
   },
   "browserslist": [
     "ie >= 11",

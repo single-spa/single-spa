@@ -5,13 +5,20 @@ import { toBootstrapPromise } from "../lifecycles/bootstrap.js";
 import { toMountPromise } from "../lifecycles/mount.js";
 import { toUnmountPromise } from "../lifecycles/unmount.js";
 import {
+  getAppStatus,
+  getAppChanges,
   getMountedApps,
-  getAppsToLoad,
-  getAppsToUnmount,
-  getAppsToMount,
 } from "../applications/apps.js";
 import { callCapturedEventListeners } from "./navigation-events.js";
-import { getAppsToUnload, toUnloadPromise } from "../lifecycles/unload.js";
+import { toUnloadPromise } from "../lifecycles/unload.js";
+import {
+  toName,
+  shouldBeActive,
+  NOT_MOUNTED,
+  MOUNTED,
+  NOT_LOADED,
+  SKIP_BECAUSE_BROKEN,
+} from "../applications/app.helpers.js";
 
 let appChangeUnderway = false,
   peopleWaitingOnAppChange = [];
@@ -32,22 +39,30 @@ export function reroute(pendingPromises = [], eventArguments) {
     });
   }
 
-  let wasNoOp = true;
+  const {
+    appsToUnload,
+    appsToUnmount,
+    appsToLoad,
+    appsToMount,
+  } = getAppChanges();
+  let appsThatChanged;
 
   if (isStarted()) {
     appChangeUnderway = true;
+    appsThatChanged = appsToUnload.concat(
+      appsToLoad,
+      appsToUnmount,
+      appsToMount
+    );
     return performAppChanges();
   } else {
+    appsThatChanged = appsToLoad;
     return loadApps();
   }
 
   function loadApps() {
     return Promise.resolve().then(() => {
-      const loadPromises = getAppsToLoad().map(toLoadPromise);
-
-      if (loadPromises.length > 0) {
-        wasNoOp = false;
-      }
+      const loadPromises = appsToLoad.map(toLoadPromise);
 
       return (
         Promise.all(loadPromises)
@@ -64,55 +79,59 @@ export function reroute(pendingPromises = [], eventArguments) {
 
   function performAppChanges() {
     return Promise.resolve().then(() => {
+      // https://github.com/single-spa/single-spa/issues/545
+      window.dispatchEvent(
+        new CustomEvent(
+          appsThatChanged.length === 0
+            ? "single-spa:before-no-app-change"
+            : "single-spa:before-app-change",
+          getCustomEventDetail(true)
+        )
+      );
+
       window.dispatchEvent(
         new CustomEvent(
           "single-spa:before-routing-event",
-          getCustomEventDetail()
+          getCustomEventDetail(true)
         )
       );
-      const unloadPromises = getAppsToUnload().map(toUnloadPromise);
+      const unloadPromises = appsToUnload.map(toUnloadPromise);
 
-      const unmountUnloadPromises = getAppsToUnmount()
+      const unmountUnloadPromises = appsToUnmount
         .map(toUnmountPromise)
         .map((unmountPromise) => unmountPromise.then(toUnloadPromise));
 
       const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
-      if (allUnmountPromises.length > 0) {
-        wasNoOp = false;
-      }
 
       const unmountAllPromise = Promise.all(allUnmountPromises);
 
-      const appsToLoad = getAppsToLoad();
+      unmountAllPromise.then(() => {
+        window.dispatchEvent(
+          new CustomEvent(
+            "single-spa:before-mount-routing-event",
+            getCustomEventDetail(true)
+          )
+        );
+      });
 
       /* We load and bootstrap apps while other apps are unmounting, but we
        * wait to mount the app until all apps are finishing unmounting
        */
       const loadThenMountPromises = appsToLoad.map((app) => {
-        return toLoadPromise(app)
-          .then(toBootstrapPromise)
-          .then((app) => {
-            return unmountAllPromise.then(() => toMountPromise(app));
-          });
+        return toLoadPromise(app).then((app) =>
+          tryToBootstrapAndMount(app, unmountAllPromise)
+        );
       });
-      if (loadThenMountPromises.length > 0) {
-        wasNoOp = false;
-      }
 
       /* These are the apps that are already bootstrapped and just need
        * to be mounted. They each wait for all unmounting apps to finish up
        * before they mount.
        */
-      const mountPromises = getAppsToMount()
+      const mountPromises = appsToMount
         .filter((appToMount) => appsToLoad.indexOf(appToMount) < 0)
         .map((appToMount) => {
-          return toBootstrapPromise(appToMount)
-            .then(() => unmountAllPromise)
-            .then(() => toMountPromise(appToMount));
+          return tryToBootstrapAndMount(appToMount, unmountAllPromise);
         });
-      if (mountPromises.length > 0) {
-        wasNoOp = false;
-      }
       return unmountAllPromise
         .catch((err) => {
           callAllEventListeners();
@@ -140,9 +159,10 @@ export function reroute(pendingPromises = [], eventArguments) {
     pendingPromises.forEach((promise) => promise.resolve(returnValue));
 
     try {
-      const appChangeEventName = wasNoOp
-        ? "single-spa:no-app-change"
-        : "single-spa:app-change";
+      const appChangeEventName =
+        appsThatChanged.length === 0
+          ? "single-spa:no-app-change"
+          : "single-spa:app-change";
       window.dispatchEvent(
         new CustomEvent(appChangeEventName, getCustomEventDetail())
       );
@@ -192,13 +212,70 @@ export function reroute(pendingPromises = [], eventArguments) {
     callCapturedEventListeners(eventArguments);
   }
 
-  function getCustomEventDetail() {
-    const result = { detail: {} };
+  function getCustomEventDetail(isBeforeChanges = false) {
+    const newAppStatuses = {};
+    const appsByNewStatus = {
+      // for apps that were mounted
+      [MOUNTED]: [],
+      // for apps that were unmounted
+      [NOT_MOUNTED]: [],
+      // apps that were forcibly unloaded
+      [NOT_LOADED]: [],
+      // apps that attempted to do something but are broken now
+      [SKIP_BECAUSE_BROKEN]: [],
+    };
 
-    if (eventArguments && eventArguments[0]) {
-      result.detail.originalEvent = eventArguments[0];
+    if (isBeforeChanges) {
+      appsToLoad.concat(appsToMount).forEach((app, index) => {
+        addApp(app, MOUNTED);
+      });
+      appsToUnload.forEach((app) => {
+        addApp(app, NOT_LOADED);
+      });
+      appsToUnmount.forEach((app) => {
+        addApp(app, NOT_MOUNTED);
+      });
+    } else {
+      appsThatChanged.forEach((app) => {
+        addApp(app);
+      });
     }
 
-    return result;
+    return {
+      detail: {
+        newAppStatuses,
+        appsByNewStatus,
+        totalAppChanges: appsThatChanged.length,
+        originalEvent: eventArguments?.[0],
+      },
+    };
+
+    function addApp(app, status) {
+      const appName = toName(app);
+      status = status || getAppStatus(appName);
+      newAppStatuses[appName] = status;
+      const statusArr = (appsByNewStatus[status] =
+        appsByNewStatus[status] || []);
+      statusArr.push(appName);
+    }
+  }
+}
+
+/**
+ * Let's imagine that some kind of delay occurred during application loading.
+ * The user without waiting for the application to load switched to another route,
+ * this means that we shouldn't bootstrap and mount that application, thus we check
+ * twice if that application should be active before bootstrapping and mounting.
+ * https://github.com/single-spa/single-spa/issues/524
+ */
+function tryToBootstrapAndMount(app, unmountAllPromise) {
+  if (shouldBeActive(app)) {
+    return toBootstrapPromise(app).then((app) =>
+      unmountAllPromise.then(() =>
+        shouldBeActive(app) ? toMountPromise(app) : app
+      )
+    );
+  } else {
+    return unmountAllPromise.then(() => app);
   }
 }

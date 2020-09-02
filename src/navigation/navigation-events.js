@@ -52,7 +52,7 @@ export function navigateToUrl(obj) {
     }
   } else if (
     destination.pathname === current.pathname &&
-    destination.search === current.pathname
+    destination.search === current.search
   ) {
     window.location.hash = destination.hash;
   } else {
@@ -90,6 +90,39 @@ function urlReroute() {
   reroute([], arguments);
 }
 
+function patchedUpdateState(updateState, methodName) {
+  return function () {
+    const urlBefore = window.location.href;
+    const result = updateState.apply(this, arguments);
+    const urlAfter = window.location.href;
+
+    if (!urlRerouteOnly || urlBefore !== urlAfter) {
+      urlReroute(createPopStateEvent(window.history.state, methodName));
+    }
+
+    return result;
+  };
+}
+
+function createPopStateEvent(state, originalMethodName) {
+  // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
+  // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
+  // all the applications can reroute. We explicitly identify this extraneous event by setting singleSpa=true and
+  // singleSpaTrigger=<pushState|replaceState> on the event instance.
+  let evt;
+  try {
+    evt = new PopStateEvent("popstate", { state });
+  } catch (err) {
+    // IE 11 compatibility https://github.com/single-spa/single-spa/issues/299
+    // https://docs.microsoft.com/en-us/openspecs/ie_standards/ms-html5e/bd560f47-b349-4d2c-baa8-f1560fb489dd
+    evt = document.createEvent("PopStateEvent");
+    evt.initPopStateEvent("popstate", false, false, state);
+  }
+  evt.singleSpa = true;
+  evt.singleSpaTrigger = originalMethodName;
+  return evt;
+}
+
 if (isInBrowser) {
   // We will trigger an app change for any routing events.
   window.addEventListener("hashchange", urlReroute);
@@ -125,42 +158,29 @@ if (isInBrowser) {
     return originalRemoveEventListener.apply(this, arguments);
   };
 
-  window.history.pushState = patchedUpdateState(window.history.pushState);
-  window.history.replaceState = patchedUpdateState(window.history.replaceState);
+  window.history.pushState = patchedUpdateState(
+    window.history.pushState,
+    "pushState"
+  );
+  window.history.replaceState = patchedUpdateState(
+    window.history.replaceState,
+    "replaceState"
+  );
 
-  function patchedUpdateState(updateState) {
-    return function () {
-      const urlBefore = window.location.href;
-      const result = updateState.apply(this, arguments);
-      const urlAfter = window.location.href;
-
-      if (!urlRerouteOnly || urlBefore !== urlAfter) {
-        urlReroute(createPopStateEvent(window.history.state));
-      }
-
-      return result;
-    };
+  if (window.singleSpaNavigate) {
+    console.warn(
+      formatErrorMessage(
+        41,
+        __DEV__ &&
+          "single-spa has been loaded twice on the page. This can result in unexpected behavior."
+      )
+    );
+  } else {
+    /* For convenience in `onclick` attributes, we expose a global function for navigating to
+     * whatever an <a> tag's href is.
+     */
+    window.singleSpaNavigate = navigateToUrl;
   }
-
-  function createPopStateEvent(state) {
-    // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
-    // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
-    // all the applications can reroute.
-    try {
-      return new PopStateEvent("popstate", { state });
-    } catch (err) {
-      // IE 11 compatibility https://github.com/single-spa/single-spa/issues/299
-      // https://docs.microsoft.com/en-us/openspecs/ie_standards/ms-html5e/bd560f47-b349-4d2c-baa8-f1560fb489dd
-      const evt = document.createEvent("PopStateEvent");
-      evt.initPopStateEvent("popstate", false, false, state);
-      return evt;
-    }
-  }
-
-  /* For convenience in `onclick` attributes, we expose a global function for navigating to
-   * whatever an <a> tag's href is.
-   */
-  window.singleSpaNavigate = navigateToUrl;
 }
 
 function parseUri(str) {
