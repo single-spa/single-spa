@@ -1,5 +1,6 @@
 {
-  "extends": ["canopy", "important-stuff"],
+  "extends": ["important-stuff"],
+  "parser": "@babel/eslint-parser",
   "env": {
     "browser": true,
     "node": true
