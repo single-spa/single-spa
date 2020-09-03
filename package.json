@@ -58,6 +58,7 @@
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.9.0",
+    "@babel/eslint-parser": "^7.11.5",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/preset-env": "^7.9.0",
     "@rollup/plugin-replace": "^2.3.1",
@@ -69,7 +70,6 @@
     "cross-env": "^7.0.2",
     "custom-event": "^1.0.1",
     "eslint": "6.8.0",
-    "eslint-config-canopy": "2.3.0",
     "eslint-config-important-stuff": "^1.1.0",
     "eslint-plugin-es5": "^1.5.0",
     "husky": "^4.2.3",
