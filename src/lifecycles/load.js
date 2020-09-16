@@ -65,10 +65,13 @@ export function toLoadPromise(app) {
             }
           }
 
-          if (!validLifecycleFn(appOpts.bootstrap)) {
+          if (
+            Object.prototype.hasOwnProperty.call(appOpts, "bootstrap") &&
+            !validLifecycleFn(appOpts.bootstrap)
+          ) {
             validationErrCode = 35;
             if (__DEV__) {
-              validationErrMessage = `does not export a bootstrap function or array of functions`;
+              validationErrMessage = `does not export a valid bootstrap function or array of functions`;
             }
           }
 

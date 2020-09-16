@@ -15,6 +15,13 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
 
     appOrParcel.status = BOOTSTRAPPING;
 
+    if (!appOrParcel.bootstrap) {
+      // Default implementation of bootstrap
+      return Promise.resolve().then(() => {
+        appOrParcel.status = NOT_MOUNTED;
+      });
+    }
+
     return reasonableTime(appOrParcel, "bootstrap")
       .then(() => {
         appOrParcel.status = NOT_MOUNTED;
