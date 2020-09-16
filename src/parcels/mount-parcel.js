@@ -154,7 +154,8 @@ export function mountParcel(config, customProps) {
     const name = config.name || `parcel-${id}`;
 
     if (
-      config.hasOwnProperty("bootstrap") &&
+      // ES Module objects don't have the object prototype
+      Object.prototype.hasOwnProperty.call(config, "bootstrap") &&
       !validLifecycleFn(config.bootstrap)
     ) {
       throw Error(

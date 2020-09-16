@@ -66,6 +66,7 @@ export function toLoadPromise(app) {
           }
 
           if (
+            // ES Modules don't have the Object prototype
             Object.prototype.hasOwnProperty.call(appOpts, "bootstrap") &&
             !validLifecycleFn(appOpts.bootstrap)
           ) {

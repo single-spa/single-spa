@@ -19,16 +19,12 @@ describe(`no-bootstrap app`, () => {
   });
 
   it(`allows an application to omit the bootstrap lifecycle`, async () => {
-    expect(
-      singleSpa.getMountedApps().some((app) => app === "no-bootstrap")
-    ).toBe(false);
+    expect(singleSpa.getAppStatus("no-bootstrap")).toBe(singleSpa.NOT_LOADED);
 
     location.hash = activeHash;
 
     await singleSpa.triggerAppChange();
 
-    expect(
-      singleSpa.getMountedApps().some((app) => app === "no-bootstrap")
-    ).toBe(true);
+    expect(singleSpa.getAppStatus("no-bootstrap")).toBe(singleSpa.MOUNTED);
   });
 });
