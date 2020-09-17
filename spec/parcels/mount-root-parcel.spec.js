@@ -98,6 +98,25 @@ describe(`root parcels`, () => {
       expect(parcel.update).toBeUndefined()
     );
   });
+
+  it(`can mount a parcel missing the bootstrap lifecycle`, async () => {
+    const parcelConfig = { async mount() {}, async unmount() {} };
+    const parcel = singleSpa.mountRootParcel(parcelConfig, {
+      domElement: document.createElement("div"),
+    });
+    await parcel.mountPromise;
+  });
+
+  it(`can mount a parcel that doesn't have the Object prototype`, async () => {
+    // Simulate an ES module, which doesn't have the object prototype
+    const parcelConfig = Object.create(null);
+    parcelConfig.mount = async function () {};
+    parcelConfig.unmount = async function () {};
+    const parcel = singleSpa.mountRootParcel(parcelConfig, {
+      domElement: document.createElement("div"),
+    });
+    await parcel.mountPromise;
+  });
 });
 
 function createParcelConfig(opts = {}) {

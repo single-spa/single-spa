@@ -218,23 +218,6 @@ describe("parcel errors", () => {
       );
     });
 
-    it(`rejects the load promise if the config doesn't have a valid bootstrap function`, () => {
-      const parcel = singleSpa.mountRootParcel(
-        { mount() {}, unmount() {} },
-        { domElement: document.createElement("div") }
-      );
-      return parcel.loadPromise.then(
-        () => {
-          throw new Error("load promise should not have succeeded");
-        },
-        (err) => {
-          expect(
-            err.message.indexOf("must have a valid bootstrap function")
-          ).toBeGreaterThan(-1);
-        }
-      );
-    });
-
     it(`rejects the load promise if the config doesn't have a valid mount function`, () => {
       const parcel = singleSpa.mountRootParcel(
         { bootstrap() {}, unmount() {} },

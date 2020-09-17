@@ -153,11 +153,15 @@ export function mountParcel(config, customProps) {
 
     const name = config.name || `parcel-${id}`;
 
-    if (!validLifecycleFn(config.bootstrap)) {
+    if (
+      // ES Module objects don't have the object prototype
+      Object.prototype.hasOwnProperty.call(config, "bootstrap") &&
+      !validLifecycleFn(config.bootstrap)
+    ) {
       throw Error(
         formatErrorMessage(
           9,
-          __DEV__ && `Parcel ${name} must have a valid bootstrap function`,
+          __DEV__ && `Parcel ${name} provided an invalid bootstrap function`,
           name
         )
       );

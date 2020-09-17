@@ -15,11 +15,13 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
 
     appOrParcel.status = BOOTSTRAPPING;
 
+    if (!appOrParcel.bootstrap) {
+      // Default implementation of bootstrap
+      return Promise.resolve().then(successfulBootstrap);
+    }
+
     return reasonableTime(appOrParcel, "bootstrap")
-      .then(() => {
-        appOrParcel.status = NOT_MOUNTED;
-        return appOrParcel;
-      })
+      .then(successfulBootstrap)
       .catch((err) => {
         if (hardFail) {
           throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
@@ -29,4 +31,9 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
         }
       });
   });
+
+  function successfulBootstrap() {
+    appOrParcel.status = NOT_MOUNTED;
+    return appOrParcel;
+  }
 }
