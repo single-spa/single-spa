@@ -40,7 +40,7 @@ export function getAppChanges() {
 
     switch (app.status) {
       case LOAD_ERROR:
-        if (currentTime - app.loadErrorTime >= 200) {
+        if (appShouldBeActive && currentTime - app.loadErrorTime >= 200) {
           appsToLoad.push(app);
         }
         break;
