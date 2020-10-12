@@ -110,6 +110,12 @@ export function reroute(pendingPromises = [], eventArguments) {
       );
 
       if (navigationIsCanceled) {
+        window.dispatchEvent(
+          new CustomEvent(
+            "single-spa:before-mount-routing-event",
+            getCustomEventDetail(true)
+          )
+        );
         finishUpAndReturn();
         navigateToUrl(oldUrl);
         return;
