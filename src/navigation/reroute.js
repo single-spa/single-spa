@@ -9,7 +9,10 @@ import {
   getAppChanges,
   getMountedApps,
 } from "../applications/apps.js";
-import { callCapturedEventListeners } from "./navigation-events.js";
+import {
+  callCapturedEventListeners,
+  navigateToUrl,
+} from "./navigation-events.js";
 import { toUnloadPromise } from "../lifecycles/unload.js";
 import {
   toName,
@@ -107,17 +110,9 @@ export function reroute(pendingPromises = [], eventArguments) {
       );
 
       if (navigationIsCanceled) {
-        // This event would be skipped, otherwise, since we
-        // are returning within this if statement before the
-        // event is normally fired
-        window.dispatchEvent(
-          new CustomEvent(
-            "single-spa:before-mount-routing-event",
-            getCustomEventDetail(true)
-          )
-        );
-
-        return finishUpAndReturn();
+        finishUpAndReturn();
+        navigateToUrl(oldUrl);
+        return;
       }
 
       const unloadPromises = appsToUnload.map(toUnloadPromise);

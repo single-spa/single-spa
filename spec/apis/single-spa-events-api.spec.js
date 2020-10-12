@@ -528,7 +528,7 @@ describe(`events api :`, () => {
   });
 
   describe(`cancelNavigation`, () => {
-    it(`allows you to cancel a navigation event in the before-routing-event handler`, (done) => {
+    it(`allows you to cancel a hash navigation event in the before-routing-event handler`, (done) => {
       const beforeRoutingEvent = (evt) => {
         expect(evt.detail.oldUrl).toMatch(/http:\/\/localhost\/(#\/)?/);
         expect(evt.detail.newUrl).toBe("http://localhost/#/russell");
@@ -544,6 +544,7 @@ describe(`events api :`, () => {
       );
 
       const originalStatus = singleSpa.getAppStatus("russell");
+      const originalUrl = window.location.href;
 
       expect(originalStatus).toMatch(/NOT_MOUNTED|NOT_LOADED/);
 
@@ -553,6 +554,52 @@ describe(`events api :`, () => {
         .triggerAppChange()
         .then(() => {
           expect(singleSpa.getAppStatus("russell")).toBe(originalStatus);
+          expect(window.location.href).toBe(originalUrl);
+        })
+        .catch(fail)
+        .finally(() => {
+          window.removeEventListener(
+            "single-spa:before-routing-event",
+            beforeRoutingEvent
+          );
+          done();
+        });
+    });
+
+    it(`allows you to cancel a pushState navigation event in the before-routing-event handler`, (done) => {
+      const app = { async mount() {}, async unmount() {} };
+      singleSpa.registerApplication({
+        name: "cancel-pushstate",
+        app,
+        activeWhen: "/cancel-pushstate",
+      });
+
+      const beforeRoutingEvent = (evt) => {
+        expect(evt.detail.oldUrl).toMatch(/http:\/\/localhost\/(#\/)?/);
+        expect(evt.detail.newUrl).toBe("http://localhost/cancel-pushstate");
+
+        if (new URL(evt.detail.newUrl).pathname === "/cancel-pushstate") {
+          evt.detail.cancelNavigation();
+        }
+      };
+
+      window.addEventListener(
+        "single-spa:before-routing-event",
+        beforeRoutingEvent
+      );
+
+      const originalStatus = singleSpa.getAppStatus("russell");
+      const originalUrl = window.location.href;
+
+      expect(originalStatus).toMatch(/NOT_MOUNTED|NOT_LOADED/);
+
+      singleSpa.navigateToUrl("/cancel-pushstate");
+
+      singleSpa
+        .triggerAppChange()
+        .then(() => {
+          expect(singleSpa.getAppStatus("russell")).toBe(originalStatus);
+          expect(window.location.href).toBe(originalUrl);
         })
         .catch(fail)
         .finally(() => {
