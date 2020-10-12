@@ -107,6 +107,14 @@ export function reroute(pendingPromises = [], eventArguments) {
       );
 
       if (navigationIsCanceled) {
+        // This event would be skipped, otherwise
+        window.dispatchEvent(
+          new CustomEvent(
+            "single-spa:before-mount-routing-event",
+            getCustomEventDetail(true)
+          )
+        );
+
         return finishUpAndReturn();
       }
 
@@ -264,6 +272,7 @@ export function reroute(pendingPromises = [], eventArguments) {
         originalEvent: eventArguments?.[0],
         oldUrl,
         newUrl,
+        navigationIsCanceled,
       },
     };
 
