@@ -102,7 +102,7 @@ export function reroute(pendingPromises = [], eventArguments) {
       window.dispatchEvent(
         new CustomEvent(
           "single-spa:before-routing-event",
-          getCustomEventDetail(true, { cancelNavigation, oldUrl, newUrl })
+          getCustomEventDetail(true, { cancelNavigation })
         )
       );
 
@@ -262,6 +262,8 @@ export function reroute(pendingPromises = [], eventArguments) {
         appsByNewStatus,
         totalAppChanges: appsThatChanged.length,
         originalEvent: eventArguments?.[0],
+        oldUrl,
+        newUrl,
       },
     };
 
