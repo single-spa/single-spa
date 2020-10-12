@@ -107,7 +107,9 @@ export function reroute(pendingPromises = [], eventArguments) {
       );
 
       if (navigationIsCanceled) {
-        // This event would be skipped, otherwise
+        // This event would be skipped, otherwise, since we
+        // are returning within this if statement before the
+        // event is normally fired
         window.dispatchEvent(
           new CustomEvent(
             "single-spa:before-mount-routing-event",
