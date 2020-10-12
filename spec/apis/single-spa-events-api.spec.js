@@ -526,4 +526,42 @@ describe(`events api :`, () => {
         .catch(fail);
     });
   });
+
+  describe(`cancelNavigation`, () => {
+    it(`allows you to cancel a navigation event in the before-routing-event handler`, (done) => {
+      const beforeRoutingEvent = (evt) => {
+        expect(evt.detail.oldUrl).toMatch(/http:\/\/localhost\/(#\/)?/);
+        expect(evt.detail.newUrl).toBe("http://localhost/#/russell");
+
+        if (new URL(evt.detail.newUrl).hash === "#/russell") {
+          evt.detail.cancelNavigation();
+        }
+      };
+
+      window.addEventListener(
+        "single-spa:before-routing-event",
+        beforeRoutingEvent
+      );
+
+      const originalStatus = singleSpa.getAppStatus("russell");
+
+      expect(originalStatus).toMatch(/NOT_MOUNTED|NOT_LOADED/);
+
+      window.location.hash = `#/russell`;
+
+      singleSpa
+        .triggerAppChange()
+        .then(() => {
+          expect(singleSpa.getAppStatus("russell")).toBe(originalStatus);
+        })
+        .catch(fail)
+        .finally(() => {
+          window.removeEventListener(
+            "single-spa:before-routing-event",
+            beforeRoutingEvent
+          );
+          done();
+        });
+    });
+  });
 });
