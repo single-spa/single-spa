@@ -9,7 +9,10 @@ import {
   getAppChanges,
   getMountedApps,
 } from "../applications/apps.js";
-import { callCapturedEventListeners } from "./navigation-events.js";
+import {
+  callCapturedEventListeners,
+  navigateToUrl,
+} from "./navigation-events.js";
 import { toUnloadPromise } from "../lifecycles/unload.js";
 import {
   toName,
@@ -19,9 +22,12 @@ import {
   NOT_LOADED,
   SKIP_BECAUSE_BROKEN,
 } from "../applications/app.helpers.js";
+import { assign } from "../utils/assign.js";
+import { isInBrowser } from "../utils/runtime-environment.js";
 
 let appChangeUnderway = false,
-  peopleWaitingOnAppChange = [];
+  peopleWaitingOnAppChange = [],
+  currentUrl = isInBrowser && window.location.href;
 
 export function triggerAppChange() {
   // Call reroute with no arguments, intentionally
@@ -45,7 +51,10 @@ export function reroute(pendingPromises = [], eventArguments) {
     appsToLoad,
     appsToMount,
   } = getAppChanges();
-  let appsThatChanged;
+  let appsThatChanged,
+    navigationIsCanceled = false,
+    oldUrl = currentUrl,
+    newUrl = (currentUrl = window.location.href);
 
   if (isStarted()) {
     appChangeUnderway = true;
@@ -58,6 +67,10 @@ export function reroute(pendingPromises = [], eventArguments) {
   } else {
     appsThatChanged = appsToLoad;
     return loadApps();
+  }
+
+  function cancelNavigation() {
+    navigationIsCanceled = true;
   }
 
   function loadApps() {
@@ -92,9 +105,22 @@ export function reroute(pendingPromises = [], eventArguments) {
       window.dispatchEvent(
         new CustomEvent(
           "single-spa:before-routing-event",
-          getCustomEventDetail(true)
+          getCustomEventDetail(true, { cancelNavigation })
         )
       );
+
+      if (navigationIsCanceled) {
+        window.dispatchEvent(
+          new CustomEvent(
+            "single-spa:before-mount-routing-event",
+            getCustomEventDetail(true)
+          )
+        );
+        finishUpAndReturn();
+        navigateToUrl(oldUrl);
+        return;
+      }
+
       const unloadPromises = appsToUnload.map(toUnloadPromise);
 
       const unmountUnloadPromises = appsToUnmount
@@ -212,7 +238,7 @@ export function reroute(pendingPromises = [], eventArguments) {
     callCapturedEventListeners(eventArguments);
   }
 
-  function getCustomEventDetail(isBeforeChanges = false) {
+  function getCustomEventDetail(isBeforeChanges = false, extraProperties) {
     const newAppStatuses = {};
     const appsByNewStatus = {
       // for apps that were mounted
@@ -241,14 +267,23 @@ export function reroute(pendingPromises = [], eventArguments) {
       });
     }
 
-    return {
+    const result = {
       detail: {
         newAppStatuses,
         appsByNewStatus,
         totalAppChanges: appsThatChanged.length,
         originalEvent: eventArguments?.[0],
+        oldUrl,
+        newUrl,
+        navigationIsCanceled,
       },
     };
+
+    if (extraProperties) {
+      assign(result.detail, extraProperties);
+    }
+
+    return result;
 
     function addApp(app, status) {
       const appName = toName(app);
