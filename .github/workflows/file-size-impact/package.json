@@ -1,0 +1,15 @@
+{
+  "name": "single-spa-workflow-file-size-impact",
+  "author": "Tiago Stutz",
+  "version": "0.0.1",
+  "description": "",
+  "main": "report-file-size-impact.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@jsenv/file-size-impact": "4.3.0"
+  }
+}
