@@ -100,7 +100,6 @@ function patchedUpdateState(updateState, methodName) {
       window.dispatchEvent(
         createPopStateEvent(window.history.state, methodName)
       );
-      // urlReroute(createPopStateEvent(window.history.state, methodName));
     }
 
     return result;
