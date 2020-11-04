@@ -25,7 +25,6 @@ describe("parcel errors", () => {
             domElement: document.createElement("div"),
           });
           return parcel1.bootstrapPromise.catch((err) => {
-            console.log("HEREEEEEEEEEEE");
             expect(err.appOrParcelName).toBe("bootstrap-error");
             expect(err.message).toMatch(`BOOTSTRAPPING`);
             expect(err.message.indexOf(`bootstrap-error`)).toBeGreaterThan(-1);
