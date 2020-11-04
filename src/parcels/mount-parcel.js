@@ -220,13 +220,9 @@ export function mountParcel(config, customProps) {
 
   // Start bootstrapping and mounting
   // The .then() causes the work to be put on the event loop instead of happening immediately
-  const bootstrapPromise = loadPromise
-    .then(() => toBootstrapPromise(parcel, true))
-    .catch((err) => {
-      // eslint-disable-next-line
-      console.log("bootstrap error", err);
-      throw err;
-    });
+  const bootstrapPromise = loadPromise.then(() =>
+    toBootstrapPromise(parcel, true)
+  );
   const mountPromise = bootstrapPromise.then(() =>
     toMountPromise(parcel, true)
   );

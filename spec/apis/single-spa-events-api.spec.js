@@ -566,7 +566,9 @@ describe(`events api :`, () => {
         });
     });
 
-    it(`allows you to cancel a pushState navigation event in the before-routing-event handler`, (done) => {
+    it(`allows you to cancel a pushState navigation event in the before-routing-event handler`, async () => {
+      await singleSpa.triggerAppChange("/");
+
       const app = { async mount() {}, async unmount() {} };
       singleSpa.registerApplication({
         name: "cancel-pushstate",
@@ -575,6 +577,10 @@ describe(`events api :`, () => {
       });
 
       const beforeRoutingEvent = (evt) => {
+        window.removeEventListener(
+          "single-spa:before-routing-event",
+          beforeRoutingEvent
+        );
         expect(evt.detail.oldUrl).toMatch(/http:\/\/localhost\/(#\/)?/);
         expect(evt.detail.newUrl).toBe("http://localhost/cancel-pushstate");
 
@@ -582,6 +588,8 @@ describe(`events api :`, () => {
           evt.detail.cancelNavigation();
         }
       };
+
+      await singleSpa.triggerAppChange();
 
       window.addEventListener(
         "single-spa:before-routing-event",
@@ -595,20 +603,9 @@ describe(`events api :`, () => {
 
       singleSpa.navigateToUrl("/cancel-pushstate");
 
-      singleSpa
-        .triggerAppChange()
-        .then(() => {
-          expect(singleSpa.getAppStatus("russell")).toBe(originalStatus);
-          expect(window.location.href).toBe(originalUrl);
-        })
-        .catch(fail)
-        .finally(() => {
-          window.removeEventListener(
-            "single-spa:before-routing-event",
-            beforeRoutingEvent
-          );
-          done();
-        });
+      await singleSpa.triggerAppChange();
+      expect(singleSpa.getAppStatus("russell")).toBe(originalStatus);
+      expect(window.location.href).toBe(originalUrl);
     });
   });
 });
