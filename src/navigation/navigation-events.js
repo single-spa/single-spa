@@ -97,7 +97,10 @@ function patchedUpdateState(updateState, methodName) {
     const urlAfter = window.location.href;
 
     if (!urlRerouteOnly || urlBefore !== urlAfter) {
-      urlReroute(createPopStateEvent(window.history.state, methodName));
+      window.dispatchEvent(
+        createPopStateEvent(window.history.state, methodName)
+      );
+      // urlReroute(createPopStateEvent(window.history.state, methodName));
     }
 
     return result;

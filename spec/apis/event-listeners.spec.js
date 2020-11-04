@@ -144,6 +144,17 @@ describe(`event listeners after single-spa is started`, () => {
     // The 2 comes from triggerAppChange and from replaceState
     expect(numActiveWhensBefore).toBe(activeWhenCalls - 2);
   });
+
+  it(`Fires artificial popstate events with correct target`, (done) => {
+    window.addEventListener("popstate", popstateListener);
+    history.pushState(history.state, document.title, "/new-url");
+
+    function popstateListener(evt) {
+      expect(evt.target).toBe(window);
+      window.removeEventListener("popstate", popstateListener);
+      done();
+    }
+  });
 });
 
 function ensureCleanSlate() {
