@@ -5,6 +5,10 @@ describe("parcel errors", () => {
     singleSpa.start();
   });
 
+  beforeEach(async () => {
+    await singleSpa.triggerAppChange();
+  });
+
   describe("lifecycle errors", () => {
     describe("bootstrap errors", () => {
       it(`should throw an error when bootstrapping fails`, async () => {
