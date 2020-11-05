@@ -5,10 +5,6 @@ describe("parcel errors", () => {
     singleSpa.start();
   });
 
-  beforeEach(async () => {
-    await singleSpa.triggerAppChange();
-  });
-
   describe("lifecycle errors", () => {
     describe("bootstrap errors", () => {
       it(`should throw an error when bootstrapping fails`, async () => {
@@ -25,17 +21,14 @@ describe("parcel errors", () => {
 
         const parcelConfig1 = createParcelConfig("bootstrap");
         parcelConfig1.name = "bootstrap-error";
-        console.log("mounting bootstrap-error");
         const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
           domElement: document.createElement("div"),
         });
         await parcel1.bootstrapPromise.catch((err) => {
-          console.log("bootstrapPromise threw");
           expect(err.appOrParcelName).toBe("bootstrap-error");
           expect(err.message).toMatch(`BOOTSTRAPPING`);
           expect(err.message.indexOf(`bootstrap-error`)).toBeGreaterThan(-1);
           expect(parcel1.getStatus()).toBe("SKIP_BECAUSE_BROKEN");
-          console.log("assertions are done");
         });
       });
     });
@@ -289,8 +282,6 @@ function createParcelConfig(errLocation) {
     bootstrapCalls: 0,
     bootstrap() {
       if (errLocation === "bootstrap") {
-        console.log("about to error");
-        console.trace();
         return Promise.reject(new Error("bootstrap error"));
       } else {
         parcelConfig.bootstrapCalls++;

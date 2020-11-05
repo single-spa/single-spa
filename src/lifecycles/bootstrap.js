@@ -24,10 +24,6 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
       .then(successfulBootstrap)
       .catch((err) => {
         if (hardFail) {
-          // eslint-disable-next-line
-          console.log("failing bootstrap");
-          // eslint-disable-next-line
-          console.log(err);
           throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
         } else {
           handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
