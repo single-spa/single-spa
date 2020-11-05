@@ -7,7 +7,7 @@ describe("parcel errors", () => {
 
   describe("lifecycle errors", () => {
     describe("bootstrap errors", () => {
-      it(`should throw an error when mounting fails`, () => {
+      it(`should throw an error when bootstrapping fails`, async () => {
         const app = createApp();
         let shouldAppBeMounted = true;
 
@@ -16,20 +16,19 @@ describe("parcel errors", () => {
           app,
           () => shouldAppBeMounted
         );
-        return singleSpa.triggerAppChange().then(() => {
-          expect(app.mountCalls).toBe(1);
+        await singleSpa.triggerAppChange();
+        expect(app.mountCalls).toBe(1);
 
-          const parcelConfig1 = createParcelConfig("bootstrap");
-          parcelConfig1.name = "bootstrap-error";
-          const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
-            domElement: document.createElement("div"),
-          });
-          return parcel1.bootstrapPromise.catch((err) => {
-            expect(err.appOrParcelName).toBe("bootstrap-error");
-            expect(err.message).toMatch(`BOOTSTRAPPING`);
-            expect(err.message.indexOf(`bootstrap-error`)).toBeGreaterThan(-1);
-            expect(parcel1.getStatus()).toBe("SKIP_BECAUSE_BROKEN");
-          });
+        const parcelConfig1 = createParcelConfig("bootstrap");
+        parcelConfig1.name = "bootstrap-error";
+        const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
+          domElement: document.createElement("div"),
+        });
+        await parcel1.bootstrapPromise.catch((err) => {
+          expect(err.appOrParcelName).toBe("bootstrap-error");
+          expect(err.message).toMatch(`BOOTSTRAPPING`);
+          expect(err.message.indexOf(`bootstrap-error`)).toBeGreaterThan(-1);
+          expect(parcel1.getStatus()).toBe("SKIP_BECAUSE_BROKEN");
         });
       });
     });
