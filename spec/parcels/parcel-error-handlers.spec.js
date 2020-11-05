@@ -5,9 +5,13 @@ describe("parcel errors", () => {
     singleSpa.start();
   });
 
+  beforeEach(async () => {
+    await singleSpa.navigateToUrl("/");
+  });
+
   describe("lifecycle errors", () => {
     describe("bootstrap errors", () => {
-      it(`should throw an error when mounting fails`, () => {
+      it(`should throw an error when bootstrapping fails`, () => {
         const app = createApp();
         let shouldAppBeMounted = true;
 
