@@ -2,6 +2,7 @@ import { reroute } from "./reroute.js";
 import { find } from "../utils/find.js";
 import { formatErrorMessage } from "../applications/app-errors.js";
 import { isInBrowser } from "../utils/runtime-environment.js";
+import { isStarted } from "../start.js";
 
 /* We capture navigation event listeners so that we can make sure
  * that application navigation listeners are not called until
@@ -97,9 +98,19 @@ function patchedUpdateState(updateState, methodName) {
     const urlAfter = window.location.href;
 
     if (!urlRerouteOnly || urlBefore !== urlAfter) {
-      window.dispatchEvent(
-        createPopStateEvent(window.history.state, methodName)
-      );
+      if (isStarted()) {
+        // fire an artificial popstate event once single-spa is started,
+        // so that single-spa application's know about routing that
+        // occurs in a different application
+        window.dispatchEvent(
+          createPopStateEvent(window.history.state, methodName)
+        );
+      } else {
+        // do not fire an artificial popstate event before single-spa is started,
+        // since no single-spa applications need to know about routing events
+        // outside of their own router.
+        reroute([]);
+      }
     }
 
     return result;

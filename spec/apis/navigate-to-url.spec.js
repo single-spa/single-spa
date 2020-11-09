@@ -21,6 +21,10 @@ function expectPathAndHashToEqual(string) {
 describe("navigateToUrl", function () {
   let urlBeforeTests = location.href;
 
+  beforeAll(() => {
+    singleSpa.start();
+  });
+
   beforeEach(() => {
     location.hash = "#a/initial";
   });
