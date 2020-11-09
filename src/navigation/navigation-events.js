@@ -100,7 +100,7 @@ function patchedUpdateState(updateState, methodName) {
     if (!urlRerouteOnly || urlBefore !== urlAfter) {
       if (isStarted()) {
         // fire an artificial popstate event once single-spa is started,
-        // so that single-spa application's know about routing that
+        // so that single-spa applications know about routing that
         // occurs in a different application
         window.dispatchEvent(
           createPopStateEvent(window.history.state, methodName)
