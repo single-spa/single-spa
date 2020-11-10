@@ -294,6 +294,37 @@ describe("applications mounting parcels :", () => {
         expect(p2.getStatus()).toBe(singleSpa.NOT_MOUNTED);
       });
   });
+
+  // https://github.com/single-spa/single-spa/issues/656
+  it(`successfully unmounts a parcel that is unmounted before mount finishes`, async () => {
+    let shouldAppBeMounted = false,
+      parcel;
+
+    singleSpa.registerApplication(
+      "immediate-unmount",
+      app,
+      () => shouldAppBeMounted
+    );
+
+    parcelConfig = {
+      mount: () =>
+        new Promise((resolve) => {
+          setTimeout(resolve, 50);
+        }),
+      async unmount() {},
+    };
+
+    shouldAppBeMounted = true;
+
+    return singleSpa.triggerAppChange().then(() => {
+      parcel = app.mountProps.mountParcel(parcelConfig, {
+        domElement: document.createElement("div"),
+      });
+
+      shouldAppBeMounted = false;
+      return singleSpa.triggerAppChange();
+    });
+  });
 });
 
 function createParcelConfig() {
