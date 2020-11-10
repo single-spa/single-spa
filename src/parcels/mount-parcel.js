@@ -90,19 +90,21 @@ export function mountParcel(config, customProps) {
     customProps,
     parentName: toName(owningAppOrParcel),
     unmountThisParcel() {
-      if (parcel.status !== MOUNTED) {
-        throw Error(
-          formatErrorMessage(
-            6,
-            __DEV__ &&
-              `Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`,
-            name,
-            parcel.status
-          )
-        );
-      }
-
-      return toUnmountPromise(parcel, true)
+      return mountPromise
+        .then(() => {
+          if (parcel.status !== MOUNTED) {
+            throw Error(
+              formatErrorMessage(
+                6,
+                __DEV__ &&
+                  `Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`,
+                name,
+                parcel.status
+              )
+            );
+          }
+          return toUnmountPromise(parcel, true);
+        })
         .then((value) => {
           if (parcel.parentName) {
             delete owningAppOrParcel.parcels[parcel.id];

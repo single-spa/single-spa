@@ -117,6 +117,15 @@ describe(`root parcels`, () => {
     });
     await parcel.mountPromise;
   });
+
+  // https://github.com/single-spa/single-spa/issues/656
+  it(`can unmount a parcel that is still waiting for mount to finish`, async () => {
+    const parcelConfig = createParcelConfig();
+    const parcel = singleSpa.mountRootParcel(parcelConfig, {
+      domElement: document.createElement("div"),
+    });
+    await parcel.unmount();
+  });
 });
 
 function createParcelConfig(opts = {}) {
