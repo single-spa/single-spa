@@ -414,13 +414,7 @@ function sanitizeActiveWhen(activeWhen) {
 export function pathToActiveWhen(path) {
   const regex = toDynamicPathValidatorRegex(path);
 
-  return (location) => {
-    const route = location.href
-      .replace(location.origin, "")
-      .replace(location.search, "")
-      .split("?")[0];
-    return regex.test(route);
-  };
+  return (location) => regex.test(location.pathname);
 }
 
 export function toDynamicPathValidatorRegex(path) {
