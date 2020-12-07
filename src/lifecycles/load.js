@@ -79,14 +79,14 @@ export function toLoadPromise(app) {
           if (!validLifecycleFn(appOpts.mount)) {
             validationErrCode = 36;
             if (__DEV__) {
-              validationErrMessage = `does not export a bootstrap function or array of functions`;
+              validationErrMessage = `does not export a mount function or array of functions`;
             }
           }
 
           if (!validLifecycleFn(appOpts.unmount)) {
             validationErrCode = 37;
             if (__DEV__) {
-              validationErrMessage = `does not export a bootstrap function or array of functions`;
+              validationErrMessage = `does not export a unmount function or array of functions`;
             }
           }
 
