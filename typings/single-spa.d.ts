@@ -91,6 +91,22 @@ declare module "single-spa" {
     customProps?: T | CustomPropsFn<T>;
   };
 
+  export type SingleSpaCustomEventDetail = {
+    newAppStatuses: {};
+    appsByNewStatus: {
+      [MOUNTED]: [];
+      [NOT_MOUNTED]: [];
+      [NOT_LOADED]: [];
+      [SKIP_BECAUSE_BROKEN]: [];
+    };
+    totalAppChanges: number;
+    originalEvent?: Event;
+    oldUrl: string;
+    newUrl: string;
+    navigationIsCanceled: boolean;
+    cancelNavigation?: () => void;
+  };
+
   // ./applications/apps.js
   export function registerApplication<T extends object = {}>(
     appName: string,
@@ -103,9 +119,7 @@ declare module "single-spa" {
     config: RegisterApplicationConfig<T>
   ): void;
 
-  export function unregisterApplication(
-    appName: string,
-  ): Promise<any>;
+  export function unregisterApplication(appName: string): Promise<any>;
 
   export function getMountedApps(): string[];
 
