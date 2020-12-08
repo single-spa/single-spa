@@ -91,8 +91,15 @@ declare module "single-spa" {
     customProps?: T | CustomPropsFn<T>;
   };
 
+  interface SingleSpaNewAppStatus {
+    [key: string]:
+      | "MOUNTED"
+      | "NOT_MOUNTED"
+      | "NOT_LOADED"
+      | "SKIP_BECAUSE_BROKEN";
+  }
   export type SingleSpaCustomEventDetail = {
-    newAppStatuses: {};
+    newAppStatuses: SingleSpaNewAppStatus;
     appsByNewStatus: {
       [MOUNTED]: [];
       [NOT_MOUNTED]: [];
