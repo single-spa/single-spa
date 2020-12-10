@@ -98,14 +98,15 @@ declare module "single-spa" {
       | "NOT_LOADED"
       | "SKIP_BECAUSE_BROKEN";
   }
+  interface SingleSpaAppsByNewStatus {
+    [MOUNTED]: [];
+    [NOT_MOUNTED]: [];
+    [NOT_LOADED]: [];
+    [SKIP_BECAUSE_BROKEN]: [];
+  }
   export type SingleSpaCustomEventDetail = {
     newAppStatuses: SingleSpaNewAppStatus;
-    appsByNewStatus: {
-      [MOUNTED]: [];
-      [NOT_MOUNTED]: [];
-      [NOT_LOADED]: [];
-      [SKIP_BECAUSE_BROKEN]: [];
-    };
+    appsByNewStatus: SingleSpaAppsByNewStatus;
     totalAppChanges: number;
     originalEvent?: Event;
     oldUrl: string;
