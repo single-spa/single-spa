@@ -53,6 +53,7 @@ export function reroute(pendingPromises = [], eventArguments) {
   } = getAppChanges();
   let appsThatChanged,
     navigationIsCanceled = false,
+    cancelPromises = [],
     oldUrl = currentUrl,
     newUrl = (currentUrl = window.location.href);
 
@@ -69,8 +70,14 @@ export function reroute(pendingPromises = [], eventArguments) {
     return loadApps();
   }
 
-  function cancelNavigation() {
-    navigationIsCanceled = true;
+  function cancelNavigation(promise) {
+    if (!navigationIsCanceled) {
+      if (typeof promise?.then === "function") {
+        cancelPromises.push(promise);
+      } else {
+        cancelPromises.push(Promise.resolve(true));
+      }
+    }
   }
 
   function loadApps() {
@@ -109,74 +116,79 @@ export function reroute(pendingPromises = [], eventArguments) {
         )
       );
 
-      if (navigationIsCanceled) {
-        window.dispatchEvent(
-          new CustomEvent(
-            "single-spa:before-mount-routing-event",
-            getCustomEventDetail(true)
-          )
-        );
-        finishUpAndReturn();
-        navigateToUrl(oldUrl);
-        return;
-      }
+      return Promise.all(cancelPromises).then((results) => {
+        if (results.indexOf(true) !== -1) {
+          navigationIsCanceled = true;
+          window.dispatchEvent(
+            new CustomEvent(
+              "single-spa:before-mount-routing-event",
+              getCustomEventDetail(true)
+            )
+          );
+          finishUpAndReturn();
+          navigateToUrl(oldUrl);
+          return;
+        }
 
-      const unloadPromises = appsToUnload.map(toUnloadPromise);
+        // navigationIsCanceled = false;
 
-      const unmountUnloadPromises = appsToUnmount
-        .map(toUnmountPromise)
-        .map((unmountPromise) => unmountPromise.then(toUnloadPromise));
+        const unloadPromises = appsToUnload.map(toUnloadPromise);
 
-      const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
+        const unmountUnloadPromises = appsToUnmount
+          .map(toUnmountPromise)
+          .map((unmountPromise) => unmountPromise.then(toUnloadPromise));
 
-      const unmountAllPromise = Promise.all(allUnmountPromises);
+        const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
 
-      unmountAllPromise.then(() => {
-        window.dispatchEvent(
-          new CustomEvent(
-            "single-spa:before-mount-routing-event",
-            getCustomEventDetail(true)
-          )
-        );
-      });
+        const unmountAllPromise = Promise.all(allUnmountPromises);
 
-      /* We load and bootstrap apps while other apps are unmounting, but we
-       * wait to mount the app until all apps are finishing unmounting
-       */
-      const loadThenMountPromises = appsToLoad.map((app) => {
-        return toLoadPromise(app).then((app) =>
-          tryToBootstrapAndMount(app, unmountAllPromise)
-        );
-      });
-
-      /* These are the apps that are already bootstrapped and just need
-       * to be mounted. They each wait for all unmounting apps to finish up
-       * before they mount.
-       */
-      const mountPromises = appsToMount
-        .filter((appToMount) => appsToLoad.indexOf(appToMount) < 0)
-        .map((appToMount) => {
-          return tryToBootstrapAndMount(appToMount, unmountAllPromise);
+        unmountAllPromise.then(() => {
+          window.dispatchEvent(
+            new CustomEvent(
+              "single-spa:before-mount-routing-event",
+              getCustomEventDetail(true)
+            )
+          );
         });
-      return unmountAllPromise
-        .catch((err) => {
-          callAllEventListeners();
-          throw err;
-        })
-        .then(() => {
-          /* Now that the apps that needed to be unmounted are unmounted, their DOM navigation
-           * events (like hashchange or popstate) should have been cleaned up. So it's safe
-           * to let the remaining captured event listeners to handle about the DOM event.
-           */
-          callAllEventListeners();
 
-          return Promise.all(loadThenMountPromises.concat(mountPromises))
-            .catch((err) => {
-              pendingPromises.forEach((promise) => promise.reject(err));
-              throw err;
-            })
-            .then(finishUpAndReturn);
+        /* We load and bootstrap apps while other apps are unmounting, but we
+         * wait to mount the app until all apps are finishing unmounting
+         */
+        const loadThenMountPromises = appsToLoad.map((app) => {
+          return toLoadPromise(app).then((app) =>
+            tryToBootstrapAndMount(app, unmountAllPromise)
+          );
         });
+
+        /* These are the apps that are already bootstrapped and just need
+         * to be mounted. They each wait for all unmounting apps to finish up
+         * before they mount.
+         */
+        const mountPromises = appsToMount
+          .filter((appToMount) => appsToLoad.indexOf(appToMount) < 0)
+          .map((appToMount) => {
+            return tryToBootstrapAndMount(appToMount, unmountAllPromise);
+          });
+        return unmountAllPromise
+          .catch((err) => {
+            callAllEventListeners();
+            throw err;
+          })
+          .then(() => {
+            /* Now that the apps that needed to be unmounted are unmounted, their DOM navigation
+             * events (like hashchange or popstate) should have been cleaned up. So it's safe
+             * to let the remaining captured event listeners to handle about the DOM event.
+             */
+            callAllEventListeners();
+
+            return Promise.all(loadThenMountPromises.concat(mountPromises))
+              .catch((err) => {
+                pendingPromises.forEach((promise) => promise.reject(err));
+                throw err;
+              })
+              .then(finishUpAndReturn);
+          });
+      });
     });
   }
 
