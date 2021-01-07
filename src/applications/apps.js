@@ -455,9 +455,13 @@ function toDynamicPathValidatorRegex(path, exactMatch) {
     if (index === path.length) {
       if (inDynamic) {
         if (exactMatch) {
+          // Ensure paths that end in a dynamic portion don't match
+          // urls with characters after a slash after the dynamic portion.
           regexStr += "$";
         }
       } else {
+        // For exact matches, expect no more characters. Otherwise, allow
+        // any characters.
         const suffix = exactMatch ? "" : ".*";
 
         regexStr =
