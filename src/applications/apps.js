@@ -411,8 +411,8 @@ function sanitizeActiveWhen(activeWhen) {
     activeWhenArray.some((activeWhen) => activeWhen(location));
 }
 
-export function pathToActiveWhen(path) {
-  const regex = toDynamicPathValidatorRegex(path);
+export function pathToActiveWhen(path, exactMatch) {
+  const regex = toDynamicPathValidatorRegex(path, exactMatch);
 
   return (location) => {
     const route = location.href
@@ -423,7 +423,7 @@ export function pathToActiveWhen(path) {
   };
 }
 
-export function toDynamicPathValidatorRegex(path) {
+function toDynamicPathValidatorRegex(path, exactMatch) {
   let lastIndex = 0,
     inDynamic = false,
     regexStr = "^";
@@ -452,12 +452,24 @@ export function toDynamicPathValidatorRegex(path) {
       ? anyCharMaybeTrailingSlashRegex
       : commonStringSubPath;
 
-    if (index === path.length && !inDynamic) {
-      regexStr =
-        // use charAt instead as we could not use es6 method endsWith
-        regexStr.charAt(regexStr.length - 1) === "/"
-          ? `${regexStr}.*$`
-          : `${regexStr}([/#].*)?$`;
+    if (index === path.length) {
+      if (inDynamic) {
+        if (exactMatch) {
+          // Ensure exact match paths that end in a dynamic portion don't match
+          // urls with characters after a slash after the dynamic portion.
+          regexStr += "$";
+        }
+      } else {
+        // For exact matches, expect no more characters. Otherwise, allow
+        // any characters.
+        const suffix = exactMatch ? "" : ".*";
+
+        regexStr =
+          // use charAt instead as we could not use es6 method endsWith
+          regexStr.charAt(regexStr.length - 1) === "/"
+            ? `${regexStr}${suffix}$`
+            : `${regexStr}(/${suffix})?(#.*)?$`;
+      }
     }
 
     inDynamic = !inDynamic;

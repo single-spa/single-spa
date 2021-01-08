@@ -1,5 +1,4 @@
 import { pathToActiveWhen } from "single-spa";
-import { toDynamicPathValidatorRegex } from "../../src/applications/apps";
 
 describe(`pathToActiveWhen`, () => {
   describe("Validate URL on given activeWhen pathname/hashPathname/both", () => {
@@ -106,17 +105,74 @@ describe(`pathToActiveWhen`, () => {
 
     expectPathToMatch(":dynamic/:dynamic", {
       "http://app.com/1/1": true,
+      "http://app.com/1/1/more": true,
     });
+  });
+
+  describe("exact matches", () => {
+    expectPathToMatch(
+      "/pathname",
+      {
+        "http://app.com/pathname": true,
+        "http://app.com/pathname/": true,
+        "http://app.com/pathname/more": false,
+        "http://app.com/pathname/?query": true,
+        "http://app.com/pathname#hash": true,
+        "http://app.com/pathname/#hash": true,
+        "http://app.com/pathname/?query#hash": true,
+      },
+      true
+    );
+
+    expectPathToMatch(
+      ":dynamic",
+      {
+        "http://app.com/1": true,
+        "http://app.com/1/": true,
+        "http://app.com/1/more": false,
+      },
+      true
+    );
+
+    expectPathToMatch(
+      ":dynamic/:dynamic",
+      {
+        "http://app.com/1/1": true,
+        "http://app.com/1/1/": true,
+        "http://app.com/1/1/more": false,
+      },
+      true
+    );
+
+    expectPathToMatch(
+      "/user/:id/settings",
+      {
+        "http://app.com/user/1/settings": true,
+        "http://app.com/user/1/settings/": true,
+        "http://app.com/user/1/settings/account": false,
+      },
+      true
+    );
+
+    expectPathToMatch(
+      "/user/:id/almost",
+      {
+        "http://app.com/user/1/almostt": false,
+      },
+      true
+    );
   });
 });
 
-function expectPathToMatch(dynamicPath, asserts) {
+function expectPathToMatch(dynamicPath, asserts, exactMatch) {
   const print = (path) => (path === "" ? "empty string ('')" : path);
   Object.entries(asserts).forEach(([path, expectTo]) => {
     it(`expects path ${print(dynamicPath)} to${
       expectTo ? "" : " not"
     } match ${print(path)}`, () => {
-      expect(pathToActiveWhen(dynamicPath)(new URL(path))).toBe(expectTo);
+      expect(pathToActiveWhen(dynamicPath, exactMatch)(new URL(path))).toBe(
+        expectTo
+      );
     });
   });
 }
