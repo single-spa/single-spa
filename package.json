@@ -1,6 +1,6 @@
 {
   "name": "single-spa",
-  "version": "5.8.3",
+  "version": "5.9.0",
   "description": "The router for easy microfrontends",
   "main": "lib/umd/single-spa.min.js",
   "types": "typings/single-spa.d.ts",
