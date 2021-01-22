@@ -18,12 +18,14 @@ declare module "single-spa" {
     ): Parcel;
   };
 
-  export type ParcelConfig =
-    | ParcelConfigObject
-    | (() => Promise<ParcelConfigObject>);
+  export type ParcelConfig<ExtraProps = {}> =
+    | ParcelConfigObject<ExtraProps>
+    | (() => Promise<ParcelConfigObject<ExtraProps>>);
 
   type ParcelProps = { domElement: HTMLElement };
-  type ParcelConfigObject = { name?: string } & LifeCycles;
+  type ParcelConfigObject<ExtraProps = {}> = { name?: string } & LifeCycles<
+    ExtraProps
+  >;
 
   type Parcel = {
     mount(): Promise<null>;
@@ -62,7 +64,6 @@ declare module "single-spa" {
 
   // ./start.js
   export function start(opts?: StartOpts): void;
-  export function isStarted(): boolean;
 
   // ./jquery-support.js
   export function ensureJQuerySupport(jQuery?: any): void;
@@ -180,9 +181,9 @@ declare module "single-spa" {
   export function removeErrorHandler(handler: (error: AppError) => void): void;
 
   // './parcels/mount-parcel.js'
-  export function mountRootParcel(
+  export function mountRootParcel<ExtraProps = {}>(
     parcelConfig: ParcelConfig,
-    parcelProps: ParcelProps & CustomProps
+    parcelProps: ParcelProps & ExtraProps
   ): Parcel;
 
   export function pathToActiveWhen(path: string): ActivityFn;
