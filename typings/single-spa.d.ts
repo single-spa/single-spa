@@ -18,14 +18,14 @@ declare module "single-spa" {
     ): Parcel;
   };
 
-  export type ParcelConfig<ExtraProps = {}> =
+  export type ParcelConfig<ExtraProps = CustomProps> =
     | ParcelConfigObject<ExtraProps>
     | (() => Promise<ParcelConfigObject<ExtraProps>>);
 
   type ParcelProps = { domElement: HTMLElement };
-  type ParcelConfigObject<ExtraProps = {}> = { name?: string } & LifeCycles<
-    ExtraProps
-  >;
+  type ParcelConfigObject<ExtraProps = CustomProps> = {
+    name?: string;
+  } & LifeCycles<ExtraProps>;
 
   type Parcel = {
     mount(): Promise<null>;
@@ -181,7 +181,7 @@ declare module "single-spa" {
   export function removeErrorHandler(handler: (error: AppError) => void): void;
 
   // './parcels/mount-parcel.js'
-  export function mountRootParcel<ExtraProps = {}>(
+  export function mountRootParcel<ExtraProps = CustomProps>(
     parcelConfig: ParcelConfig,
     parcelProps: ParcelProps & ExtraProps
   ): Parcel;
