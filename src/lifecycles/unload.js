@@ -7,6 +7,7 @@ import {
 } from "../applications/app.helpers.js";
 import { handleAppError } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
+import { LOAD_ERROR } from "single-spa";
 
 const appsToUnload = {};
 
@@ -35,14 +36,20 @@ export function toUnloadPromise(app) {
       return unloadInfo.promise.then(() => app);
     }
 
-    if (app.status !== NOT_MOUNTED) {
+    if (app.status !== NOT_MOUNTED && app.status !== LOAD_ERROR) {
       /* The app cannot be unloaded until it is unmounted.
        */
       return app;
     }
 
+    const unloadPromise =
+      app.status === LOAD_ERROR
+        ? Promise.resolve()
+        : reasonableTime(app, "unload");
+
     app.status = UNLOADING;
-    return reasonableTime(app, "unload")
+
+    return unloadPromise
       .then(() => {
         finishUnloadingApp(app, unloadInfo);
         return app;

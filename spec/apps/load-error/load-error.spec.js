@@ -41,6 +41,41 @@ describe(`load-error`, () => {
     }
   });
 
+  it(`lets you unload an application that is in LOAD_ERROR status`, async () => {
+    await singleSpa.triggerAppChange();
+
+    singleSpa.addErrorHandler(errHandler);
+
+    singleSpa.registerApplication({
+      name: "load-error-unload",
+      app: () => Promise.reject(Error("load failed")),
+      activeWhen: ["#load-error-unload"],
+    });
+
+    location.hash = "#load-error-unload";
+
+    await singleSpa.triggerAppChange();
+
+    expect(singleSpa.getAppStatus("load-error-unload")).toBe(
+      singleSpa.LOAD_ERROR
+    );
+
+    const unloadPromise = singleSpa.unloadApplication("load-error-unload");
+    location.hash = "#no-longer-active";
+
+    await singleSpa.triggerAppChange();
+
+    await unloadPromise;
+
+    expect(singleSpa.getAppStatus("load-error-unload")).toBe(
+      singleSpa.NOT_LOADED
+    );
+
+    function errHandler() {
+      singleSpa.removeErrorHandler(errHandler);
+    }
+  });
+
   it(`doesn't try to reload an application that should not be active`, async () => {
     let numLoads = 0;
     await singleSpa.triggerAppChange();
