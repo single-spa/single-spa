@@ -6,8 +6,16 @@ import {
   SingleSpaCustomEventDetail,
   SingleSpaNewAppStatus,
   SingleSpaAppsByNewStatus,
+  Parcel,
+  ParcelConfig,
 } from "single-spa";
 import { expectError, expectType } from "tsd";
+
+const planetsParcel: ParcelConfig<Planets> = {
+  async bootstrap() {},
+  async mount() {},
+  async unmount() {},
+};
 
 const appOrParcel = {
   async bootstrap() {},
@@ -20,7 +28,23 @@ mountRootParcel(appOrParcel, {
   domElement: document.createElement("div"),
 });
 
-expectError(mountRootParcel(appOrParcel, () => {}));
+interface Planets {
+  favoritePlanet: string;
+}
+
+const parcel: Parcel<Planets> = mountRootParcel<Planets>(appOrParcel, {
+  domElement: document.createElement("div"),
+  favoritePlanet: "Mercury",
+});
+if (parcel.update) {
+  parcel.update({
+    favoritePlanet: "Mars",
+  });
+}
+
+expectError(
+  mountRootParcel<Planets>(appOrParcel, () => {})
+);
 
 registerApplication({
   name: "app1",

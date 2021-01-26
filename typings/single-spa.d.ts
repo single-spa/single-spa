@@ -4,10 +4,10 @@ declare module "single-spa" {
     [num: number]: any;
   }
 
-  type CustomPropsFn<T extends CustomProps = CustomProps> = (
+  type CustomPropsFn<ExtraProps extends CustomProps = CustomProps> = (
     name: string,
     location: Location
-  ) => T;
+  ) => ExtraProps;
 
   export type AppProps = {
     name: string;
@@ -18,17 +18,19 @@ declare module "single-spa" {
     ): Parcel;
   };
 
-  export type ParcelConfig =
-    | ParcelConfigObject
-    | (() => Promise<ParcelConfigObject>);
+  export type ParcelConfig<ExtraProps = CustomProps> =
+    | ParcelConfigObject<ExtraProps>
+    | (() => Promise<ParcelConfigObject<ExtraProps>>);
 
   type ParcelProps = { domElement: HTMLElement };
-  type ParcelConfigObject = { name?: string } & LifeCycles;
+  type ParcelConfigObject<ExtraProps = CustomProps> = {
+    name?: string;
+  } & LifeCycles<ExtraProps>;
 
-  type Parcel = {
+  type Parcel<ExtraProps = CustomProps> = {
     mount(): Promise<null>;
     unmount(): Promise<null>;
-    update?(customProps: CustomProps): Promise<any>;
+    update?(customProps: ExtraProps): Promise<any>;
     getStatus():
       | "NOT_LOADED"
       | "LOADING_SOURCE_CODE"
@@ -48,12 +50,14 @@ declare module "single-spa" {
     unmountPromise: Promise<null>;
   };
 
-  type LifeCycleFn<T> = (config: T & AppProps) => Promise<any>;
-  export type LifeCycles<T = {}> = {
-    bootstrap: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
-    mount: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
-    unmount: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
-    update?: LifeCycleFn<T> | Array<LifeCycleFn<T>>;
+  type LifeCycleFn<ExtraProps> = (
+    config: ExtraProps & AppProps
+  ) => Promise<any>;
+  export type LifeCycles<ExtraProps = {}> = {
+    bootstrap: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
+    mount: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
+    unmount: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
+    update?: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
   };
 
   export type StartOpts = {
@@ -62,7 +66,6 @@ declare module "single-spa" {
 
   // ./start.js
   export function start(opts?: StartOpts): void;
-  export function isStarted(): boolean;
 
   // ./jquery-support.js
   export function ensureJQuerySupport(jQuery?: any): void;
@@ -76,19 +79,19 @@ declare module "single-spa" {
   export function setUnmountMaxTime(time: number, dieOnTimeout?: boolean): void;
   export function setUnloadMaxTime(time: number, dieOnTimeout?: boolean): void;
 
-  type Application<T = {}> =
-    | LifeCycles<T>
-    | ((config: T & AppProps) => Promise<LifeCycles<T>>);
+  type Application<ExtraProps = {}> =
+    | LifeCycles<ExtraProps>
+    | ((config: ExtraProps & AppProps) => Promise<LifeCycles<ExtraProps>>);
 
   type ActivityFn = (location: Location) => boolean;
 
   type Activity = ActivityFn | string | (ActivityFn | string)[];
 
-  export type RegisterApplicationConfig<T extends CustomProps = {}> = {
+  export type RegisterApplicationConfig<ExtraProps extends CustomProps = {}> = {
     name: string;
-    app: Application<T>;
+    app: Application<ExtraProps>;
     activeWhen: Activity;
-    customProps?: T | CustomPropsFn<T>;
+    customProps?: ExtraProps | CustomPropsFn<ExtraProps>;
   };
 
   interface SingleSpaNewAppStatus {
@@ -116,15 +119,15 @@ declare module "single-spa" {
   };
 
   // ./applications/apps.js
-  export function registerApplication<T extends object = {}>(
+  export function registerApplication<ExtraProps extends CustomProps = {}>(
     appName: string,
-    applicationOrLoadingFn: Application<T>,
+    applicationOrLoadingFn: Application<ExtraProps>,
     activityFn: ActivityFn,
-    customProps?: T | CustomPropsFn<T>
+    customProps?: ExtraProps | CustomPropsFn<ExtraProps>
   ): void;
 
-  export function registerApplication<T extends object = {}>(
-    config: RegisterApplicationConfig<T>
+  export function registerApplication<ExtraProps extends CustomProps = {}>(
+    config: RegisterApplicationConfig<ExtraProps>
   ): void;
 
   export function unregisterApplication(appName: string): Promise<any>;
@@ -180,10 +183,10 @@ declare module "single-spa" {
   export function removeErrorHandler(handler: (error: AppError) => void): void;
 
   // './parcels/mount-parcel.js'
-  export function mountRootParcel(
-    parcelConfig: ParcelConfig,
-    parcelProps: ParcelProps & CustomProps
-  ): Parcel;
+  export function mountRootParcel<ExtraProps = CustomProps>(
+    parcelConfig: ParcelConfig<ExtraProps>,
+    parcelProps: ParcelProps & ExtraProps
+  ): Parcel<ExtraProps>;
 
   export function pathToActiveWhen(path: string): ActivityFn;
 }
