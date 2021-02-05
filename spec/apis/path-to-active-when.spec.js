@@ -161,6 +161,15 @@ describe(`pathToActiveWhen`, () => {
       },
       true
     );
+
+    expectPathToMatch("/:id", {
+      "http://app.com/123": true,
+      "http://app.com/abc": true,
+      "http://app.com/123/": true,
+      "http://app.com/abc/": true,
+      "http://app.com/123/more": false,
+      "http://app.com/abc/more": false,
+    });
   });
 });
 
