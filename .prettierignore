@@ -4,3 +4,4 @@ LICENSE
 .gitignore
 .npmignore
 .prettierignore
+coverage
