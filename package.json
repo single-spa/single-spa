@@ -17,7 +17,8 @@
     "test:browser": "cross-env BABEL_ENV=test jest --config jest-browser.config.js",
     "test:node": "cross-env BABEL_ENV=test jest --config jest-node.config.js",
     "test:types": "tsd",
-    "prettier": "prettier './**' --write",
+    "format": "prettier --write .",
+    "check-format": "prettier --check .",
     "lint": "eslint src"
   },
   "tsd": {
