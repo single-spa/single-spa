@@ -69,8 +69,8 @@ export function reroute(pendingPromises = [], eventArguments) {
     return loadApps();
   }
 
-  function cancelNavigation() {
-    navigationIsCanceled = true;
+  function cancelNavigation(fn) {
+    navigationIsCanceled = typeof fn === "function" ? fn : true;
   }
 
   function loadApps() {
@@ -91,7 +91,7 @@ export function reroute(pendingPromises = [], eventArguments) {
   }
 
   function performAppChanges() {
-    return Promise.resolve().then(() => {
+    return Promise.resolve().then(async () => {
       // https://github.com/single-spa/single-spa/issues/545
       window.dispatchEvent(
         new CustomEvent(
@@ -108,6 +108,16 @@ export function reroute(pendingPromises = [], eventArguments) {
           getCustomEventDetail(true, { cancelNavigation })
         )
       );
+
+      if (typeof navigationIsCanceled === "function") {
+        try {
+          navigationIsCanceled = await navigationIsCanceled();
+        } catch (e) {
+          throw new Error(
+            "CancelNavigation if passed a function, the function must return a promise and the promise must resolve to either true or false"
+          );
+        }
+      }
 
       if (navigationIsCanceled) {
         window.dispatchEvent(

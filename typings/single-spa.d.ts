@@ -107,6 +107,13 @@ declare module "single-spa" {
     [NOT_LOADED]: [];
     [SKIP_BECAUSE_BROKEN]: [];
   }
+
+  export type cancelNavigationCallBack = (fn: Function) => Promise<boolean>;
+
+  export type cancelNavigationFunction =
+    | cancelNavigationCallBack
+    | void
+    | undefined;
   export type SingleSpaCustomEventDetail = {
     newAppStatuses: SingleSpaNewAppStatus;
     appsByNewStatus: SingleSpaAppsByNewStatus;
@@ -114,8 +121,8 @@ declare module "single-spa" {
     originalEvent?: Event;
     oldUrl: string;
     newUrl: string;
-    navigationIsCanceled: boolean;
-    cancelNavigation?: () => void;
+    navigationIsCanceled: cancelNavigationCallBack | Promise<boolean> | boolean;
+    cancelNavigation?: cancelNavigationFunction;
   };
 
   // ./applications/apps.js

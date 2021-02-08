@@ -8,6 +8,8 @@ import {
   SingleSpaAppsByNewStatus,
   Parcel,
   ParcelConfig,
+  cancelNavigationCallBack,
+  cancelNavigationFunction,
 } from "single-spa";
 import { expectError, expectType } from "tsd";
 
@@ -77,6 +79,8 @@ window.addEventListener("single-spa:routing-event", ((
   expectType<Event | undefined>(evt.detail.originalEvent);
   expectType<string>(evt.detail.oldUrl);
   expectType<string>(evt.detail.newUrl);
-  expectType<boolean>(evt.detail.navigationIsCanceled);
-  expectType<(() => void) | undefined>(evt.detail.cancelNavigation);
+  expectType<cancelNavigationCallBack | Promise<boolean> | boolean>(
+    evt.detail.navigationIsCanceled
+  );
+  expectType<cancelNavigationFunction>(evt.detail.cancelNavigation);
 }) as EventListener);
