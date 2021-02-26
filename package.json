@@ -17,6 +17,7 @@
     "test:browser": "cross-env BABEL_ENV=test jest --config jest-browser.config.js",
     "test:node": "cross-env BABEL_ENV=test jest --config jest-node.config.js",
     "test:types": "tsd",
+    "test:lockfile": "js-correct-lockfile yarn",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "lint": "eslint src"
@@ -75,6 +76,7 @@
     "eslint-plugin-es5": "^1.5.0",
     "husky": "^4.2.3",
     "jest": "^25.1.0",
+    "js-correct-lockfile": "^1.0.0",
     "prettier": "^2.0.2",
     "pretty-quick": "^2.0.1",
     "rimraf": "^3.0.2",
