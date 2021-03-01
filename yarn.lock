@@ -3834,6 +3834,11 @@ jest@^25.1.0:
     import-local "^3.0.2"
     jest-cli "^25.1.0"
 
+js-correct-lockfile@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/js-correct-lockfile/-/js-correct-lockfile-1.0.0.tgz#c84a00502c00d0c597f1de8587f2c345278b71b4"
+  integrity sha512-f4nFNNgL36OYaf4psgICuVhgezkvkJucRQiiXzEDsUW+XnVBC9xO+lDOP9m3gERqs0ZeOQf5W3etdQ4HWDEW4w==
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
