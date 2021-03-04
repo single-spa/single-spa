@@ -188,5 +188,8 @@ declare module "single-spa" {
     parcelProps: ParcelProps & ExtraProps
   ): Parcel<ExtraProps>;
 
-  export function pathToActiveWhen(path: string): ActivityFn;
+  export function pathToActiveWhen(
+    path: string,
+    exactMatch?: boolean
+  ): ActivityFn;
 }
