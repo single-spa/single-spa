@@ -67,6 +67,9 @@ registerApplication({
 const activeWhen = pathToActiveWhen("/users/:id");
 expectType<boolean>(activeWhen(window.location));
 
+const activeWhenExact = pathToActiveWhen("/users/:id", true);
+expectType<boolean>(activeWhenExact(window.location));
+
 window.addEventListener("single-spa:routing-event", ((
   evt: CustomEvent<SingleSpaCustomEventDetail>
 ) => {
