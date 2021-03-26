@@ -52,7 +52,6 @@ export function reroute(pendingPromises = [], eventArguments) {
     appsToMount,
   } = getAppChanges();
   let appsThatChanged,
-    navigationIsCanceled = false,
     cancelPromises = [],
     oldUrl = currentUrl,
     newUrl = (currentUrl = window.location.href);
@@ -71,7 +70,6 @@ export function reroute(pendingPromises = [], eventArguments) {
   }
 
   function cancelNavigation(promise) {
-    if (!navigationIsCanceled) {
       if (typeof promise?.then === "function") {
         cancelPromises.push(promise);
       } else {
@@ -116,9 +114,8 @@ export function reroute(pendingPromises = [], eventArguments) {
         )
       );
 
-      return Promise.all(cancelPromises).then((results) => {
-        if (results.indexOf(true) !== -1) {
-          navigationIsCanceled = true;
+      return Promise.all(cancelPromises).then((cancelValues) => {
+        if (cancelValues.some(v => v)) {
           window.dispatchEvent(
             new CustomEvent(
               "single-spa:before-mount-routing-event",
@@ -129,8 +126,6 @@ export function reroute(pendingPromises = [], eventArguments) {
           navigateToUrl(oldUrl);
           return;
         }
-
-        // navigationIsCanceled = false;
 
         const unloadPromises = appsToUnload.map(toUnloadPromise);
 
