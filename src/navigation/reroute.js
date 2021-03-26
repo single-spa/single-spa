@@ -70,11 +70,10 @@ export function reroute(pendingPromises = [], eventArguments) {
   }
 
   function cancelNavigation(promise) {
-      if (typeof promise?.then === "function") {
-        cancelPromises.push(promise);
-      } else {
-        cancelPromises.push(Promise.resolve(true));
-      }
+    if (typeof promise?.then === "function") {
+      cancelPromises.push(promise);
+    } else {
+      cancelPromises.push(Promise.resolve(true));
     }
   }
 
@@ -115,7 +114,7 @@ export function reroute(pendingPromises = [], eventArguments) {
       );
 
       return Promise.all(cancelPromises).then((cancelValues) => {
-        if (cancelValues.some(v => v)) {
+        if (cancelValues.some((v) => v)) {
           window.dispatchEvent(
             new CustomEvent(
               "single-spa:before-mount-routing-event",
@@ -282,7 +281,6 @@ export function reroute(pendingPromises = [], eventArguments) {
         originalEvent: eventArguments?.[0],
         oldUrl,
         newUrl,
-        navigationIsCanceled,
       },
     };
 
