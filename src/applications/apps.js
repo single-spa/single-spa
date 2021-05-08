@@ -416,11 +416,12 @@ export function pathToActiveWhen(path, exactMatch) {
 
   return (location) => {
     // compatible with IE10
-    if (!location.origin) {
-      location.origin = `${location.protocol}//${location.hostname}${location.port ? ':' + location.port: ''}`;
+    let origin = location.origin;
+    if (!origin) {
+      origin = `${location.protocol}//${location.hostname}${location.port ? ':' + location.port : ''}`;
     }
     const route = location.href
-      .replace(location.origin, "")
+      .replace(origin, "")
       .replace(location.search, "")
       .split("?")[0];
     return regex.test(route);
