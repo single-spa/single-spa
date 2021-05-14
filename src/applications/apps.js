@@ -415,8 +415,13 @@ export function pathToActiveWhen(path, exactMatch) {
   const regex = toDynamicPathValidatorRegex(path, exactMatch);
 
   return (location) => {
+    // compatible with IE10
+    let origin = location.origin;
+    if (!origin) {
+      origin = `${location.protocol}//${location.host}`;
+    }
     const route = location.href
-      .replace(location.origin, "")
+      .replace(origin, "")
       .replace(location.search, "")
       .split("?")[0];
     return regex.test(route);
