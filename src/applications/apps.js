@@ -418,9 +418,7 @@ export function pathToActiveWhen(path, exactMatch) {
     // compatible with IE10
     let origin = location.origin;
     if (!origin) {
-      origin = `${location.protocol}//${location.hostname}${
-        location.port ? ":" + location.port : ""
-      }`;
+      origin = `${location.protocol}//${location.host}`;
     }
     const route = location.href
       .replace(origin, "")
