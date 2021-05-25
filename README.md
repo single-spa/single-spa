@@ -26,8 +26,8 @@ Build micro frontends that coexist and can ([but don't need to](https://single-s
 
 To add your company's logo to this section:
 
-- Become a [recurring Open Collective sponsor](https://opencollective.com/single-spa) of at least $100 a month.
-- Become a [recurring Github sponsor](https://github.com/sponsors/joeldenning) of at least $100 a month.
+- Become a [recurring Open Collective sponsor](https://opencollective.com/single-spa) of at least \$100 a month.
+- Become a [recurring Github sponsor](https://github.com/sponsors/joeldenning) of at least \$100 a month.
 - Sponsor a core team member to implement a specific feature for single-spa. Pay our regular consulting rate. Inquire in our Slack workspace.
 
 ## Documentation
