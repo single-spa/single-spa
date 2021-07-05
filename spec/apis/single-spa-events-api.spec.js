@@ -1,5 +1,4 @@
 import * as singleSpa from "single-spa";
-import { catchSingleSpaErrors } from "../test-utils";
 
 const russellApp = {
   bootstrapCount: 0,
