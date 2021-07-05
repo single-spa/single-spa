@@ -19,6 +19,17 @@ Build micro frontends that coexist and can ([but don't need to](https://single-s
 - Write new code, possibly with a new framework, without rewriting your existing app
 - Lazy load code for improved initial load time.
 
+## Sponsors
+
+<a href="https://datacamp.com/"><img height="50" alt="DataCamp-Logo" src="https://user-images.githubusercontent.com/5524384/117517708-1047f200-af5a-11eb-8d5d-0997d6df06d6.png"></a>
+<a href="https://pos.toasttab.com/"><img height="50" alt="Toast-Logo" src="https://user-images.githubusercontent.com/5524384/117516281-eab8e980-af55-11eb-9d3c-baff0c3c86e6.png"></a>
+
+To add your company's logo to this section:
+
+- Become a [recurring Open Collective sponsor](https://opencollective.com/single-spa) of at least \$100 a month.
+- Become a [recurring Github sponsor](https://github.com/sponsors/joeldenning) of at least \$100 a month.
+- Sponsor a core team member to implement a specific feature for single-spa. Pay our regular consulting rate. Inquire in our Slack workspace.
+
 ## Documentation
 
 You can find the single-spa documentation [on the website](https://single-spa.js.org/).

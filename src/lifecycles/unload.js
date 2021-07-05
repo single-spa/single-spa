@@ -2,12 +2,12 @@ import {
   NOT_MOUNTED,
   UNLOADING,
   NOT_LOADED,
+  LOAD_ERROR,
   SKIP_BECAUSE_BROKEN,
   toName,
 } from "../applications/app.helpers.js";
 import { handleAppError } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
-import { LOAD_ERROR } from "single-spa";
 
 const appsToUnload = {};
 
