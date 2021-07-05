@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "16"
-      - uses: pnpm/action-setup@2
+      - uses: pnpm/action-setup@2.0.1
         with:
           version: 6.9.1
       - run: pnpm install --frozen-lockfile
