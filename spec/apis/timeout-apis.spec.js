@@ -184,22 +184,27 @@ function generateParcel(
       bootstrap: () =>
         new Promise((resolve) => {
           setTimeout(resolve, bootstrapDelay);
+          jest.advanceTimersByTime(bootstrapDelay);
         }),
       mount: () =>
         new Promise((resolve) => {
           setTimeout(resolve, mountDelay);
+          jest.advanceTimersByTime(mountDelay);
         }),
       update: () =>
         new Promise((resolve) => {
           setTimeout(resolve, updateDelay);
+          jest.advanceTimersByTime(updateDelay);
         }),
       unmount: () =>
         new Promise((resolve) => {
           setTimeout(resolve, unmountDelay);
+          jest.advanceTimersByTime(unmountDelay);
         }),
       unload: () =>
         new Promise((resolve) => {
           setTimeout(resolve, unloadDelay);
+          jest.advanceTimersByTime(unloadDelay);
         }),
     },
     {
@@ -210,23 +215,8 @@ function generateParcel(
 
 async function controlledParcelActions(action, ...parcelArgs) {
   const parcel = singleSpa.mountRootParcel(...generateParcel(...parcelArgs));
-  await flushPromises();
-  jest.advanceTimersByTime(2);
-  await flushPromises();
-  jest.advanceTimersByTime(1);
-  await flushPromises();
-  jest.advanceTimersByTime(2);
-  await flushPromises();
-  jest.advanceTimersByTime(7);
+  jest.runAllTimers();
   const actionPromise = action(parcel);
-  await flushPromises();
-  jest.advanceTimersByTime(3);
-  await flushPromises();
-  jest.advanceTimersByTime(7);
+  jest.runAllTimers();
   await actionPromise;
-}
-
-// https://github.com/facebook/jest/issues/2157#issuecomment-279171856
-function flushPromises() {
-  return new Promise((resolve) => setImmediate(resolve));
 }

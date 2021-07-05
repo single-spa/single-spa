@@ -14,9 +14,9 @@ export function toUnmountPromise(appOrParcel, hardFail) {
     }
     appOrParcel.status = UNMOUNTING;
 
-    const unmountChildrenParcels = Object.keys(
-      appOrParcel.parcels
-    ).map((parcelId) => appOrParcel.parcels[parcelId].unmountThisParcel());
+    const unmountChildrenParcels = Object.keys(appOrParcel.parcels).map(
+      (parcelId) => appOrParcel.parcels[parcelId].unmountThisParcel()
+    );
 
     let parcelError;
 

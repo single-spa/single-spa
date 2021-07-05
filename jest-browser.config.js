@@ -1,7 +1,10 @@
-module.exports = {
+export default {
   testEnvironment: "jsdom",
   moduleNameMapper: {
     "single-spa": "<rootDir>/src/single-spa.js",
   },
-  setupFiles: ["<rootDir>/spec/test-setup.js"],
+  globals: {
+    __SINGLE_SPA_DEVTOOLS__: {},
+    __DEV__: true,
+  },
 };

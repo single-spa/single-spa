@@ -5,3 +5,4 @@ LICENSE
 .npmignore
 .prettierignore
 coverage
+pnpm-lock.yaml

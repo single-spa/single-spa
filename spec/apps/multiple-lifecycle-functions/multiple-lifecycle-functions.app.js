@@ -106,8 +106,20 @@ export const unmount = [
 ];
 
 export function reset() {
-  _bootstrapsCalledOutOfOrder = _mountsCalledOutOfOrder = _unmountsCalledOutOfOrder = undefined;
-  _bootstrap1Called = _bootstrap2Called = _bootstrap3Called = _mount1Called = _mount2Called = _mount3Called = _unmount1Called = _unmount2Called = _unmount3Called = false;
+  _bootstrapsCalledOutOfOrder =
+    _mountsCalledOutOfOrder =
+    _unmountsCalledOutOfOrder =
+      undefined;
+  _bootstrap1Called =
+    _bootstrap2Called =
+    _bootstrap3Called =
+    _mount1Called =
+    _mount2Called =
+    _mount3Called =
+    _unmount1Called =
+    _unmount2Called =
+    _unmount3Called =
+      false;
 }
 
 export function bootstrapsCalledOutOfOrder() {

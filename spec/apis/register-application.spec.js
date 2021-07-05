@@ -5,20 +5,17 @@ describe("registerApplication", function () {
   let errorsMessages = {
     invalidConfig: "Configuration object can't be an Array or null!",
     name: {
-      args:
-        "The 1st argument to registerApplication must be a non-empty string 'appName'",
+      args: "The 1st argument to registerApplication must be a non-empty string 'appName'",
       config:
         "The config.name on registerApplication must be a non-empty string",
     },
     app: {
-      args:
-        "The 2nd argument to registerApplication must be an application or loading application function",
+      args: "The 2nd argument to registerApplication must be an application or loading application function",
       config:
         "The config.app on registerApplication must be an application or a loading function",
     },
     activeWhen: {
-      args:
-        "The 3rd argument to registerApplication must be an activeWhen function",
+      args: "The 3rd argument to registerApplication must be an activeWhen function",
       config:
         "The config.activeWhen on registerApplication must be a string, function or an array with both",
     },

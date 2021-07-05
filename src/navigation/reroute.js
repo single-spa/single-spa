@@ -45,12 +45,8 @@ export function reroute(pendingPromises = [], eventArguments) {
     });
   }
 
-  const {
-    appsToUnload,
-    appsToUnmount,
-    appsToLoad,
-    appsToMount,
-  } = getAppChanges();
+  const { appsToUnload, appsToUnmount, appsToLoad, appsToMount } =
+    getAppChanges();
   let appsThatChanged,
     navigationIsCanceled = false,
     oldUrl = currentUrl,

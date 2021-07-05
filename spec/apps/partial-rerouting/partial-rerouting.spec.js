@@ -2,7 +2,7 @@ import * as singleSpa from "single-spa";
 
 describe("partial rerouting", () => {
   function delay() {
-    return new Promise((resolve) => setImmediate(resolve));
+    return new Promise((resolve) => setTimeout(resolve));
   }
 
   beforeAll(() => singleSpa.start());

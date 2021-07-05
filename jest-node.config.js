@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   testEnvironment: "node",
   moduleNameMapper: {
     "single-spa": "<rootDir>/src/single-spa.js",
