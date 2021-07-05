@@ -50,6 +50,9 @@ export function mountParcel(config, customProps) {
     );
   }
 
+  const id = parcelCount++;
+  const name = config.name || `parcel-${id}`;
+
   if (typeof customProps !== "object") {
     throw Error(
       formatErrorMessage(
@@ -72,8 +75,6 @@ export function mountParcel(config, customProps) {
       )
     );
   }
-
-  const id = parcelCount++;
 
   const passedConfigLoadingFunction = typeof config === "function";
   const configLoadingFunction = passedConfigLoadingFunction
