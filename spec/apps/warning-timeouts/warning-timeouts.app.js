@@ -3,18 +3,21 @@ let delay = 0;
 export function bootstrap() {
   return new Promise((resolve) => {
     setTimeout(resolve, delay);
+    advanceTimers();
   });
 }
 
 export function mount() {
   return new Promise((resolve) => {
     setTimeout(resolve, delay);
+    advanceTimers();
   });
 }
 
 export function unmount() {
   return new Promise((resolve) => {
     setTimeout(resolve, delay);
+    advanceTimers();
   });
 }
 
@@ -39,4 +42,12 @@ export function reset() {
 
 export function setDelay(millis) {
   delay = millis;
+}
+
+function advanceTimers() {
+  window.dispatchEvent(
+    new CustomEvent("fake-timers-advance", {
+      detail: delay,
+    })
+  );
 }

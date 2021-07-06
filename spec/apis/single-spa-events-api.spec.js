@@ -73,51 +73,47 @@ describe(`events api :`, () => {
       boom = false;
     });
 
-    it(`is fired on the window whenever the hash changes`, (done) => {
-      singleSpa
-        .triggerAppChange() // start with a clean slate (no previous tests doing anything)
-        .then(() => {
-          window.addEventListener("single-spa:routing-event", finishTest);
-          window.location.hash = `#/hash-was-changed`;
+    it(`is fired on the window whenever the hash changes`, async () => {
+      await singleSpa.triggerAppChange(); // start with a clean slate (no previous tests doing anything)
 
-          function finishTest() {
-            window.removeEventListener("single-spa:routing-event", finishTest);
-            done();
-          }
-        })
-        .catch(fail);
+      window.addEventListener("single-spa:routing-event", finishTest);
+      window.location.hash = `#/hash-was-changed`;
+
+      let finish;
+      await new Promise((r) => (finish = r));
+
+      function finishTest() {
+        window.removeEventListener("single-spa:routing-event", finishTest);
+        finish();
+      }
     });
 
-    it(`is fired on the window whenever the url changes`, (done) => {
-      singleSpa
-        .triggerAppChange() // start with a clean slate (no previous tests doing anything)
-        .then(() => {
-          window.addEventListener("single-spa:routing-event", finishTest);
-          window.history.pushState({}, null, `#/push-state-called`);
+    it(`is fired on the window whenever the url changes`, async () => {
+      await singleSpa.triggerAppChange();
+      window.addEventListener("single-spa:routing-event", finishTest);
+      window.history.pushState({}, null, `#/push-state-called`);
+      let finish;
+      await new Promise((r) => (finish = r));
 
-          function finishTest() {
-            window.removeEventListener("single-spa:routing-event", finishTest);
-            done();
-          }
-        })
-        .catch(fail);
+      function finishTest() {
+        window.removeEventListener("single-spa:routing-event", finishTest);
+        finish();
+      }
     });
 
-    it(`doesn't destroy single-spa when you throw an error inside of an event listener`, (done) => {
-      const ogOnError = window.onerror;
+    // Excluded because of https://github.com/facebook/jest/issues/5620
+    xit(`doesn't destroy single-spa when you throw an error inside of an event listener`, async () => {
       const counterFn = jest.fn();
+      let finish,
+        finishPromise = new Promise((r) => (finish = r));
 
-      window.onerror = function (err) {
-        counterFn();
-        console.error(err);
-        doneIfAllListenerHadBeenInvoked();
-      };
+      process.on("uncaughtException", errHandler);
 
       // If the counterFn had been called thrice, it means all listener be invoked.
       function doneIfAllListenerHadBeenInvoked() {
         if (counterFn.mock.calls.length === 3) {
-          window.onerror = ogOnError;
-          done();
+          process.off("uncaughtException", errHandler);
+          finish();
         }
       }
 
@@ -140,17 +136,25 @@ describe(`events api :`, () => {
       }
       window.addEventListener("hashchange", hashchangeListener);
 
-      singleSpa
-        .triggerAppChange()
-        .then(() => (window.location.hash = "#/hashchange"))
-        .catch((err) => {
-          // If single-spa died because of the thrown error above, we've got a problem
-          window.removeEventListener("single-spa:routing-event", listener);
-          window.removeEventListener("hashchange", hashchangeListener);
-          window.removeEventListener("hashchange", hashchangeListenerWithErr);
-          window.onerror = ogOnError;
-          fail(err);
-        });
+      try {
+        await singleSpa.triggerAppChange();
+        window.location.hash = "#/hashchange";
+      } catch {
+        window.removeEventListener("single-spa:routing-event", listener);
+        window.removeEventListener("hashchange", hashchangeListener);
+        window.removeEventListener("hashchange", hashchangeListenerWithErr);
+        process.off("uncaughtException", errHandler);
+        throw err;
+      }
+
+      await finishPromise;
+
+      function errHandler(err) {
+        console.log("errHandler");
+        counterFn();
+        console.error(err);
+        doneIfAllListenerHadBeenInvoked();
+      }
     });
   });
 
@@ -246,289 +250,265 @@ describe(`events api :`, () => {
   });
 
   describe(`single-spa:app-change`, () => {
-    it(`is fired when an app is mounted`, (done) => {
+    it(`is fired when an app is mounted`, async () => {
       window.location.hash = `#`;
 
-      singleSpa
-        .triggerAppChange() // start with a clean slate (no previous tests doing anything)
-        .then(() => {
-          window.addEventListener("single-spa:app-change", finishTest);
-          window.location.hash = `#/russell`;
+      await singleSpa.triggerAppChange();
 
-          function finishTest(evt) {
-            const {
-              detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
-            } = evt;
-            window.removeEventListener("single-spa:app-change", finishTest);
-            expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
-            expect(
-              appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()
-            ).toEqual([]);
-            expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual([]);
-            expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
-              ["russell"].sort()
-            );
-
-            expect(totalAppChanges).toBe(1);
-
-            expect(newAppStatuses).toEqual({
-              russell: singleSpa.MOUNTED,
-            });
-            done();
-          }
-
-          return singleSpa.triggerAppChange();
-        })
-        .catch(fail);
-    });
-
-    it(`is fired with multiple apps that changed`, (done) => {
-      window.location.hash = `#`;
-
-      singleSpa
-        .triggerAppChange() // start with a clean slate (no previous tests doing anything)
-        .then(() => {
-          boom = true; // turn on the boom application
-          window.addEventListener("single-spa:app-change", finishTest);
-          window.location.hash = `#/russell`;
-
-          function finishTest(evt) {
-            window.removeEventListener("single-spa:app-change", finishTest);
-            const {
-              detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
-            } = evt;
-            expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
-            expect(
-              appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()
-            ).toEqual([]);
-            expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual([]);
-            expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
-              ["russell", "boom"].sort()
-            );
-
-            expect(totalAppChanges).toBe(2);
-
-            expect(newAppStatuses).toEqual({
-              russell: singleSpa.MOUNTED,
-              boom: singleSpa.MOUNTED,
-            });
-            done();
-          }
-
-          return singleSpa.triggerAppChange();
-        })
-        .catch(fail);
-    });
-
-    it(`is fired for unmounts`, (done) => {
+      window.addEventListener("single-spa:app-change", finishTest);
       window.location.hash = `#/russell`;
 
-      singleSpa
-        .triggerAppChange() // start with a clean slate (no previous tests doing anything)
-        .then(() => {
-          window.addEventListener("single-spa:app-change", finishTest);
-          window.location.hash = `#`;
+      let finish,
+        testFinishPromise = new Promise((r) => (finish = r));
 
-          function finishTest(evt) {
-            window.removeEventListener("single-spa:app-change", finishTest);
-            const {
-              detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
-            } = evt;
-            expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
-            expect(
-              appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()
-            ).toEqual([]);
-            expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual([]);
-            expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual(
-              ["russell"].sort()
-            );
+      function finishTest(evt) {
+        const {
+          detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
+        } = evt;
+        window.removeEventListener("single-spa:app-change", finishTest);
+        expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
+        expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
+          []
+        );
+        expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual([]);
+        expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
+          ["russell"].sort()
+        );
 
-            expect(totalAppChanges).toBe(1);
+        expect(totalAppChanges).toBe(1);
 
-            expect(newAppStatuses).toEqual({
-              russell: singleSpa.NOT_MOUNTED,
-            });
-            done();
-          }
+        expect(newAppStatuses).toEqual({
+          russell: singleSpa.MOUNTED,
+        });
 
-          return singleSpa.triggerAppChange();
-        })
-        .catch(fail);
+        finish();
+      }
+
+      await singleSpa.triggerAppChange();
+      await testFinishPromise;
     });
 
-    it(`fires with multiple statuses when things are both mounted and unmounted`, (done) => {
+    it(`is fired with multiple apps that changed`, async () => {
+      window.location.hash = `#`;
+
+      await singleSpa.triggerAppChange();
+      boom = true; // turn on the boom application
+      window.addEventListener("single-spa:app-change", finishTest);
+      window.location.hash = `#/russell`;
+
+      let finish,
+        testFinishPromise = new Promise((r) => (finish = r));
+
+      function finishTest(evt) {
+        window.removeEventListener("single-spa:app-change", finishTest);
+        const {
+          detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
+        } = evt;
+        expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
+        expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
+          []
+        );
+        expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual([]);
+        expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
+          ["russell", "boom"].sort()
+        );
+
+        expect(totalAppChanges).toBe(2);
+
+        expect(newAppStatuses).toEqual({
+          russell: singleSpa.MOUNTED,
+          boom: singleSpa.MOUNTED,
+        });
+        finish();
+      }
+
+      await singleSpa.triggerAppChange();
+      await testFinishPromise;
+    });
+
+    it(`is fired for unmounts`, async () => {
+      window.location.hash = `#/russell`;
+
+      await singleSpa.triggerAppChange();
+      let finish,
+        testFinishPromise = new Promise((r) => (finish = r));
+      window.addEventListener("single-spa:app-change", finishTest);
+      window.location.hash = `#`;
+
+      function finishTest(evt) {
+        window.removeEventListener("single-spa:app-change", finishTest);
+        const {
+          detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
+        } = evt;
+        expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
+        expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
+          []
+        );
+        expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual([]);
+        expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual(
+          ["russell"].sort()
+        );
+
+        expect(totalAppChanges).toBe(1);
+
+        expect(newAppStatuses).toEqual({
+          russell: singleSpa.NOT_MOUNTED,
+        });
+        finish();
+      }
+
+      await singleSpa.triggerAppChange();
+      await testFinishPromise;
+    });
+
+    it(`fires with multiple statuses when things are both mounted and unmounted`, async () => {
       window.location.hash = `#`; // unmount russell
       boom = true; // mount boom
-      singleSpa
-        .triggerAppChange() // start with a clean slate (no previous tests doing anything)
-        .then(() => {
-          window.addEventListener("single-spa:app-change", finishTest);
-          window.location.hash = `#/russell`; // mount russell
-          boom = false; // unmount boom
 
-          function finishTest(evt) {
-            const {
-              detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
-            } = evt;
-            window.removeEventListener("single-spa:app-change", finishTest);
-            expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
-            expect(
-              appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()
-            ).toEqual([]);
-            expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual(
-              ["boom"].sort()
-            );
-            expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
-              ["russell"].sort()
-            );
+      await singleSpa.triggerAppChange();
+      let finish,
+        testFinishPromise = new Promise((r) => (finish = r));
 
-            expect(totalAppChanges).toBe(2);
+      window.addEventListener("single-spa:app-change", finishTest);
+      window.location.hash = `#/russell`; // mount russell
+      boom = false; // unmount boom
 
-            expect(newAppStatuses).toEqual({
-              boom: singleSpa.NOT_MOUNTED,
-              russell: singleSpa.MOUNTED,
-            });
-            done();
-          }
+      function finishTest(evt) {
+        const {
+          detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
+        } = evt;
+        window.removeEventListener("single-spa:app-change", finishTest);
+        expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
+        expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
+          []
+        );
+        expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual(
+          ["boom"].sort()
+        );
+        expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
+          ["russell"].sort()
+        );
 
-          return singleSpa.triggerAppChange();
-        })
-        .catch(fail);
+        expect(totalAppChanges).toBe(2);
+
+        expect(newAppStatuses).toEqual({
+          boom: singleSpa.NOT_MOUNTED,
+          russell: singleSpa.MOUNTED,
+        });
+        finish();
+      }
+
+      await singleSpa.triggerAppChange();
+      await testFinishPromise;
     });
 
-    it(`is not fired when no app is mounted`, (done) => {
+    it(`is not fired when no app is mounted`, async () => {
+      let appChangeCalls = 0;
       function failTest() {
+        appChangeCalls++;
         window.removeEventListener("single-spa:app-change", failTest);
-        fail(`single-spa:app-change should not be called when no apps change`);
       }
 
       window.location.hash = `#`;
 
-      singleSpa
-        .triggerAppChange()
-        .then(() => singleSpa.triggerAppChange())
-        .then(() => {
-          window.addEventListener("single-spa:app-change", failTest);
-          window.location.hash = `#/not-a-real-app`;
+      await singleSpa.triggerAppChange();
+      await singleSpa.triggerAppChange();
+      window.addEventListener("single-spa:app-change", failTest);
+      window.location.hash = `#/not-a-real-app`;
 
-          return singleSpa.triggerAppChange();
-        })
-        .then(() => {
-          window.removeEventListener("single-spa:app-change", failTest);
-
-          // If failTest wasn't called, then we're good
-          done();
-        })
-        .catch(fail);
+      await singleSpa.triggerAppChange();
+      window.removeEventListener("single-spa:app-change", failTest);
+      expect(appChangeCalls).toBe(0);
     });
   });
 
   describe(`single-spa:no-app-change`, () => {
-    it(`is fired when no app is loaded, bootstrapped, mounted, unmounted, or unloaded`, (done) => {
+    it(`is fired when no app is loaded, bootstrapped, mounted, unmounted, or unloaded`, async () => {
       window.location.hash = `#`;
 
-      singleSpa
-        .triggerAppChange()
-        .then(() => {
-          window.addEventListener("single-spa:no-app-change", finishTest);
-          window.location.hash = `#not-a-real-app`;
+      await singleSpa.triggerAppChange();
+      window.addEventListener("single-spa:no-app-change", finishTest);
+      window.location.hash = `#not-a-real-app`;
+      let finish,
+        testFinishPromise = new Promise((r) => (finish = r));
 
-          function finishTest() {
-            window.removeEventListener("single-spa:no-app-change", finishTest);
-            done();
-          }
-        })
-        .catch(fail);
+      function finishTest() {
+        window.removeEventListener("single-spa:no-app-change", finishTest);
+        finish();
+      }
+
+      await testFinishPromise;
     });
   });
 
   describe(`single-spa:before-app-change`, () => {
-    it(`is fired before apps will change, and not fired if no apps are changing`, (done) => {
+    it(`is fired before apps will change, and not fired if no apps are changing`, async () => {
       window.location.hash = `#/russell`;
 
-      singleSpa
-        .triggerAppChange()
-        .then(() => {
-          expect(singleSpa.getAppStatus("boom")).toMatch(
-            /NOT_MOUNTED|NOT_LOADED/
-          );
-          expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
-          window.addEventListener("single-spa:before-app-change", finishTest);
-          window.addEventListener(
-            "single-spa:before-no-app-change",
-            finishTest
-          );
-          boom = true;
-          window.location.hash = `#not-a-real-app`;
+      await singleSpa.triggerAppChange();
 
-          function finishTest(evt) {
-            window.removeEventListener(
-              "single-spa:before-app-change",
-              finishTest
-            );
-            window.removeEventListener(
-              "single-spa:before-no-app-change",
-              finishTest
-            );
-            expect(evt.type).toBe("single-spa:before-app-change");
-            expect(singleSpa.getAppStatus("boom")).toMatch(
-              /NOT_MOUNTED|NOT_LOADED/
-            );
-            expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
-            expect(evt.detail.appsByNewStatus[singleSpa.MOUNTED]).toEqual([
-              "boom",
-            ]);
-            expect(evt.detail.appsByNewStatus[singleSpa.NOT_MOUNTED]).toEqual([
-              "russell",
-            ]);
-            done();
-          }
-        })
-        .catch(fail);
+      expect(singleSpa.getAppStatus("boom")).toMatch(/NOT_MOUNTED|NOT_LOADED/);
+      expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
+      window.addEventListener("single-spa:before-app-change", finishTest);
+      window.addEventListener("single-spa:before-no-app-change", finishTest);
+      boom = true;
+      window.location.hash = `#not-a-real-app`;
+
+      let finish;
+      await new Promise((resolve) => {
+        finish = resolve;
+      });
+
+      function finishTest(evt) {
+        window.removeEventListener("single-spa:before-app-change", finishTest);
+        window.removeEventListener(
+          "single-spa:before-no-app-change",
+          finishTest
+        );
+        expect(evt.type).toBe("single-spa:before-app-change");
+        expect(singleSpa.getAppStatus("boom")).toMatch(
+          /NOT_MOUNTED|NOT_LOADED/
+        );
+        expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
+        expect(evt.detail.appsByNewStatus[singleSpa.MOUNTED]).toEqual(["boom"]);
+        expect(evt.detail.appsByNewStatus[singleSpa.NOT_MOUNTED]).toEqual([
+          "russell",
+        ]);
+        finish();
+      }
     });
   });
 
   describe(`single-spa:before-no-app-change`, () => {
-    it(`is fired before apps will not change, and not fired if apps are changing`, (done) => {
+    it(`is fired before apps will not change, and not fired if apps are changing`, async () => {
+      let finish,
+        testFinishPromise = new Promise((r) => (finish = r));
       window.location.hash = `#/russell`;
 
-      singleSpa
-        .triggerAppChange()
-        .then(() => {
-          expect(singleSpa.getAppStatus("boom")).toMatch(
-            /NOT_MOUNTED|NOT_LOADED/
-          );
-          expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
-          window.addEventListener(
-            "single-spa:before-no-app-change",
-            finishTest
-          );
-          window.addEventListener("single-spa:before-app-change", finishTest);
-          singleSpa.triggerAppChange();
+      await singleSpa.triggerAppChange();
+      expect(singleSpa.getAppStatus("boom")).toMatch(/NOT_MOUNTED|NOT_LOADED/);
+      expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
+      window.addEventListener("single-spa:before-no-app-change", finishTest);
+      window.addEventListener("single-spa:before-app-change", finishTest);
+      await singleSpa.triggerAppChange();
 
-          function finishTest(evt) {
-            window.removeEventListener(
-              "single-spa:before-no-app-change",
-              finishTest
-            );
-            window.removeEventListener(
-              "single-spa:before-app-change",
-              finishTest
-            );
-            expect(evt.type).toEqual("single-spa:before-no-app-change");
-            expect(evt.detail.appsByNewStatus[singleSpa.MOUNTED]).toEqual([]);
-            expect(evt.detail.appsByNewStatus[singleSpa.NOT_MOUNTED]).toEqual(
-              []
-            );
-            done();
-          }
-        })
-        .catch(fail);
+      function finishTest(evt) {
+        window.removeEventListener(
+          "single-spa:before-no-app-change",
+          finishTest
+        );
+        window.removeEventListener("single-spa:before-app-change", finishTest);
+        expect(evt.type).toEqual("single-spa:before-no-app-change");
+        expect(evt.detail.appsByNewStatus[singleSpa.MOUNTED]).toEqual([]);
+        expect(evt.detail.appsByNewStatus[singleSpa.NOT_MOUNTED]).toEqual([]);
+        finish();
+      }
+      await testFinishPromise;
     });
   });
 
   describe(`cancelNavigation`, () => {
-    it(`allows you to cancel a hash navigation event in the before-routing-event handler`, (done) => {
+    it(`allows you to cancel a hash navigation event in the before-routing-event handler`, async () => {
       const beforeRoutingEvent = (evt) => {
         expect(evt.detail.oldUrl).toMatch(/http:\/\/localhost\/(#\/)?/);
         expect(evt.detail.newUrl).toBe("http://localhost/#/russell");
@@ -550,20 +530,13 @@ describe(`events api :`, () => {
 
       window.location.hash = `#/russell`;
 
-      singleSpa
-        .triggerAppChange()
-        .then(() => {
-          expect(singleSpa.getAppStatus("russell")).toBe(originalStatus);
-          expect(window.location.href).toBe(originalUrl);
-        })
-        .catch(fail)
-        .finally(() => {
-          window.removeEventListener(
-            "single-spa:before-routing-event",
-            beforeRoutingEvent
-          );
-          done();
-        });
+      await singleSpa.triggerAppChange();
+      expect(singleSpa.getAppStatus("russell")).toBe(originalStatus);
+      expect(window.location.href).toBe(originalUrl);
+      window.removeEventListener(
+        "single-spa:before-routing-event",
+        beforeRoutingEvent
+      );
     });
 
     it(`allows you to cancel a pushState navigation event in the before-routing-event handler`, async () => {

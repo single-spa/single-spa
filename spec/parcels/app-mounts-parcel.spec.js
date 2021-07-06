@@ -258,10 +258,9 @@ describe("applications mounting parcels :", () => {
         });
         expect(parcelConfig.mountCalls).toBe(0);
         expect(parcelConfig2.mountCalls).toBe(0);
-        return Promise.all([
-          parcel.mountPromise,
-          parcel2.mountPromise,
-        ]).then(() => [parcel, parcel2]);
+        return Promise.all([parcel.mountPromise, parcel2.mountPromise]).then(
+          () => [parcel, parcel2]
+        );
       })
       .then(([p, p2]) => {
         expect(parcelConfig.mountCalls).toBe(1);

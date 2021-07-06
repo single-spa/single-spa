@@ -101,7 +101,7 @@ describe("navigateToUrl", function () {
 
   it("should reroute if query params have changed", function () {
     singleSpaNavigate("/route?yoshi=best");
-    spyOn(window.history, "pushState");
+    jest.spyOn(window.history, "pushState");
     singleSpaNavigate("/route?yoshi=criminal");
     expect(window.history.pushState).toHaveBeenCalledWith(
       null,
@@ -112,7 +112,7 @@ describe("navigateToUrl", function () {
 
   it("should reroute if query params have changed with hash based routing", function () {
     singleSpaNavigate("#/route?yoshi=criminal");
-    spyOn(window.history, "pushState");
+    jest.spyOn(window.history, "pushState");
     singleSpaNavigate("#/route?yoshi=freeanimal");
     expect(location.hash).toBe("#/route?yoshi=freeanimal");
   });

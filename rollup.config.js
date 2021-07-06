@@ -1,6 +1,6 @@
-import resolve from "rollup-plugin-node-resolve";
-import babel from "rollup-plugin-babel";
-import commonjs from "rollup-plugin-commonjs";
+import resolve from "@rollup/plugin-node-resolve";
+import babel from "@rollup/plugin-babel";
+import commonjs from "@rollup/plugin-commonjs";
 import analyzer from "rollup-plugin-analyzer";
 import replace from "@rollup/plugin-replace";
 import packageJson from "./package.json";
@@ -11,6 +11,7 @@ const useAnalyzer = process.env.ANALYZER === "analyzer";
 const replaceOpts = {
   "process.env.BABEL_ENV": null,
   __DEV__: !isProduction,
+  preventAssignment: true,
 };
 
 const babelOpts = {
@@ -33,23 +34,23 @@ export default (async () => [
     input: "./src/single-spa.js",
     output: [
       {
-        file: `./lib/umd/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        file: `./lib/es5/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
         format: "umd",
         name: "singleSpa",
         sourcemap: true,
-        banner: generateBanner("UMD"),
+        banner: generateBanner("UMD ES5"),
       },
       {
-        file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        file: `./lib/es5/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
         format: "system",
         sourcemap: true,
-        banner: generateBanner("SystemJS"),
+        banner: generateBanner("SystemJS ES5"),
       },
       {
-        file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        file: `./lib/es5/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
         format: "esm",
         sourcemap: true,
-        banner: generateBanner("ESM"),
+        banner: generateBanner("ESM ES5"),
       },
     ],
     plugins: [
@@ -63,12 +64,31 @@ export default (async () => [
   },
   {
     input: "./src/single-spa.js",
-    output: {
-      file: `./lib/es2015/single-spa${isProduction ? ".min" : ".dev"}.js`,
-      format: "esm",
-      sourcemap: true,
-      banner: generateBanner("ES2015"),
-    },
+    output: [
+      {
+        file: `./lib/es2015/umd/single-spa${
+          isProduction ? ".min" : ".dev"
+        }.cjs`,
+        format: "umd",
+        name: "singleSpa",
+        sourcemap: true,
+        banner: generateBanner("UMD ES2015"),
+      },
+      {
+        file: `./lib/es2015/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        format: "esm",
+        sourcemap: true,
+        banner: generateBanner("ES2015"),
+      },
+      {
+        file: `./lib/es2015/system/single-spa${
+          isProduction ? ".min" : ".dev"
+        }.js`,
+        format: "system",
+        sourcemap: true,
+        banner: generateBanner("SystemJS ES2015"),
+      },
+    ],
     plugins: [
       replace(replaceOpts),
       resolve(),

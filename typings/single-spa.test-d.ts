@@ -43,9 +43,7 @@ if (parcel.update) {
   });
 }
 
-expectError(
-  mountRootParcel<Planets>(appOrParcel, () => {})
-);
+expectError(mountRootParcel<Planets>(appOrParcel, () => {}));
 
 registerApplication({
   name: "app1",

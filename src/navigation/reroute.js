@@ -50,12 +50,8 @@ export function reroute(
     });
   }
 
-  const {
-    appsToUnload,
-    appsToUnmount,
-    appsToLoad,
-    appsToMount,
-  } = getAppChanges();
+  const { appsToUnload, appsToUnmount, appsToLoad, appsToMount } =
+    getAppChanges();
   let appsThatChanged,
     cancelPromises = [],
     oldUrl = currentUrl,

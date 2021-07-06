@@ -18,11 +18,13 @@ describe(`warning-timeouts app`, () => {
     singleSpa.start();
     consoleWarnSpy = jest.spyOn(console, "warn");
     jest.useFakeTimers();
+    window.addEventListener("fake-timers-advance", advanceTimers);
   });
 
   afterAll(() => {
     consoleWarnSpy.mockRestore();
     jest.useRealTimers();
+    window.removeEventListener("fake-timers-advance", advanceTimers);
   });
 
   beforeEach(() => {
@@ -89,25 +91,10 @@ describe(`warning-timeouts app`, () => {
 
 async function controlledAppChange() {
   const appChangePromise = singleSpa.triggerAppChange();
-  await flushPromises();
-  jest.advanceTimersByTime(1);
-  await flushPromises();
-  jest.advanceTimersByTime(1);
-  await flushPromises();
-  jest.advanceTimersByTime(1);
-  await flushPromises();
-  jest.advanceTimersByTime(1);
-  await flushPromises();
-  jest.advanceTimersByTime(1);
-  await flushPromises();
-  jest.advanceTimersByTime(1);
-  await flushPromises();
-  jest.advanceTimersByTime(1);
-  await flushPromises();
+  jest.advanceTimersByTime(10);
   await appChangePromise;
 }
 
-// https://github.com/facebook/jest/issues/2157#issuecomment-279171856
-function flushPromises() {
-  return new Promise((resolve) => setImmediate(resolve));
+function advanceTimers(evt) {
+  jest.advanceTimersByTime(evt.detail);
 }
