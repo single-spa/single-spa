@@ -2,28 +2,28 @@
   "name": "single-spa",
   "version": "5.9.3",
   "description": "The router for easy microfrontends",
-  "main": "lib/umd/single-spa.min.cjs",
+  "main": "lib/es2015/umd/single-spa.min.cjs",
   "types": "typings/single-spa.d.ts",
   "type": "module",
   "exports": {
     ".": {
       "development": {
-        "import": "./lib/esm/single-spa.dev.js",
-        "require": "./lib/umd/single-spa.dev.cjs"
+        "import": "./lib/es2015/esm/single-spa.dev.js",
+        "require": "./lib/es2015/umd/single-spa.dev.cjs"
       },
       "production": {
-        "import": "./lib/esm/single-spa.min.js",
-        "require": "./lib/umd/single-spa.min.cjs"
+        "import": "./lib/es2015/esm/single-spa.min.js",
+        "require": "./lib/es2015/umd/single-spa.min.cjs"
       },
       "default": {
-        "import": "./lib/esm/single-spa.min.js",
-        "require": "./lib/umd/single-spa.min.cjs"
+        "import": "./lib/es2015/esm/single-spa.min.js",
+        "require": "./lib/es2015/umd/single-spa.min.cjs"
       }
     },
     "./package.json": "./package.json",
     "./lib/*": "./lib/*"
   },
-  "module": "lib/esm/single-spa.min.js",
+  "module": "lib/es2015/esm/single-spa.min.js",
   "scripts": {
     "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod",
     "build:prod": "rollup -c --environment NODE_ENV:'production'",
