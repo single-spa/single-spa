@@ -7,7 +7,7 @@ let started = false;
 
 export function start(opts) {
   started = true;
-  if (opts && opts.urlRerouteOnly) {
+  if (opts && opts.hasOwnProperty("urlRerouteOnly")) {
     setUrlRerouteOnly(opts.urlRerouteOnly);
   }
   if (isInBrowser) {

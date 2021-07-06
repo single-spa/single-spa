@@ -81,7 +81,9 @@ export function callCapturedEventListeners(eventArguments) {
   }
 }
 
-let urlRerouteOnly;
+// True by default, as a performance optimization that reduces
+// the number of extraneous popstate events
+let urlRerouteOnly = true;
 
 export function setUrlRerouteOnly(val) {
   urlRerouteOnly = val;
