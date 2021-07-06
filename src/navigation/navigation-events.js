@@ -82,10 +82,6 @@ export function callCapturedEventListeners(eventArguments) {
 
 let urlRerouteOnly;
 
-export function setUrlRerouteOnly(val) {
-  urlRerouteOnly = val;
-}
-
 function urlReroute() {
   reroute([], arguments);
 }
@@ -145,7 +141,7 @@ export function patchHistoryApi(opts) {
   }
 
   if (opts) {
-    setUrlRerouteOnly(opts.urlRerouteOnly);
+    urlRerouteOnly = opts.urlRerouteOnly;
   }
 
   historyApiIsPatched = true;
