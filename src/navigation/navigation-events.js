@@ -146,7 +146,6 @@ export function patchHistoryApi(opts) {
 
   if (opts) {
     setUrlRerouteOnly(opts.urlRerouteOnly);
-    console.log("urlRerouteOnly", urlRerouteOnly);
   }
 
   historyApiIsPatched = true;
