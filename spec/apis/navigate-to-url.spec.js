@@ -1,7 +1,7 @@
 import * as singleSpa from "single-spa";
 
 singleSpa.start({
-  urlRerouteOnly: false
+  urlRerouteOnly: false,
 });
 
 function hrefWithoutHash() {
@@ -163,9 +163,9 @@ describe("window.history.pushState", () => {
   // all the applications can reroute. We explicitly identify this extraneous event by setting singleSpa=true and
   // singleSpaTrigger=<pushState|replaceState> on the event instance.
   it("should fire a popstate event when history.replaceState is called", async function () {
-    history.replaceState(history.state, "", "/")
+    history.replaceState(history.state, "", "/");
 
-    await singleSpa.triggerAppChange()
+    await singleSpa.triggerAppChange();
 
     await new Promise((resolve, reject) => {
       const newHistoryState = { yoshi: "best" };

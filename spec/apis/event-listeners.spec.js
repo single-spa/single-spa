@@ -121,18 +121,19 @@ describe(`event listeners after single-spa is started`, () => {
   });
 
   it(`Fires artificial popstate events with correct target`, async () => {
-    history.pushState(history.state, '', '/')
-    await singleSpa.triggerAppChange()
+    history.pushState(history.state, "", "/");
+    await singleSpa.triggerAppChange();
 
-    let finish, popstatePromise = new Promise(resolve => finish = resolve)
+    let finish,
+      popstatePromise = new Promise((resolve) => (finish = resolve));
     window.addEventListener("popstate", popstateListener);
-    history.pushState(history.state, '', "/new-url");
-    await popstatePromise
+    history.pushState(history.state, "", "/new-url");
+    await popstatePromise;
 
     function popstateListener(evt) {
       expect(evt.target).toBe(window);
       window.removeEventListener("popstate", popstateListener);
-      finish()
+      finish();
     }
   });
 });
