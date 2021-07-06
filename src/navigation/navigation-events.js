@@ -136,7 +136,11 @@ function createPopStateEvent(state, originalMethodName) {
   return evt;
 }
 
+export let originalReplaceState = null;
+
 if (isInBrowser) {
+  originalReplaceState = window.history.replaceState;
+
   // We will trigger an app change for any routing events.
   window.addEventListener("hashchange", urlReroute);
   window.addEventListener("popstate", urlReroute);
@@ -176,7 +180,7 @@ if (isInBrowser) {
     "pushState"
   );
   window.history.replaceState = patchedUpdateState(
-    window.history.replaceState,
+    originalReplaceState,
     "replaceState"
   );
 

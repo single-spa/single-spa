@@ -607,5 +607,236 @@ describe(`events api :`, () => {
       expect(singleSpa.getAppStatus("russell")).toBe(originalStatus);
       expect(window.location.href).toBe(originalUrl);
     });
+
+    it(`does not fire single-spa events during the reroute back to originalUrl after cancelation`, async () => {
+      let preCancelation = [],
+        postCancelation = [],
+        cancelationStarted = false;
+
+      singleSpa.registerApplication({
+        name: "cancel-navigation-silent-reroute",
+        app: {
+          async mount() {},
+          async unmount() {},
+        },
+        activeWhen: ["/"],
+      });
+
+      singleSpa.navigateToUrl("/");
+      await singleSpa.triggerAppChange();
+
+      window.addEventListener("single-spa:before-routing-event", countEvents);
+      window.addEventListener(
+        "single-spa:before-mount-routing-event",
+        countEvents
+      );
+      window.addEventListener("single-spa:before-app-change", countEvents);
+      window.addEventListener("single-spa:before-no-app-change", countEvents);
+      window.addEventListener("single-spa:app-change", countEvents);
+      window.addEventListener("single-spa:no-app-change", countEvents);
+      window.addEventListener("single-spa:routing-event", countEvents);
+
+      window.addEventListener(
+        "single-spa:before-routing-event",
+        cancelTheNavigation
+      );
+
+      singleSpa.navigateToUrl("/app1");
+      await singleSpa.triggerAppChange();
+
+      window.removeEventListener(
+        "single-spa:before-routing-event",
+        countEvents
+      );
+      window.removeEventListener(
+        "single-spa:before-mount-routing-event",
+        countEvents
+      );
+      window.removeEventListener("single-spa:before-app-change", countEvents);
+      window.removeEventListener(
+        "single-spa:before-no-app-change",
+        countEvents
+      );
+      window.removeEventListener("single-spa:app-change", countEvents);
+      window.removeEventListener("single-spa:no-app-change", countEvents);
+      window.removeEventListener("single-spa:routing-event", countEvents);
+      window.removeEventListener(
+        "single-spa:before-routing-event",
+        cancelTheNavigation
+      );
+
+      expect(preCancelation).toEqual([
+        "single-spa:before-no-app-change",
+        "single-spa:before-routing-event",
+      ]);
+      expect(postCancelation).toEqual([]);
+      expect(location.pathname).toEqual("/");
+
+      function countEvents(evt) {
+        (cancelationStarted ? postCancelation : preCancelation).push(evt.type);
+      }
+
+      function cancelTheNavigation(evt) {
+        window.removeEventListener(
+          "single-spa:before-routing-event",
+          cancelTheNavigation
+        );
+        expect(new URL(evt.detail.oldUrl).pathname).toEqual("/");
+        expect(new URL(evt.detail.newUrl).pathname).toEqual("/app1");
+        evt.detail.cancelNavigation();
+        cancelationStarted = true;
+      }
+    });
+
+    it(
+      `cancels if you call with no arguments`,
+      cancelNavigationTest({
+        shouldCancel: true,
+        cancelValue: undefined,
+        name: "undefined-cancel",
+      })
+    );
+
+    it(
+      `cancels if you call with true`,
+      cancelNavigationTest({
+        shouldCancel: true,
+        cancelValue: true,
+        name: "true-cancel",
+      })
+    );
+
+    it(
+      `cancels if you call with truthy value`,
+      cancelNavigationTest({
+        shouldCancel: true,
+        cancelValue: {},
+        name: "truthy-cancel",
+      })
+    );
+
+    it(
+      `doesn't cancel navigation if you call with false`,
+      cancelNavigationTest({
+        shouldCancel: false,
+        cancelValue: false,
+        name: "false-cancel",
+      })
+    );
+
+    it(
+      `doesn't cancel navigation if you call with null`,
+      cancelNavigationTest({
+        shouldCancel: false,
+        cancelValue: null,
+        name: "null-cancel",
+      })
+    );
+
+    it(
+      `doesn't cancel navigation if you call with falsy value`,
+      cancelNavigationTest({
+        shouldCancel: false,
+        cancelValue: "",
+        name: "empty-string-cancel",
+      })
+    );
+
+    // https://github.com/single-spa/single-spa/issues/670
+    it(
+      `allows for async navigation cancelation`,
+      cancelNavigationTest({
+        shouldCancel: true,
+        cancelValue: () => Promise.resolve(true),
+        name: "async-cancel",
+      })
+    );
+
+    it(
+      `allows for delayed, async navigation cancelation`,
+      cancelNavigationTest({
+        shouldCancel: true,
+        cancelValue: () =>
+          new Promise((resolve) => {
+            setTimeout(() => {
+              resolve(true);
+            }, 10);
+          }),
+        name: "async-delayed-cancel",
+      })
+    );
+
+    it(
+      `doesn't cancel with promise rejection`,
+      cancelNavigationTest({
+        cancelValue: () => Promise.reject(),
+        shouldCancel: false,
+        name: "async-cancel-rejection",
+      })
+    );
+
+    it(
+      `doesn't cancel with promise that resolves with a false value`,
+      cancelNavigationTest({
+        cancelValue: Promise.resolve(false),
+        shouldCancel: false,
+        name: "async-cancel-false",
+      })
+    );
+
+    it(
+      `doesn't cancel with promise that resolves with a falsy value`,
+      cancelNavigationTest({
+        cancelValue: Promise.resolve(""),
+        shouldCancel: false,
+        name: "async-cancel-falsy",
+      })
+    );
+
+    it(
+      `doesn't cancel with promise that resolves with undefined`,
+      cancelNavigationTest({
+        cancelValue: Promise.resolve(undefined),
+        shouldCancel: false,
+        name: "async-cancel-undefined",
+      })
+    );
+
+    function cancelNavigationTest({ cancelValue, shouldCancel, name }) {
+      return async function () {
+        singleSpa.registerApplication({
+          name,
+          app: {
+            async mount() {},
+            async unmount() {},
+          },
+          activeWhen: ["/"],
+        });
+
+        singleSpa.navigateToUrl("/");
+        await singleSpa.triggerAppChange();
+
+        window.addEventListener(
+          "single-spa:before-routing-event",
+          cancelTheNavigation
+        );
+
+        singleSpa.navigateToUrl("/app1");
+        await singleSpa.triggerAppChange();
+
+        window.removeEventListener(
+          "single-spa:before-routing-event",
+          cancelTheNavigation
+        );
+
+        expect(location.pathname).toEqual(shouldCancel ? "/" : "/app1");
+
+        function cancelTheNavigation(evt) {
+          evt.detail.cancelNavigation(
+            typeof cancelValue === "function" ? cancelValue() : cancelValue
+          );
+        }
+      };
+    }
   });
 });
