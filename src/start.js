@@ -1,8 +1,5 @@
 import { reroute } from "./navigation/reroute.js";
-import {
-  patchHistoryApi,
-  setUrlRerouteOnly,
-} from "./navigation/navigation-events.js";
+import { patchHistoryApi } from "./navigation/navigation-events.js";
 import { isInBrowser } from "./utils/runtime-environment.js";
 
 let started = false;
