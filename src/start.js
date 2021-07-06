@@ -9,12 +9,9 @@ let started = false;
 
 export function start(opts) {
   started = true;
-  if (opts && opts.urlRerouteOnly) {
-    setUrlRerouteOnly(opts.urlRerouteOnly);
-  }
   if (isInBrowser) {
     reroute();
-    patchHistoryApi();
+    patchHistoryApi(opts);
   }
 }
 
