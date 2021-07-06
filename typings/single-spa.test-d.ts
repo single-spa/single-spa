@@ -8,6 +8,7 @@ import {
   SingleSpaAppsByNewStatus,
   Parcel,
   ParcelConfig,
+  patchHistoryApi,
 } from "single-spa";
 import { expectError, expectType } from "tsd";
 
@@ -83,3 +84,20 @@ window.addEventListener("single-spa:routing-event", ((
   expectType<boolean>(evt.detail.navigationIsCanceled);
   expectType<(() => void) | undefined>(evt.detail.cancelNavigation);
 }) as EventListener);
+
+expectType<void>(patchHistoryApi());
+expectType<void>(
+  patchHistoryApi({
+    urlRerouteOnly: false,
+  })
+);
+expectType<void>(
+  patchHistoryApi({
+    urlRerouteOnly: true,
+  })
+);
+expectError<void>(
+  patchHistoryApi({
+    random: true,
+  })
+);
