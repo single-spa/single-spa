@@ -10,8 +10,8 @@ let started = false;
 export function start(opts) {
   started = true;
   if (isInBrowser) {
-    reroute();
     patchHistoryApi(opts);
+    reroute();
   }
 }
 
