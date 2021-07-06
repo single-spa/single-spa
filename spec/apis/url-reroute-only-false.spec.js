@@ -1,8 +1,10 @@
 import * as singleSpa from "single-spa";
 
-describe(`urlRerouteOnly default value`, () => {
-  it(`sets urlreroute only to true by default`, async () => {
-    singleSpa.start();
+describe(`urlRerouteOnly option`, () => {
+  it(`Triggers a reroute and popstate when urlReroute is set to false`, async () => {
+    singleSpa.start({
+      urlRerouteOnly: false,
+    });
 
     singleSpa.navigateToUrl("/");
     await singleSpa.triggerAppChange();
@@ -14,7 +16,7 @@ describe(`urlRerouteOnly default value`, () => {
     expect(numPopstates).toBe(0);
     history.pushState(history.state, "", "/");
     await singleSpa.triggerAppChange();
-    expect(numPopstates).toBe(0);
+    expect(numPopstates).toBe(1);
 
     window.removeEventListener("popstate", popstateListener);
   });
