@@ -124,6 +124,8 @@ function createPopStateEvent(state, originalMethodName) {
   return evt;
 }
 
+export let originalReplaceState = null;
+
 let historyApiIsPatched = false;
 
 // We patch the history API so single-spa is notified of all calls to pushState/replaceState.
@@ -146,6 +148,8 @@ export function patchHistoryApi(opts) {
     opts && opts.hasOwnProperty("urlRerouteOnly") ? opts.urlRerouteOnly : true;
 
   historyApiIsPatched = true;
+
+  originalReplaceState = window.history.replaceState;
 
   // We will trigger an app change for any routing events.
   window.addEventListener("hashchange", urlReroute);
@@ -186,7 +190,7 @@ export function patchHistoryApi(opts) {
     "pushState"
   );
   window.history.replaceState = patchedUpdateState(
-    window.history.replaceState,
+    originalReplaceState,
     "replaceState"
   );
 }

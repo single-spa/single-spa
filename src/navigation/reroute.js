@@ -11,7 +11,7 @@ import {
 } from "../applications/apps.js";
 import {
   callCapturedEventListeners,
-  navigateToUrl,
+  originalReplaceState,
 } from "./navigation-events.js";
 import { toUnloadPromise } from "../lifecycles/unload.js";
 import {
@@ -24,6 +24,7 @@ import {
 } from "../applications/app.helpers.js";
 import { assign } from "../utils/assign.js";
 import { isInBrowser } from "../utils/runtime-environment.js";
+import { formatErrorMessage } from "../applications/app-errors.js";
 
 let appChangeUnderway = false,
   peopleWaitingOnAppChange = [],
@@ -34,7 +35,11 @@ export function triggerAppChange() {
   return reroute();
 }
 
-export function reroute(pendingPromises = [], eventArguments) {
+export function reroute(
+  pendingPromises = [],
+  eventArguments,
+  silentNavigation = false
+) {
   if (appChangeUnderway) {
     return new Promise((resolve, reject) => {
       peopleWaitingOnAppChange.push({
@@ -52,7 +57,7 @@ export function reroute(pendingPromises = [], eventArguments) {
     appsToMount,
   } = getAppChanges();
   let appsThatChanged,
-    navigationIsCanceled = false,
+    cancelPromises = [],
     oldUrl = currentUrl,
     newUrl = (currentUrl = window.location.href);
 
@@ -69,8 +74,26 @@ export function reroute(pendingPromises = [], eventArguments) {
     return loadApps();
   }
 
-  function cancelNavigation() {
-    navigationIsCanceled = true;
+  function cancelNavigation(val = true) {
+    const promise =
+      typeof val?.then === "function" ? val : Promise.resolve(val);
+    cancelPromises.push(
+      promise.catch((err) => {
+        console.warn(
+          Error(
+            formatErrorMessage(
+              42,
+              __DEV__ &&
+                `single-spa: A cancelNavigation promise rejected with the following value: ${err}`
+            )
+          )
+        );
+        console.warn(err);
+
+        // Interpret a Promise rejection to mean that the navigation should not be canceled
+        return false;
+      })
+    );
   }
 
   function loadApps() {
@@ -93,90 +116,95 @@ export function reroute(pendingPromises = [], eventArguments) {
   function performAppChanges() {
     return Promise.resolve().then(() => {
       // https://github.com/single-spa/single-spa/issues/545
-      window.dispatchEvent(
-        new CustomEvent(
-          appsThatChanged.length === 0
-            ? "single-spa:before-no-app-change"
-            : "single-spa:before-app-change",
-          getCustomEventDetail(true)
-        )
+      fireSingleSpaEvent(
+        appsThatChanged.length === 0
+          ? "before-no-app-change"
+          : "before-app-change",
+        getCustomEventDetail(true)
       );
 
-      window.dispatchEvent(
-        new CustomEvent(
-          "single-spa:before-routing-event",
-          getCustomEventDetail(true, { cancelNavigation })
-        )
+      fireSingleSpaEvent(
+        "before-routing-event",
+        getCustomEventDetail(true, { cancelNavigation })
       );
 
-      if (navigationIsCanceled) {
-        window.dispatchEvent(
-          new CustomEvent(
-            "single-spa:before-mount-routing-event",
+      return Promise.all(cancelPromises).then((cancelValues) => {
+        const navigationIsCanceled = cancelValues.some((v) => v);
+
+        if (navigationIsCanceled) {
+          // Change url back to old url, without triggering the normal single-spa reroute
+          originalReplaceState.call(
+            window.history,
+            history.state,
+            "",
+            oldUrl.substring(location.origin.length)
+          );
+
+          // Single-spa's internal tracking of current url needs to be updated after the url change above
+          currentUrl = location.href;
+
+          // necessary for the reroute function to know that the current reroute is finished
+          appChangeUnderway = false;
+
+          // Tell single-spa to reroute again, this time with the url set to the old URL
+          return reroute(peopleWaitingOnAppChange, eventArguments, true);
+        }
+
+        const unloadPromises = appsToUnload.map(toUnloadPromise);
+
+        const unmountUnloadPromises = appsToUnmount
+          .map(toUnmountPromise)
+          .map((unmountPromise) => unmountPromise.then(toUnloadPromise));
+
+        const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
+
+        const unmountAllPromise = Promise.all(allUnmountPromises);
+
+        unmountAllPromise.then(() => {
+          fireSingleSpaEvent(
+            "before-mount-routing-event",
             getCustomEventDetail(true)
-          )
-        );
-        finishUpAndReturn();
-        navigateToUrl(oldUrl);
-        return;
-      }
-
-      const unloadPromises = appsToUnload.map(toUnloadPromise);
-
-      const unmountUnloadPromises = appsToUnmount
-        .map(toUnmountPromise)
-        .map((unmountPromise) => unmountPromise.then(toUnloadPromise));
-
-      const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
-
-      const unmountAllPromise = Promise.all(allUnmountPromises);
-
-      unmountAllPromise.then(() => {
-        window.dispatchEvent(
-          new CustomEvent(
-            "single-spa:before-mount-routing-event",
-            getCustomEventDetail(true)
-          )
-        );
-      });
-
-      /* We load and bootstrap apps while other apps are unmounting, but we
-       * wait to mount the app until all apps are finishing unmounting
-       */
-      const loadThenMountPromises = appsToLoad.map((app) => {
-        return toLoadPromise(app).then((app) =>
-          tryToBootstrapAndMount(app, unmountAllPromise)
-        );
-      });
-
-      /* These are the apps that are already bootstrapped and just need
-       * to be mounted. They each wait for all unmounting apps to finish up
-       * before they mount.
-       */
-      const mountPromises = appsToMount
-        .filter((appToMount) => appsToLoad.indexOf(appToMount) < 0)
-        .map((appToMount) => {
-          return tryToBootstrapAndMount(appToMount, unmountAllPromise);
+          );
         });
-      return unmountAllPromise
-        .catch((err) => {
-          callAllEventListeners();
-          throw err;
-        })
-        .then(() => {
-          /* Now that the apps that needed to be unmounted are unmounted, their DOM navigation
-           * events (like hashchange or popstate) should have been cleaned up. So it's safe
-           * to let the remaining captured event listeners to handle about the DOM event.
-           */
-          callAllEventListeners();
 
-          return Promise.all(loadThenMountPromises.concat(mountPromises))
-            .catch((err) => {
-              pendingPromises.forEach((promise) => promise.reject(err));
-              throw err;
-            })
-            .then(finishUpAndReturn);
+        /* We load and bootstrap apps while other apps are unmounting, but we
+         * wait to mount the app until all apps are finishing unmounting
+         */
+        const loadThenMountPromises = appsToLoad.map((app) => {
+          return toLoadPromise(app).then((app) =>
+            tryToBootstrapAndMount(app, unmountAllPromise)
+          );
         });
+
+        /* These are the apps that are already bootstrapped and just need
+         * to be mounted. They each wait for all unmounting apps to finish up
+         * before they mount.
+         */
+        const mountPromises = appsToMount
+          .filter((appToMount) => appsToLoad.indexOf(appToMount) < 0)
+          .map((appToMount) => {
+            return tryToBootstrapAndMount(appToMount, unmountAllPromise);
+          });
+        return unmountAllPromise
+          .catch((err) => {
+            callAllEventListeners();
+            throw err;
+          })
+          .then(() => {
+            /* Now that the apps that needed to be unmounted are unmounted, their DOM navigation
+             * events (like hashchange or popstate) should have been cleaned up. So it's safe
+             * to let the remaining captured event listeners to handle about the DOM event.
+             */
+            callAllEventListeners();
+
+            return Promise.all(loadThenMountPromises.concat(mountPromises))
+              .catch((err) => {
+                pendingPromises.forEach((promise) => promise.reject(err));
+                throw err;
+              })
+              .then(finishUpAndReturn);
+          });
+      });
     });
   }
 
@@ -186,15 +214,9 @@ export function reroute(pendingPromises = [], eventArguments) {
 
     try {
       const appChangeEventName =
-        appsThatChanged.length === 0
-          ? "single-spa:no-app-change"
-          : "single-spa:app-change";
-      window.dispatchEvent(
-        new CustomEvent(appChangeEventName, getCustomEventDetail())
-      );
-      window.dispatchEvent(
-        new CustomEvent("single-spa:routing-event", getCustomEventDetail())
-      );
+        appsThatChanged.length === 0 ? "no-app-change" : "app-change";
+      fireSingleSpaEvent(appChangeEventName, getCustomEventDetail());
+      fireSingleSpaEvent("routing-event", getCustomEventDetail());
     } catch (err) {
       /* We use a setTimeout because if someone else's event handler throws an error, single-spa
        * needs to carry on. If a listener to the event throws an error, it's their own fault, not
@@ -231,11 +253,15 @@ export function reroute(pendingPromises = [], eventArguments) {
    * single-spa, which means queued ones first and then the most recent one.
    */
   function callAllEventListeners() {
-    pendingPromises.forEach((pendingPromise) => {
-      callCapturedEventListeners(pendingPromise.eventArguments);
-    });
+    // During silent navigation (when navigation was canceled and we're going back to the old URL),
+    // we should not fire any popstate / hashchange events
+    if (!silentNavigation) {
+      pendingPromises.forEach((pendingPromise) => {
+        callCapturedEventListeners(pendingPromise.eventArguments);
+      });
 
-    callCapturedEventListeners(eventArguments);
+      callCapturedEventListeners(eventArguments);
+    }
   }
 
   function getCustomEventDetail(isBeforeChanges = false, extraProperties) {
@@ -275,7 +301,6 @@ export function reroute(pendingPromises = [], eventArguments) {
         originalEvent: eventArguments?.[0],
         oldUrl,
         newUrl,
-        navigationIsCanceled,
       },
     };
 
@@ -292,6 +317,16 @@ export function reroute(pendingPromises = [], eventArguments) {
       const statusArr = (appsByNewStatus[status] =
         appsByNewStatus[status] || []);
       statusArr.push(appName);
+    }
+  }
+
+  function fireSingleSpaEvent(name, eventProperties) {
+    // During silent navigation (caused by navigation cancelation), we should not
+    // fire any single-spa events
+    if (!silentNavigation) {
+      window.dispatchEvent(
+        new CustomEvent(`single-spa:${name}`, eventProperties)
+      );
     }
   }
 }
