@@ -1,5 +1,9 @@
 import * as singleSpa from "single-spa";
 
+singleSpa.start({
+  urlRerouteOnly: false
+});
+
 function hrefWithoutHash() {
   return location.href.indexOf("#") >= 0
     ? location.href.slice(0, location.href.indexOf("#"))
@@ -20,10 +24,6 @@ function expectPathAndHashToEqual(string) {
 
 describe("navigateToUrl", function () {
   let urlBeforeTests = location.href;
-
-  beforeAll(() => {
-    singleSpa.start();
-  });
 
   beforeEach(() => {
     location.hash = "#a/initial";
@@ -162,22 +162,25 @@ describe("window.history.pushState", () => {
   // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
   // all the applications can reroute. We explicitly identify this extraneous event by setting singleSpa=true and
   // singleSpaTrigger=<pushState|replaceState> on the event instance.
-  it("should fire a popstate event when history.replaceState is called", function () {
-    return singleSpa.triggerAppChange().then(() => {
-      return new Promise((resolve, reject) => {
-        const newHistoryState = { yoshi: "best" };
-        window.addEventListener("popstate", popstateListener);
-        window.history.replaceState(newHistoryState, "title", "/new-url");
-        function popstateListener(evt) {
-          expect(evt instanceof PopStateEvent).toBe(true);
-          expect(window.location.pathname).toBe("/new-url");
-          expect(evt.state).toBe(newHistoryState);
-          expect(evt.singleSpa).toBe(true);
-          expect(evt.singleSpaTrigger).toBe("replaceState");
-          window.removeEventListener("popstate", popstateListener);
-          resolve();
-        }
-      });
+  it("should fire a popstate event when history.replaceState is called", async function () {
+    history.replaceState(history.state, "", "/")
+
+    await singleSpa.triggerAppChange()
+
+    await new Promise((resolve, reject) => {
+      const newHistoryState = { yoshi: "best" };
+      window.addEventListener("popstate", popstateListener);
+      window.history.replaceState(newHistoryState, "", "/new-url");
+
+      function popstateListener(evt) {
+        expect(evt instanceof PopStateEvent).toBe(true);
+        expect(window.location.pathname).toBe("/new-url");
+        expect(evt.state).toBe(newHistoryState);
+        expect(evt.singleSpa).toBe(true);
+        expect(evt.singleSpaTrigger).toBe("replaceState");
+        window.removeEventListener("popstate", popstateListener);
+        resolve();
+      }
     });
   });
 });
