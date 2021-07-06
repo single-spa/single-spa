@@ -16,7 +16,10 @@ export {
   getAppNames,
   pathToActiveWhen,
 } from "./applications/apps.js";
-export { navigateToUrl } from "./navigation/navigation-events.js";
+export {
+  navigateToUrl,
+  patchHistoryApi,
+} from "./navigation/navigation-events.js";
 export { triggerAppChange } from "./navigation/reroute.js";
 export {
   addErrorHandler,

@@ -192,4 +192,6 @@ declare module "single-spa" {
     path: string,
     exactMatch?: boolean
   ): ActivityFn;
+
+  export function patchHistoryApi(opts?: StartOpts): void;
 }
