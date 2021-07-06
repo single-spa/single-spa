@@ -15,7 +15,7 @@ describe(`multiple instances of single-spa`, () => {
 
     expect(consoleWarnSpy).not.toHaveBeenCalled();
 
-    await import("single-spa");
+    const singleSpa = await import("single-spa");
 
     expect(consoleWarnSpy).toHaveBeenCalledWith(
       "single-spa minified message #41: single-spa has been loaded twice on the page. This can result in unexpected behavior. See https://single-spa.js.org/error/?code=41"
