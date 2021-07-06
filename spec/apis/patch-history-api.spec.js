@@ -25,6 +25,8 @@ describe("patchHistoryApi", () => {
     await tick();
     expect(numPopstates).toEqual(2);
 
+    window.removeEventListener("popstate", popstateListener);
+
     expect(patchHistoryApi).toThrowError(
       "was called after the history api was already patched"
     );

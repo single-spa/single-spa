@@ -133,7 +133,7 @@ let historyApiIsPatched = false;
 // We patch the history API so single-spa is notified of all calls to pushState/replaceState.
 // We patch addEventListener/removeEventListener so we can capture all popstate/hashchange event listeners,
 // and delay calling them until single-spa has finished mounting/unmounting applications
-export function patchHistoryApi() {
+export function patchHistoryApi(opts) {
   if (historyApiIsPatched) {
     throw Error(
       formatErrorMessage(
@@ -142,6 +142,11 @@ export function patchHistoryApi() {
           `single-spa: patchHistoryApi() was called after the history api was already patched.`
       )
     );
+  }
+
+  if (opts) {
+    setUrlRerouteOnly(opts.urlRerouteOnly);
+    console.log("urlRerouteOnly", urlRerouteOnly);
   }
 
   historyApiIsPatched = true;
