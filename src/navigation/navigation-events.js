@@ -140,9 +140,10 @@ export function patchHistoryApi(opts) {
     );
   }
 
-  if (opts) {
-    urlRerouteOnly = opts.urlRerouteOnly;
-  }
+  // True by default, as a performance optimization that reduces
+  // the number of extraneous popstate events
+  urlRerouteOnly =
+    opts && opts.hasOwnProperty("urlRerouteOnly") ? opts.urlRerouteOnly : true;
 
   historyApiIsPatched = true;
 
