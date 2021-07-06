@@ -18,10 +18,6 @@ export function start(opts) {
   }
 }
 
-export function stop() {
-  started = false;
-}
-
 export function isStarted() {
   return started;
 }
