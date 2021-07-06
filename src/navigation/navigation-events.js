@@ -2,7 +2,6 @@ import { reroute } from "./reroute.js";
 import { find } from "../utils/find.js";
 import { formatErrorMessage } from "../applications/app-errors.js";
 import { isInBrowser } from "../utils/runtime-environment.js";
-import { isStarted } from "../start.js";
 
 /* We capture navigation event listeners so that we can make sure
  * that application navigation listeners are not called until
@@ -83,10 +82,6 @@ export function callCapturedEventListeners(eventArguments) {
 
 let urlRerouteOnly;
 
-export function setUrlRerouteOnly(val) {
-  urlRerouteOnly = val;
-}
-
 function urlReroute() {
   reroute([], arguments);
 }
@@ -98,19 +93,12 @@ function patchedUpdateState(updateState, methodName) {
     const urlAfter = window.location.href;
 
     if (!urlRerouteOnly || urlBefore !== urlAfter) {
-      if (isStarted()) {
-        // fire an artificial popstate event once single-spa is started,
-        // so that single-spa applications know about routing that
-        // occurs in a different application
-        window.dispatchEvent(
-          createPopStateEvent(window.history.state, methodName)
-        );
-      } else {
-        // do not fire an artificial popstate event before single-spa is started,
-        // since no single-spa applications need to know about routing events
-        // outside of their own router.
-        reroute([]);
-      }
+      // fire an artificial popstate event so that
+      // single-spa applications know about routing that
+      // occurs in a different application
+      window.dispatchEvent(
+        createPopStateEvent(window.history.state, methodName)
+      );
     }
 
     return result;
@@ -138,7 +126,28 @@ function createPopStateEvent(state, originalMethodName) {
 
 export let originalReplaceState = null;
 
-if (isInBrowser) {
+let historyApiIsPatched = false;
+
+// We patch the history API so single-spa is notified of all calls to pushState/replaceState.
+// We patch addEventListener/removeEventListener so we can capture all popstate/hashchange event listeners,
+// and delay calling them until single-spa has finished mounting/unmounting applications
+export function patchHistoryApi(opts) {
+  if (historyApiIsPatched) {
+    throw Error(
+      formatErrorMessage(
+        43,
+        __DEV__ &&
+          `single-spa: patchHistoryApi() was called after the history api was already patched.`
+      )
+    );
+  }
+
+  if (opts) {
+    urlRerouteOnly = opts.urlRerouteOnly;
+  }
+
+  historyApiIsPatched = true;
+
   originalReplaceState = window.history.replaceState;
 
   // We will trigger an app change for any routing events.
@@ -183,7 +192,13 @@ if (isInBrowser) {
     originalReplaceState,
     "replaceState"
   );
+}
 
+// Detect if single-spa has already been loaded on the page.
+// If so, warn because this can result in lots of problems, including
+// lots of extraneous popstate events and unexpected results for
+// apis like getAppNames().
+if (isInBrowser) {
   if (window.singleSpaNavigate) {
     console.warn(
       formatErrorMessage(

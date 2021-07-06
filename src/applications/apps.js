@@ -22,6 +22,7 @@ import {
 import { formatErrorMessage } from "./app-errors.js";
 import { isInBrowser } from "../utils/runtime-environment.js";
 import { assign } from "../utils/assign";
+import { isStarted } from "../start.js";
 
 const apps = [];
 
@@ -88,6 +89,8 @@ export function getAppStatus(appName) {
   return app ? app.status : null;
 }
 
+let startWarningInitialized = false;
+
 export function registerApplication(
   appNameOrConfig,
   appOrLoadApp,
@@ -100,6 +103,22 @@ export function registerApplication(
     activeWhen,
     customProps
   );
+
+  if (!isStarted() && !startWarningInitialized) {
+    startWarningInitialized = true;
+
+    setTimeout(() => {
+      if (!isStarted()) {
+        console.warn(
+          formatErrorMessage(
+            1,
+            __DEV__ &&
+              `singleSpa.start() has not been called, 5000ms after single-spa was loaded. Before start() is called, apps can be declared and loaded, but not bootstrapped or mounted.`
+          )
+        );
+      }
+    }, 5000);
+  }
 
   if (getAppNames().indexOf(registration.name) !== -1)
     throw Error(
