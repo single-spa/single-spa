@@ -143,7 +143,7 @@ export function reroute(
           appChangeUnderway = false;
 
           // Tell single-spa to reroute again, this time with the url set to the old URL
-          return reroute(peopleWaitingOnAppChange, eventArguments, true);
+          return reroute(pendingPromises, eventArguments, true);
         }
 
         const unloadPromises = appsToUnload.map(toUnloadPromise);
