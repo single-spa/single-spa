@@ -614,8 +614,15 @@ describe(`events api :`, () => {
         cancelTheNavigation
       );
 
+      let cancelationFinished,
+        cancelationFinishedPromise = new Promise(
+          (r) => (cancelationFinished = r)
+        );
+
+      console.log("navigating");
       singleSpa.navigateToUrl("/app1");
-      await singleSpa.triggerAppChange();
+
+      await cancelationFinishedPromise;
 
       window.removeEventListener(
         "single-spa:before-routing-event",
@@ -638,6 +645,10 @@ describe(`events api :`, () => {
         cancelTheNavigation
       );
 
+      // Give time for single-spa to actually cancel the navigation
+      await tick();
+
+      // Cancelation causes two reroutes, and therefore two before-no-app-change and two before-routing-events
       expect(preCancelation).toEqual([
         "single-spa:before-no-app-change",
         "single-spa:before-routing-event",
@@ -658,6 +669,7 @@ describe(`events api :`, () => {
         expect(new URL(evt.detail.newUrl).pathname).toEqual("/app1");
         evt.detail.cancelNavigation();
         cancelationStarted = true;
+        cancelationFinished();
       }
     });
 
@@ -813,3 +825,7 @@ describe(`events api :`, () => {
     }
   });
 });
+
+function tick() {
+  return new Promise((r) => setTimeout(r));
+}
