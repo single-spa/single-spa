@@ -14,15 +14,18 @@ jobs:
       - name: Setup git
         uses: actions/checkout@v2
       - name: Setup node ${{ matrix.node }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-      - name: npm install
-        run: npm install
-      - name: npm run build
-        run: npm run build
-      - name: npm install jsenv-file-size
-        run: npm install --prefix ./.github/workflows/file-size-impact/
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.9.1
+      - name: pnpm install
+        run: pnpm install
+      - name: pnpm run build
+        run: pnpm run build
+      - name: pnpm install jsenv-file-size
+        run: pnpm install --prefix ./.github/workflows/file-size-impact/
       - name: Report file size impact
         run: node ./.github/workflows/file-size-impact/report-file-size-impact.js
         env:
