@@ -150,7 +150,6 @@ describe(`events api :`, () => {
       await finishPromise;
 
       function errHandler(err) {
-        console.log("errHandler");
         counterFn();
         console.error(err);
         doneIfAllListenerHadBeenInvoked();
@@ -619,7 +618,6 @@ describe(`events api :`, () => {
           (r) => (cancelationFinished = r)
         );
 
-      console.log("navigating");
       singleSpa.navigateToUrl("/app1");
 
       await cancelationFinishedPromise;
