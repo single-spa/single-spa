@@ -2,6 +2,7 @@ import {
   NOT_MOUNTED,
   MOUNTED,
   SKIP_BECAUSE_BROKEN,
+  MOUNTING,
 } from "../applications/app.helpers.js";
 import { handleAppError, transformErr } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
@@ -21,6 +22,8 @@ export function toMountPromise(appOrParcel, hardFail) {
       window.dispatchEvent(new CustomEvent("single-spa:before-first-mount"));
       beforeFirstMountFired = true;
     }
+
+    appOrParcel.status = MOUNTING;
 
     return reasonableTime(appOrParcel, "mount")
       .then(() => {
