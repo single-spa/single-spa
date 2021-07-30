@@ -72,7 +72,7 @@ describe("applications mounting parcels :", () => {
         expect(unmountPromiseHasResolved).toBe(false);
 
         return parcel.bootstrapPromise.then(() => {
-          expect(parcel.getStatus()).toBe(singleSpa.NOT_MOUNTED);
+          expect(parcel.getStatus()).toBe(singleSpa.MOUNTING);
           expect(unmountPromiseHasResolved).toBe(false);
 
           return parcel.mountPromise.then(() => {
