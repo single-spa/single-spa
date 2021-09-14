@@ -20,8 +20,8 @@ jobs:
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: 6.15.0
-      - name: pnpm install --frozen-lockfile
-        run: pnpm install
+      - name: pnpm install
+        run: pnpm install --frozen-lockfile
       - name: pnpm run build
         run: pnpm run build
       - name: pnpm install jsenv-file-size
