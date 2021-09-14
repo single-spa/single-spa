@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [13.12.0]
+        node: [16.4]
     runs-on: ${{ matrix.os }}
     name: report file size impact
     steps:
@@ -19,8 +19,8 @@ jobs:
           node-version: ${{ matrix.node }}
       - uses: pnpm/action-setup@v2.0.1
         with:
-          version: 6.9.1
-      - name: pnpm install
+          version: 6.15.0
+      - name: pnpm install --frozen-lockfile
         run: pnpm install
       - name: pnpm run build
         run: pnpm run build

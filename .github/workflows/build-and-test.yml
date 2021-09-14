@@ -15,7 +15,7 @@ jobs:
           node-version: "16.4"
       - uses: pnpm/action-setup@v2.0.1
         with:
-          version: 6.11.5
+          version: 6.15.0
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
       - run: pnpm test
