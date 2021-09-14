@@ -6,7 +6,8 @@
     "node": true
   },
   "globals": {
-    "__DEV__": true
+    "__DEV__": true,
+    "__PROFILE__": true
   },
   "plugins": ["es5"],
   "rules": {

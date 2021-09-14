@@ -6,5 +6,6 @@ export default {
   globals: {
     __SINGLE_SPA_DEVTOOLS__: {},
     __DEV__: true,
+    __PROFILE__: true,
   },
 };

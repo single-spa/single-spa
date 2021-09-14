@@ -3,11 +3,13 @@ import {
   MOUNTED,
   SKIP_BECAUSE_BROKEN,
   MOUNTING,
+  toName,
 } from "../applications/app.helpers.js";
 import { handleAppError, transformErr } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
 import CustomEvent from "custom-event";
 import { toUnmountPromise } from "./unmount.js";
+import { addProfileEntry } from "../devtools/profiler.js";
 
 let beforeFirstMountFired = false;
 let firstMountFired = false;
@@ -16,6 +18,12 @@ export function toMountPromise(appOrParcel, hardFail) {
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== NOT_MOUNTED) {
       return appOrParcel;
+    }
+
+    let startTime;
+
+    if (__PROFILE__) {
+      startTime = Date.now();
     }
 
     if (!beforeFirstMountFired) {
@@ -34,6 +42,17 @@ export function toMountPromise(appOrParcel, hardFail) {
           firstMountFired = true;
         }
 
+        if (__PROFILE__) {
+          addProfileEntry(
+            "application",
+            toName(appOrParcel),
+            "mount",
+            startTime,
+            Date.now(),
+            true
+          );
+        }
+
         return appOrParcel;
       })
       .catch((err) => {
@@ -47,6 +66,17 @@ export function toMountPromise(appOrParcel, hardFail) {
         );
 
         function setSkipBecauseBroken() {
+          if (__PROFILE__) {
+            addProfileEntry(
+              "application",
+              toName(appOrParcel),
+              "mount",
+              startTime,
+              Date.now(),
+              false
+            );
+          }
+
           if (!hardFail) {
             handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
             return appOrParcel;

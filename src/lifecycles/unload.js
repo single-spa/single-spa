@@ -8,55 +8,89 @@ import {
 } from "../applications/app.helpers.js";
 import { handleAppError } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
+import { addProfileEntry } from "../devtools/profiler.js";
 
 const appsToUnload = {};
 
-export function toUnloadPromise(app) {
+export function toUnloadPromise(appOrParcel) {
   return Promise.resolve().then(() => {
-    const unloadInfo = appsToUnload[toName(app)];
+    const unloadInfo = appsToUnload[toName(appOrParcel)];
 
     if (!unloadInfo) {
       /* No one has called unloadApplication for this app,
        */
-      return app;
+      return appOrParcel;
     }
 
-    if (app.status === NOT_LOADED) {
+    if (appOrParcel.status === NOT_LOADED) {
       /* This app is already unloaded. We just need to clean up
        * anything that still thinks we need to unload the app.
        */
-      finishUnloadingApp(app, unloadInfo);
-      return app;
+      finishUnloadingApp(appOrParcel, unloadInfo);
+      return appOrParcel;
     }
 
-    if (app.status === UNLOADING) {
+    if (appOrParcel.status === UNLOADING) {
       /* Both unloadApplication and reroute want to unload this app.
        * It only needs to be done once, though.
        */
-      return unloadInfo.promise.then(() => app);
+      return unloadInfo.promise.then(() => appOrParcel);
     }
 
-    if (app.status !== NOT_MOUNTED && app.status !== LOAD_ERROR) {
+    if (
+      appOrParcel.status !== NOT_MOUNTED &&
+      appOrParcel.status !== LOAD_ERROR
+    ) {
       /* The app cannot be unloaded until it is unmounted.
        */
-      return app;
+      return appOrParcel;
+    }
+
+    let startTime;
+
+    if (__PROFILE__) {
+      startTime = Date.now();
     }
 
     const unloadPromise =
-      app.status === LOAD_ERROR
+      appOrParcel.status === LOAD_ERROR
         ? Promise.resolve()
-        : reasonableTime(app, "unload");
+        : reasonableTime(appOrParcel, "unload");
 
-    app.status = UNLOADING;
+    appOrParcel.status = UNLOADING;
 
     return unloadPromise
       .then(() => {
-        finishUnloadingApp(app, unloadInfo);
-        return app;
+        if (__PROFILE__) {
+          addProfileEntry(
+            "application",
+            toName(appOrParcel),
+            "unload",
+            startTime,
+            Date.now(),
+            true
+          );
+        }
+
+        finishUnloadingApp(appOrParcel, unloadInfo);
+
+        return appOrParcel;
       })
       .catch((err) => {
-        errorUnloadingApp(app, unloadInfo, err);
-        return app;
+        if (__PROFILE__) {
+          addProfileEntry(
+            "application",
+            toName(appOrParcel),
+            "unload",
+            startTime,
+            Date.now(),
+            false
+          );
+        }
+
+        errorUnloadingApp(appOrParcel, unloadInfo, err);
+
+        return appOrParcel;
       });
   });
 }

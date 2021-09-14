@@ -19,24 +19,34 @@ import {
 } from "./lifecycle.helpers.js";
 import { getProps } from "./prop.helpers.js";
 import { assign } from "../utils/assign.js";
+import { addProfileEntry } from "../devtools/profiler.js";
 
-export function toLoadPromise(app) {
+export function toLoadPromise(appOrParcel) {
   return Promise.resolve().then(() => {
-    if (app.loadPromise) {
-      return app.loadPromise;
+    if (appOrParcel.loadPromise) {
+      return appOrParcel.loadPromise;
     }
 
-    if (app.status !== NOT_LOADED && app.status !== LOAD_ERROR) {
-      return app;
+    if (
+      appOrParcel.status !== NOT_LOADED &&
+      appOrParcel.status !== LOAD_ERROR
+    ) {
+      return appOrParcel;
     }
 
-    app.status = LOADING_SOURCE_CODE;
+    let startTime;
+
+    if (__PROFILE__) {
+      startTime = Date.now();
+    }
+
+    appOrParcel.status = LOADING_SOURCE_CODE;
 
     let appOpts, isUserErr;
 
-    return (app.loadPromise = Promise.resolve()
+    return (appOrParcel.loadPromise = Promise.resolve()
       .then(() => {
-        const loadPromise = app.loadApp(getProps(app));
+        const loadPromise = appOrParcel.loadApp(getProps(appOrParcel));
         if (!smellsLikeAPromise(loadPromise)) {
           // The name of the app will be prepended to this error message inside of the handleAppError function
           isUserErr = true;
@@ -45,14 +55,14 @@ export function toLoadPromise(app) {
               33,
               __DEV__ &&
                 `single-spa loading function did not return a promise. Check the second argument to registerApplication('${toName(
-                  app
+                  appOrParcel
                 )}', loadingFunction, activityFunction)`,
-              toName(app)
+              toName(appOrParcel)
             )
           );
         }
         return loadPromise.then((val) => {
-          app.loadErrorTime = null;
+          appOrParcel.loadErrorTime = null;
 
           appOpts = val;
 
@@ -102,51 +112,77 @@ export function toLoadPromise(app) {
                 validationErrCode,
                 __DEV__ &&
                   `The loading function for single-spa ${type} '${toName(
-                    app
+                    appOrParcel
                   )}' resolved with the following, which does not have bootstrap, mount, and unmount functions`,
                 type,
-                toName(app),
+                toName(appOrParcel),
                 appOptsStr
               ),
               appOpts
             );
-            handleAppError(validationErrMessage, app, SKIP_BECAUSE_BROKEN);
-            return app;
+            handleAppError(
+              validationErrMessage,
+              appOrParcel,
+              SKIP_BECAUSE_BROKEN
+            );
+            return appOrParcel;
           }
 
           if (appOpts.devtools && appOpts.devtools.overlays) {
-            app.devtools.overlays = assign(
+            appOrParcel.devtools.overlays = assign(
               {},
-              app.devtools.overlays,
+              appOrParcel.devtools.overlays,
               appOpts.devtools.overlays
             );
           }
 
-          app.status = NOT_BOOTSTRAPPED;
-          app.bootstrap = flattenFnArray(appOpts, "bootstrap");
-          app.mount = flattenFnArray(appOpts, "mount");
-          app.unmount = flattenFnArray(appOpts, "unmount");
-          app.unload = flattenFnArray(appOpts, "unload");
-          app.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
+          appOrParcel.status = NOT_BOOTSTRAPPED;
+          appOrParcel.bootstrap = flattenFnArray(appOpts, "bootstrap");
+          appOrParcel.mount = flattenFnArray(appOpts, "mount");
+          appOrParcel.unmount = flattenFnArray(appOpts, "unmount");
+          appOrParcel.unload = flattenFnArray(appOpts, "unload");
+          appOrParcel.timeouts = ensureValidAppTimeouts(appOpts.timeouts);
 
-          delete app.loadPromise;
+          delete appOrParcel.loadPromise;
 
-          return app;
+          if (__PROFILE__) {
+            addProfileEntry(
+              "application",
+              toName(appOrParcel),
+              "load",
+              startTime,
+              Date.now(),
+              true
+            );
+          }
+
+          return appOrParcel;
         });
       })
       .catch((err) => {
-        delete app.loadPromise;
+        delete appOrParcel.loadPromise;
 
         let newStatus;
         if (isUserErr) {
           newStatus = SKIP_BECAUSE_BROKEN;
         } else {
           newStatus = LOAD_ERROR;
-          app.loadErrorTime = new Date().getTime();
+          appOrParcel.loadErrorTime = new Date().getTime();
         }
-        handleAppError(err, app, newStatus);
+        handleAppError(err, appOrParcel, newStatus);
 
-        return app;
+        if (__PROFILE__) {
+          addProfileEntry(
+            "application",
+            toName(appOrParcel),
+            "load",
+            startTime,
+            Date.now(),
+            false
+          );
+        }
+
+        return appOrParcel;
       }));
   });
 }

@@ -11,6 +11,7 @@ const useAnalyzer = process.env.ANALYZER === "analyzer";
 const replaceOpts = {
   "process.env.BABEL_ENV": null,
   __DEV__: !isProduction,
+  __PROFILE__: !isProduction,
   preventAssignment: true,
 };
 
@@ -31,7 +32,7 @@ const terserOpts = {
 
 export default (async () => [
   {
-    input: "./src/single-spa.js",
+    input: `./src/single-spa${isProduction ? "" : ".profile"}.js`,
     output: [
       {
         file: `./lib/es5/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
@@ -63,7 +64,7 @@ export default (async () => [
     ],
   },
   {
-    input: "./src/single-spa.js",
+    input: `./src/single-spa${isProduction ? "" : ".profile"}.js`,
     output: [
       {
         file: `./lib/es2015/umd/single-spa${
