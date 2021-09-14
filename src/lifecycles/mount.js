@@ -23,7 +23,7 @@ export function toMountPromise(appOrParcel, hardFail) {
     let startTime;
 
     if (__PROFILE__) {
-      startTime = Date.now();
+      startTime = performance.now();
     }
 
     if (!beforeFirstMountFired) {
@@ -48,7 +48,7 @@ export function toMountPromise(appOrParcel, hardFail) {
             toName(appOrParcel),
             "mount",
             startTime,
-            Date.now(),
+            performance.now(),
             true
           );
         }
@@ -72,7 +72,7 @@ export function toMountPromise(appOrParcel, hardFail) {
               toName(appOrParcel),
               "mount",
               startTime,
-              Date.now(),
+              performance.now(),
               false
             );
           }

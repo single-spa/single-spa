@@ -54,8 +54,8 @@ describe(`profiler basics`, () => {
 
     expect(loadProfilesAfter.length).toBe(1);
     expect(loadProfilesAfter[0].operationSucceeded).toBe(true);
-    expect(Number.isInteger(loadProfilesAfter[0].start)).toBe(true);
-    expect(Number.isInteger(loadProfilesAfter[0].end)).toBe(true);
+    expect(!Number.isNaN(loadProfilesAfter[0].start)).toBe(true);
+    expect(!Number.isNaN(loadProfilesAfter[0].end)).toBe(true);
   });
 
   it(`captures load error profile events`, async () => {

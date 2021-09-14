@@ -18,7 +18,7 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
     }
 
     if (__PROFILE__) {
-      startTime = Date.now();
+      startTime = performance.now();
     }
 
     appOrParcel.status = BOOTSTRAPPING;
@@ -37,7 +37,7 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
             toName(appOrParcel),
             "bootstrap",
             startTime,
-            Date.now(),
+            performance.now(),
             false
           );
         }
@@ -60,7 +60,7 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
         toName(appOrParcel),
         "bootstrap",
         startTime,
-        Date.now(),
+        performance.now(),
         true
       );
     }

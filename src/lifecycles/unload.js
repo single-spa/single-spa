@@ -49,7 +49,7 @@ export function toUnloadPromise(appOrParcel) {
     let startTime;
 
     if (__PROFILE__) {
-      startTime = Date.now();
+      startTime = performance.now();
     }
 
     const unloadPromise =
@@ -67,7 +67,7 @@ export function toUnloadPromise(appOrParcel) {
             toName(appOrParcel),
             "unload",
             startTime,
-            Date.now(),
+            performance.now(),
             true
           );
         }
@@ -83,7 +83,7 @@ export function toUnloadPromise(appOrParcel) {
             toName(appOrParcel),
             "unload",
             startTime,
-            Date.now(),
+            performance.now(),
             false
           );
         }

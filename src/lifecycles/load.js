@@ -37,7 +37,7 @@ export function toLoadPromise(appOrParcel) {
     let startTime;
 
     if (__PROFILE__) {
-      startTime = Date.now();
+      startTime = performance.now();
     }
 
     appOrParcel.status = LOADING_SOURCE_CODE;
@@ -151,7 +151,7 @@ export function toLoadPromise(appOrParcel) {
               toName(appOrParcel),
               "load",
               startTime,
-              Date.now(),
+              performance.now(),
               true
             );
           }
@@ -177,7 +177,7 @@ export function toLoadPromise(appOrParcel) {
             toName(appOrParcel),
             "load",
             startTime,
-            Date.now(),
+            performance.now(),
             false
           );
         }

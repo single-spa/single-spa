@@ -18,7 +18,7 @@ export function toUnmountPromise(appOrParcel, hardFail) {
     let startTime;
 
     if (__PROFILE__) {
-      startTime = Date.now();
+      startTime = performance.now();
     }
 
     appOrParcel.status = UNMOUNTING;
@@ -59,7 +59,7 @@ export function toUnmountPromise(appOrParcel, hardFail) {
               toName(appOrParcel),
               "unmount",
               startTime,
-              Date.now(),
+              performance.now(),
               true
             );
           }
@@ -71,7 +71,7 @@ export function toUnmountPromise(appOrParcel, hardFail) {
               toName(appOrParcel),
               "unmount",
               startTime,
-              Date.now(),
+              performance.now(),
               false
             );
           }
