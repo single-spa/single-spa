@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [13.12.0]
+        node: [16.9.1]
     runs-on: ${{ matrix.os }}
     name: report file size impact
     steps:
@@ -19,9 +19,9 @@ jobs:
           node-version: ${{ matrix.node }}
       - uses: pnpm/action-setup@v2.0.1
         with:
-          version: 6.9.1
+          version: 6.15.0
       - name: pnpm install
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
       - name: pnpm run build
         run: pnpm run build
       - name: pnpm install jsenv-file-size

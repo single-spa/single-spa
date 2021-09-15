@@ -3,15 +3,24 @@ import {
   NOT_MOUNTED,
   MOUNTED,
   SKIP_BECAUSE_BROKEN,
+  toName,
 } from "../applications/app.helpers.js";
 import { handleAppError, transformErr } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
+import { addProfileEntry } from "../devtools/profiler.js";
 
 export function toUnmountPromise(appOrParcel, hardFail) {
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== MOUNTED) {
       return appOrParcel;
     }
+
+    let startTime;
+
+    if (__PROFILE__) {
+      startTime = performance.now();
+    }
+
     appOrParcel.status = UNMOUNTING;
 
     const unmountChildrenParcels = Object.keys(appOrParcel.parcels).map(
@@ -37,20 +46,43 @@ export function toUnmountPromise(appOrParcel, hardFail) {
 
     function unmountAppOrParcel() {
       // We always try to unmount the appOrParcel, even if the children parcels failed to unmount.
-      return reasonableTime(appOrParcel, "unmount")
-        .then(() => {
+      return reasonableTime(appOrParcel, "unmount").then(
+        () => {
           // The appOrParcel needs to stay in a broken status if its children parcels fail to unmount
           if (!parcelError) {
             appOrParcel.status = NOT_MOUNTED;
           }
-        })
-        .catch((err) => {
+
+          if (__PROFILE__) {
+            addProfileEntry(
+              "application",
+              toName(appOrParcel),
+              "unmount",
+              startTime,
+              performance.now(),
+              true
+            );
+          }
+        },
+        (err) => {
+          if (__PROFILE__) {
+            addProfileEntry(
+              "application",
+              toName(appOrParcel),
+              "unmount",
+              startTime,
+              performance.now(),
+              false
+            );
+          }
+
           if (hardFail) {
             throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
           } else {
             handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
           }
-        });
+        }
+      );
     }
   });
 }
