@@ -10,6 +10,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@jsenv/file-size-impact": "4.3.0"
+    "@jsenv/file-size-impact": "10.0.3"
   }
 }
