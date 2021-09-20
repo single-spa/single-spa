@@ -11,7 +11,7 @@ import {
   LOADING_SOURCE_CODE,
   shouldBeActive,
 } from "./app.helpers.js";
-import { reroute } from "../navigation/reroute.js";
+import { reroute, triggerAppChange } from "../navigation/reroute.js";
 import { find } from "../utils/find.js";
 import { toUnmountPromise } from "../lifecycles/unmount.js";
 import {
@@ -169,7 +169,8 @@ export function unregisterApplication(appName) {
     );
   }
 
-  return unloadApplication(appName).then(() => {
+  // See https://github.com/single-spa/single-spa/issues/871 for why waitForUnmount is false
+  return unloadApplication(appName, { waitForUnmount: false }).then(() => {
     const appIndex = apps.map(toName).indexOf(appName);
     apps.splice(appIndex, 1);
   });
@@ -233,14 +234,27 @@ export function unloadApplication(appName, opts = { waitForUnmount: false }) {
 }
 
 function immediatelyUnloadApp(app, resolve, reject) {
-  toUnmountPromise(app)
-    .then(toUnloadPromise)
+  Promise.resolve()
     .then(() => {
-      resolve();
-      setTimeout(() => {
-        // reroute, but the unload promise is done
-        reroute();
-      });
+      // Before unmounting the application, we first must wait for it to finish mounting
+      // Otherwise, the test for issue 871 in unregister-application.spec.js fails because
+      // the application isn't really unmounted.
+      if (
+        find(checkActivityFunctions(), (activeApp) => activeApp === toName(app))
+      ) {
+        return triggerAppChange();
+      }
+    })
+    .then(() => {
+      return toUnmountPromise(app)
+        .then(toUnloadPromise)
+        .then(() => {
+          resolve();
+          setTimeout(() => {
+            // reroute, but the unload promise is done
+            reroute();
+          });
+        });
     })
     .catch(reject);
 }
