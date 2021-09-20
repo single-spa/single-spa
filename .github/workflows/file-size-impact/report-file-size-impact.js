@@ -5,6 +5,7 @@ import {
 
 reportFileSizeImpact({
   ...readGithubWorkflowEnv(),
+  installCommand: "pnpm install",
   trackingConfig: {
     dist: {
       "./lib/**/*": true,
