@@ -42,12 +42,10 @@ describe("unregisterApplication", function () {
     let mounted = false;
     const slowMountApp = {
       async mount() {
-        console.log("mounting slow app");
         mounted = true;
         await new Promise((r) => setTimeout(r, 1000));
       },
       async unmount() {
-        console.log("unmounting slow app");
         mounted = false;
       },
     };
