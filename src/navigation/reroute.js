@@ -164,11 +164,18 @@ export function reroute(pendingPromises = [], eventArguments) {
           throw err;
         })
         .then(() => {
-          /* Now that the apps that needed to be unmounted are unmounted, their DOM navigation
-           * events (like hashchange or popstate) should have been cleaned up. So it's safe
-           * to let the remaining captured event listeners to handle about the DOM event.
+          /* If no apps unmounted then we don't want to set up the event listeners again since
+           * they are already setup. An example of this going from / => /?tab=1 where both routes
+           * render the same apps. If you're in a test env, then pass this too since you don't
+           * really have anything mounted/unmounted.
            */
-          callAllEventListeners();
+          if (allUnmountPromises.length > 0 || process.env.NODE_ENV === 'test') {
+            /* Now that the apps that needed to be unmounted are unmounted, their DOM navigation
+             * events (like hashchange or popstate) should have been cleaned up. So it's safe
+             * to let the remaining captured event listeners to handle about the DOM event.
+             */
+            callAllEventListeners();
+          }
 
           return Promise.all(loadThenMountPromises.concat(mountPromises))
             .catch((err) => {
