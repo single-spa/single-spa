@@ -25,6 +25,7 @@ import {
 import { assign } from "../utils/assign.js";
 import { isInBrowser } from "../utils/runtime-environment.js";
 import { formatErrorMessage } from "../applications/app-errors.js";
+import { addProfileEntry } from "../devtools/profiler.js";
 
 let appChangeUnderway = false,
   peopleWaitingOnAppChange = [],
@@ -48,6 +49,19 @@ export function reroute(
         eventArguments,
       });
     });
+  }
+
+  let startTime, profilerKind;
+
+  if (__PROFILE__) {
+    startTime = performance.now();
+    if (silentNavigation) {
+      profilerKind = "silentNavigation";
+    } else if (eventArguments) {
+      profilerKind = "browserNavigation";
+    } else {
+      profilerKind = "triggerAppChange";
+    }
   }
 
   const { appsToUnload, appsToUnmount, appsToLoad, appsToMount } =
@@ -95,15 +109,38 @@ export function reroute(
   function loadApps() {
     return Promise.resolve().then(() => {
       const loadPromises = appsToLoad.map(toLoadPromise);
+      let succeeded;
 
       return (
         Promise.all(loadPromises)
           .then(callAllEventListeners)
           // there are no mounted apps, before start() is called, so we always return []
-          .then(() => [])
+          .then(() => {
+            if (__PROFILE__) {
+              succeeded = true;
+            }
+
+            return [];
+          })
           .catch((err) => {
+            if (__PROFILE__) {
+              succeeded = false;
+            }
+
             callAllEventListeners();
             throw err;
+          })
+          .finally(() => {
+            if (__PROFILE__) {
+              addProfileEntry(
+                "routing",
+                "loadApps",
+                profilerKind,
+                startTime,
+                performance.now(),
+                succeeded
+              );
+            }
           })
       );
     });
@@ -142,6 +179,17 @@ export function reroute(
           // necessary for the reroute function to know that the current reroute is finished
           appChangeUnderway = false;
 
+          if (__PROFILE__) {
+            addProfileEntry(
+              "routing",
+              "navigationCanceled",
+              profilerKind,
+              startTime,
+              performance.now(),
+              true
+            );
+          }
+
           // Tell single-spa to reroute again, this time with the url set to the old URL
           return reroute(pendingPromises, eventArguments, true);
         }
@@ -156,12 +204,42 @@ export function reroute(
 
         const unmountAllPromise = Promise.all(allUnmountPromises);
 
-        unmountAllPromise.then(() => {
-          fireSingleSpaEvent(
-            "before-mount-routing-event",
-            getCustomEventDetail(true)
-          );
-        });
+        let unmountFinishedTime;
+
+        unmountAllPromise.then(
+          () => {
+            if (__PROFILE__) {
+              unmountFinishedTime = performance.now();
+
+              addProfileEntry(
+                "routing",
+                "unmountAndUnload",
+                profilerKind,
+                startTime,
+                performance.now(),
+                true
+              );
+            }
+            fireSingleSpaEvent(
+              "before-mount-routing-event",
+              getCustomEventDetail(true)
+            );
+          },
+          (err) => {
+            if (__PROFILE__) {
+              addProfileEntry(
+                "routing",
+                "unmountAndUnload",
+                profilerKind,
+                startTime,
+                performance.now(),
+                true
+              );
+            }
+
+            throw err;
+          }
+        );
 
         /* We load and bootstrap apps while other apps are unmounting, but we
          * wait to mount the app until all apps are finishing unmounting
@@ -198,7 +276,35 @@ export function reroute(
                 pendingPromises.forEach((promise) => promise.reject(err));
                 throw err;
               })
-              .then(finishUpAndReturn);
+              .then(finishUpAndReturn)
+              .then(
+                () => {
+                  if (__PROFILE__) {
+                    addProfileEntry(
+                      "routing",
+                      "loadAndMount",
+                      profilerKind,
+                      unmountFinishedTime,
+                      performance.now(),
+                      true
+                    );
+                  }
+                },
+                (err) => {
+                  if (__PROFILE__) {
+                    addProfileEntry(
+                      "routing",
+                      "loadAndMount",
+                      profilerKind,
+                      unmountFinishedTime,
+                      performance.now(),
+                      false
+                    );
+                  }
+
+                  throw err;
+                }
+              );
           });
       });
     });

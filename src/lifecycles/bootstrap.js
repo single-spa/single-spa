@@ -4,13 +4,14 @@ import {
   NOT_MOUNTED,
   SKIP_BECAUSE_BROKEN,
   toName,
+  isParcel,
 } from "../applications/app.helpers.js";
 import { reasonableTime } from "../applications/timeouts.js";
 import { handleAppError, transformErr } from "../applications/app-errors.js";
 import { addProfileEntry } from "../devtools/profiler.js";
 
 export function toBootstrapPromise(appOrParcel, hardFail) {
-  let startTime;
+  let startTime, profileEventType;
 
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== NOT_BOOTSTRAPPED) {
@@ -18,6 +19,7 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
     }
 
     if (__PROFILE__) {
+      profileEventType = isParcel(appOrParcel) ? "parcel" : "application";
       startTime = performance.now();
     }
 
@@ -33,7 +35,7 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
       .catch((err) => {
         if (__PROFILE__) {
           addProfileEntry(
-            "application",
+            profileEventType,
             toName(appOrParcel),
             "bootstrap",
             startTime,
@@ -56,7 +58,7 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
 
     if (__PROFILE__) {
       addProfileEntry(
-        "application",
+        profileEventType,
         toName(appOrParcel),
         "bootstrap",
         startTime,

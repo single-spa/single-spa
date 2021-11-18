@@ -4,6 +4,7 @@ import {
   MOUNTED,
   SKIP_BECAUSE_BROKEN,
   toName,
+  isParcel,
 } from "../applications/app.helpers.js";
 import { handleAppError, transformErr } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
@@ -15,10 +16,11 @@ export function toUnmountPromise(appOrParcel, hardFail) {
       return appOrParcel;
     }
 
-    let startTime;
+    let startTime, profileEventType;
 
     if (__PROFILE__) {
       startTime = performance.now();
+      profileEventType = isParcel(appOrParcel) ? "parcel" : "application";
     }
 
     appOrParcel.status = UNMOUNTING;
@@ -55,7 +57,7 @@ export function toUnmountPromise(appOrParcel, hardFail) {
 
           if (__PROFILE__) {
             addProfileEntry(
-              "application",
+              profileEventType,
               toName(appOrParcel),
               "unmount",
               startTime,
@@ -67,7 +69,7 @@ export function toUnmountPromise(appOrParcel, hardFail) {
         (err) => {
           if (__PROFILE__) {
             addProfileEntry(
-              "application",
+              profileEventType,
               toName(appOrParcel),
               "unmount",
               startTime,

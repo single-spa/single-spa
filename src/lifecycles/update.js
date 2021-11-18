@@ -3,37 +3,69 @@ import {
   MOUNTED,
   SKIP_BECAUSE_BROKEN,
   toName,
+  isParcel,
 } from "../applications/app.helpers.js";
 import {
   transformErr,
   formatErrorMessage,
 } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
+import { addProfileEntry } from "../devtools/profiler.js";
 
-export function toUpdatePromise(parcel) {
+export function toUpdatePromise(appOrParcel) {
   return Promise.resolve().then(() => {
-    if (parcel.status !== MOUNTED) {
+    let startTime, profileEventType;
+
+    if (__PROFILE__) {
+      profileEventType = isParcel(appOrParcel) ? "parcel" : "application";
+      startTime = performance.now();
+    }
+
+    if (appOrParcel.status !== MOUNTED) {
       throw Error(
         formatErrorMessage(
           32,
           __DEV__ &&
             `Cannot update parcel '${toName(
-              parcel
+              appOrParcel
             )}' because it is not mounted`,
-          toName(parcel)
+          toName(appOrParcel)
         )
       );
     }
 
-    parcel.status = UPDATING;
+    appOrParcel.status = UPDATING;
 
-    return reasonableTime(parcel, "update")
+    return reasonableTime(appOrParcel, "update")
       .then(() => {
-        parcel.status = MOUNTED;
-        return parcel;
+        appOrParcel.status = MOUNTED;
+
+        if (__PROFILE__) {
+          addProfileEntry(
+            profileEventType,
+            toName(appOrParcel),
+            "update",
+            startTime,
+            performance.now(),
+            true
+          );
+        }
+
+        return appOrParcel;
       })
       .catch((err) => {
-        throw transformErr(err, parcel, SKIP_BECAUSE_BROKEN);
+        if (__PROFILE__) {
+          addProfileEntry(
+            profileEventType,
+            toName(appOrParcel),
+            "update",
+            startTime,
+            performance.now(),
+            false
+          );
+        }
+
+        throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
       });
   });
 }
