@@ -11,6 +11,7 @@ import {
 } from "../applications/apps.js";
 import {
   callCapturedEventListeners,
+  lastUrlChange,
   originalReplaceState,
 } from "./navigation-events.js";
 import { toUnloadPromise } from "../lifecycles/unload.js";
@@ -124,20 +125,29 @@ export function reroute(
         getCustomEventDetail(true, { cancelNavigation })
       );
 
+      const lastUrlChangeBeforeCancelPromises = lastUrlChange;
+
       return Promise.all(cancelPromises).then((cancelValues) => {
         const navigationIsCanceled = cancelValues.some((v) => v);
 
         if (navigationIsCanceled) {
-          // Change url back to old url, without triggering the normal single-spa reroute
-          originalReplaceState.call(
-            window.history,
-            history.state,
-            "",
-            oldUrl.substring(location.origin.length)
-          );
+          // Only navigate to old url if there hasn't been a navigation since we started waiting for cancelation
+          // https://github.com/single-spa/single-spa/issues/950
+          const sendToOldUrl =
+            lastUrlChange === lastUrlChangeBeforeCancelPromises;
 
-          // Single-spa's internal tracking of current url needs to be updated after the url change above
-          currentUrl = location.href;
+          if (sendToOldUrl) {
+            // Change url back to old url, without triggering the normal single-spa reroute
+            originalReplaceState.call(
+              window.history,
+              history.state,
+              "",
+              oldUrl.substring(location.origin.length)
+            );
+
+            // Single-spa's internal tracking of current url needs to be updated after the url change above
+            currentUrl = location.href;
+          }
 
           // necessary for the reroute function to know that the current reroute is finished
           appChangeUnderway = false;

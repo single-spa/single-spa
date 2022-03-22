@@ -785,7 +785,27 @@ describe(`events api :`, () => {
       })
     );
 
-    function cancelNavigationTest({ cancelValue, shouldCancel, name }) {
+    // https://github.com/single-spa/single-spa/issues/950
+    it(
+      `doesn't take you back to old url if navigation occurs while waiting for cancelation promises`,
+      cancelNavigationTest({
+        cancelValue: new Promise((resolve) => {
+          setTimeout(() => resolve(true), 50);
+        }),
+        shouldCancel: false,
+        secondNavigation: "/app2",
+        expectedEndUrl: "/app2",
+        name: "async-cancel-slow",
+      })
+    );
+
+    function cancelNavigationTest({
+      cancelValue,
+      shouldCancel,
+      name,
+      secondNavigation,
+      expectedEndUrl,
+    }) {
       return async function () {
         singleSpa.registerApplication({
           name,
@@ -805,6 +825,13 @@ describe(`events api :`, () => {
         );
 
         singleSpa.navigateToUrl("/app1");
+
+        if (secondNavigation) {
+          await Promise.resolve().then(() => {
+            return singleSpa.navigateToUrl(secondNavigation);
+          });
+        }
+
         await singleSpa.triggerAppChange();
 
         window.removeEventListener(
@@ -812,7 +839,9 @@ describe(`events api :`, () => {
           cancelTheNavigation
         );
 
-        expect(location.pathname).toEqual(shouldCancel ? "/" : "/app1");
+        const endUrl = expectedEndUrl || (shouldCancel ? "/" : "/app1");
+
+        expect(location.pathname).toEqual(endUrl);
 
         function cancelTheNavigation(evt) {
           evt.detail.cancelNavigation(
