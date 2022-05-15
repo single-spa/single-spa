@@ -341,7 +341,6 @@ function validCustomProps(customProps) {
     !customProps ||
     typeof customProps === "function" ||
     (typeof customProps === "object" &&
-      customProps !== null &&
       !Array.isArray(customProps))
   );
 }
