@@ -9,6 +9,7 @@ import {
   Parcel,
   ParcelConfig,
   patchHistoryApi,
+  MOUNTED,
 } from "single-spa";
 import { expectError, expectType } from "tsd";
 
@@ -81,6 +82,7 @@ window.addEventListener("single-spa:routing-event", ((
   expectType<string>(evt.detail.newUrl);
   expectType<boolean>(evt.detail.navigationIsCanceled);
   expectType<(() => void) | undefined>(evt.detail.cancelNavigation);
+  expectType<string[]>(evt.detail.appsByNewStatus[MOUNTED]);
 }) as EventListener);
 
 expectType<void>(patchHistoryApi());
