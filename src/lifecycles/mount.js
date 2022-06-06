@@ -4,6 +4,7 @@ import {
   SKIP_BECAUSE_BROKEN,
   MOUNTING,
   toName,
+  isParcel,
 } from "../applications/app.helpers.js";
 import { handleAppError, transformErr } from "../applications/app-errors.js";
 import { reasonableTime } from "../applications/timeouts.js";
@@ -20,9 +21,10 @@ export function toMountPromise(appOrParcel, hardFail) {
       return appOrParcel;
     }
 
-    let startTime;
+    let startTime, profileEventType;
 
     if (__PROFILE__) {
+      profileEventType = isParcel(appOrParcel) ? "parcel" : "application";
       startTime = performance.now();
     }
 
@@ -44,7 +46,7 @@ export function toMountPromise(appOrParcel, hardFail) {
 
         if (__PROFILE__) {
           addProfileEntry(
-            "application",
+            profileEventType,
             toName(appOrParcel),
             "mount",
             startTime,
@@ -68,7 +70,7 @@ export function toMountPromise(appOrParcel, hardFail) {
         function setSkipBecauseBroken() {
           if (__PROFILE__) {
             addProfileEntry(
-              "application",
+              profileEventType,
               toName(appOrParcel),
               "mount",
               startTime,
