@@ -47,7 +47,8 @@
     "testDir": "spec/typings",
     "compilerOptions": {
       "lib": [
-        "dom"
+        "dom",
+        "ES2015"
       ]
     }
   },
