@@ -8,6 +8,9 @@ import {
   SingleSpaAppsByNewStatus,
   Parcel,
   ParcelConfig,
+  setBootstrapMaxTime,
+  setMountMaxTime,
+  setUnmountMaxTime,
 } from "single-spa";
 import { expectError, expectType } from "tsd";
 
@@ -83,3 +86,15 @@ window.addEventListener("single-spa:routing-event", ((
   expectType<boolean>(evt.detail.navigationIsCanceled);
   expectType<(() => void) | undefined>(evt.detail.cancelNavigation);
 }) as EventListener);
+
+setBootstrapMaxTime(100);
+setBootstrapMaxTime(100, true);
+setBootstrapMaxTime(100, true, 50);
+
+setMountMaxTime(100);
+setMountMaxTime(100, true);
+setMountMaxTime(100, true, 50);
+
+setUnmountMaxTime(100);
+setUnmountMaxTime(100, true);
+setUnmountMaxTime(100, true, 50);
