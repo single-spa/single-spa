@@ -94,6 +94,12 @@ function urlReroute() {
 function patchedUpdateState(updateState, methodName) {
   return function () {
     const urlBefore = window.location.href;
+    
+    // issues/1030 - Vue requires 'current' to be set at all times
+    if (arguments && arguments[0] && !arguments[0]?.current) {
+      arguments[0].current = window.location.pathname;
+    }
+    
     const result = updateState.apply(this, arguments);
     const urlAfter = window.location.href;
 
