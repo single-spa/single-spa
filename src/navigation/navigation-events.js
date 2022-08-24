@@ -97,7 +97,7 @@ function patchedUpdateState(updateState, methodName) {
     
     // issues/1030 - Vue requires 'current' to be set at all times
     if (arguments && arguments[0] && !arguments[0]?.current) {
-      arguments[0].current = window.location.pathname;
+      arguments[0].current = "";
     }
     
     const result = updateState.apply(this, arguments);
