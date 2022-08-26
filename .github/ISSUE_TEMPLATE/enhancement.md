@@ -1,8 +1,7 @@
 ---
-name: "Enhancement"
+name: 'Enhancement'
 about: Request a new feature.
 labels: 'enhancement'
-
 ---
 
 <!--
