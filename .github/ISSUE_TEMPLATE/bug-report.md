@@ -14,7 +14,6 @@ single-spa version:
 ## Steps To Reproduce
 
 1.
-2.
 
 <!--
   Your bug will get fixed much faster if we can run your code and it doesn't
