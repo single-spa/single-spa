@@ -122,7 +122,7 @@ declare module "single-spa" {
 
   type Application<ExtraProps = {}> =
     | LifeCycles<ExtraProps>
-    | ((config: ExtraProps & AppProps) => Promise<LifeCycles<ExtraProps>>);
+    | ((config: ExtraProps & AppProps) => Promise<LifeCycles<ExtraProps>> | Promise<System.Module>);
 
   type ActivityFn = (location: Location) => boolean;
 
