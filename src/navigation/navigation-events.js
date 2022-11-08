@@ -55,7 +55,11 @@ export function navigateToUrl(obj) {
     destination.pathname === current.pathname &&
     destination.search === current.search
   ) {
-    window.location.hash = destination.hash;
+    // fix Firefox automatically add hash sign in the end URL
+    // if setting window.location.hash to empty string or #
+    if (destination.hash && destination.hash !== "#") {
+      window.location.hash = destination.hash;
+    }
   } else {
     // different path, host, or query params
     window.history.pushState(null, null, url);
