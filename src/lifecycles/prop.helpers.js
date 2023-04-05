@@ -1,7 +1,11 @@
 import * as singleSpa from "../single-spa.js";
 import { mountParcel } from "../parcels/mount-parcel.js";
 import { assign } from "../utils/assign.js";
-import { isParcel, toDynamicPathRegexInfo, toName } from "../applications/app.helpers.js";
+import {
+  isParcel,
+  toDynamicPathRegexInfo,
+  toName,
+} from "../applications/app.helpers.js";
 import { formatErrorMessage } from "../applications/app-errors.js";
 
 export function getProps(appOrParcel) {
@@ -26,19 +30,19 @@ export function getProps(appOrParcel) {
       customProps
     );
   }
-  let pathParams = {};
-
-  if (typeof appOrParcel.activeWhen === "string") {
-    pathParams = extractDynamicParams(appOrParcel.activeWhen, window.location);
-  }
 
   const result = assign({}, customProps, {
     name,
     mountParcel: mountParcel.bind(appOrParcel),
     singleSpa,
     route: {
-      params: pathParams,
-    }
+      get params() {
+        if (typeof appOrParcel.activeWhen === "string") {
+          return extractDynamicParams(appOrParcel.activeWhen, window.location);
+        }
+        return {};
+      },
+    },
   });
 
   if (isParcel(appOrParcel)) {
