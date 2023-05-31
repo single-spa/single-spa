@@ -120,9 +120,12 @@ declare module "single-spa" {
     warningMillis?: number
   ): void;
 
+  import System from "systemjs";
   type Application<ExtraProps = {}> =
     | LifeCycles<ExtraProps>
-    | ((config: ExtraProps & AppProps) => Promise<LifeCycles<ExtraProps>> | Promise<System.Module>);
+    | ((
+        config: ExtraProps & AppProps
+      ) => Promise<LifeCycles<ExtraProps>> | Promise<System.Module>);
 
   type ActivityFn = (location: Location) => boolean;
 

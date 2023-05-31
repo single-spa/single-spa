@@ -57,6 +57,9 @@
   ],
   "author": "Joel Denning",
   "license": "MIT",
+  "peerDependencies": {
+    "systemjs": "*"
+  },
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.9.0",
