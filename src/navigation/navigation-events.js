@@ -58,7 +58,7 @@ export function navigateToUrl(obj) {
     window.location.hash = destination.hash;
   } else {
     // different path, host, or query params
-    window.history.pushState(null, null, url);
+    window.history.pushState({}, '', url);
   }
 }
 
