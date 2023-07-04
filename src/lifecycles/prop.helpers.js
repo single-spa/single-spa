@@ -68,5 +68,5 @@ function extractDynamicParams(activeWhen, location) {
     });
     return params;
   }
-  return null;
+  return {};
 }
