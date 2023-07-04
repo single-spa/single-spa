@@ -1,7 +1,11 @@
 import * as singleSpa from "../single-spa.js";
 import { mountParcel } from "../parcels/mount-parcel.js";
 import { assign } from "../utils/assign.js";
-import { isParcel, toName } from "../applications/app.helpers.js";
+import {
+  isParcel,
+  toDynamicPathRegexInfo,
+  toName,
+} from "../applications/app.helpers.js";
 import { formatErrorMessage } from "../applications/app-errors.js";
 
 export function getProps(appOrParcel) {
@@ -26,10 +30,19 @@ export function getProps(appOrParcel) {
       customProps
     );
   }
+
   const result = assign({}, customProps, {
     name,
     mountParcel: mountParcel.bind(appOrParcel),
     singleSpa,
+    route: {
+      get params() {
+        if (typeof appOrParcel.activeWhen === "string") {
+          return extractDynamicParams(appOrParcel.activeWhen, window.location);
+        }
+        return {};
+      },
+    },
   });
 
   if (isParcel(appOrParcel)) {
@@ -37,4 +50,23 @@ export function getProps(appOrParcel) {
   }
 
   return result;
+}
+
+function extractDynamicParams(activeWhen, location) {
+  const { regex, paramNames } = toDynamicPathRegexInfo(activeWhen);
+  const origin = location.origin || `${location.protocol}//${location.host}`;
+  const route = location.href
+    .replace(origin, "")
+    .replace(location.search, "")
+    .split("?")[0];
+
+  const match = regex.exec(route);
+  if (match) {
+    const params = {};
+    paramNames.forEach((paramName, index) => {
+      params[paramName] = match[index + 1];
+    });
+    return params;
+  }
+  return {};
 }
