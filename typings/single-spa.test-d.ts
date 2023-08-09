@@ -1,4 +1,4 @@
-import "..";
+
 import {
   mountRootParcel,
   registerApplication,
@@ -11,7 +11,7 @@ import {
   setBootstrapMaxTime,
   setMountMaxTime,
   setUnmountMaxTime,
-} from "single-spa";
+} from "..";
 import { expectError, expectType } from "tsd";
 
 const planetsParcel: ParcelConfig<Planets> = {

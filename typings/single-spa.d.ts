@@ -1,4 +1,4 @@
-declare module "single-spa" {
+
   interface CustomProps {
     [str: string]: any;
     [num: number]: any;
@@ -233,4 +233,3 @@ declare module "single-spa" {
     path: string,
     exactMatch?: boolean
   ): ActivityFn;
-}
