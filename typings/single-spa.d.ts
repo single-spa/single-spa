@@ -71,13 +71,54 @@ declare module "single-spa" {
   export function ensureJQuerySupport(jQuery?: any): void;
 
   // ./applications/timeouts.js
+  /**
+   * Sets the timeout for the given lifecycle.
+   * @param {number} time - The timeout in milliseconds.
+   * @param {boolean=} dieOnTimeout - Whether to throw an error if the timeout is reached. Default false.
+   * @param {number=} warningMillis - The number of milliseconds before the timeout warning is triggered. Default 1000.
+   * @returns {void}
+   **/
   export function setBootstrapMaxTime(
     time: number,
-    dieOnTimeout?: boolean
+    dieOnTimeout?: boolean,
+    warningMillis?: number
   ): void;
-  export function setMountMaxTime(time: number, dieOnTimeout?: boolean): void;
-  export function setUnmountMaxTime(time: number, dieOnTimeout?: boolean): void;
-  export function setUnloadMaxTime(time: number, dieOnTimeout?: boolean): void;
+  /**
+   * Sets the timeout for the given lifecycle.
+   * @param {number} time - The timeout in milliseconds.
+   * @param {boolean=} dieOnTimeout - Whether to throw an error if the timeout is reached. Default false.
+   * @param {number=} warningMillis - The number of milliseconds before the timeout warning is triggered. Default 1000.
+   * @returns {void}
+   **/
+  export function setMountMaxTime(
+    time: number,
+    dieOnTimeout?: boolean,
+    warningMillis?: number
+  ): void;
+  /**
+   * Sets the timeout for the given lifecycle.
+   * @param {number} time - The timeout in milliseconds.
+   * @param {boolean=} dieOnTimeout - Whether to throw an error if the timeout is reached. Default false.
+   * @param {number=} warningMillis - The number of milliseconds before the timeout warning is triggered. Default 1000.
+   * @returns {void}
+   **/
+  export function setUnmountMaxTime(
+    time: number,
+    dieOnTimeout?: boolean,
+    warningMillis?: number
+  ): void;
+  /**
+   * Sets the timeout for the given lifecycle.
+   * @param {number} time - The timeout in milliseconds.
+   * @param {boolean=} dieOnTimeout - Whether to throw an error if the timeout is reached. Default false.
+   * @param {number=} warningMillis - The number of milliseconds before the timeout warning is triggered. Default 1000.
+   * @returns {void}
+   **/
+  export function setUnloadMaxTime(
+    time: number,
+    dieOnTimeout?: boolean,
+    warningMillis?: number
+  ): void;
 
   type Application<ExtraProps = {}> =
     | LifeCycles<ExtraProps>

@@ -6,7 +6,7 @@
 
 # single-spa
 
-[Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/zt-mafdeybq-0v1aIm3KKaqyVCT2xeny3Q)
+[Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/zt-yxfqpl2u-PNx3uZtS3pgAXbOBWsdwOA)
 
 [Donate to this project](https://opencollective.com/single-spa)
 
@@ -23,6 +23,7 @@ Build micro frontends that coexist and can ([but don't need to](https://single-s
 
 <a href="https://datacamp.com/"><img height="50" alt="DataCamp-Logo" src="https://user-images.githubusercontent.com/5524384/117517708-1047f200-af5a-11eb-8d5d-0997d6df06d6.png"></a>
 <a href="https://pos.toasttab.com/"><img height="50" alt="Toast-Logo" src="https://user-images.githubusercontent.com/5524384/117516281-eab8e980-af55-11eb-9d3c-baff0c3c86e6.png"></a>
+<a href="https://medium.com/asurion-product-development"><img height="50" alt="asurion-logo" src="https://user-images.githubusercontent.com/1222137/166689686-14e38af4-0536-48fc-8720-60a324fb751e.svg"></a>
 
 To add your company's logo to this section:
 
