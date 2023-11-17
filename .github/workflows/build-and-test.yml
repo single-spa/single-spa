@@ -26,4 +26,4 @@ jobs:
       - run: pnpm test
       - run: pnpm run check-format
       - run: pnpm run lint
-      - run: pnpm run exec changeset status
+      - run: pnpm exec changeset status
