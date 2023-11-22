@@ -1,6 +1,6 @@
 {
   "name": "single-spa",
-  "version": "6.0.0-beta.3",
+  "version": "6.0.0-beta.4",
   "description": "The router for easy microfrontends",
   "main": "lib/es2015/umd/single-spa.min.cjs",
   "types": "typings/single-spa.d.ts",
