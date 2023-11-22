@@ -170,10 +170,10 @@ export function unregisterApplication(appName) {
   }
 
   const unloadPromise = isInBrowser
-    ? unloadApplication(appName, { waitForUnmount: false })
+    ? // See https://github.com/single-spa/single-spa/issues/871 for why waitForUnmount is false
+      unloadApplication(appName, { waitForUnmount: false })
     : Promise.resolve();
 
-  // See https://github.com/single-spa/single-spa/issues/871 for why waitForUnmount is false
   return unloadPromise.then(() => {
     const appIndex = apps.map(toName).indexOf(appName);
     apps.splice(appIndex, 1);
