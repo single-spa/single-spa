@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@2.3.1/schema.json",
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "single-spa/single-spa" }
+  ],
+  "commit": false,
+  "fixed": [],
+  "linked": [],
+  "access": "restricted",
+  "baseBranch": "6.0",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}
