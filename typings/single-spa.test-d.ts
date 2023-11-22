@@ -10,6 +10,9 @@ import {
   ParcelConfig,
   patchHistoryApi,
   MOUNTED,
+  setBootstrapMaxTime,
+  setMountMaxTime,
+  setUnmountMaxTime,
 } from "single-spa";
 import { expectError, expectType } from "tsd";
 
@@ -101,3 +104,15 @@ expectError<void>(
     random: true,
   })
 );
+
+setBootstrapMaxTime(100);
+setBootstrapMaxTime(100, true);
+setBootstrapMaxTime(100, true, 50);
+
+setMountMaxTime(100);
+setMountMaxTime(100, true);
+setMountMaxTime(100, true, 50);
+
+setUnmountMaxTime(100);
+setUnmountMaxTime(100, true);
+setUnmountMaxTime(100, true, 50);
