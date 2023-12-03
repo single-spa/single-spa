@@ -9,18 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           # Necessary for changeset status to work
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
       - uses: pnpm/action-setup@v2
         with:
-          version: 8.10.5
+          version: 8.11.0
       # Necessary for changeset status to work
-      - run: git checkout 6.0 && git checkout $GITHUB_SHA
+      - run: git checkout main && git checkout $GITHUB_SHA
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
       - run: pnpm test
