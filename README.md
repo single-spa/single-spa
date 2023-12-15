@@ -10,6 +10,12 @@
 
 [Donate to this project](https://opencollective.com/single-spa)
 
+[Official single-spa hosting](https://baseplate.cloud)
+
+<a href="https://baseplate.cloud">
+  <img height="30" alt="baseplate-logo-standard" src="https://github.com/single-spa/single-spa/assets/5524384/020f0d65-356b-444b-9009-9faf607c1a28" style="background-color: white;">
+</a>
+
 ## A javascript framework for front-end microservices
 
 Build micro frontends that coexist and can ([but don't need to](https://single-spa.js.org/docs/faq.html#can-i-use-more-than-one-framework)) be written with their own framework. This allows you to:
