@@ -13,7 +13,7 @@
 [Official single-spa hosting](https://baseplate.cloud)
 
 <a href="https://baseplate.cloud">
-  <img height="50" alt="baseplate-logo-standard" src="https://github.com/single-spa/single-spa/assets/5524384/020f0d65-356b-444b-9009-9faf607c1a28">
+  <img height="30" alt="baseplate-logo-standard" src="https://github.com/single-spa/single-spa/assets/5524384/020f0d65-356b-444b-9009-9faf607c1a28" style="background-color: white;">
 </a>
 
 ## A javascript framework for front-end microservices
