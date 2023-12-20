@@ -1,4 +1,4 @@
-<img src="https://single-spa.js.org/img/logo-white-bgblue.svg" width="50" height="50">
+<img src="https://github.com/single-spa/single-spa/assets/5524384/7b1b642d-53d1-409a-b992-e77495bcf631" height="40">
 
 [![npm version](https://img.shields.io/npm/v/single-spa.svg?style=flat-square)](https://www.npmjs.org/package/single-spa)
 [![](https://data.jsdelivr.com/v1/package/npm/single-spa/badge)](https://www.jsdelivr.com/package/npm/single-spa)
