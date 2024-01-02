@@ -32,7 +32,7 @@ const terserOpts = {
 
 export default (async () => [
   {
-    input: `./src/single-spa${isProduction ? "" : ".profile"}.js`,
+    input: `./src/single-spa${isProduction ? "" : ".profile"}.ts`,
     output: [
       {
         file: `./lib/es5/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
@@ -64,7 +64,7 @@ export default (async () => [
     ],
   },
   {
-    input: `./src/single-spa${isProduction ? "" : ".profile"}.js`,
+    input: `./src/single-spa${isProduction ? "" : ".profile"}.ts`,
     output: [
       {
         file: `./lib/es2015/umd/single-spa${

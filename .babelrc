@@ -6,7 +6,8 @@
         "modules": false,
         "bugfixes": true
       }
-    ]
+    ],
+    "@babel/preset-typescript"
   ],
   "env": {
     "test": {
@@ -16,10 +17,11 @@
           {
             "bugfixes": true,
             "targets": {
-              "browsers": "node >=10"
+              "node": "current"
             }
           }
-        ]
+        ],
+        "@babel/preset-typescript"
       ],
       "plugins": ["dynamic-import-node"]
     },
