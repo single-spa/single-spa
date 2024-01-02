@@ -1,6 +1,15 @@
 import {
   validLifecycleFn,
   flattenFnArray,
+  CustomProps,
+  Parcel,
+  ApplicationObject,
+  ParcelOwner,
+  ParcelCustomProps,
+  InternalParcel,
+  ParcelConfigObject,
+  ParcelConfig,
+  ParcelMap,
 } from "../lifecycles/lifecycle.helpers.js";
 import {
   NOT_BOOTSTRAPPED,
@@ -16,17 +25,32 @@ import { toUpdatePromise } from "../lifecycles/update.js";
 import { toUnmountPromise } from "../lifecycles/unmount.js";
 import { ensureValidAppTimeouts } from "../applications/timeouts.js";
 import { formatErrorMessage } from "../applications/app-errors.js";
+import { isParcel } from "../applications/app.helpers.js";
 
 let parcelCount = 0;
 const rootParcels = { parcels: {} };
 
 // This is a public api, exported to users of single-spa
-export function mountRootParcel() {
-  return mountParcel.apply(rootParcels, arguments);
+export function mountRootParcel(
+  config: ParcelConfig,
+  customProps: CustomProps
+) {
+  return mountParcel.call(rootParcels, config, customProps);
 }
 
-export function mountParcel(config, customProps) {
+export function mountParcel(
+  this: Parcel | ApplicationObject,
+  config: ParcelConfig,
+  customProps: ParcelCustomProps
+) {
   const owningAppOrParcel = this;
+
+  let owningParcelMap: ParcelMap;
+  if (isParcel(owningAppOrParcel)) {
+    owningParcelMap = (owningAppOrParcel as Parcel)._parcel.parcels;
+  } else {
+    owningParcelMap = (owningAppOrParcel as ApplicationObject).parcels;
+  }
 
   // Validate inputs
   if (!config || (typeof config !== "object" && typeof config !== "function")) {
@@ -77,12 +101,11 @@ export function mountParcel(config, customProps) {
   }
 
   const passedConfigLoadingFunction = typeof config === "function";
-  const configLoadingFunction = passedConfigLoadingFunction
-    ? config
-    : () => Promise.resolve(config);
+  const configLoadingFunction: () => Promise<ParcelConfigObject<CustomProps>> =
+    passedConfigLoadingFunction ? config : () => Promise.resolve(config);
 
   // Internal representation
-  const parcel = {
+  const parcel: Partial<InternalParcel> = {
     id,
     parcels: {},
     status: passedConfigLoadingFunction
@@ -108,7 +131,7 @@ export function mountParcel(config, customProps) {
         })
         .then((value) => {
           if (parcel.parentName) {
-            delete owningAppOrParcel.parcels[parcel.id];
+            delete owningParcelMap[parcel.id];
           }
 
           return value;
@@ -124,12 +147,6 @@ export function mountParcel(config, customProps) {
         });
     },
   };
-
-  // We return an external representation
-  let externalRepresentation;
-
-  // Add to owning app or parcel
-  owningAppOrParcel.parcels[id] = parcel;
 
   let loadPromise = configLoadingFunction();
 
@@ -213,12 +230,14 @@ export function mountParcel(config, customProps) {
 
     if (config.update) {
       parcel.update = flattenFnArray(config, "update");
-      externalRepresentation.update = function (customProps) {
-        parcel.customProps = customProps;
-
-        return promiseWithoutReturnValue(toUpdatePromise(parcel));
-      };
     }
+
+    const fullParcel: InternalParcel = parcel as InternalParcel;
+
+    // Add to owning app or parcel
+    owningParcelMap[id] = fullParcel;
+
+    return config;
   });
 
   // Start bootstrapping and mounting
@@ -237,7 +256,7 @@ export function mountParcel(config, customProps) {
     rejectUnmount = reject;
   });
 
-  externalRepresentation = {
+  let externalRepresentation: Parcel = {
     mount() {
       return promiseWithoutReturnValue(
         Promise.resolve().then(() => {
@@ -254,7 +273,7 @@ export function mountParcel(config, customProps) {
           }
 
           // Add to owning app or parcel
-          owningAppOrParcel.parcels[id] = parcel;
+          owningParcelMap[id] = parcel as InternalParcel;
 
           return toMountPromise(parcel);
         })
@@ -270,7 +289,18 @@ export function mountParcel(config, customProps) {
     bootstrapPromise: promiseWithoutReturnValue(bootstrapPromise),
     mountPromise: promiseWithoutReturnValue(mountPromise),
     unmountPromise: promiseWithoutReturnValue(unmountPromise),
+    _parcel: parcel as InternalParcel,
   };
+
+  loadPromise.then((config) => {
+    if (config.update) {
+      externalRepresentation.update = function (customProps) {
+        parcel.customProps = customProps;
+
+        return promiseWithoutReturnValue(toUpdatePromise(parcel));
+      };
+    }
+  });
 
   return externalRepresentation;
 }

@@ -2,7 +2,7 @@
  * and lodash is ~200kb (not worth it)
  */
 
-export function find(arr, func) {
+export function find(arr: any[], func: (item: any) => boolean): any | null {
   for (let i = 0; i < arr.length; i++) {
     if (func(arr[i])) {
       return arr[i];

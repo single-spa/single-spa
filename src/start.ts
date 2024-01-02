@@ -2,9 +2,9 @@ import { reroute } from "./navigation/reroute.js";
 import { patchHistoryApi } from "./navigation/navigation-events.js";
 import { isInBrowser } from "./utils/runtime-environment.js";
 
-let started = false;
+let started: boolean = false;
 
-export function start(opts) {
+export function start(opts: StartOpts) {
   started = true;
   if (isInBrowser) {
     patchHistoryApi(opts);
@@ -12,6 +12,10 @@ export function start(opts) {
   }
 }
 
-export function isStarted() {
+export function isStarted(): boolean {
   return started;
+}
+
+interface StartOpts {
+  urlRerouteOnly?: boolean;
 }

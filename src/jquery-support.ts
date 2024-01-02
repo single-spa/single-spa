@@ -1,8 +1,8 @@
 import { routingEventsListeningTo } from "./navigation/navigation-events.js";
 
-let hasInitialized = false;
+let hasInitialized: boolean = false;
 
-export function ensureJQuerySupport(jQuery = window.jQuery) {
+export function ensureJQuerySupport(jQuery: any = window.jQuery): void {
   if (!jQuery) {
     if (window.$ && window.$.fn && window.$.fn.jquery) {
       jQuery = window.$;
@@ -40,11 +40,11 @@ export function ensureJQuerySupport(jQuery = window.jQuery) {
 }
 
 function captureRoutingEvents(
-  originalJQueryFunction,
-  nativeFunctionToCall,
-  eventString,
-  fn,
-  originalArgs
+  originalJQueryFunction: Function,
+  nativeFunctionToCall: Function,
+  eventString: string,
+  fn: Function,
+  originalArgs: any[]
 ) {
   if (typeof eventString !== "string") {
     return originalJQueryFunction.apply(this, originalArgs);
@@ -62,5 +62,12 @@ function captureRoutingEvents(
     return this;
   } else {
     return originalJQueryFunction.apply(this, originalArgs);
+  }
+}
+
+declare global {
+  interface Window {
+    jQuery?: any;
+    $?: any;
   }
 }
