@@ -36,7 +36,8 @@
               "esmodules": true
             }
           }
-        ]
+        ],
+        "@babel/preset-typescript"
       ]
     }
   }
