@@ -1,6 +1,5 @@
 {
   "files": ["src/single-spa.ts"],
-  "include": ["src/declarations.d.ts"],
   "compilerOptions": {
     "outDir": "typings",
     "emitDeclarationOnly": true,

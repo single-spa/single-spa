@@ -17,6 +17,7 @@ const replaceOpts = {
 
 const babelOpts = {
   exclude: "node_modules/**",
+  babelHelpers: "bundled",
 };
 
 const terserOpts = {
@@ -59,7 +60,8 @@ export default (async () => [
       resolve(),
       babel(babelOpts),
       commonjs(),
-      isProduction && (await import("rollup-plugin-terser")).terser(terserOpts),
+      isProduction &&
+        (await import("@rollup/plugin-terser")).terser(terserOpts),
       useAnalyzer && analyzer(),
     ],
   },
@@ -100,7 +102,7 @@ export default (async () => [
       ),
       commonjs(),
       isProduction &&
-        (await import("rollup-plugin-terser")).terser(
+        (await import("@rollup/plugin-terser")).terser(
           Object.assign({}, terserOpts, {
             ecma: 6,
             module: true,
