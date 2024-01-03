@@ -5,10 +5,10 @@ import {
   SKIP_BECAUSE_BROKEN,
   toName,
   isParcel,
-} from "../applications/app.helpers.js";
-import { handleAppError, transformErr } from "../applications/app-errors.js";
-import { reasonableTime } from "../applications/timeouts.js";
-import { addProfileEntry } from "../devtools/profiler.js";
+} from "../applications/app.helpers";
+import { handleAppError, transformErr } from "../applications/app-errors";
+import { reasonableTime } from "../applications/timeouts";
+import { addProfileEntry } from "../devtools/profiler";
 
 export function toUnmountPromise(appOrParcel, hardFail) {
   return Promise.resolve().then(() => {

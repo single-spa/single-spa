@@ -1,11 +1,11 @@
-export { start } from "./start.js";
-export { ensureJQuerySupport } from "./jquery-support.js";
+export { start } from "./start";
+export { ensureJQuerySupport } from "./jquery-support";
 export {
   setBootstrapMaxTime,
   setMountMaxTime,
   setUnmountMaxTime,
   setUnloadMaxTime,
-} from "./applications/timeouts.js";
+} from "./applications/timeouts";
 export {
   registerApplication,
   unregisterApplication,
@@ -15,17 +15,11 @@ export {
   checkActivityFunctions,
   getAppNames,
   pathToActiveWhen,
-} from "./applications/apps.js";
-export {
-  navigateToUrl,
-  patchHistoryApi,
-} from "./navigation/navigation-events.js";
-export { triggerAppChange } from "./navigation/reroute.js";
-export {
-  addErrorHandler,
-  removeErrorHandler,
-} from "./applications/app-errors.js";
-export { mountRootParcel } from "./parcels/mount-parcel.js";
+} from "./applications/apps";
+export { navigateToUrl, patchHistoryApi } from "./navigation/navigation-events";
+export { triggerAppChange } from "./navigation/reroute";
+export { addErrorHandler, removeErrorHandler } from "./applications/app-errors";
+export { mountRootParcel } from "./parcels/mount-parcel";
 
 export {
   NOT_LOADED,
@@ -40,10 +34,10 @@ export {
   UNLOADING,
   UNMOUNTING,
   SKIP_BECAUSE_BROKEN,
-} from "./applications/app.helpers.js";
+} from "./applications/app.helpers";
 
 import devtools from "./devtools/devtools";
-import { isInBrowser } from "./utils/runtime-environment.js";
+import { isInBrowser } from "./utils/runtime-environment";
 
 if (isInBrowser && window.__SINGLE_SPA_DEVTOOLS__) {
   window.__SINGLE_SPA_DEVTOOLS__.exposedMethods = devtools;

@@ -6,20 +6,17 @@ import {
   NOT_LOADED,
   objectType,
   toName,
-} from "../applications/app.helpers.js";
-import { ensureValidAppTimeouts } from "../applications/timeouts.js";
-import {
-  handleAppError,
-  formatErrorMessage,
-} from "../applications/app-errors.js";
+} from "../applications/app.helpers";
+import { ensureValidAppTimeouts } from "../applications/timeouts";
+import { handleAppError, formatErrorMessage } from "../applications/app-errors";
 import {
   flattenFnArray,
   smellsLikeAPromise,
   validLifecycleFn,
-} from "./lifecycle.helpers.js";
-import { getProps } from "./prop.helpers.js";
-import { assign } from "../utils/assign.js";
-import { addProfileEntry } from "../devtools/profiler.js";
+} from "./lifecycle.helpers";
+import { getProps } from "./prop.helpers";
+import { assign } from "../utils/assign";
+import { addProfileEntry } from "../devtools/profiler";
 
 export function toLoadPromise(appOrParcel) {
   return Promise.resolve().then(() => {

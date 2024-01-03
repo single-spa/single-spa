@@ -10,7 +10,7 @@ import {
   ParcelConfigObject,
   ParcelConfig,
   ParcelMap,
-} from "../lifecycles/lifecycle.helpers.js";
+} from "../lifecycles/lifecycle.helpers";
 import {
   NOT_BOOTSTRAPPED,
   NOT_MOUNTED,
@@ -18,14 +18,14 @@ import {
   LOADING_SOURCE_CODE,
   SKIP_BECAUSE_BROKEN,
   toName,
-} from "../applications/app.helpers.js";
-import { toBootstrapPromise } from "../lifecycles/bootstrap.js";
-import { toMountPromise } from "../lifecycles/mount.js";
-import { toUpdatePromise } from "../lifecycles/update.js";
-import { toUnmountPromise } from "../lifecycles/unmount.js";
-import { ensureValidAppTimeouts } from "../applications/timeouts.js";
-import { formatErrorMessage } from "../applications/app-errors.js";
-import { isParcel } from "../applications/app.helpers.js";
+} from "../applications/app.helpers";
+import { toBootstrapPromise } from "../lifecycles/bootstrap";
+import { toMountPromise } from "../lifecycles/mount";
+import { toUpdatePromise } from "../lifecycles/update";
+import { toUnmountPromise } from "../lifecycles/unmount";
+import { ensureValidAppTimeouts } from "../applications/timeouts";
+import { formatErrorMessage } from "../applications/app-errors";
+import { isParcel } from "../applications/app.helpers";
 
 let parcelCount = 0;
 const rootParcels = { parcels: {} };
@@ -39,18 +39,11 @@ export function mountRootParcel(
 }
 
 export function mountParcel(
-  this: Parcel | ApplicationObject,
+  this: InternalParcel | ApplicationObject,
   config: ParcelConfig,
   customProps: ParcelCustomProps
 ) {
   const owningAppOrParcel = this;
-
-  let owningParcelMap: ParcelMap;
-  if (isParcel(owningAppOrParcel)) {
-    owningParcelMap = (owningAppOrParcel as Parcel)._parcel.parcels;
-  } else {
-    owningParcelMap = (owningAppOrParcel as ApplicationObject).parcels;
-  }
 
   // Validate inputs
   if (!config || (typeof config !== "object" && typeof config !== "function")) {
@@ -131,7 +124,7 @@ export function mountParcel(
         })
         .then((value) => {
           if (parcel.parentName) {
-            delete owningParcelMap[parcel.id];
+            delete owningAppOrParcel.parcels[parcel.id];
           }
 
           return value;
@@ -235,7 +228,7 @@ export function mountParcel(
     const fullParcel: InternalParcel = parcel as InternalParcel;
 
     // Add to owning app or parcel
-    owningParcelMap[id] = fullParcel;
+    owningAppOrParcel.parcels[id] = fullParcel;
 
     return config;
   });
@@ -273,7 +266,7 @@ export function mountParcel(
           }
 
           // Add to owning app or parcel
-          owningParcelMap[id] = parcel as InternalParcel;
+          owningAppOrParcel.parcels[id] = parcel as InternalParcel;
 
           return toMountPromise(parcel);
         })
@@ -292,15 +285,21 @@ export function mountParcel(
     _parcel: parcel as InternalParcel,
   };
 
-  loadPromise.then((config) => {
-    if (config.update) {
-      externalRepresentation.update = function (customProps) {
-        parcel.customProps = customProps;
+  loadPromise.then(
+    (config) => {
+      if (config.update) {
+        externalRepresentation.update = function (customProps) {
+          parcel.customProps = customProps;
 
-        return promiseWithoutReturnValue(toUpdatePromise(parcel));
-      };
+          return promiseWithoutReturnValue(toUpdatePromise(parcel));
+        };
+      }
+    },
+    () => {
+      // This catch handler avoids unhandled rejections.
+      // User code can handle the rejection via externalRepresentation.loadPromise.catch
     }
-  });
+  );
 
   return externalRepresentation;
 }

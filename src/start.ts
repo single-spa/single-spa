@@ -1,6 +1,6 @@
-import { reroute } from "./navigation/reroute.js";
-import { patchHistoryApi } from "./navigation/navigation-events.js";
-import { isInBrowser } from "./utils/runtime-environment.js";
+import { reroute } from "./navigation/reroute";
+import { patchHistoryApi } from "./navigation/navigation-events";
+import { isInBrowser } from "./utils/runtime-environment";
 
 let started: boolean = false;
 

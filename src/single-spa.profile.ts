@@ -1,3 +1,3 @@
-export * from "./single-spa.js";
+export * from "./single-spa";
 
-export * from "./devtools/profiler-api.js";
+export * from "./devtools/profiler-api";

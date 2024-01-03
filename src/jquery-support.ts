@@ -1,4 +1,4 @@
-import { routingEventsListeningTo } from "./navigation/navigation-events.js";
+import { routingEventsListeningTo } from "./navigation/navigation-events";
 
 let hasInitialized: boolean = false;
 

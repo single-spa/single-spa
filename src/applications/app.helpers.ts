@@ -1,4 +1,4 @@
-import { handleAppError } from "./app-errors.js";
+import { handleAppError } from "./app-errors";
 
 // App statuses
 export enum AppOrParcelStatus {

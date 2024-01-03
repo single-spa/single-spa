@@ -1,1 +1,1 @@
-export { getProfilerData } from "./profiler.js";
+export { getProfilerData } from "./profiler";

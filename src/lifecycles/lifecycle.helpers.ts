@@ -1,7 +1,10 @@
-import { find } from "../utils/find.js";
-import { objectType, toName } from "../applications/app.helpers.js";
-import { formatErrorMessage } from "../applications/app-errors.js";
-import { AppOrParcelStatus } from "../applications/app.helpers";
+import { find } from "../utils/find";
+import {
+  objectType,
+  toName,
+  AppOrParcelStatus,
+} from "../applications/app.helpers";
+import { formatErrorMessage } from "../applications/app-errors";
 
 export function validLifecycleFn(fn) {
   return fn && (typeof fn === "function" || isArrayOfFns(fn));
