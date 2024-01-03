@@ -28,7 +28,7 @@
   },
   "module": "lib/es2015/esm/single-spa.min.js",
   "scripts": {
-    "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod",
+    "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod pnpm:build:types",
     "build:prod": "rollup -c --environment ROLLUP_ENV:'production'",
     "build:dev": "rollup -c",
     "build:analyze": "rollup -c --environment ANALYZER:'analyzer'",
