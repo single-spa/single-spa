@@ -8,14 +8,17 @@
   "exports": {
     ".": {
       "development": {
+        "types": "./typings/single-spa.d.ts",
         "import": "./lib/es2015/esm/single-spa.dev.js",
         "require": "./lib/es2015/umd/single-spa.dev.cjs"
       },
       "production": {
+        "types": "./typings/single-spa.d.ts",
         "import": "./lib/es2015/esm/single-spa.min.js",
         "require": "./lib/es2015/umd/single-spa.min.cjs"
       },
       "default": {
+        "types": "./typings/single-spa.d.ts",
         "import": "./lib/es2015/esm/single-spa.min.js",
         "require": "./lib/es2015/umd/single-spa.min.cjs"
       }
