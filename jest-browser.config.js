@@ -1,7 +1,7 @@
 export default {
   testEnvironment: "jsdom",
   moduleNameMapper: {
-    "single-spa": "<rootDir>/src/single-spa.js",
+    "single-spa": "<rootDir>/src/single-spa.ts",
   },
   globals: {
     __SINGLE_SPA_DEVTOOLS__: {},

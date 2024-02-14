@@ -6,7 +6,8 @@
         "modules": false,
         "bugfixes": true
       }
-    ]
+    ],
+    "@babel/preset-typescript"
   ],
   "env": {
     "test": {
@@ -19,7 +20,8 @@
               "browsers": "node >=10"
             }
           }
-        ]
+        ],
+        "@babel/preset-typescript"
       ],
       "plugins": ["dynamic-import-node"]
     },
@@ -34,7 +36,8 @@
               "esmodules": true
             }
           }
-        ]
+        ],
+        "@babel/preset-typescript"
       ]
     }
   }

@@ -17,6 +17,7 @@ const replaceOpts = {
 
 const babelOpts = {
   exclude: "node_modules/**",
+  babelHelpers: "bundled",
 };
 
 const terserOpts = {
@@ -32,7 +33,7 @@ const terserOpts = {
 
 export default (async () => [
   {
-    input: `./src/single-spa${isProduction ? "" : ".profile"}.js`,
+    input: `./src/single-spa${isProduction ? "" : ".profile"}.ts`,
     output: [
       {
         file: `./lib/es5/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
@@ -59,12 +60,13 @@ export default (async () => [
       resolve(),
       babel(babelOpts),
       commonjs(),
-      isProduction && (await import("rollup-plugin-terser")).terser(terserOpts),
+      isProduction &&
+        (await import("@rollup/plugin-terser")).terser(terserOpts),
       useAnalyzer && analyzer(),
     ],
   },
   {
-    input: `./src/single-spa${isProduction ? "" : ".profile"}.js`,
+    input: `./src/single-spa${isProduction ? "" : ".profile"}.ts`,
     output: [
       {
         file: `./lib/es2015/umd/single-spa${
@@ -100,7 +102,7 @@ export default (async () => [
       ),
       commonjs(),
       isProduction &&
-        (await import("rollup-plugin-terser")).terser(
+        (await import("@rollup/plugin-terser")).terser(
           Object.assign({}, terserOpts, {
             ecma: 6,
             module: true,
