@@ -4,13 +4,10 @@ import {
   SKIP_BECAUSE_BROKEN,
   toName,
   isParcel,
-} from "../applications/app.helpers.js";
-import {
-  transformErr,
-  formatErrorMessage,
-} from "../applications/app-errors.js";
-import { reasonableTime } from "../applications/timeouts.js";
-import { addProfileEntry } from "../devtools/profiler.js";
+} from "../applications/app.helpers";
+import { transformErr, formatErrorMessage } from "../applications/app-errors";
+import { reasonableTime } from "../applications/timeouts";
+import { addProfileEntry } from "../devtools/profiler";
 
 export function toUpdatePromise(appOrParcel) {
   return Promise.resolve().then(() => {

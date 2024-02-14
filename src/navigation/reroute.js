@@ -1,19 +1,19 @@
 import CustomEvent from "custom-event";
-import { isStarted } from "../start.js";
-import { toLoadPromise } from "../lifecycles/load.js";
-import { toBootstrapPromise } from "../lifecycles/bootstrap.js";
-import { toMountPromise } from "../lifecycles/mount.js";
-import { toUnmountPromise } from "../lifecycles/unmount.js";
+import { isStarted } from "../start";
+import { toLoadPromise } from "../lifecycles/load";
+import { toBootstrapPromise } from "../lifecycles/bootstrap";
+import { toMountPromise } from "../lifecycles/mount";
+import { toUnmountPromise } from "../lifecycles/unmount";
 import {
   getAppStatus,
   getAppChanges,
   getMountedApps,
-} from "../applications/apps.js";
+} from "../applications/apps";
 import {
   callCapturedEventListeners,
   originalReplaceState,
-} from "./navigation-events.js";
-import { toUnloadPromise } from "../lifecycles/unload.js";
+} from "./navigation-events";
+import { toUnloadPromise } from "../lifecycles/unload";
 import {
   toName,
   shouldBeActive,
@@ -21,11 +21,11 @@ import {
   MOUNTED,
   NOT_LOADED,
   SKIP_BECAUSE_BROKEN,
-} from "../applications/app.helpers.js";
-import { assign } from "../utils/assign.js";
-import { isInBrowser } from "../utils/runtime-environment.js";
-import { formatErrorMessage } from "../applications/app-errors.js";
-import { addProfileEntry } from "../devtools/profiler.js";
+} from "../applications/app.helpers";
+import { assign } from "../utils/assign";
+import { isInBrowser } from "../utils/runtime-environment";
+import { formatErrorMessage } from "../applications/app-errors";
+import { addProfileEntry } from "../devtools/profiler";
 
 let appChangeUnderway = false,
   peopleWaitingOnAppChange = [],

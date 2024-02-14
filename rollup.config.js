@@ -18,6 +18,7 @@ const replaceOpts = {
 const babelOpts = {
   exclude: "node_modules/**",
   babelHelpers: "bundled",
+  extensions: [".js", ".ts"],
 };
 
 const terserOpts = {
@@ -29,6 +30,10 @@ const terserOpts = {
       return comment.value.trim().startsWith("single-spa@");
     },
   },
+};
+
+const resolveOpts = {
+  extensions: [".ts", ".js"],
 };
 
 export default (async () => [
@@ -57,7 +62,7 @@ export default (async () => [
     ],
     plugins: [
       replace(replaceOpts),
-      resolve(),
+      resolve(resolveOpts),
       babel(babelOpts),
       commonjs(),
       isProduction &&
@@ -94,7 +99,7 @@ export default (async () => [
     ],
     plugins: [
       replace(replaceOpts),
-      resolve(),
+      resolve(resolveOpts),
       babel(
         Object.assign({}, babelOpts, {
           envName: "esm",

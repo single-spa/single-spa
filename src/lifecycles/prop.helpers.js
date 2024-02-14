@@ -1,8 +1,8 @@
-import * as singleSpa from "../single-spa.js";
-import { mountParcel } from "../parcels/mount-parcel.js";
-import { assign } from "../utils/assign.js";
-import { isParcel, toName } from "../applications/app.helpers.js";
-import { formatErrorMessage } from "../applications/app-errors.js";
+import * as singleSpa from "../single-spa";
+import { mountParcel } from "../parcels/mount-parcel";
+import { assign } from "../utils/assign";
+import { isParcel, toName } from "../applications/app.helpers";
+import { formatErrorMessage } from "../applications/app-errors";
 
 export function getProps(appOrParcel) {
   const name = toName(appOrParcel);

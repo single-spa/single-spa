@@ -5,10 +5,10 @@ import {
   SKIP_BECAUSE_BROKEN,
   toName,
   isParcel,
-} from "../applications/app.helpers.js";
-import { reasonableTime } from "../applications/timeouts.js";
-import { handleAppError, transformErr } from "../applications/app-errors.js";
-import { addProfileEntry } from "../devtools/profiler.js";
+} from "../applications/app.helpers";
+import { reasonableTime } from "../applications/timeouts";
+import { handleAppError, transformErr } from "../applications/app-errors";
+import { addProfileEntry } from "../devtools/profiler";
 
 export function toBootstrapPromise(appOrParcel, hardFail) {
   let startTime, profileEventType;

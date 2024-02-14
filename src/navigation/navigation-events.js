@@ -1,7 +1,7 @@
-import { reroute } from "./reroute.js";
-import { find } from "../utils/find.js";
-import { formatErrorMessage } from "../applications/app-errors.js";
-import { isInBrowser } from "../utils/runtime-environment.js";
+import { reroute } from "./reroute";
+import { find } from "../utils/find";
+import { formatErrorMessage } from "../applications/app-errors";
+import { isInBrowser } from "../utils/runtime-environment";
 
 /* We capture navigation event listeners so that we can make sure
  * that application navigation listeners are not called until

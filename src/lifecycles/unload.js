@@ -5,10 +5,10 @@ import {
   LOAD_ERROR,
   SKIP_BECAUSE_BROKEN,
   toName,
-} from "../applications/app.helpers.js";
-import { handleAppError } from "../applications/app-errors.js";
-import { reasonableTime } from "../applications/timeouts.js";
-import { addProfileEntry } from "../devtools/profiler.js";
+} from "../applications/app.helpers";
+import { handleAppError } from "../applications/app-errors";
+import { reasonableTime } from "../applications/timeouts";
+import { addProfileEntry } from "../devtools/profiler";
 
 const appsToUnload = {};
 

@@ -1,4 +1,4 @@
-import { ensureJQuerySupport } from "../jquery-support.js";
+import { ensureJQuerySupport } from "../jquery-support";
 import {
   isActive,
   toName,
@@ -10,19 +10,19 @@ import {
   SKIP_BECAUSE_BROKEN,
   LOADING_SOURCE_CODE,
   shouldBeActive,
-} from "./app.helpers.js";
-import { reroute, triggerAppChange } from "../navigation/reroute.js";
-import { find } from "../utils/find.js";
-import { toUnmountPromise } from "../lifecycles/unmount.js";
+} from "./app.helpers";
+import { reroute, triggerAppChange } from "../navigation/reroute";
+import { find } from "../utils/find";
+import { toUnmountPromise } from "../lifecycles/unmount";
 import {
   toUnloadPromise,
   getAppUnloadInfo,
   addAppToUnload,
-} from "../lifecycles/unload.js";
-import { formatErrorMessage } from "./app-errors.js";
-import { isInBrowser } from "../utils/runtime-environment.js";
+} from "../lifecycles/unload";
+import { formatErrorMessage } from "./app-errors";
+import { isInBrowser } from "../utils/runtime-environment";
 import { assign } from "../utils/assign";
-import { isStarted } from "../start.js";
+import { isStarted } from "../start";
 
 const apps = [];
 

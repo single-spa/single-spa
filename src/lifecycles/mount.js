@@ -5,12 +5,12 @@ import {
   MOUNTING,
   toName,
   isParcel,
-} from "../applications/app.helpers.js";
-import { handleAppError, transformErr } from "../applications/app-errors.js";
-import { reasonableTime } from "../applications/timeouts.js";
+} from "../applications/app.helpers";
+import { handleAppError, transformErr } from "../applications/app-errors";
+import { reasonableTime } from "../applications/timeouts";
 import CustomEvent from "custom-event";
-import { toUnmountPromise } from "./unmount.js";
-import { addProfileEntry } from "../devtools/profiler.js";
+import { toUnmountPromise } from "./unmount";
+import { addProfileEntry } from "../devtools/profiler";
 
 let beforeFirstMountFired = false;
 let firstMountFired = false;
