@@ -25,7 +25,7 @@ import { ensureValidAppTimeouts } from "../applications/timeouts";
 import { formatErrorMessage } from "../applications/app-errors";
 
 let parcelCount = 0;
-const rootParcels = { parcels: {} };
+const rootParcels: ParcelOwner = { name: "root", parcels: {} };
 
 // This is a public api, exported to users of single-spa
 export function mountRootParcel(
