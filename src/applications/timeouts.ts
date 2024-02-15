@@ -173,7 +173,7 @@ export function reasonableTime(
       timeoutConfig.millis
     );
 
-    function maybeTimingOut(shouldError: boolean | number) {
+    function maybeTimingOut(shouldError: true | number) {
       if (!finished) {
         if (shouldError === true) {
           errored = true;
