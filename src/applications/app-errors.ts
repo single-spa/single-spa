@@ -8,9 +8,9 @@ import {
 
 let errorHandlers: ErrorHandler[] = [];
 
-class SingleSpaError extends Error {
+type SingleSpaError = Error & {
   appOrParcelName: string;
-}
+};
 
 type ErrorHandler = (err: SingleSpaError) => any;
 
@@ -80,7 +80,7 @@ export function transformErr(
     appOrParcel
   )}' died in status ${appOrParcel.status}: `;
 
-  let result: Partial<SingleSpaError>;
+  let result: Error;
 
   if (ogErr instanceof Error) {
     try {
@@ -111,11 +111,12 @@ export function transformErr(
     }
   }
 
-  result.appOrParcelName = toName(appOrParcel);
+  const singleSpaErr = result as SingleSpaError;
+  singleSpaErr.appOrParcelName = toName(appOrParcel);
 
   // We set the status after transforming the error so that the error message
   // references the state the application was in before the status change.
   appOrParcel.status = newStatus;
 
-  return result as SingleSpaError;
+  return singleSpaErr;
 }
