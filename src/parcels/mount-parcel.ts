@@ -3,13 +3,10 @@ import {
   flattenFnArray,
   CustomProps,
   Parcel,
-  ApplicationObject,
-  ParcelOwner,
   ParcelCustomProps,
   InternalParcel,
   ParcelConfigObject,
   ParcelConfig,
-  ParcelMap,
 } from "../lifecycles/lifecycle.helpers";
 import {
   NOT_BOOTSTRAPPED,
@@ -18,6 +15,7 @@ import {
   LOADING_SOURCE_CODE,
   SKIP_BECAUSE_BROKEN,
   toName,
+  InternalApplication,
 } from "../applications/app.helpers";
 import { toBootstrapPromise } from "../lifecycles/bootstrap";
 import { toMountPromise } from "../lifecycles/mount";
@@ -39,7 +37,7 @@ export function mountRootParcel(
 }
 
 export function mountParcel(
-  this: InternalParcel | ApplicationObject,
+  this: InternalParcel | InternalApplication,
   config: ParcelConfig,
   customProps: ParcelCustomProps
 ) {

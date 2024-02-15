@@ -3,8 +3,10 @@ import {
   objectType,
   toName,
   AppOrParcelStatus,
+  InternalApplication,
 } from "../applications/app.helpers";
 import { formatErrorMessage } from "../applications/app-errors";
+import { AppOrParcelTimeouts } from "../applications/timeouts";
 
 export function validLifecycleFn(fn) {
   return fn && (typeof fn === "function" || isArrayOfFns(fn));
@@ -65,7 +67,7 @@ export interface ParcelCustomProps extends CustomProps {
   domElement: HTMLElement;
 }
 
-type CustomPropsFn<ExtraProps extends CustomProps = CustomProps> = (
+export type CustomPropsFn<ExtraProps extends CustomProps = CustomProps> = (
   name: string,
   location: Location
 ) => ExtraProps;
@@ -119,20 +121,6 @@ export interface ParcelMap {
   [parcelId: number]: InternalParcel;
 }
 
-interface AppOrParcelTimeouts {
-  bootstrap: Timeout;
-  mount: Timeout;
-  unmount: Timeout;
-  unload: Timeout;
-  update: Timeout;
-}
-
-interface Timeout {
-  millis: number;
-  dieOnTimeout: false;
-  warningMillis: number;
-}
-
 // Intended for internal use only
 export interface InternalParcel {
   id: number;
@@ -149,10 +137,7 @@ export interface InternalParcel {
   timeouts: AppOrParcelTimeouts;
 }
 
-export type AppOrParcel = ApplicationObject | Parcel;
-
-export type ApplicationObject<ExtraProps = {}> = LifeCycles<ExtraProps> &
-  ParcelOwner;
+export type AppOrParcel = InternalApplication | InternalParcel;
 
 export type Application<ExtraProps = {}> =
   | LifeCycles<ExtraProps>

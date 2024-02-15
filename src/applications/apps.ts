@@ -10,9 +10,10 @@ import {
   SKIP_BECAUSE_BROKEN,
   LOADING_SOURCE_CODE,
   shouldBeActive,
+  InternalApplication,
+  AppOrParcelStatus,
 } from "./app.helpers";
 import { reroute, triggerAppChange } from "../navigation/reroute";
-import { find } from "../utils/find";
 import { toUnmountPromise } from "../lifecycles/unmount";
 import {
   toUnloadPromise,
@@ -21,19 +22,35 @@ import {
 } from "../lifecycles/unload";
 import { formatErrorMessage } from "./app-errors";
 import { isInBrowser } from "../utils/runtime-environment";
-import { assign } from "../utils/assign";
 import { isStarted } from "../start";
+import {
+  Activity,
+  ActivityFn,
+  AppProps,
+  Application,
+  CustomProps,
+  CustomPropsFn,
+  LifeCycles,
+  RegisterApplicationConfig,
+} from "../lifecycles/lifecycle.helpers";
 
-const apps = [];
+const apps: InternalApplication[] = [];
 
-export function getAppChanges() {
-  const appsToUnload = [],
-    appsToUnmount = [],
-    appsToLoad = [],
-    appsToMount = [];
+interface AppChanges {
+  appsToUnload: InternalApplication[];
+  appsToUnmount: InternalApplication[];
+  appsToLoad: InternalApplication[];
+  appsToMount: InternalApplication[];
+}
+
+export function getAppChanges(): AppChanges {
+  const appsToUnload: InternalApplication[] = [],
+    appsToUnmount: InternalApplication[] = [],
+    appsToLoad: InternalApplication[] = [],
+    appsToMount: InternalApplication[] = [];
 
   // We re-attempt to download applications in LOAD_ERROR after a timeout of 200 milliseconds
-  const currentTime = new Date().getTime();
+  const currentTime: number = new Date().getTime();
 
   apps.forEach((app) => {
     const appShouldBeActive =
@@ -71,31 +88,31 @@ export function getAppChanges() {
   return { appsToUnload, appsToUnmount, appsToLoad, appsToMount };
 }
 
-export function getMountedApps() {
+export function getMountedApps(): string[] {
   return apps.filter(isActive).map(toName);
 }
 
-export function getAppNames() {
+export function getAppNames(): string[] {
   return apps.map(toName);
 }
 
 // used in devtools, not (currently) exposed as a single-spa API
-export function getRawAppData() {
+export function getRawAppData(): InternalApplication[] {
   return [...apps];
 }
 
-export function getAppStatus(appName) {
-  const app = find(apps, (app) => toName(app) === appName);
+export function getAppStatus(appName): AppOrParcelStatus {
+  const app = apps.find((app) => toName(app) === appName);
   return app ? app.status : null;
 }
 
-let startWarningInitialized = false;
+let startWarningInitialized: boolean = false;
 
-export function registerApplication(
-  appNameOrConfig,
-  appOrLoadApp,
-  activeWhen,
-  customProps
+export function registerApplication<ExtraProps extends CustomProps = {}>(
+  appNameOrConfig: string | RegisterApplicationConfig,
+  appOrLoadApp: Application,
+  activeWhen: Activity,
+  customProps?: ExtraProps | CustomPropsFn<ExtraProps>
 ) {
   const registration = sanitizeArguments(
     appNameOrConfig,
@@ -131,7 +148,7 @@ export function registerApplication(
     );
 
   apps.push(
-    assign(
+    Object.assign(
       {
         loadErrorTime: null,
         status: NOT_LOADED,
@@ -153,11 +170,13 @@ export function registerApplication(
   }
 }
 
-export function checkActivityFunctions(location = window.location) {
+export function checkActivityFunctions(
+  location: Location = window.location
+): string[] {
   return apps.filter((app) => app.activeWhen(location)).map(toName);
 }
 
-export function unregisterApplication(appName) {
+export function unregisterApplication(appName: string): Promise<void> {
   if (apps.filter((app) => toName(app) === appName).length === 0) {
     throw Error(
       formatErrorMessage(
@@ -180,7 +199,10 @@ export function unregisterApplication(appName) {
   });
 }
 
-export function unloadApplication(appName, opts = { waitForUnmount: false }) {
+export function unloadApplication(
+  appName: string,
+  opts: { waitForUnmount: boolean } = { waitForUnmount: false }
+): Promise<void> {
   if (typeof appName !== "string") {
     throw Error(
       formatErrorMessage(
@@ -189,7 +211,7 @@ export function unloadApplication(appName, opts = { waitForUnmount: false }) {
       )
     );
   }
-  const app = find(apps, (App) => toName(App) === appName);
+  const app = apps.find((app) => toName(app) === appName);
   if (!app) {
     throw Error(
       formatErrorMessage(
@@ -210,7 +232,7 @@ export function unloadApplication(appName, opts = { waitForUnmount: false }) {
       return appUnloadInfo.promise;
     } else {
       // We're the first ones wanting the app to be resolved.
-      const promise = new Promise((resolve, reject) => {
+      const promise = new Promise<void>((resolve, reject) => {
         addAppToUnload(app, () => promise, resolve, reject);
       });
       return promise;
@@ -237,14 +259,18 @@ export function unloadApplication(appName, opts = { waitForUnmount: false }) {
   }
 }
 
-function immediatelyUnloadApp(app, resolve, reject) {
+function immediatelyUnloadApp(
+  app: InternalApplication,
+  resolve: (value?: any) => void,
+  reject: (value?: any) => void
+): void {
   Promise.resolve()
     .then(() => {
       // Before unmounting the application, we first must wait for it to finish mounting
       // Otherwise, the test for issue 871 in unregister-application.spec.js fails because
       // the application isn't really unmounted.
       if (
-        find(checkActivityFunctions(), (activeApp) => activeApp === toName(app))
+        checkActivityFunctions().find((activeApp) => activeApp === toName(app))
       ) {
         return triggerAppChange();
       }
@@ -264,11 +290,11 @@ function immediatelyUnloadApp(app, resolve, reject) {
 }
 
 function validateRegisterWithArguments(
-  name,
-  appOrLoadApp,
-  activeWhen,
-  customProps
-) {
+  name: string,
+  appOrLoadApp: Application,
+  activeWhen: Activity,
+  customProps?: CustomProps | CustomPropsFn
+): void {
   if (typeof name !== "string" || name.length === 0)
     throw Error(
       formatErrorMessage(
@@ -306,7 +332,9 @@ function validateRegisterWithArguments(
     );
 }
 
-export function validateRegisterWithConfig(config) {
+export function validateRegisterWithConfig(
+  config: Partial<RegisterApplicationConfig>
+): void {
   if (Array.isArray(config) || config === null)
     throw Error(
       formatErrorMessage(
@@ -373,7 +401,7 @@ export function validateRegisterWithConfig(config) {
     );
 }
 
-function validCustomProps(customProps) {
+function validCustomProps(customProps: any): boolean {
   return (
     !customProps ||
     typeof customProps === "function" ||
@@ -383,27 +411,36 @@ function validCustomProps(customProps) {
   );
 }
 
-function sanitizeArguments(
-  appNameOrConfig,
-  appOrLoadApp,
-  activeWhen,
-  customProps
-) {
+interface ApplicationRegistration {
+  name: string;
+  loadApp: Application;
+  activeWhen: ActivityFn;
+  customProps?: CustomProps;
+}
+
+function sanitizeArguments<ExtraProps extends CustomProps = {}>(
+  appNameOrConfig: string | RegisterApplicationConfig,
+  appOrLoadApp: Application,
+  activeWhen: Activity,
+  customProps?: ExtraProps | CustomPropsFn<ExtraProps>
+): ApplicationRegistration {
   const usingObjectAPI = typeof appNameOrConfig === "object";
 
-  const registration = {
-    name: null,
-    loadApp: null,
-    activeWhen: null,
-    customProps: null,
+  let unsanitizedRegistration: {
+    name: string;
+    app: Application;
+    activeWhen: Activity;
+    customProps: CustomProps;
   };
 
   if (usingObjectAPI) {
     validateRegisterWithConfig(appNameOrConfig);
-    registration.name = appNameOrConfig.name;
-    registration.loadApp = appNameOrConfig.app;
-    registration.activeWhen = appNameOrConfig.activeWhen;
-    registration.customProps = appNameOrConfig.customProps;
+    unsanitizedRegistration = {
+      name: appNameOrConfig.name,
+      app: appNameOrConfig.app,
+      activeWhen: appNameOrConfig.activeWhen,
+      customProps: appNameOrConfig.customProps,
+    };
   } else {
     validateRegisterWithArguments(
       appNameOrConfig,
@@ -411,20 +448,25 @@ function sanitizeArguments(
       activeWhen,
       customProps
     );
-    registration.name = appNameOrConfig;
-    registration.loadApp = appOrLoadApp;
-    registration.activeWhen = activeWhen;
-    registration.customProps = customProps;
+    unsanitizedRegistration = {
+      name: appNameOrConfig,
+      app: appOrLoadApp,
+      activeWhen,
+      customProps,
+    };
   }
 
-  registration.loadApp = sanitizeLoadApp(registration.loadApp);
-  registration.customProps = sanitizeCustomProps(registration.customProps);
-  registration.activeWhen = sanitizeActiveWhen(registration.activeWhen);
-
-  return registration;
+  return {
+    name: unsanitizedRegistration.name,
+    loadApp: sanitizeLoadApp(unsanitizedRegistration.app),
+    customProps: sanitizeCustomProps(unsanitizedRegistration.customProps),
+    activeWhen: sanitizeActiveWhen(unsanitizedRegistration.activeWhen),
+  };
 }
 
-function sanitizeLoadApp(loadApp) {
+function sanitizeLoadApp<ExtraProps extends CustomProps = {}>(
+  loadApp: Application
+): (config: ExtraProps & AppProps) => Promise<LifeCycles<ExtraProps>> {
   if (typeof loadApp !== "function") {
     return () => Promise.resolve(loadApp);
   }
@@ -432,26 +474,32 @@ function sanitizeLoadApp(loadApp) {
   return loadApp;
 }
 
-function sanitizeCustomProps(customProps) {
+function sanitizeCustomProps(customProps?: CustomProps): CustomProps {
   return customProps ? customProps : {};
 }
 
-function sanitizeActiveWhen(activeWhen) {
-  let activeWhenArray = Array.isArray(activeWhen) ? activeWhen : [activeWhen];
-  activeWhenArray = activeWhenArray.map((activeWhenOrPath) =>
-    typeof activeWhenOrPath === "function"
-      ? activeWhenOrPath
-      : pathToActiveWhen(activeWhenOrPath)
+function sanitizeActiveWhen(activeWhen: Activity): ActivityFn {
+  const activeWhenArray: (ActivityFn | string)[] = Array.isArray(activeWhen)
+    ? activeWhen
+    : [activeWhen];
+  const activityFnArray: ActivityFn[] = activeWhenArray.map(
+    (activeWhenOrPath) =>
+      typeof activeWhenOrPath === "function"
+        ? activeWhenOrPath
+        : pathToActiveWhen(activeWhenOrPath, false)
   );
 
   return (location) =>
-    activeWhenArray.some((activeWhen) => activeWhen(location));
+    activityFnArray.some((activeWhen) => activeWhen(location));
 }
 
-export function pathToActiveWhen(path, exactMatch) {
+export function pathToActiveWhen(
+  path: string,
+  exactMatch: boolean
+): ActivityFn {
   const regex = toDynamicPathValidatorRegex(path, exactMatch);
 
-  return (location) => {
+  return (location: Location) => {
     // compatible with IE10
     let origin = location.origin;
     if (!origin) {
@@ -465,10 +513,10 @@ export function pathToActiveWhen(path, exactMatch) {
   };
 }
 
-function toDynamicPathValidatorRegex(path, exactMatch) {
-  let lastIndex = 0,
-    inDynamic = false,
-    regexStr = "^";
+function toDynamicPathValidatorRegex(path: string, exactMatch: boolean) {
+  let lastIndex: number = 0,
+    inDynamic: boolean = false,
+    regexStr: string = "^";
 
   if (path[0] !== "/") {
     path = "/" + path;
