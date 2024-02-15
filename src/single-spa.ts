@@ -45,6 +45,8 @@ if (isInBrowser && window.__SINGLE_SPA_DEVTOOLS__) {
 
 declare global {
   interface Window {
-    __SINGLE_SPA_DEVTOOLS__: devtools;
+    __SINGLE_SPA_DEVTOOLS__: {
+      exposedMethods: typeof devtools;
+    };
   }
 }

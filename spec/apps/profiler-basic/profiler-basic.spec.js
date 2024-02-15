@@ -2,7 +2,7 @@ import * as singleSpa from "single-spa";
 import {
   clearProfilerData,
   getProfilerData,
-} from "../../../src/devtools/profiler.js";
+} from "../../../src/devtools/profiler";
 
 describe(`profiler basics`, () => {
   let app,
