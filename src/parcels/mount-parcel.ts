@@ -4,9 +4,10 @@ import {
   CustomProps,
   Parcel,
   ParcelCustomProps,
-  InternalParcel,
   ParcelConfigObject,
   ParcelConfig,
+  ParcelOwner,
+  InternalParcel,
 } from "../lifecycles/lifecycle.helpers";
 import {
   NOT_BOOTSTRAPPED,
@@ -15,7 +16,6 @@ import {
   LOADING_SOURCE_CODE,
   SKIP_BECAUSE_BROKEN,
   toName,
-  InternalApplication,
 } from "../applications/app.helpers";
 import { toBootstrapPromise } from "../lifecycles/bootstrap";
 import { toMountPromise } from "../lifecycles/mount";
@@ -23,7 +23,6 @@ import { toUpdatePromise } from "../lifecycles/update";
 import { toUnmountPromise } from "../lifecycles/unmount";
 import { ensureValidAppTimeouts } from "../applications/timeouts";
 import { formatErrorMessage } from "../applications/app-errors";
-import { isParcel } from "../applications/app.helpers";
 
 let parcelCount = 0;
 const rootParcels = { parcels: {} };
@@ -37,7 +36,7 @@ export function mountRootParcel(
 }
 
 export function mountParcel(
-  this: InternalParcel | InternalApplication,
+  this: ParcelOwner,
   config: ParcelConfig,
   customProps: ParcelCustomProps
 ) {
