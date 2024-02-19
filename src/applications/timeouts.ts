@@ -184,7 +184,7 @@ export function reasonableTime(
             //don't resolve or reject, we're waiting this one out
           }
         } else if (!errored) {
-          const numWarnings: number = shouldError as number;
+          const numWarnings: number = shouldError;
           const numMillis = numWarnings * warningPeriod;
           console.warn(errMsg);
           if (numMillis + warningPeriod < timeoutConfig.millis) {
@@ -202,10 +202,10 @@ export function ensureValidAppTimeouts(
   const result = {};
 
   for (let key in globalTimeoutConfig) {
-    result[key] = assign(
+    result[key] = Object.assign(
       {},
       globalTimeoutConfig[key],
-      (timeouts && timeouts[key]) || {}
+      timeouts?.[key] ?? {}
     );
   }
 

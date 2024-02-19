@@ -401,7 +401,7 @@ export function validateRegisterWithConfig(
     );
 }
 
-function validCustomProps(customProps: any): boolean {
+function validCustomProps(customProps: unknown): boolean {
   return (
     !customProps ||
     typeof customProps === "function" ||
@@ -430,7 +430,7 @@ function sanitizeArguments<ExtraProps extends CustomProps = {}>(
     name: string;
     app: Application;
     activeWhen: Activity;
-    customProps: CustomProps;
+    customProps: CustomProps | CustomPropsFn<CustomProps>;
   };
 
   if (usingObjectAPI) {
