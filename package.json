@@ -8,16 +8,34 @@
   "exports": {
     ".": {
       "development": {
-        "import": "./lib/es2015/esm/single-spa.dev.js",
-        "require": "./lib/es2015/umd/single-spa.dev.cjs"
+        "import": {
+          "types": "./typings/single-spa.d.ts",
+          "default": "./lib/es2015/esm/single-spa.dev.js"
+        },
+        "require": {
+          "types": "./typings/single-spa.d.cts",
+          "default": "./lib/es2015/umd/single-spa.dev.cjs"
+        }
       },
       "production": {
-        "import": "./lib/es2015/esm/single-spa.min.js",
-        "require": "./lib/es2015/umd/single-spa.min.cjs"
+        "import": {
+          "types": "./typings/single-spa.d.ts",
+          "default": "./lib/es2015/esm/single-spa.min.js"
+        },
+        "require": {
+          "types": "./typings/single-spa.d.cts",
+          "default": "./lib/es2015/umd/single-spa.min.cjs"
+        }
       },
       "default": {
-        "import": "./lib/es2015/esm/single-spa.min.js",
-        "require": "./lib/es2015/umd/single-spa.min.cjs"
+        "import": {
+          "types": "./typings/single-spa.d.ts",
+          "default": "./lib/es2015/esm/single-spa.min.js"
+        },
+        "require": {
+          "types": "./typings/single-spa.d.cts",
+          "default": "./lib/es2015/umd/single-spa.min.cjs"
+        }
       }
     },
     "./package.json": "./package.json",
@@ -54,7 +72,8 @@
   },
   "files": [
     "lib",
-    "typings/single-spa.d.ts"
+    "typings/single-spa.d.ts",
+    "typings/single-spa.d.cts"
   ],
   "homepage": "https://single-spa.js.org",
   "repository": "https://github.com/single-spa/single-spa",
