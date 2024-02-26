@@ -1,8 +1,24 @@
-import { objectType, toName } from "./app.helpers";
+import { AppOrParcel } from "../lifecycles/lifecycle.helpers";
+import {
+  AppOrParcelStatus,
+  InternalApplication,
+  objectType,
+  toName,
+} from "./app.helpers";
 
-let errorHandlers = [];
+let errorHandlers: ErrorHandler[] = [];
 
-export function handleAppError(err, app, newStatus) {
+type SingleSpaError = Error & {
+  appOrParcelName: string;
+};
+
+type ErrorHandler = (err: SingleSpaError) => any;
+
+export function handleAppError(
+  err: Error,
+  app: InternalApplication,
+  newStatus: AppOrParcelStatus
+) {
   const transformedErr = transformErr(err, app, newStatus);
 
   if (errorHandlers.length) {
@@ -55,12 +71,16 @@ export function formatErrorMessage(code, msg, ...args) {
   }`;
 }
 
-export function transformErr(ogErr, appOrParcel, newStatus) {
+export function transformErr(
+  ogErr: Error,
+  appOrParcel: AppOrParcel,
+  newStatus: AppOrParcelStatus
+): SingleSpaError {
   const errPrefix = `${objectType(appOrParcel)} '${toName(
     appOrParcel
   )}' died in status ${appOrParcel.status}: `;
 
-  let result;
+  let result: Error;
 
   if (ogErr instanceof Error) {
     try {
@@ -91,11 +111,12 @@ export function transformErr(ogErr, appOrParcel, newStatus) {
     }
   }
 
-  result.appOrParcelName = toName(appOrParcel);
+  const singleSpaErr = result as SingleSpaError;
+  singleSpaErr.appOrParcelName = toName(appOrParcel);
 
   // We set the status after transforming the error so that the error message
   // references the state the application was in before the status change.
   appOrParcel.status = newStatus;
 
-  return result;
+  return singleSpaErr;
 }

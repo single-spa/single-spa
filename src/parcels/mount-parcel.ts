@@ -3,13 +3,11 @@ import {
   flattenFnArray,
   CustomProps,
   Parcel,
-  ApplicationObject,
-  ParcelOwner,
   ParcelCustomProps,
-  InternalParcel,
   ParcelConfigObject,
   ParcelConfig,
-  ParcelMap,
+  ParcelOwner,
+  InternalParcel,
 } from "../lifecycles/lifecycle.helpers";
 import {
   NOT_BOOTSTRAPPED,
@@ -25,10 +23,9 @@ import { toUpdatePromise } from "../lifecycles/update";
 import { toUnmountPromise } from "../lifecycles/unmount";
 import { ensureValidAppTimeouts } from "../applications/timeouts";
 import { formatErrorMessage } from "../applications/app-errors";
-import { isParcel } from "../applications/app.helpers";
 
 let parcelCount = 0;
-const rootParcels = { parcels: {} };
+const rootParcels: ParcelOwner = { name: "rootParcels", parcels: {} };
 
 // This is a public api, exported to users of single-spa
 export function mountRootParcel(
@@ -39,7 +36,7 @@ export function mountRootParcel(
 }
 
 export function mountParcel(
-  this: InternalParcel | ApplicationObject,
+  this: ParcelOwner,
   config: ParcelConfig,
   customProps: ParcelCustomProps
 ) {

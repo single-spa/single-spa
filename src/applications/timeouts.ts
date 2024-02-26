@@ -2,10 +2,25 @@ import { assign } from "../utils/assign";
 import { getProps } from "../lifecycles/prop.helpers";
 import { objectType, toName } from "./app.helpers";
 import { formatErrorMessage } from "./app-errors";
+import { AppOrParcel } from "../lifecycles/lifecycle.helpers";
 
-const defaultWarningMillis = 1000;
+export interface AppOrParcelTimeouts {
+  bootstrap: Timeout;
+  mount: Timeout;
+  unmount: Timeout;
+  unload: Timeout;
+  update: Timeout;
+}
 
-const globalTimeoutConfig = {
+export interface Timeout {
+  millis: number;
+  dieOnTimeout: boolean;
+  warningMillis: number;
+}
+
+const defaultWarningMillis: number = 1000;
+
+const globalTimeoutConfig: AppOrParcelTimeouts = {
   bootstrap: {
     millis: 4000,
     dieOnTimeout: false,
@@ -33,7 +48,11 @@ const globalTimeoutConfig = {
   },
 };
 
-export function setBootstrapMaxTime(time, dieOnTimeout, warningMillis) {
+export function setBootstrapMaxTime(
+  time: number,
+  dieOnTimeout: boolean,
+  warningMillis: number
+): void {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
@@ -51,7 +70,11 @@ export function setBootstrapMaxTime(time, dieOnTimeout, warningMillis) {
   };
 }
 
-export function setMountMaxTime(time, dieOnTimeout, warningMillis) {
+export function setMountMaxTime(
+  time: number,
+  dieOnTimeout: boolean,
+  warningMillis: number
+): void {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
@@ -69,7 +92,11 @@ export function setMountMaxTime(time, dieOnTimeout, warningMillis) {
   };
 }
 
-export function setUnmountMaxTime(time, dieOnTimeout, warningMillis) {
+export function setUnmountMaxTime(
+  time: number,
+  dieOnTimeout: boolean,
+  warningMillis: number
+) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
@@ -87,7 +114,11 @@ export function setUnmountMaxTime(time, dieOnTimeout, warningMillis) {
   };
 }
 
-export function setUnloadMaxTime(time, dieOnTimeout, warningMillis) {
+export function setUnloadMaxTime(
+  time: number,
+  dieOnTimeout: boolean,
+  warningMillis: number
+) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
@@ -105,14 +136,17 @@ export function setUnloadMaxTime(time, dieOnTimeout, warningMillis) {
   };
 }
 
-export function reasonableTime(appOrParcel, lifecycle) {
+export function reasonableTime(
+  appOrParcel: AppOrParcel,
+  lifecycle: "bootstrap" | "mount" | "update" | "unmount" | "unload"
+): Promise<any> {
   const timeoutConfig = appOrParcel.timeouts[lifecycle];
   const warningPeriod = timeoutConfig.warningMillis;
   const type = objectType(appOrParcel);
 
   return new Promise((resolve, reject) => {
-    let finished = false;
-    let errored = false;
+    let finished: boolean = false;
+    let errored: boolean = false;
 
     appOrParcel[lifecycle](getProps(appOrParcel))
       .then((val) => {
@@ -139,7 +173,7 @@ export function reasonableTime(appOrParcel, lifecycle) {
       timeoutConfig.millis
     );
 
-    function maybeTimingOut(shouldError) {
+    function maybeTimingOut(shouldError: true | number) {
       if (!finished) {
         if (shouldError === true) {
           errored = true;
@@ -150,7 +184,7 @@ export function reasonableTime(appOrParcel, lifecycle) {
             //don't resolve or reject, we're waiting this one out
           }
         } else if (!errored) {
-          const numWarnings = shouldError;
+          const numWarnings: number = shouldError;
           const numMillis = numWarnings * warningPeriod;
           console.warn(errMsg);
           if (numMillis + warningPeriod < timeoutConfig.millis) {
@@ -162,16 +196,18 @@ export function reasonableTime(appOrParcel, lifecycle) {
   });
 }
 
-export function ensureValidAppTimeouts(timeouts) {
+export function ensureValidAppTimeouts(
+  timeouts: Partial<AppOrParcelTimeouts>
+): AppOrParcelTimeouts {
   const result = {};
 
   for (let key in globalTimeoutConfig) {
-    result[key] = assign(
+    result[key] = Object.assign(
       {},
       globalTimeoutConfig[key],
-      (timeouts && timeouts[key]) || {}
+      timeouts?.[key] ?? {}
     );
   }
 
-  return result;
+  return result as AppOrParcelTimeouts;
 }
