@@ -47,8 +47,8 @@ export function navigateToUrl(obj: NavigateArg): void {
     );
   }
 
-  const current = parseUri(window.location.href);
-  const destination = parseUri(url);
+  const current = new URL(window.location.href);
+  const destination = new URL(url, window.location.href);
 
   if (url.indexOf("#") === 0) {
     window.location.hash = destination.hash;
@@ -234,10 +234,4 @@ if (isInBrowser) {
      */
     window.singleSpaNavigate = navigateToUrl;
   }
-}
-
-function parseUri(str: string): HTMLAnchorElement {
-  const anchor = document.createElement("a");
-  anchor.href = str;
-  return anchor;
 }
