@@ -16,6 +16,6 @@ export function isStarted(): boolean {
   return started;
 }
 
-interface StartOpts {
+export interface StartOpts {
   urlRerouteOnly?: boolean;
 }

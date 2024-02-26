@@ -4,3 +4,4 @@ declare const process: {
     BABEL_ENV: "test" | "undefined";
   };
 };
+declare const __PROFILE__: boolean;
