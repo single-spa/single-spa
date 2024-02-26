@@ -1,10 +1,13 @@
 {
   "name": "single-spa",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "The router for easy microfrontends",
   "main": "lib/es2015/umd/single-spa.min.cjs",
   "types": "typings/single-spa.d.ts",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "development": {
@@ -58,7 +61,7 @@
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "lint": "eslint src",
-    "postinstall": "husky install",
+    "_postinstall": "husky install",
     "prepublishOnly": "pinst --disable && pnpm run build",
     "postpublish": "pinst --enable"
   },
