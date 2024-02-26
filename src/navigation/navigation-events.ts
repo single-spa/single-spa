@@ -8,14 +8,21 @@ import { isInBrowser } from "../utils/runtime-environment";
  * single-spa has ensured that the correct applications are
  * unmounted and mounted.
  */
-const capturedEventListeners = {
+const capturedEventListeners: CapturedEventListeners = {
   hashchange: [],
   popstate: [],
 };
 
+interface CapturedEventListeners {
+  hashchange: ((this: Window, ev: HashChangeEvent) => any)[];
+  popstate: ((this: Window, ev: PopStateEvent) => any)[];
+}
+
 export const routingEventsListeningTo = ["hashchange", "popstate"];
 
-export function navigateToUrl(obj) {
+type NavigateArg = string | HTMLAnchorElement | MouseEvent;
+
+export function navigateToUrl(obj: NavigateArg): void {
   let url;
   if (typeof obj === "string") {
     url = obj;
@@ -23,12 +30,12 @@ export function navigateToUrl(obj) {
     url = this.href;
   } else if (
     obj &&
-    obj.currentTarget &&
-    obj.currentTarget.href &&
-    obj.preventDefault
+    (obj as MouseEvent).currentTarget &&
+    ((obj as MouseEvent).currentTarget as HTMLAnchorElement).href &&
+    (obj as MouseEvent).preventDefault
   ) {
-    url = obj.currentTarget.href;
-    obj.preventDefault();
+    url = ((obj as MouseEvent).currentTarget as HTMLAnchorElement).href;
+    (obj as MouseEvent).preventDefault();
   } else {
     throw Error(
       formatErrorMessage(
@@ -46,6 +53,7 @@ export function navigateToUrl(obj) {
     window.location.hash = destination.hash;
   } else if (current.host !== destination.host && destination.host) {
     if (process.env.BABEL_ENV === "test") {
+      // @ts-ignore
       return { wouldHaveReloadedThePage: true };
     } else {
       window.location.href = url;
@@ -61,7 +69,9 @@ export function navigateToUrl(obj) {
   }
 }
 
-export function callCapturedEventListeners(eventArguments) {
+export function callCapturedEventListeners(
+  eventArguments: [HashChangeEvent | PopStateEvent]
+): void {
   if (eventArguments) {
     const eventType = eventArguments[0].type;
     if (routingEventsListeningTo.indexOf(eventType) >= 0) {
@@ -80,7 +90,7 @@ export function callCapturedEventListeners(eventArguments) {
   }
 }
 
-let urlRerouteOnly;
+let urlRerouteOnly: boolean;
 
 function urlReroute() {
   reroute([], arguments);
