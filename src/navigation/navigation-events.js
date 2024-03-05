@@ -57,7 +57,7 @@ export function navigateToUrl(obj) {
   ) {
     // fix Firefox automatically add hash sign in the end URL
     // if setting window.location.hash to empty string or #
-    if (destination.hash && destination.hash !== "#") {
+    if (destination.hash.length > 0 && destination.hash !== "#") {
       window.location.hash = destination.hash;
     }
   } else {
