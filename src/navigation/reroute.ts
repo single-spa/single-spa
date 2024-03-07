@@ -21,14 +21,22 @@ import {
   MOUNTED,
   NOT_LOADED,
   SKIP_BECAUSE_BROKEN,
+  InternalApplication,
 } from "../applications/app.helpers";
-import { assign } from "../utils/assign";
 import { isInBrowser } from "../utils/runtime-environment";
 import { formatErrorMessage } from "../applications/app-errors";
-import { addProfileEntry } from "../devtools/profiler";
+import { ProfileEntry, addProfileEntry } from "../devtools/profiler";
 
-let appChangeUnderway = false,
-  peopleWaitingOnAppChange = [],
+type EventArguments = [HashChangeEvent | PopStateEvent];
+
+interface WaitingPromises {
+  resolve(value: unknown): void;
+  reject(value: unknown): void;
+  eventArguments?: [HashChangeEvent | PopStateEvent];
+}
+
+let appChangeUnderway: boolean = false,
+  promisesWaitingOnAppChange: WaitingPromises[] = [],
   currentUrl = isInBrowser && window.location.href;
 
 export function triggerAppChange() {
@@ -37,13 +45,13 @@ export function triggerAppChange() {
 }
 
 export function reroute(
-  pendingPromises = [],
-  eventArguments,
-  silentNavigation = false
-) {
+  pendingPromises: WaitingPromises[] = [],
+  eventArguments: EventArguments = undefined,
+  silentNavigation: boolean = false
+): Promise<string[]> {
   if (appChangeUnderway) {
     return new Promise((resolve, reject) => {
-      peopleWaitingOnAppChange.push({
+      promisesWaitingOnAppChange.push({
         resolve,
         reject,
         eventArguments,
@@ -51,7 +59,7 @@ export function reroute(
     });
   }
 
-  let startTime, profilerKind;
+  let startTime: number, profilerKind: ProfileEntry["kind"];
 
   if (__PROFILE__) {
     startTime = performance.now();
@@ -66,10 +74,10 @@ export function reroute(
 
   const { appsToUnload, appsToUnmount, appsToLoad, appsToMount } =
     getAppChanges();
-  let appsThatChanged,
-    cancelPromises = [],
-    oldUrl = currentUrl,
-    newUrl = (currentUrl = window.location.href);
+  let appsThatChanged: InternalApplication[],
+    cancelPromises: Promise<unknown>[] = [],
+    oldUrl: string = currentUrl,
+    newUrl: string = (currentUrl = window.location.href);
 
   if (isStarted()) {
     appChangeUnderway = true;
@@ -84,9 +92,11 @@ export function reroute(
     return loadApps();
   }
 
-  function cancelNavigation(val = true) {
-    const promise =
-      typeof val?.then === "function" ? val : Promise.resolve(val);
+  function cancelNavigation(val: boolean | Promise<boolean> = true) {
+    const promise: Promise<boolean> =
+      typeof (val as Promise<boolean>)?.then === "function"
+        ? (val as Promise<boolean>)
+        : Promise.resolve(val);
     cancelPromises.push(
       promise.catch((err) => {
         console.warn(
@@ -106,7 +116,7 @@ export function reroute(
     );
   }
 
-  function loadApps() {
+  function loadApps(): Promise<string[]> {
     return Promise.resolve().then(() => {
       const loadPromises = appsToLoad.map(toLoadPromise);
       let succeeded;
@@ -146,7 +156,7 @@ export function reroute(
     });
   }
 
-  function performAppChanges() {
+  function performAppChanges(): Promise<string[]> {
     return Promise.resolve().then(() => {
       // https://github.com/single-spa/single-spa/issues/545
       fireSingleSpaEvent(
@@ -162,7 +172,7 @@ export function reroute(
       );
 
       return Promise.all(cancelPromises).then((cancelValues) => {
-        const navigationIsCanceled = cancelValues.some((v) => v);
+        const navigationIsCanceled: boolean = cancelValues.some((v) => v);
 
         if (navigationIsCanceled) {
           // Change url back to old url, without triggering the normal single-spa reroute
@@ -194,17 +204,21 @@ export function reroute(
           return reroute(pendingPromises, eventArguments, true);
         }
 
-        const unloadPromises = appsToUnload.map(toUnloadPromise);
+        const unloadPromises: Promise<InternalApplication>[] =
+          appsToUnload.map(toUnloadPromise);
 
         const unmountUnloadPromises = appsToUnmount
           .map(toUnmountPromise)
-          .map((unmountPromise) => unmountPromise.then(toUnloadPromise));
+          .map((unmountPromise: Promise<InternalApplication>) =>
+            unmountPromise.then(toUnloadPromise)
+          );
 
-        const allUnmountPromises = unmountUnloadPromises.concat(unloadPromises);
+        const allUnmountPromises: Promise<InternalApplication>[] =
+          unmountUnloadPromises.concat(unloadPromises);
 
         const unmountAllPromise = Promise.all(allUnmountPromises);
 
-        let unmountFinishedTime;
+        let unmountFinishedTime: number;
 
         unmountAllPromise.then(
           () => {
@@ -244,18 +258,19 @@ export function reroute(
         /* We load and bootstrap apps while other apps are unmounting, but we
          * wait to mount the app until all apps are finishing unmounting
          */
-        const loadThenMountPromises = appsToLoad.map((app) => {
-          return toLoadPromise(app).then((app) =>
-            tryToBootstrapAndMount(app, unmountAllPromise)
-          );
-        });
+        const loadThenMountPromises: Promise<InternalApplication>[] =
+          appsToLoad.map((app) => {
+            return toLoadPromise(app).then((app) =>
+              tryToBootstrapAndMount(app, unmountAllPromise)
+            );
+          });
 
         /* These are the apps that are already bootstrapped and just need
          * to be mounted. They each wait for all unmounting apps to finish up
          * before they mount.
          */
-        const mountPromises = appsToMount
-          .filter((appToMount) => appsToLoad.indexOf(appToMount) < 0)
+        const mountPromises: Promise<InternalApplication>[] = appsToMount
+          .filter((appToMount) => !appsToLoad.includes(appToMount))
           .map((appToMount) => {
             return tryToBootstrapAndMount(appToMount, unmountAllPromise);
           });
@@ -276,7 +291,6 @@ export function reroute(
                 pendingPromises.forEach((promise) => promise.reject(err));
                 throw err;
               })
-              .then(finishUpAndReturn)
               .then(
                 () => {
                   if (__PROFILE__) {
@@ -304,13 +318,14 @@ export function reroute(
 
                   throw err;
                 }
-              );
+              )
+              .then(finishUpAndReturn);
           });
       });
     });
   }
 
-  function finishUpAndReturn() {
+  function finishUpAndReturn(): string[] {
     const returnValue = getMountedApps();
     pendingPromises.forEach((promise) => promise.resolve(returnValue));
 
@@ -336,12 +351,12 @@ export function reroute(
      */
     appChangeUnderway = false;
 
-    if (peopleWaitingOnAppChange.length > 0) {
+    if (promisesWaitingOnAppChange.length > 0) {
       /* While we were rerouting, someone else triggered another reroute that got queued.
        * So we need reroute again.
        */
-      const nextPendingPromises = peopleWaitingOnAppChange;
-      peopleWaitingOnAppChange = [];
+      const nextPendingPromises = promisesWaitingOnAppChange;
+      promisesWaitingOnAppChange = [];
       reroute(nextPendingPromises);
     }
 
@@ -366,7 +381,10 @@ export function reroute(
     }
   }
 
-  function getCustomEventDetail(isBeforeChanges = false, extraProperties) {
+  function getCustomEventDetail(
+    isBeforeChanges: boolean = false,
+    extraProperties?: Object
+  ): CustomEventInit {
     const newAppStatuses = {};
     const appsByNewStatus = {
       // for apps that were mounted
@@ -407,12 +425,15 @@ export function reroute(
     };
 
     if (extraProperties) {
-      assign(result.detail, extraProperties);
+      Object.assign(result.detail, extraProperties);
     }
 
     return result;
 
-    function addApp(app, status) {
+    function addApp(
+      app: InternalApplication,
+      status?: InternalApplication["status"]
+    ) {
       const appName = toName(app);
       status = status || getAppStatus(appName);
       newAppStatuses[appName] = status;
@@ -422,7 +443,7 @@ export function reroute(
     }
   }
 
-  function fireSingleSpaEvent(name, eventProperties) {
+  function fireSingleSpaEvent(name: string, eventProperties: CustomEventInit) {
     // During silent navigation (caused by navigation cancelation), we should not
     // fire any single-spa events
     if (!silentNavigation) {
@@ -440,7 +461,10 @@ export function reroute(
  * twice if that application should be active before bootstrapping and mounting.
  * https://github.com/single-spa/single-spa/issues/524
  */
-function tryToBootstrapAndMount(app, unmountAllPromise) {
+function tryToBootstrapAndMount(
+  app: InternalApplication,
+  unmountAllPromise: Promise<unknown>
+): Promise<InternalApplication> {
   if (shouldBeActive(app)) {
     return toBootstrapPromise(app).then((app) =>
       unmountAllPromise.then(() =>

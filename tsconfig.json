@@ -1,10 +1,10 @@
 {
   "files": ["src/single-spa.ts"],
-  "include": ["src/declarations.d.ts"],
+  "include": ["src/declarations.d.ts", "src/window-globals.d.ts"],
   "compilerOptions": {
     "outDir": "typings",
     "emitDeclarationOnly": true,
     "declaration": true,
-    "lib": ["dom", "es5", "es2015"]
+    "lib": ["dom", "es5", "es2020"]
   }
 }

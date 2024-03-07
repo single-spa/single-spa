@@ -1,6 +1,6 @@
 let profileEntries: ProfileEntry[] = [];
 
-interface ProfileEntry {
+export interface ProfileEntry {
   type: "application" | "parcel" | "routing";
   name: string;
   kind:

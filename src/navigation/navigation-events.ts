@@ -2,20 +2,28 @@ import { reroute } from "./reroute";
 import { find } from "../utils/find";
 import { formatErrorMessage } from "../applications/app-errors";
 import { isInBrowser } from "../utils/runtime-environment";
+import { StartOpts } from "../start";
 
 /* We capture navigation event listeners so that we can make sure
  * that application navigation listeners are not called until
  * single-spa has ensured that the correct applications are
  * unmounted and mounted.
  */
-const capturedEventListeners = {
+const capturedEventListeners: CapturedEventListeners = {
   hashchange: [],
   popstate: [],
 };
 
+interface CapturedEventListeners {
+  hashchange: ((this: Window, ev: HashChangeEvent) => any)[];
+  popstate: ((this: Window, ev: PopStateEvent) => any)[];
+}
+
 export const routingEventsListeningTo = ["hashchange", "popstate"];
 
-export function navigateToUrl(obj) {
+type NavigateArg = string | HTMLAnchorElement | MouseEvent;
+
+export function navigateToUrl(obj: NavigateArg): void {
   let url;
   if (typeof obj === "string") {
     url = obj;
@@ -23,12 +31,12 @@ export function navigateToUrl(obj) {
     url = this.href;
   } else if (
     obj &&
-    obj.currentTarget &&
-    obj.currentTarget.href &&
-    obj.preventDefault
+    "currentTarget" in obj &&
+    "href" in obj.currentTarget &&
+    "preventDefault" in obj
   ) {
-    url = obj.currentTarget.href;
-    obj.preventDefault();
+    url = ((obj as MouseEvent).currentTarget as HTMLAnchorElement).href;
+    (obj as MouseEvent).preventDefault();
   } else {
     throw Error(
       formatErrorMessage(
@@ -39,13 +47,14 @@ export function navigateToUrl(obj) {
     );
   }
 
-  const current = parseUri(window.location.href);
-  const destination = parseUri(url);
+  const current = new URL(window.location.href);
+  const destination = new URL(url, window.location.href);
 
   if (url.indexOf("#") === 0) {
     window.location.hash = destination.hash;
   } else if (current.host !== destination.host && destination.host) {
     if (process.env.BABEL_ENV === "test") {
+      // @ts-expect-error test-only return value
       return { wouldHaveReloadedThePage: true };
     } else {
       window.location.href = url;
@@ -61,7 +70,9 @@ export function navigateToUrl(obj) {
   }
 }
 
-export function callCapturedEventListeners(eventArguments) {
+export function callCapturedEventListeners(
+  eventArguments: [HashChangeEvent | PopStateEvent]
+): void {
   if (eventArguments) {
     const eventType = eventArguments[0].type;
     if (routingEventsListeningTo.indexOf(eventType) >= 0) {
@@ -80,13 +91,18 @@ export function callCapturedEventListeners(eventArguments) {
   }
 }
 
-let urlRerouteOnly;
+let urlRerouteOnly: boolean;
 
-function urlReroute() {
-  reroute([], arguments);
+function urlReroute(evt: HashChangeEvent | PopStateEvent) {
+  reroute([], [evt]);
 }
 
-function patchedUpdateState(updateState, methodName) {
+type UpdateState = (data: any, unused: string, url?: string | URL) => void;
+
+function patchedUpdateState(
+  updateState: UpdateState,
+  methodName: "pushState" | "replaceState"
+) {
   return function () {
     const urlBefore = window.location.href;
     const result = updateState.apply(this, arguments);
@@ -105,33 +121,37 @@ function patchedUpdateState(updateState, methodName) {
   };
 }
 
-function createPopStateEvent(state, originalMethodName) {
-  // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
-  // We need a popstate event even though the browser doesn't do one by default when you call replaceState, so that
-  // all the applications can reroute. We explicitly identify this extraneous event by setting singleSpa=true and
-  // singleSpaTrigger=<pushState|replaceState> on the event instance.
-  let evt;
-  try {
-    evt = new PopStateEvent("popstate", { state });
-  } catch (err) {
-    // IE 11 compatibility https://github.com/single-spa/single-spa/issues/299
-    // https://docs.microsoft.com/en-us/openspecs/ie_standards/ms-html5e/bd560f47-b349-4d2c-baa8-f1560fb489dd
-    evt = document.createEvent("PopStateEvent");
-    evt.initPopStateEvent("popstate", false, false, state);
-  }
-  evt.singleSpa = true;
-  evt.singleSpaTrigger = originalMethodName;
-  return evt;
+interface SingleSpaPopStateEvent extends PopStateEvent {
+  singleSpa: boolean;
+  singleSpaTrigger: string;
 }
 
-export let originalReplaceState = null;
+function createPopStateEvent(
+  state,
+  originalMethodName
+): SingleSpaPopStateEvent {
+  // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
+  // We need a popstate event even though the browser doesn't fire one by default when you call replaceState, so that
+  // all the applications can reroute. We explicitly identify this extraneous event by setting singleSpa=true and
+  // singleSpaTrigger=<pushState|replaceState> on the event instance.
+  let evt = new PopStateEvent("popstate", { state });
+  (evt as SingleSpaPopStateEvent).singleSpa = true;
+  (evt as SingleSpaPopStateEvent).singleSpaTrigger = originalMethodName;
+  return evt as SingleSpaPopStateEvent;
+}
 
-let historyApiIsPatched = false;
+export let originalReplaceState: (
+  data: any,
+  unused: string,
+  url?: string | URL
+) => void = null;
+
+let historyApiIsPatched: boolean = false;
 
 // We patch the history API so single-spa is notified of all calls to pushState/replaceState.
 // We patch addEventListener/removeEventListener so we can capture all popstate/hashchange event listeners,
 // and delay calling them until single-spa has finished mounting/unmounting applications
-export function patchHistoryApi(opts) {
+export function patchHistoryApi(opts?: StartOpts) {
   if (historyApiIsPatched) {
     throw Error(
       formatErrorMessage(
@@ -155,7 +175,7 @@ export function patchHistoryApi(opts) {
   window.addEventListener("hashchange", urlReroute);
   window.addEventListener("popstate", urlReroute);
 
-  // Monkeypatch addEventListener so that we can ensure correct timing
+  // Patch addEventListener so that we can ensure correct timing
   const originalAddEventListener = window.addEventListener;
   const originalRemoveEventListener = window.removeEventListener;
   window.addEventListener = function (eventName, fn) {
@@ -214,10 +234,4 @@ if (isInBrowser) {
      */
     window.singleSpaNavigate = navigateToUrl;
   }
-}
-
-function parseUri(str) {
-  const anchor = document.createElement("a");
-  anchor.href = str;
-  return anchor;
 }
