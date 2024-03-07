@@ -31,9 +31,9 @@ export function navigateToUrl(obj: NavigateArg): void {
     url = this.href;
   } else if (
     obj &&
-    (obj as MouseEvent).currentTarget &&
-    ((obj as MouseEvent).currentTarget as HTMLAnchorElement).href &&
-    (obj as MouseEvent).preventDefault
+    "currentTarget" in obj &&
+    "href" in obj.currentTarget &&
+    "preventDefault" in obj
   ) {
     url = ((obj as MouseEvent).currentTarget as HTMLAnchorElement).href;
     (obj as MouseEvent).preventDefault();
@@ -54,7 +54,7 @@ export function navigateToUrl(obj: NavigateArg): void {
     window.location.hash = destination.hash;
   } else if (current.host !== destination.host && destination.host) {
     if (process.env.BABEL_ENV === "test") {
-      // @ts-ignore
+      // @ts-expect-error test-only return value
       return { wouldHaveReloadedThePage: true };
     } else {
       window.location.href = url;
