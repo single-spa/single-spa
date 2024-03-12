@@ -6,7 +6,7 @@
 
 # single-spa
 
-[Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/zt-21skfl7l3-leF7JkoKwKaRIPX~N6jXJQ)
+[Join the chat on Slack](https://join.slack.com/t/single-spa/shared_invite/zt-2efw13fg4-oJgemeyCUJv4~JrQlYttnA)
 
 [Donate to this project](https://opencollective.com/single-spa)
 
