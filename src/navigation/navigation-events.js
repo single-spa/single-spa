@@ -82,6 +82,8 @@ export function callCapturedEventListeners(eventArguments) {
 
 let urlRerouteOnly;
 
+export let lastUrlChange = isInBrowser ? window.performance.now() : null;
+
 function urlReroute() {
   reroute([], arguments);
 }
@@ -92,7 +94,14 @@ function patchedUpdateState(updateState, methodName) {
     const result = updateState.apply(this, arguments);
     const urlAfter = window.location.href;
 
-    if (!urlRerouteOnly || urlBefore !== urlAfter) {
+    const urlChange = urlBefore !== urlAfter;
+
+    if (urlChange) {
+      // We unfortunately have to track the time
+      lastUrlChange = window.performance.now();
+    }
+
+    if (!urlRerouteOnly || urlChange) {
       // fire an artificial popstate event so that
       // single-spa applications know about routing that
       // occurs in a different application
