@@ -7,11 +7,14 @@ import {
 } from "../applications/app.helpers";
 import { transformErr, formatErrorMessage } from "../applications/app-errors";
 import { reasonableTime } from "../applications/timeouts";
-import { addProfileEntry } from "../devtools/profiler";
+import { ProfileEntry, addProfileEntry } from "../devtools/profiler";
+import { LoadedAppOrParcel } from "./lifecycle.helpers";
 
-export function toUpdatePromise(appOrParcel) {
+export function toUpdatePromise(
+  appOrParcel: LoadedAppOrParcel
+): Promise<LoadedAppOrParcel> {
   return Promise.resolve().then(() => {
-    let startTime, profileEventType;
+    let startTime: number, profileEventType: ProfileEntry["type"];
 
     if (__PROFILE__) {
       profileEventType = isParcel(appOrParcel) ? "parcel" : "application";

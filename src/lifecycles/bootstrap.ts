@@ -8,10 +8,14 @@ import {
 } from "../applications/app.helpers";
 import { reasonableTime } from "../applications/timeouts";
 import { handleAppError, transformErr } from "../applications/app-errors";
-import { addProfileEntry } from "../devtools/profiler";
+import { ProfileEntry, addProfileEntry } from "../devtools/profiler";
+import { LoadedAppOrParcel } from "./lifecycle.helpers";
 
-export function toBootstrapPromise(appOrParcel, hardFail) {
-  let startTime, profileEventType;
+export function toBootstrapPromise(
+  appOrParcel: LoadedAppOrParcel,
+  hardFail: boolean = false
+): Promise<LoadedAppOrParcel> {
+  let startTime: number, profileEventType: ProfileEntry["type"];
 
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== NOT_BOOTSTRAPPED) {
@@ -53,7 +57,7 @@ export function toBootstrapPromise(appOrParcel, hardFail) {
       });
   });
 
-  function successfulBootstrap() {
+  function successfulBootstrap(): LoadedAppOrParcel {
     appOrParcel.status = NOT_MOUNTED;
 
     if (__PROFILE__) {

@@ -1,4 +1,8 @@
-import { AppOrParcel } from "../lifecycles/lifecycle.helpers";
+import {
+  AppOrParcel,
+  InternalParcel,
+  LoadedApp,
+} from "../lifecycles/lifecycle.helpers";
 import {
   AppOrParcelStatus,
   InternalApplication,
@@ -16,7 +20,7 @@ type ErrorHandler = (err: SingleSpaError) => any;
 
 export function handleAppError(
   err: Error,
-  app: InternalApplication,
+  app: InternalApplication | InternalParcel,
   newStatus: AppOrParcelStatus
 ) {
   const transformedErr = transformErr(err, app, newStatus);

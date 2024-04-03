@@ -31,6 +31,8 @@ import {
   CustomProps,
   CustomPropsFn,
   LifeCycles,
+  LoadApp,
+  LoadedApp,
   RegisterApplicationConfig,
 } from "../lifecycles/lifecycle.helpers";
 
@@ -276,7 +278,7 @@ function immediatelyUnloadApp(
       }
     })
     .then(() => {
-      return toUnmountPromise(app)
+      return toUnmountPromise(app as LoadedApp)
         .then(toUnloadPromise)
         .then(() => {
           resolve();
@@ -413,7 +415,7 @@ function validCustomProps(customProps: unknown): boolean {
 
 interface ApplicationRegistration {
   name: string;
-  loadApp: Application;
+  loadApp: LoadApp;
   activeWhen: ActivityFn;
   customProps?: CustomProps;
 }

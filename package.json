@@ -41,7 +41,7 @@
     "test:lockfile": "js-correct-lockfile pnpm",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
-    "lint": "eslint src",
+    "lint": "eslint src --ext .ts",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable && pnpm run build",
     "postpublish": "pinst --enable"
@@ -79,7 +79,6 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.23.7",
-    "@babel/eslint-parser": "^7.23.3",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/preset-env": "^7.23.7",
     "@babel/preset-typescript": "^7.23.3",
@@ -121,5 +120,8 @@
   "ignore": [
     "examples",
     "docs"
-  ]
+  ],
+  "dependencies": {
+    "@typescript-eslint/parser": "^7.5.0"
+  }
 }

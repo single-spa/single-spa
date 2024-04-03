@@ -1,7 +1,8 @@
 import {
   ActivityFn,
   AppOrParcel,
-  Application,
+  CustomProps,
+  LoadApp,
   ParcelMap,
 } from "../lifecycles/lifecycle.helpers";
 import { handleAppError } from "./app-errors";
@@ -64,17 +65,20 @@ export function objectType(appOrParcel: AppOrParcel): "parcel" | "application" {
 export interface InternalApplication {
   name: string;
   activeWhen: ActivityFn;
-  loadApp: Application;
+  loadApp: LoadApp;
   status: AppOrParcelStatus;
   loadErrorTime: number;
   parcels: ParcelMap;
+  customProps?: CustomProps;
   // The ensureValidAppTimeouts function gets called once the app is loaded
   timeouts?: AppOrParcelTimeouts;
-  devtools: {
-    overlays: {
-      options: OverlayOptions;
-      selectors: string[];
-    };
+  devtools: AppDevtools;
+}
+
+export interface AppDevtools {
+  overlays: {
+    options: OverlayOptions;
+    selectors: string[];
   };
 }
 

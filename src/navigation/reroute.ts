@@ -26,6 +26,7 @@ import {
 import { isInBrowser } from "../utils/runtime-environment";
 import { formatErrorMessage } from "../applications/app-errors";
 import { ProfileEntry, addProfileEntry } from "../devtools/profiler";
+import { LoadedApp } from "../lifecycles/lifecycle.helpers";
 
 type EventArguments = [HashChangeEvent | PopStateEvent];
 
@@ -207,14 +208,16 @@ export function reroute(
         const unloadPromises: Promise<InternalApplication>[] =
           appsToUnload.map(toUnloadPromise);
 
-        const unmountUnloadPromises = appsToUnmount
-          .map(toUnmountPromise)
-          .map((unmountPromise: Promise<InternalApplication>) =>
+        const unmountUnloadPromises = (appsToUnmount as LoadedApp[])
+          .map((app) => toUnmountPromise(app))
+          .map((unmountPromise: Promise<LoadedApp>) =>
             unmountPromise.then(toUnloadPromise)
           );
 
-        const allUnmountPromises: Promise<InternalApplication>[] =
-          unmountUnloadPromises.concat(unloadPromises);
+        const allUnmountPromises: Promise<InternalApplication>[] = [
+          ...unmountUnloadPromises,
+          ...unloadPromises,
+        ];
 
         const unmountAllPromise = Promise.all(allUnmountPromises);
 
@@ -466,11 +469,11 @@ function tryToBootstrapAndMount(
   unmountAllPromise: Promise<unknown>
 ): Promise<InternalApplication> {
   if (shouldBeActive(app)) {
-    return toBootstrapPromise(app).then((app) =>
+    return toBootstrapPromise(app as LoadedApp).then((app) =>
       unmountAllPromise.then(() =>
         shouldBeActive(app) ? toMountPromise(app) : app
       )
-    );
+    ) as Promise<InternalApplication>;
   } else {
     return unmountAllPromise.then(() => app);
   }
