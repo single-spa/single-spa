@@ -91,6 +91,7 @@
     "@rollup/plugin-replace": "^2.3.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@types/jest": "^26.0.23",
+    "@typescript-eslint/parser": "^7.5.0",
     "babel-jest": "^29.7.0",
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "concurrently": "^6.2.0",
@@ -120,8 +121,5 @@
   "ignore": [
     "examples",
     "docs"
-  ],
-  "dependencies": {
-    "@typescript-eslint/parser": "^7.5.0"
-  }
+  ]
 }
