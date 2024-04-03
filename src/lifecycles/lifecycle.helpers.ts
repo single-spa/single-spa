@@ -1,6 +1,5 @@
 import { find } from "../utils/find";
 import {
-  objectType,
   toName,
   AppOrParcelStatus,
   InternalApplication,
