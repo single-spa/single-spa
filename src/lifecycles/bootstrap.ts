@@ -13,7 +13,7 @@ import { LoadedAppOrParcel } from "./lifecycle.helpers";
 
 export function toBootstrapPromise(
   appOrParcel: LoadedAppOrParcel,
-  hardFail: boolean = false
+  hardFail?: boolean
 ): Promise<LoadedAppOrParcel> {
   let startTime: number, profileEventType: ProfileEntry["type"];
 

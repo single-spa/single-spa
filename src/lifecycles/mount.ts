@@ -18,7 +18,7 @@ let firstMountFired: boolean = false;
 
 export function toMountPromise(
   appOrParcel: LoadedAppOrParcel,
-  hardFail: boolean = false
+  hardFail?: boolean
 ): Promise<LoadedAppOrParcel> {
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== NOT_MOUNTED) {

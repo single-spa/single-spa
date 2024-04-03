@@ -13,7 +13,7 @@ import { LoadedAppOrParcel } from "./lifecycle.helpers";
 
 export function toUnmountPromise(
   appOrParcel: LoadedAppOrParcel,
-  hardFail: boolean = false
+  hardFail?: boolean
 ): Promise<LoadedAppOrParcel> {
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== MOUNTED) {
