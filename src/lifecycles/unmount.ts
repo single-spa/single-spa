@@ -8,15 +8,19 @@ import {
 } from "../applications/app.helpers";
 import { handleAppError, transformErr } from "../applications/app-errors";
 import { reasonableTime } from "../applications/timeouts";
-import { addProfileEntry } from "../devtools/profiler";
+import { ProfileEntry, addProfileEntry } from "../devtools/profiler";
+import { LoadedAppOrParcel } from "./lifecycle.helpers";
 
-export function toUnmountPromise(appOrParcel, hardFail) {
+export function toUnmountPromise(
+  appOrParcel: LoadedAppOrParcel,
+  hardFail?: boolean
+): Promise<LoadedAppOrParcel> {
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== MOUNTED) {
       return appOrParcel;
     }
 
-    let startTime, profileEventType;
+    let startTime: number, profileEventType: ProfileEntry["type"];
 
     if (__PROFILE__) {
       startTime = performance.now();
@@ -29,7 +33,7 @@ export function toUnmountPromise(appOrParcel, hardFail) {
       (parcelId) => appOrParcel.parcels[parcelId].unmountThisParcel()
     );
 
-    let parcelError;
+    let parcelError: Error;
 
     return Promise.all(unmountChildrenParcels)
       .then(unmountAppOrParcel, (parcelError) => {

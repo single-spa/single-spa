@@ -5,66 +5,72 @@ import {
   LOAD_ERROR,
   SKIP_BECAUSE_BROKEN,
   toName,
+  InternalApplication,
 } from "../applications/app.helpers";
 import { handleAppError } from "../applications/app-errors";
 import { reasonableTime } from "../applications/timeouts";
 import { addProfileEntry } from "../devtools/profiler";
+import { LoadedApp } from "./lifecycle.helpers";
 
-const appsToUnload = {};
+interface UnloadInfo {
+  app: InternalApplication;
+  promise?: Promise<any>;
+  resolve: (val?) => void;
+  reject: (val?) => void;
+}
 
-export function toUnloadPromise(appOrParcel) {
+const appsToUnload: Record<string, UnloadInfo> = {};
+
+export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
   return Promise.resolve().then(() => {
-    const unloadInfo = appsToUnload[toName(appOrParcel)];
+    const unloadInfo = appsToUnload[toName(app)];
 
     if (!unloadInfo) {
       /* No one has called unloadApplication for this app,
        */
-      return appOrParcel;
+      return app;
     }
 
-    if (appOrParcel.status === NOT_LOADED) {
+    if (app.status === NOT_LOADED) {
       /* This app is already unloaded. We just need to clean up
        * anything that still thinks we need to unload the app.
        */
-      finishUnloadingApp(appOrParcel, unloadInfo);
-      return appOrParcel;
+      finishUnloadingApp(app, unloadInfo);
+      return app;
     }
 
-    if (appOrParcel.status === UNLOADING) {
+    if (app.status === UNLOADING) {
       /* Both unloadApplication and reroute want to unload this app.
        * It only needs to be done once, though.
        */
-      return unloadInfo.promise.then(() => appOrParcel);
+      return unloadInfo.promise!.then(() => app);
     }
 
-    if (
-      appOrParcel.status !== NOT_MOUNTED &&
-      appOrParcel.status !== LOAD_ERROR
-    ) {
+    if (app.status !== NOT_MOUNTED && app.status !== LOAD_ERROR) {
       /* The app cannot be unloaded until it is unmounted.
        */
-      return appOrParcel;
+      return app;
     }
 
-    let startTime;
+    let startTime: number;
 
     if (__PROFILE__) {
       startTime = performance.now();
     }
 
     const unloadPromise =
-      appOrParcel.status === LOAD_ERROR
+      app.status === LOAD_ERROR
         ? Promise.resolve()
-        : reasonableTime(appOrParcel, "unload");
+        : reasonableTime(app, "unload");
 
-    appOrParcel.status = UNLOADING;
+    app.status = UNLOADING;
 
     return unloadPromise
       .then(() => {
         if (__PROFILE__) {
           addProfileEntry(
             "application",
-            toName(appOrParcel),
+            toName(app),
             "unload",
             startTime,
             performance.now(),
@@ -72,15 +78,15 @@ export function toUnloadPromise(appOrParcel) {
           );
         }
 
-        finishUnloadingApp(appOrParcel, unloadInfo);
+        finishUnloadingApp(app, unloadInfo);
 
-        return appOrParcel;
+        return app;
       })
       .catch((err) => {
         if (__PROFILE__) {
           addProfileEntry(
             "application",
-            toName(appOrParcel),
+            toName(app),
             "unload",
             startTime,
             performance.now(),
@@ -88,14 +94,14 @@ export function toUnloadPromise(appOrParcel) {
           );
         }
 
-        errorUnloadingApp(appOrParcel, unloadInfo, err);
+        errorUnloadingApp(app, unloadInfo, err);
 
-        return appOrParcel;
+        return app;
       });
   });
 }
 
-function finishUnloadingApp(app, unloadInfo) {
+function finishUnloadingApp(app: LoadedApp, unloadInfo: UnloadInfo) {
   delete appsToUnload[toName(app)];
 
   // Unloaded apps don't have lifecycles
@@ -112,7 +118,7 @@ function finishUnloadingApp(app, unloadInfo) {
   unloadInfo.resolve();
 }
 
-function errorUnloadingApp(app, unloadInfo, err) {
+function errorUnloadingApp(app: LoadedApp, unloadInfo: UnloadInfo, err: Error) {
   delete appsToUnload[toName(app)];
 
   // Unloaded apps don't have lifecycles
@@ -125,13 +131,18 @@ function errorUnloadingApp(app, unloadInfo, err) {
   unloadInfo.reject(err);
 }
 
-export function addAppToUnload(app, promiseGetter, resolve, reject) {
+export function addAppToUnload(
+  app: InternalApplication,
+  promiseGetter: () => Promise<any>,
+  resolve: (val?) => any,
+  reject: (val?) => any
+) {
   appsToUnload[toName(app)] = { app, resolve, reject };
   Object.defineProperty(appsToUnload[toName(app)], "promise", {
     get: promiseGetter,
   });
 }
 
-export function getAppUnloadInfo(appName) {
+export function getAppUnloadInfo(appName: string): UnloadInfo {
   return appsToUnload[appName];
 }

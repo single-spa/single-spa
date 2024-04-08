@@ -1,14 +1,16 @@
 import { find } from "../utils/find";
 import {
-  objectType,
   toName,
   AppOrParcelStatus,
   InternalApplication,
+  AppDevtools,
 } from "../applications/app.helpers";
 import { formatErrorMessage } from "../applications/app-errors";
 import { AppOrParcelTimeouts } from "../applications/timeouts";
 
-export function validLifecycleFn(fn) {
+export function validLifecycleFn(
+  fn: LifeCycleFn<unknown> | LifeCycleFn<unknown>[]
+): boolean {
   return fn && (typeof fn === "function" || isArrayOfFns(fn));
 
   function isArrayOfFns(arr) {
@@ -18,17 +20,22 @@ export function validLifecycleFn(fn) {
   }
 }
 
-export function flattenFnArray(appOrParcel, lifecycle) {
-  let fns = appOrParcel[lifecycle] || [];
-  fns = Array.isArray(fns) ? fns : [fns];
+export function flattenFnArray(
+  appOrParcel: LifeCycles<unknown>,
+  lifecycle: "bootstrap" | "mount" | "update" | "unmount" | "unload",
+  isParcel: boolean
+): LifeCycleFn<unknown> {
+  let fns: LifeCycleFn<unknown>[] = Array.isArray(appOrParcel[lifecycle])
+    ? (appOrParcel[lifecycle] as LifeCycleFn<unknown>[])
+    : [appOrParcel[lifecycle] as LifeCycleFn<unknown>].filter(Boolean);
   if (fns.length === 0) {
     fns = [() => Promise.resolve()];
   }
 
-  const type = objectType(appOrParcel);
+  const type = isParcel ? "parcel" : "application";
   const name = toName(appOrParcel);
 
-  return function (props) {
+  return function (props: AppProps): Promise<unknown> {
     return fns.reduce((resultPromise, fn, index) => {
       return resultPromise.then(() => {
         const thisPromise = fn(props);
@@ -97,6 +104,9 @@ export type LifeCycles<ExtraProps = {}> = {
   mount: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
   unmount: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
   update?: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
+  unload?: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
+  devtools?: AppDevtools;
+  timeouts?: AppOrParcelTimeouts;
 };
 
 export type Parcel<ExtraProps = CustomProps> = {
@@ -139,9 +149,25 @@ export interface InternalParcel {
 
 export type AppOrParcel = InternalApplication | InternalParcel;
 
+interface Loaded extends LifeCycles {
+  // loadPromise sometimes bails early if there is an error,
+  // which results in it being an InternalApplication
+  loadPromise?: Promise<LoadedApp | InternalApplication>;
+}
+
+export type LoadedAppOrParcel =
+  | (InternalApplication & Loaded)
+  | (InternalParcel & Loaded);
+
+export type LoadedApp = InternalApplication & Loaded;
+
 export type Application<ExtraProps = {}> =
   | LifeCycles<ExtraProps>
-  | ((config: ExtraProps & AppProps) => Promise<LifeCycles<ExtraProps>>);
+  | LoadApp<ExtraProps>;
+
+export type LoadApp<ExtraProps = {}> = (
+  config: ExtraProps & AppProps
+) => Promise<LifeCycles<ExtraProps>>;
 
 export type ActivityFn = (location: Location) => boolean;
 

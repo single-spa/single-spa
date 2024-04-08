@@ -1,6 +1,9 @@
 {
   "extends": ["important-stuff"],
-  "parser": "@babel/eslint-parser",
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "env": {
     "browser": true,
     "node": true
@@ -11,8 +14,6 @@
   },
   "plugins": ["es5"],
   "rules": {
-    "es5/no-es6-methods": "error",
-    "es5/no-es6-static-methods": "error",
     "es5/no-binary-and-octal-literals": "error",
     "es5/no-classes": "error",
     "es5/no-for-of": "error",

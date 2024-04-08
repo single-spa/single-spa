@@ -10,18 +10,22 @@ import { handleAppError, transformErr } from "../applications/app-errors";
 import { reasonableTime } from "../applications/timeouts";
 import CustomEvent from "custom-event";
 import { toUnmountPromise } from "./unmount";
-import { addProfileEntry } from "../devtools/profiler";
+import { ProfileEntry, addProfileEntry } from "../devtools/profiler";
+import { LoadedAppOrParcel } from "./lifecycle.helpers";
 
-let beforeFirstMountFired = false;
-let firstMountFired = false;
+let beforeFirstMountFired: boolean = false;
+let firstMountFired: boolean = false;
 
-export function toMountPromise(appOrParcel, hardFail) {
+export function toMountPromise(
+  appOrParcel: LoadedAppOrParcel,
+  hardFail?: boolean
+): Promise<LoadedAppOrParcel> {
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== NOT_MOUNTED) {
       return appOrParcel;
     }
 
-    let startTime, profileEventType;
+    let startTime: number, profileEventType: ProfileEntry["type"];
 
     if (__PROFILE__) {
       profileEventType = isParcel(appOrParcel) ? "parcel" : "application";

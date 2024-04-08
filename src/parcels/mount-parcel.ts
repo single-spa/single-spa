@@ -117,7 +117,7 @@ export function mountParcel(
               )
             );
           }
-          return toUnmountPromise(parcel, true);
+          return toUnmountPromise(parcel as InternalParcel, true);
         })
         .then((value) => {
           if (parcel.parentName) {
@@ -207,9 +207,9 @@ export function mountParcel(
       );
     }
 
-    const bootstrap = flattenFnArray(config, "bootstrap");
-    const mount = flattenFnArray(config, "mount");
-    const unmount = flattenFnArray(config, "unmount");
+    const bootstrap = flattenFnArray(config, "bootstrap", true);
+    const mount = flattenFnArray(config, "mount", true);
+    const unmount = flattenFnArray(config, "unmount", true);
 
     parcel.status = NOT_BOOTSTRAPPED;
     parcel.name = name;
@@ -219,7 +219,7 @@ export function mountParcel(
     parcel.timeouts = ensureValidAppTimeouts(config.timeouts);
 
     if (config.update) {
-      parcel.update = flattenFnArray(config, "update");
+      parcel.update = flattenFnArray(config, "update", true);
     }
 
     const fullParcel: InternalParcel = parcel as InternalParcel;
@@ -233,10 +233,10 @@ export function mountParcel(
   // Start bootstrapping and mounting
   // The .then() causes the work to be put on the event loop instead of happening immediately
   const bootstrapPromise = loadPromise.then(() =>
-    toBootstrapPromise(parcel, true)
+    toBootstrapPromise(parcel as InternalParcel, true)
   );
   const mountPromise = bootstrapPromise.then(() =>
-    toMountPromise(parcel, true)
+    toMountPromise(parcel as InternalParcel, true)
   );
 
   let resolveUnmount, rejectUnmount;
@@ -265,7 +265,7 @@ export function mountParcel(
           // Add to owning app or parcel
           owningAppOrParcel.parcels[id] = parcel as InternalParcel;
 
-          return toMountPromise(parcel);
+          return toMountPromise(parcel as InternalParcel);
         })
       );
     },
@@ -288,7 +288,9 @@ export function mountParcel(
         externalRepresentation.update = function (customProps) {
           parcel.customProps = customProps;
 
-          return promiseWithoutReturnValue(toUpdatePromise(parcel));
+          return promiseWithoutReturnValue(
+            toUpdatePromise(parcel as InternalParcel)
+          );
         };
       }
     },
