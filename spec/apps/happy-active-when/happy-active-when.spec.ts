@@ -6,7 +6,7 @@ describe(`happy-active-when`, () => {
   beforeAll(() => {
     singleSpa.registerApplication({
       name: "myApp",
-      app: () => import("./happy-active-when.app.ts"),
+      app: () => import("./happy-active-when.app"),
       activeWhen: [
         "/#/appWithRegularPrefix",
         "/pathname",
@@ -20,7 +20,7 @@ describe(`happy-active-when`, () => {
   });
 
   beforeEach(() => {
-    return import("./happy-active-when.app.ts")
+    return import("./happy-active-when.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });

@@ -10,8 +10,8 @@ describe(`bootstrap-times-out-dies`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./bootstrap-times-out-dies.app.ts",
-      () => import("./bootstrap-times-out-dies.app.ts"),
+      "./bootstrap-times-out-dies.app",
+      () => import("./bootstrap-times-out-dies.app"),
       (location) => location.hash === "#bootstrap-times-out-dies"
     );
     singleSpa.start();
@@ -23,7 +23,7 @@ describe(`bootstrap-times-out-dies`, () => {
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import("./bootstrap-times-out-dies.app.ts")
+    return import("./bootstrap-times-out-dies.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -39,9 +39,9 @@ describe(`bootstrap-times-out-dies`, () => {
       expect(myApp.wasBootstrapped()).toEqual(true);
       expect(myApp.wasMounted()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
-      expect(
-        singleSpa.getAppStatus("./bootstrap-times-out-dies.app.ts")
-      ).toEqual("SKIP_BECAUSE_BROKEN");
+      expect(singleSpa.getAppStatus("./bootstrap-times-out-dies.app")).toEqual(
+        "SKIP_BECAUSE_BROKEN"
+      );
       expect(errs.length).toBeGreaterThan(0);
     });
   });

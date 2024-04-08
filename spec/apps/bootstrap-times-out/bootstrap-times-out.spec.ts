@@ -10,8 +10,8 @@ describe(`bootstrap-times-out`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./bootstrap-times-out.app.ts",
-      () => import("./bootstrap-times-out.app.ts"),
+      "./bootstrap-times-out.app",
+      () => import("./bootstrap-times-out.app"),
       (location) => location.hash === "#bootstrap-times-out"
     );
     singleSpa.start();
@@ -23,7 +23,7 @@ describe(`bootstrap-times-out`, () => {
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import("./bootstrap-times-out.app.ts")
+    return import("./bootstrap-times-out.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -38,10 +38,8 @@ describe(`bootstrap-times-out`, () => {
     return singleSpa.triggerAppChange().then(() => {
       expect(myApp.wasBootstrapped()).toEqual(true);
       expect(myApp.wasMounted()).toEqual(true);
-      expect(singleSpa.getMountedApps()).toEqual([
-        "./bootstrap-times-out.app.ts",
-      ]);
-      expect(singleSpa.getAppStatus("./bootstrap-times-out.app.ts")).toEqual(
+      expect(singleSpa.getMountedApps()).toEqual(["./bootstrap-times-out.app"]);
+      expect(singleSpa.getAppStatus("./bootstrap-times-out.app")).toEqual(
         singleSpa.MOUNTED
       );
       expect(errs.length).toBe(0);
