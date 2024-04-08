@@ -8,12 +8,12 @@ describe(`mounting-status`, () => {
   beforeAll(async () => {
     singleSpa.registerApplication({
       name: "mounting-status",
-      app: () => import("./mounting-status.app.js"),
+      app: () => import("./mounting-status.app"),
       activeWhen: (location) => location.hash === activeHash,
     });
     singleSpa.start();
 
-    app = await import("./mounting-status.app.js");
+    app = await import("./mounting-status.app");
   });
 
   beforeEach(() => {

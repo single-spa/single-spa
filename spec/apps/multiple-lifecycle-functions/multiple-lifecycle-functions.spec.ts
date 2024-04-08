@@ -7,8 +7,8 @@ describe(`multiple-lifecycle-functions app`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./multiple-lifecycle-functions.app.js",
-      () => import("./multiple-lifecycle-functions.app.js"),
+      "./multiple-lifecycle-functions.app",
+      () => import("./multiple-lifecycle-functions.app"),
       (location) => location.hash === activeHash
     );
     singleSpa.start();
@@ -17,7 +17,7 @@ describe(`multiple-lifecycle-functions app`, () => {
   beforeEach(() => {
     location.hash = activeHash;
 
-    return import("./multiple-lifecycle-functions.app.js")
+    return import("./multiple-lifecycle-functions.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });

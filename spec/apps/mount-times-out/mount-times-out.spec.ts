@@ -11,8 +11,8 @@ describe(`mount-times-out app`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./mount-times-out.app.js",
-      () => import("./mount-times-out.app.js"),
+      "./mount-times-out.app",
+      () => import("./mount-times-out.app"),
       (location) => location.hash === activeHash
     );
     singleSpa.start();
@@ -24,7 +24,7 @@ describe(`mount-times-out app`, () => {
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import("./mount-times-out.app.js")
+    return import("./mount-times-out.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -37,8 +37,8 @@ describe(`mount-times-out app`, () => {
     return singleSpa.triggerAppChange().then(() => {
       expect(myApp.bootstraps()).toEqual(1);
       expect(myApp.mounts()).toEqual(1);
-      expect(singleSpa.getMountedApps()).toEqual(["./mount-times-out.app.js"]);
-      expect(singleSpa.getAppStatus("./mount-times-out.app.js")).toEqual(
+      expect(singleSpa.getMountedApps()).toEqual(["./mount-times-out.app"]);
+      expect(singleSpa.getAppStatus("./mount-times-out.app")).toEqual(
         "MOUNTED"
       );
     });

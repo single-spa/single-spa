@@ -11,8 +11,8 @@ describe(`mount-rejects app`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./mount-rejects.app.js",
-      () => import("./mount-rejects.app.js"),
+      "./mount-rejects.app",
+      () => import("./mount-rejects.app"),
       (location) => location.hash === activeHash
     );
     singleSpa.start();
@@ -24,7 +24,7 @@ describe(`mount-rejects app`, () => {
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import("./mount-rejects.app.js")
+    return import("./mount-rejects.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -38,14 +38,14 @@ describe(`mount-rejects app`, () => {
       expect(myApp.wasBootstrapped()).toEqual(true);
       expect(myApp.wasMounted()).toEqual(true);
       expect(singleSpa.getMountedApps()).toEqual([]);
-      expect(singleSpa.getAppStatus("./mount-rejects.app.js")).toEqual(
+      expect(singleSpa.getAppStatus("./mount-rejects.app")).toEqual(
         "SKIP_BECAUSE_BROKEN"
       );
 
       location.hash = "#not-mount-rejects";
       return singleSpa.triggerAppChange().then(() => {
         expect(singleSpa.getMountedApps()).toEqual([]);
-        expect(singleSpa.getAppStatus("./mount-rejects.app.js")).toEqual(
+        expect(singleSpa.getAppStatus("./mount-rejects.app")).toEqual(
           "SKIP_BECAUSE_BROKEN"
         );
       });

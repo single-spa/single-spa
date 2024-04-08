@@ -11,8 +11,8 @@ describe(`invalid-unmount app`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./invalid-unmount.app.js",
-      () => import("./invalid-unmount.app.js"),
+      "./invalid-unmount.app",
+      () => import("./invalid-unmount.app"),
       (location) => location.hash === activeHash
     );
     singleSpa.start();
@@ -24,7 +24,7 @@ describe(`invalid-unmount app`, () => {
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import("./invalid-unmount.app.js")
+    return import("./invalid-unmount.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -39,8 +39,8 @@ describe(`invalid-unmount app`, () => {
     return singleSpa.triggerAppChange().then(() => {
       expect(myApp.numBootstraps()).toEqual(1);
       expect(myApp.numMounts()).toEqual(1);
-      expect(singleSpa.getMountedApps()).toEqual(["./invalid-unmount.app.js"]);
-      expect(singleSpa.getAppStatus("./invalid-unmount.app.js")).toEqual(
+      expect(singleSpa.getMountedApps()).toEqual(["./invalid-unmount.app"]);
+      expect(singleSpa.getAppStatus("./invalid-unmount.app")).toEqual(
         "MOUNTED"
       );
 
@@ -51,7 +51,7 @@ describe(`invalid-unmount app`, () => {
         expect(myApp.numMounts()).toEqual(1);
         expect(myApp.numUnmounts()).toEqual(1);
         expect(singleSpa.getMountedApps()).toEqual([]);
-        expect(singleSpa.getAppStatus("./invalid-unmount.app.js")).toEqual(
+        expect(singleSpa.getAppStatus("./invalid-unmount.app")).toEqual(
           "SKIP_BECAUSE_BROKEN"
         );
 
@@ -62,7 +62,7 @@ describe(`invalid-unmount app`, () => {
           expect(myApp.numMounts()).toEqual(1); // hasn't increased
           expect(myApp.numUnmounts()).toEqual(1);
           expect(singleSpa.getMountedApps()).toEqual([]);
-          expect(singleSpa.getAppStatus("./invalid-unmount.app.js")).toEqual(
+          expect(singleSpa.getAppStatus("./invalid-unmount.app")).toEqual(
             "SKIP_BECAUSE_BROKEN"
           );
         });

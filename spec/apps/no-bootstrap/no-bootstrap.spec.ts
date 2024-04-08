@@ -8,7 +8,7 @@ describe(`no-bootstrap app`, () => {
   beforeAll(() => {
     singleSpa.registerApplication({
       name: "no-bootstrap",
-      app: () => import("./no-bootstrap.app.js"),
+      app: () => import("./no-bootstrap.app"),
       activeWhen: (location) => location.hash === activeHash,
     });
     singleSpa.start();

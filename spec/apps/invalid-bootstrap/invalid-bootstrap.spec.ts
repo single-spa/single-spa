@@ -12,8 +12,8 @@ describe(`invalid-bootstrap app`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./invalid-bootstrap.app.js",
-      () => import("./invalid-bootstrap.app.js"),
+      "./invalid-bootstrap.app",
+      () => import("./invalid-bootstrap.app"),
       (location) => location.hash === activeHash
     );
     singleSpa.start();
@@ -25,7 +25,7 @@ describe(`invalid-bootstrap app`, () => {
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import("./invalid-bootstrap.app.js")
+    return import("./invalid-bootstrap.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -39,7 +39,7 @@ describe(`invalid-bootstrap app`, () => {
       expect(myApp.mountWasCalled()).toEqual(false);
       expect(myApp.unmountWasCalled()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
-      expect(singleSpa.getAppStatus("./invalid-bootstrap.app.js")).toEqual(
+      expect(singleSpa.getAppStatus("./invalid-bootstrap.app")).toEqual(
         "SKIP_BECAUSE_BROKEN"
       );
       expect(errs.length).toBeGreaterThan(0);

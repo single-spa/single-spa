@@ -1,6 +1,6 @@
 import * as singleSpa from "single-spa";
 
-describe(`bootstrap-times-out-dies`, () => {
+describe(`bootstrap-rejects`, () => {
   let myApp,
     errs = [];
 
@@ -10,20 +10,18 @@ describe(`bootstrap-times-out-dies`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./bootstrap-times-out-dies.app.js",
-      () => import("./bootstrap-times-out-dies.app.js"),
-      (location) => location.hash === "#bootstrap-times-out-dies"
+      "./bootstrap-rejects.app.ts",
+      () => import("./bootstrap-rejects.app.ts"),
+      (location) => location.hash === "#bootstrap-rejects"
     );
     singleSpa.start();
   });
 
   beforeEach(() => {
-    location.hash = "#";
-
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import("./bootstrap-times-out-dies.app.js")
+    return import("./bootstrap-rejects.app.ts")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -32,17 +30,17 @@ describe(`bootstrap-times-out-dies`, () => {
     singleSpa.removeErrorHandler(handleError);
   });
 
-  it(`is put into SKIP_BECAUSE_BROKEN if dieOnTimeout is true`, () => {
-    location.hash = "#bootstrap-times-out-dies";
+  it(`puts the app into SKIP_BECAUSE_BROKEN, fires a window event, and doesn't mount it`, () => {
+    location.hash = "#bootstrap-rejects";
 
     return singleSpa.triggerAppChange().then(() => {
+      expect(errs.length).toBe(1);
       expect(myApp.wasBootstrapped()).toEqual(true);
       expect(myApp.wasMounted()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
-      expect(
-        singleSpa.getAppStatus("./bootstrap-times-out-dies.app.js")
-      ).toEqual("SKIP_BECAUSE_BROKEN");
-      expect(errs.length).toBeGreaterThan(0);
+      expect(singleSpa.getAppStatus("./bootstrap-rejects.app.ts")).toEqual(
+        singleSpa.SKIP_BECAUSE_BROKEN
+      );
     });
   });
 });

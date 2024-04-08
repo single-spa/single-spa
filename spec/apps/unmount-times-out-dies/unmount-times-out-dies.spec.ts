@@ -1,8 +1,8 @@
 import * as singleSpa from "single-spa";
 
-const activeHash = `#unmount-times-out`;
+const activeHash = `#unmount-times-out-dies`;
 
-describe(`unmount-times-out app`, () => {
+describe(`unmount-times-out-dies app`, () => {
   let myApp, errs;
 
   function handleError(err) {
@@ -11,36 +11,36 @@ describe(`unmount-times-out app`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./unmount-times-out.app.js",
-      () => import("./unmount-times-out.app.js"),
+      "./unmount-times-out-dies.app",
+      () => import("./unmount-times-out-dies.app"),
       (location) => location.hash === activeHash
     );
     singleSpa.start();
   });
 
   beforeEach(() => {
+    location.hash = "#";
+
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    location.hash = "#";
-
-    return import("./unmount-times-out.app.js")
+    return import("./unmount-times-out-dies.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
-  it(`is just waited for if dieOnTimeout is false`, () => {
+  it(`is put into SKIP_BECAUSE_BROKEN when dieOnTimeout is true`, () => {
     location.hash = activeHash;
 
     return singleSpa.triggerAppChange().then(() => {
       expect(myApp.numBootstraps()).toEqual(1);
       expect(myApp.numMounts()).toEqual(1);
       expect(singleSpa.getMountedApps()).toEqual([
-        "./unmount-times-out.app.js",
+        "./unmount-times-out-dies.app",
       ]);
-      expect(singleSpa.getAppStatus("./unmount-times-out.app.js")).toEqual(
+      expect(singleSpa.getAppStatus("./unmount-times-out-dies.app")).toEqual(
         "MOUNTED"
       );
 
@@ -49,8 +49,8 @@ describe(`unmount-times-out app`, () => {
       return singleSpa.triggerAppChange().then(() => {
         expect(myApp.numUnmounts()).toEqual(1);
         expect(singleSpa.getMountedApps()).toEqual([]);
-        expect(singleSpa.getAppStatus("./unmount-times-out.app.js")).toEqual(
-          "NOT_MOUNTED"
+        expect(singleSpa.getAppStatus("./unmount-times-out-dies.app")).toEqual(
+          "SKIP_BECAUSE_BROKEN"
         );
       });
     });

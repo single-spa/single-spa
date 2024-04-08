@@ -6,7 +6,7 @@ describe(`returns-non-native-promise`, () => {
   beforeAll(() => {
     singleSpa.registerApplication(
       "./returns-non-native-promise.app.js",
-      () => import("./returns-non-native-promise.app.js"),
+      () => import("./returns-non-native-promise.app"),
       (location) => location.hash === "#returns-non-native-promise"
     );
     singleSpa.start();
@@ -15,7 +15,7 @@ describe(`returns-non-native-promise`, () => {
   beforeEach(() => {
     location.hash = "#";
 
-    return import("./returns-non-native-promise.app.js")
+    return import("./returns-non-native-promise.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });

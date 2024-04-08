@@ -5,8 +5,8 @@ describe(`happy-basic`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./happy-basic.app.js",
-      () => import("./happy-basic.app.js"),
+      "./happy-basic.app.ts",
+      () => import("./happy-basic.app.ts"),
       (location) => location.hash === "#happy-basic"
     );
     singleSpa.start();
@@ -15,7 +15,7 @@ describe(`happy-basic`, () => {
   beforeEach(() => {
     location.hash = "#";
 
-    return import("./happy-basic.app.js")
+    return import("./happy-basic.app.ts")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -29,7 +29,7 @@ describe(`happy-basic`, () => {
     return singleSpa.triggerAppChange().then(() => {
       expect(myApp.wasBootstrapped()).toEqual(true);
       expect(myApp.isMounted()).toEqual(true);
-      expect(singleSpa.getMountedApps()).toEqual(["./happy-basic.app.js"]);
+      expect(singleSpa.getMountedApps()).toEqual(["./happy-basic.app.ts"]);
 
       location.hash = "#not-happy-basic";
 
