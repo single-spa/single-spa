@@ -2,7 +2,7 @@
   "extends": ["important-stuff"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "lib": ["dom", "es5", "es2020"]
+    "project": "./tsconfig.json"
   },
   "env": {
     "browser": true,

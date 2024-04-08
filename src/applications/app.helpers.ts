@@ -2,6 +2,7 @@ import {
   ActivityFn,
   AppOrParcel,
   CustomProps,
+  InternalParcel,
   LoadApp,
   ParcelMap,
 } from "../lifecycles/lifecycle.helpers";
@@ -54,8 +55,10 @@ export function toName(app) {
   return app.name;
 }
 
-export function isParcel(appOrParcel) {
-  return Boolean(appOrParcel.unmountThisParcel);
+export function isParcel(
+  appOrParcel: AppOrParcel
+): appOrParcel is InternalParcel {
+  return Boolean((appOrParcel as InternalParcel).unmountThisParcel);
 }
 
 export function objectType(appOrParcel: AppOrParcel): "parcel" | "application" {

@@ -2,7 +2,7 @@ import * as singleSpa from "../single-spa";
 import { mountParcel } from "../parcels/mount-parcel";
 import { isParcel, toName } from "../applications/app.helpers";
 import { formatErrorMessage } from "../applications/app-errors";
-import { AppOrParcel, InternalParcel } from "./lifecycle.helpers";
+import { AppOrParcel, CustomProps, InternalParcel } from "./lifecycle.helpers";
 
 interface SingleSpaProps {
   name: string;
@@ -11,7 +11,9 @@ interface SingleSpaProps {
   unmountSelf(): Promise<AppOrParcel>;
 }
 
-export function getProps(appOrParcel: AppOrParcel): SingleSpaProps {
+export function getProps(
+  appOrParcel: AppOrParcel
+): SingleSpaProps & CustomProps {
   const name = toName(appOrParcel);
   let customProps =
     typeof appOrParcel.customProps === "function"
@@ -40,7 +42,7 @@ export function getProps(appOrParcel: AppOrParcel): SingleSpaProps {
   });
 
   if (isParcel(appOrParcel)) {
-    result.unmountSelf = (appOrParcel as InternalParcel).unmountThisParcel;
+    result.unmountSelf = appOrParcel.unmountThisParcel;
   }
 
   return result;

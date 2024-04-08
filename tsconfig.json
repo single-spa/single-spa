@@ -1,6 +1,11 @@
 {
   "files": ["src/single-spa.ts"],
-  "include": ["src/declarations.d.ts", "src/window-globals.d.ts"],
+  "include": [
+    "src/declarations.d.ts",
+    "src/window-globals.d.ts",
+    "src/devtools/profiler-api.ts",
+    "src/single-spa.profile.ts"
+  ],
   "compilerOptions": {
     "outDir": "typings",
     "emitDeclarationOnly": true,
