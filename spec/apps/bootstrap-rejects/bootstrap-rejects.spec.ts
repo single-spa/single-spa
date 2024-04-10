@@ -10,8 +10,8 @@ describe(`bootstrap-rejects`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./bootstrap-rejects.app.js",
-      () => import("./bootstrap-rejects.app.js"),
+      "./bootstrap-rejects.app",
+      () => import("./bootstrap-rejects.app"),
       (location) => location.hash === "#bootstrap-rejects"
     );
     singleSpa.start();
@@ -21,7 +21,7 @@ describe(`bootstrap-rejects`, () => {
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import("./bootstrap-rejects.app.js")
+    return import("./bootstrap-rejects.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -38,7 +38,7 @@ describe(`bootstrap-rejects`, () => {
       expect(myApp.wasBootstrapped()).toEqual(true);
       expect(myApp.wasMounted()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
-      expect(singleSpa.getAppStatus("./bootstrap-rejects.app.js")).toEqual(
+      expect(singleSpa.getAppStatus("./bootstrap-rejects.app")).toEqual(
         singleSpa.SKIP_BECAUSE_BROKEN
       );
     });

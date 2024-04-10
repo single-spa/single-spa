@@ -1,8 +1,6 @@
 import * as singleSpa from "single-spa";
 
-const activeHash = `#invalid-bootstrap`;
-
-describe(`invalid-bootstrap app`, () => {
+describe(`bootstrap-times-out-dies`, () => {
   let myApp,
     errs = [];
 
@@ -12,20 +10,20 @@ describe(`invalid-bootstrap app`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./invalid-bootstrap.app.js",
-      () => import("./invalid-bootstrap.app.js"),
-      (location) => location.hash === activeHash
+      "./bootstrap-times-out-dies.app",
+      () => import("./bootstrap-times-out-dies.app"),
+      (location) => location.hash === "#bootstrap-times-out-dies"
     );
     singleSpa.start();
   });
 
   beforeEach(() => {
-    location.hash = activeHash;
+    location.hash = "#";
 
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import("./invalid-bootstrap.app.js")
+    return import("./bootstrap-times-out-dies.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -34,12 +32,14 @@ describe(`invalid-bootstrap app`, () => {
     singleSpa.removeErrorHandler(handleError);
   });
 
-  it(`is never bootstrapped, mounted, or unmounted`, () => {
+  it(`is put into SKIP_BECAUSE_BROKEN if dieOnTimeout is true`, () => {
+    location.hash = "#bootstrap-times-out-dies";
+
     return singleSpa.triggerAppChange().then(() => {
-      expect(myApp.mountWasCalled()).toEqual(false);
-      expect(myApp.unmountWasCalled()).toEqual(false);
+      expect(myApp.wasBootstrapped()).toEqual(true);
+      expect(myApp.wasMounted()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
-      expect(singleSpa.getAppStatus("./invalid-bootstrap.app.js")).toEqual(
+      expect(singleSpa.getAppStatus("./bootstrap-times-out-dies.app")).toEqual(
         "SKIP_BECAUSE_BROKEN"
       );
       expect(errs.length).toBeGreaterThan(0);

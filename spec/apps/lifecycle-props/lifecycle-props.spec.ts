@@ -10,7 +10,7 @@ describe(`lifecycle-props app`, () => {
   });
 
   beforeEach(() => {
-    return import("./lifecycle-props.app.js")
+    return import("./lifecycle-props.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -18,7 +18,7 @@ describe(`lifecycle-props app`, () => {
   it(`is given the correct props for each lifecycle function`, () => {
     singleSpa.registerApplication(
       "lifecycle-props",
-      () => import("./lifecycle-props.app.js"),
+      () => import("./lifecycle-props.app"),
       (location) => location.hash === activeHash
     );
 
@@ -51,7 +51,7 @@ describe(`lifecycle-props app`, () => {
   it(`is given the correct props for each lifecycle function if customProps are passed`, () => {
     singleSpa.registerApplication(
       "lifecycle-props-customProps",
-      () => import("./lifecycle-props.app.js"),
+      () => import("./lifecycle-props.app"),
       (location) => location.hash === activeHash,
       { test: "test" }
     );

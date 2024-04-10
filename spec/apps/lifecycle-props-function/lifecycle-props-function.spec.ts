@@ -10,7 +10,7 @@ describe(`lifecycle-props-function app`, () => {
 
     singleSpa.registerApplication(
       "lifecycle-props-function",
-      () => import("./lifecycle-props-function.app.js"),
+      () => import("./lifecycle-props-function.app"),
       (location) => location.hash === activeHash,
       (name, location) => {
         return customProps;
@@ -19,7 +19,7 @@ describe(`lifecycle-props-function app`, () => {
   });
 
   beforeEach(async () => {
-    const app = await import("./lifecycle-props-function.app.js");
+    const app = await import("./lifecycle-props-function.app");
     myApp = app;
     app.reset();
     customProps = {};

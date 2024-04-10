@@ -12,8 +12,8 @@ describe(`invalid-no-mount app`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./invalid-no-mount.app.js",
-      import("./invalid-no-mount.app.js"),
+      "./invalid-no-mount.app",
+      import("./invalid-no-mount.app"),
       (location) => location.hash === activeHash
     );
     singleSpa.start();
@@ -24,7 +24,7 @@ describe(`invalid-no-mount app`, () => {
 
     singleSpa.addErrorHandler(handleError);
 
-    return import("./invalid-no-mount.app.js")
+    return import("./invalid-no-mount.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -35,7 +35,7 @@ describe(`invalid-no-mount app`, () => {
     return singleSpa.triggerAppChange().then(() => {
       expect(myApp.isBootstrapped()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
-      expect(singleSpa.getAppStatus("./invalid-no-mount.app.js")).toEqual(
+      expect(singleSpa.getAppStatus("./invalid-no-mount.app")).toEqual(
         "SKIP_BECAUSE_BROKEN"
       );
     });

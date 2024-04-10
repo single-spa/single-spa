@@ -40,8 +40,10 @@ describe(`pathToActiveWhen`, () => {
       "http://app.com/#/pathname/anything/everything": true,
       "http://app.com/#/pathname/anything/everything#url-fragment": true,
       "http://app.com/#/pathname/anything/everything?query-string=1": true,
-      "http://app.com?query-string=1/#/pathname/anything/everything?query-string=1": true,
-      "http://app.com?query-string=1#/pathname/anything/everything?query-string=1": true,
+      "http://app.com?query-string=1/#/pathname/anything/everything?query-string=1":
+        true,
+      "http://app.com?query-string=1#/pathname/anything/everything?query-string=1":
+        true,
     });
 
     expectPathToMatch("/#/pathname/:dynamic/notDynamic", {

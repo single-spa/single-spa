@@ -1,13 +1,13 @@
 import * as singleSpa from "single-spa";
 
-describe(`returns-non-native-promise`, () => {
+describe(`happy-basic`, () => {
   let myApp;
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./returns-non-native-promise.app.js",
-      () => import("./returns-non-native-promise.app.js"),
-      (location) => location.hash === "#returns-non-native-promise"
+      "./happy-basic.app",
+      () => import("./happy-basic.app"),
+      (location) => location.hash === "#happy-basic"
     );
     singleSpa.start();
   });
@@ -15,29 +15,27 @@ describe(`returns-non-native-promise`, () => {
   beforeEach(() => {
     location.hash = "#";
 
-    return import("./returns-non-native-promise.app.js")
+    return import("./happy-basic.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
 
   it(`goes through the whole lifecycle successfully`, () => {
-    expect(myApp.wasMounted()).toEqual(false);
+    expect(myApp.isMounted()).toEqual(false);
     expect(singleSpa.getMountedApps()).toEqual([]);
 
-    location.hash = "#returns-non-native-promise";
+    location.hash = "happy-basic";
 
     return singleSpa.triggerAppChange().then(() => {
       expect(myApp.wasBootstrapped()).toEqual(true);
-      expect(myApp.wasMounted()).toEqual(true);
-      expect(singleSpa.getMountedApps()).toEqual([
-        "./returns-non-native-promise.app.js",
-      ]);
+      expect(myApp.isMounted()).toEqual(true);
+      expect(singleSpa.getMountedApps()).toEqual(["./happy-basic.app"]);
 
-      location.hash = "#something-else";
+      location.hash = "#not-happy-basic";
 
       return singleSpa.triggerAppChange().then(() => {
         expect(myApp.wasBootstrapped()).toEqual(true);
-        expect(myApp.wasUnmounted()).toEqual(true);
+        expect(myApp.isMounted()).toEqual(false);
         expect(singleSpa.getMountedApps()).toEqual([]);
       });
     });
