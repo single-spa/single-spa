@@ -4,7 +4,10 @@
       "@babel/preset-env",
       {
         "modules": false,
-        "bugfixes": true
+        "bugfixes": true,
+        "targets": {
+          "esmodules": true
+        }
       }
     ],
     "@babel/preset-typescript"
@@ -24,21 +27,6 @@
         "@babel/preset-typescript"
       ],
       "plugins": ["dynamic-import-node"]
-    },
-    "esm": {
-      "presets": [
-        [
-          "@babel/preset-env",
-          {
-            "modules": false,
-            "bugfixes": true,
-            "targets": {
-              "esmodules": true
-            }
-          }
-        ],
-        "@babel/preset-typescript"
-      ]
     }
   }
 }

@@ -5,7 +5,7 @@ import analyzer from "rollup-plugin-analyzer";
 import replace from "@rollup/plugin-replace";
 import packageJson from "./package.json";
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.ROLLUP_ENV === "production";
 const useAnalyzer = process.env.ANALYZER === "analyzer";
 
 const replaceOpts = {
@@ -41,60 +41,23 @@ export default (async () => [
     input: `./src/single-spa${isProduction ? "" : ".profile"}.ts`,
     output: [
       {
-        file: `./lib/es5/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
+        file: `./lib/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
         format: "umd",
         name: "singleSpa",
         sourcemap: true,
-        banner: generateBanner("UMD ES5"),
+        banner: generateBanner("UMD"),
       },
       {
-        file: `./lib/es5/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
-        format: "system",
-        sourcemap: true,
-        banner: generateBanner("SystemJS ES5"),
-      },
-      {
-        file: `./lib/es5/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
         format: "esm",
         sourcemap: true,
-        banner: generateBanner("ESM ES5"),
-      },
-    ],
-    plugins: [
-      replace(replaceOpts),
-      resolve(resolveOpts),
-      babel(babelOpts),
-      commonjs(),
-      isProduction &&
-        (await import("@rollup/plugin-terser")).terser(terserOpts),
-      useAnalyzer && analyzer(),
-    ],
-  },
-  {
-    input: `./src/single-spa${isProduction ? "" : ".profile"}.ts`,
-    output: [
-      {
-        file: `./lib/es2015/umd/single-spa${
-          isProduction ? ".min" : ".dev"
-        }.cjs`,
-        format: "umd",
-        name: "singleSpa",
-        sourcemap: true,
-        banner: generateBanner("UMD ES2015"),
+        banner: generateBanner("ESM"),
       },
       {
-        file: `./lib/es2015/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
-        format: "esm",
-        sourcemap: true,
-        banner: generateBanner("ES2015"),
-      },
-      {
-        file: `./lib/es2015/system/single-spa${
-          isProduction ? ".min" : ".dev"
-        }.js`,
+        file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
         format: "system",
         sourcemap: true,
-        banner: generateBanner("SystemJS ES2015"),
+        banner: generateBanner("SystemJS"),
       },
     ],
     plugins: [
@@ -107,7 +70,7 @@ export default (async () => [
       ),
       commonjs(),
       isProduction &&
-        (await import("@rollup/plugin-terser")).terser(
+        (await import("@rollup/plugin-terser")).default(
           Object.assign({}, terserOpts, {
             ecma: 6,
             module: true,
