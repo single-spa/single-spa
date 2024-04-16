@@ -1,5 +1,4 @@
 import { reroute } from "./reroute";
-import { find } from "../utils/find";
 import { formatErrorMessage } from "../applications/app-errors";
 import { isInBrowser } from "../utils/runtime-environment";
 import { StartOpts } from "../start";
@@ -164,8 +163,9 @@ export function patchHistoryApi(opts?: StartOpts) {
 
   // True by default, as a performance optimization that reduces
   // the number of extraneous popstate events
-  urlRerouteOnly =
-    opts && opts.hasOwnProperty("urlRerouteOnly") ? opts.urlRerouteOnly : true;
+  urlRerouteOnly = opts?.hasOwnProperty("urlRerouteOnly")
+    ? opts.urlRerouteOnly
+    : true;
 
   historyApiIsPatched = true;
 
@@ -182,7 +182,7 @@ export function patchHistoryApi(opts?: StartOpts) {
     if (typeof fn === "function") {
       if (
         routingEventsListeningTo.indexOf(eventName) >= 0 &&
-        !find(capturedEventListeners[eventName], (listener) => listener === fn)
+        !capturedEventListeners[eventName].find((listener) => listener === fn)
       ) {
         capturedEventListeners[eventName].push(fn);
         return;
@@ -194,7 +194,7 @@ export function patchHistoryApi(opts?: StartOpts) {
 
   window.removeEventListener = function (eventName, listenerFn) {
     if (typeof listenerFn === "function") {
-      if (routingEventsListeningTo.indexOf(eventName) >= 0) {
+      if (routingEventsListeningTo.includes(eventName)) {
         capturedEventListeners[eventName] = capturedEventListeners[
           eventName
         ].filter((fn) => fn !== listenerFn);

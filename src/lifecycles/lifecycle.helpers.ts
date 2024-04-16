@@ -1,4 +1,3 @@
-import { find } from "../utils/find";
 import {
   toName,
   AppOrParcelStatus,
@@ -15,7 +14,7 @@ export function validLifecycleFn(
 
   function isArrayOfFns(arr) {
     return (
-      Array.isArray(arr) && !find(arr, (item) => typeof item !== "function")
+      Array.isArray(arr) && !arr.find((item) => typeof item !== "function")
     );
   }
 }

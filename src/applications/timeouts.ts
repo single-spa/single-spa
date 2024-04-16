@@ -1,4 +1,3 @@
-import { assign } from "../utils/assign";
 import { getProps } from "../lifecycles/prop.helpers";
 import { objectType, toName } from "./app.helpers";
 import { formatErrorMessage } from "./app-errors";

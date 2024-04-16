@@ -116,11 +116,8 @@
     "typescript": "^5.3.3"
   },
   "browserslist": [
-    "ie >= 11",
-    "last 4 Safari major versions",
-    "last 10 Chrome major versions",
-    "last 10 Firefox major versions",
-    "last 4 Edge major versions"
+    ">1%",
+    "not ie <= 11"
   ],
   "ignore": [
     "examples",
