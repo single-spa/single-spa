@@ -26,6 +26,7 @@ import { assign } from "../utils/assign.js";
 import { isInBrowser } from "../utils/runtime-environment.js";
 import { formatErrorMessage } from "../applications/app-errors.js";
 import { addProfileEntry } from "../devtools/profiler.js";
+import { logger } from "../utils/logging.js";
 
 let appChangeUnderway = false,
   peopleWaitingOnAppChange = [],
@@ -89,7 +90,7 @@ export function reroute(
       typeof val?.then === "function" ? val : Promise.resolve(val);
     cancelPromises.push(
       promise.catch((err) => {
-        console.warn(
+        logger.warn(
           Error(
             formatErrorMessage(
               42,
@@ -98,7 +99,7 @@ export function reroute(
             )
           )
         );
-        console.warn(err);
+        logger.warn(err);
 
         // Interpret a Promise rejection to mean that the navigation should not be canceled
         return false;

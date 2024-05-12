@@ -1,4 +1,5 @@
 import { objectType, toName } from "./app.helpers";
+import { logger } from "../utils/logging";
 
 let errorHandlers = [];
 
@@ -72,7 +73,7 @@ export function transformErr(ogErr, appOrParcel, newStatus) {
     }
     result = ogErr;
   } else {
-    console.warn(
+    logger.warn(
       formatErrorMessage(
         30,
         __DEV__ &&

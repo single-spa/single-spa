@@ -1,4 +1,5 @@
 import { ensureJQuerySupport } from "../jquery-support.js";
+import { logger } from "../utils/logging.js"
 import {
   isActive,
   toName,
@@ -109,7 +110,7 @@ export function registerApplication(
 
     setTimeout(() => {
       if (!isStarted()) {
-        console.warn(
+        logger.warn(
           formatErrorMessage(
             1,
             __DEV__ &&

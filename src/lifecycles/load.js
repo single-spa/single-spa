@@ -20,6 +20,7 @@ import {
 import { getProps } from "./prop.helpers.js";
 import { assign } from "../utils/assign.js";
 import { addProfileEntry } from "../devtools/profiler.js";
+import { logger } from "../utils/logging.js";
 
 export function toLoadPromise(appOrParcel) {
   return Promise.resolve().then(() => {
@@ -107,7 +108,7 @@ export function toLoadPromise(appOrParcel) {
             try {
               appOptsStr = JSON.stringify(appOpts);
             } catch {}
-            console.error(
+            logger.error(
               formatErrorMessage(
                 validationErrCode,
                 __DEV__ &&

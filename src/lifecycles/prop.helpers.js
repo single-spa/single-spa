@@ -3,6 +3,7 @@ import { mountParcel } from "../parcels/mount-parcel.js";
 import { assign } from "../utils/assign.js";
 import { isParcel, toName } from "../applications/app.helpers.js";
 import { formatErrorMessage } from "../applications/app-errors.js";
+import { logger } from "../utils/logging.js";
 
 export function getProps(appOrParcel) {
   const name = toName(appOrParcel);
@@ -16,7 +17,7 @@ export function getProps(appOrParcel) {
     Array.isArray(customProps)
   ) {
     customProps = {};
-    console.warn(
+    logger.warn(
       formatErrorMessage(
         40,
         __DEV__ &&

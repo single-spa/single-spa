@@ -2,6 +2,7 @@ import { reroute } from "./reroute.js";
 import { find } from "../utils/find.js";
 import { formatErrorMessage } from "../applications/app-errors.js";
 import { isInBrowser } from "../utils/runtime-environment.js";
+import { logger } from "../utils/logging.js";
 
 /* We capture navigation event listeners so that we can make sure
  * that application navigation listeners are not called until
@@ -201,7 +202,7 @@ export function patchHistoryApi(opts) {
 // apis like getAppNames().
 if (isInBrowser) {
   if (window.singleSpaNavigate) {
-    console.warn(
+    logger.warn(
       formatErrorMessage(
         41,
         __DEV__ &&

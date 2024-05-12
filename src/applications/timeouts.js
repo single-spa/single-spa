@@ -2,6 +2,7 @@ import { assign } from "../utils/assign";
 import { getProps } from "../lifecycles/prop.helpers";
 import { objectType, toName } from "./app.helpers";
 import { formatErrorMessage } from "./app-errors";
+import { logger } from "../utils/logging";
 
 const defaultWarningMillis = 1000;
 
@@ -146,13 +147,13 @@ export function reasonableTime(appOrParcel, lifecycle) {
           if (timeoutConfig.dieOnTimeout) {
             reject(Error(errMsg));
           } else {
-            console.error(errMsg);
+            logger.error(errMsg);
             //don't resolve or reject, we're waiting this one out
           }
         } else if (!errored) {
           const numWarnings = shouldError;
           const numMillis = numWarnings * warningPeriod;
-          console.warn(errMsg);
+          logger.warn(errMsg);
           if (numMillis + warningPeriod < timeoutConfig.millis) {
             setTimeout(() => maybeTimingOut(numWarnings + 1), warningPeriod);
           }
