@@ -4,11 +4,6 @@ describe('logger module', () => {
     beforeEach(() => {
         setLogger(true);
     });
-    // afterEach(() => {
-    //     ['debug', 'info', 'warn', 'error'].forEach(m => {
-    //         console[m]?.mockRestore();
-    //     });
-    // });
     const defaultConsoleTests = [
         {
             method: "debug",
