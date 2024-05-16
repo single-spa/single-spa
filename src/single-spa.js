@@ -1,4 +1,5 @@
 export { start } from "./start.js";
+export { setLogger } from "./utils/logging.js";
 export { ensureJQuerySupport } from "./jquery-support.js";
 export {
   setBootstrapMaxTime,
