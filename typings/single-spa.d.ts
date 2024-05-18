@@ -235,4 +235,19 @@ declare module "single-spa" {
   ): ActivityFn;
 
   export function patchHistoryApi(opts?: StartOpts): void;
+
+  export interface ILogger {
+    debug(...data: any[]): void;
+    info(...data: any[]): void;
+    warn(...data: any[]): void;
+    error(...data: any[]): void;
+  }
+
+  /**
+   * Sets a logger object to be used by the single-spa library to emit log messages.  By default, 
+   * log messages are emitted to the console.
+   * @param logger A custom logger object, or the value `true` to log to the console, or the value 
+   * `false` to deactivate all logging.
+   */
+  export function configureLogger(logger: null | ILogger): void;
 }

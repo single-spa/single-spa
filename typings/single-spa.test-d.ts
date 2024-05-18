@@ -13,6 +13,8 @@ import {
   setBootstrapMaxTime,
   setMountMaxTime,
   setUnmountMaxTime,
+  configureLogger,
+  ILogger
 } from "single-spa";
 import { expectError, expectType } from "tsd";
 
@@ -116,3 +118,18 @@ setMountMaxTime(100, true, 50);
 setUnmountMaxTime(100);
 setUnmountMaxTime(100, true);
 setUnmountMaxTime(100, true, 50);
+
+configureLogger(null);
+configureLogger(console);
+
+const customLogger: ILogger = {
+  debug(...params: any[]) { },
+  info(...params: any[]) { },
+  warn(...params: any[]) { },
+  error(...params: any[]) { },
+};
+
+configureLogger(customLogger);
+expectError<void>(
+  configureLogger(true)
+);

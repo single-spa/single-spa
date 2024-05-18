@@ -1,10 +1,4 @@
-/* export interface ILogger {
-    debug(...data: any[]): void;
-    info(...data: any[]): void;
-    warn(...data: any[]): void;
-    error(...data: any[]): void;
-}
-
+/* 
 const silentLogger: ILogger = {
     debug: noop,
     info: noop,
@@ -14,17 +8,13 @@ const silentLogger: ILogger = {
 
 let loggerInstance: ILogger = globalThis?.console;
 
-export function setLogger(logger: boolean | ILogger) {
+export function configureLogger(logger: null | ILogger) {
     if (!logger) {
         loggerInstance = silentLogger;
         return;
     }
-    if (logger === true) {
-        loggerInstance = console;
-        return;
-    }
     loggerInstance = logger;
-}
+};
 
 export const logger = {
     debug(...data) {
@@ -59,17 +49,13 @@ let loggerInstance = globalThis?.console;
  * @param logger A custom logger object, or the value `true` to log to the console, or the value 
  * `false` to deactivate all logging.
  */
-export function setLogger(logger) {
+export function configureLogger(logger) {
     if (!logger) {
         loggerInstance = silentLogger;
         return;
     }
-    if (logger === true) {
-        loggerInstance = console;
-        return;
-    }
     loggerInstance = logger;
-}
+};
 
 export const logger = {
     debug(...data) {

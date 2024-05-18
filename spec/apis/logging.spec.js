@@ -1,8 +1,8 @@
-import { logger, setLogger } from '../../src/utils/logging';
+import { logger, configureLogger } from '../../src/utils/logging';
 
 describe('logger module', () => {
     beforeEach(() => {
-        setLogger(true);
+        configureLogger(console);
     });
     const defaultConsoleTests = [
         {
@@ -35,16 +35,16 @@ describe('logger module', () => {
             spy.mockReset();
         });
     });
-    describe('setLogger', () => {
+    describe('configureLogger', () => {
         defaultConsoleTests.forEach(tc => {
-            it(`Should silence all logging coming from the "${tc.method}" method after calling setLogger with "false" as argument.`, () => {
+            it(`Should silence all logging coming from the "${tc.method}" method after calling configureLogger with "null" as argument.`, () => {
                 // Arrange.
                 const spy = jest.spyOn(console, tc.method);
                 tc.fn("Testing.");
                 expect(spy).toHaveBeenCalledTimes(1);
                 
                 // Act.
-                setLogger(false);
+                configureLogger(null);
 
                 // Assert.
                 tc.fn("Testing 2.");
@@ -59,12 +59,12 @@ describe('logger module', () => {
             error: jest.fn()
         };
         defaultConsoleTests.forEach(tc => {
-            it(`Should call the provided custom logger's "${tc.method}" method instead of logging directly to the console when setLogger is called with a custom logger object as argument.`, () => {
+            it(`Should call the provided custom logger's "${tc.method}" method instead of logging directly to the console when configureLogger is called with a custom logger object as argument.`, () => {
                 // Arrange.
                 const spy = jest.spyOn(console, tc.method);
 
                 // Act.
-                setLogger(customLogger);
+                configureLogger(customLogger);
 
                 // Assert.
                 tc.fn("Testing.");
