@@ -46,15 +46,25 @@ let loggerInstance = globalThis?.console;
 /**
  * Sets a logger object to be used by the single-spa library to emit log messages.  By default, 
  * log messages are emitted to the console.
- * @param logger A custom logger object, or the value `true` to log to the console, or the value 
- * `false` to deactivate all logging.
+ * @param logger A custom logger object, or `null` to silence logging.  To restore logging to 
+ * the console, pass the console object.
  */
 export function configureLogger(logger) {
-    if (!logger) {
+    if (logger === null) {
         loggerInstance = silentLogger;
         return;
     }
-    loggerInstance = logger;
+    if (typeof logger === 'object' &&
+        typeof logger.debug === 'function'
+        && typeof logger.info === "function"
+        && typeof logger.warn === "function"
+        && typeof logger.error === "function"
+    ) {
+        loggerInstance = logger;
+    }
+    else {
+        throw new Error("Invalid argument:  The given logger does not conform to the expected specification.")
+    }
 };
 
 export const logger = {
