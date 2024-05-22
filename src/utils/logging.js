@@ -32,6 +32,8 @@ export const logger = {
 };
 */
 
+import { formatErrorMessage } from "../applications/app-errors";
+
 function noop() { }
 
 const silentLogger = {
@@ -63,7 +65,13 @@ export function configureLogger(logger) {
         loggerInstance = logger;
     }
     else {
-        throw new Error("Invalid argument:  The given logger does not conform to the expected specification.")
+        loggerInstance.warn(
+            formatErrorMessage(
+                42,
+                __DEV__ &&
+                "The given logger does not conform to the ILogger interface."
+            )
+        );
     }
 };
 
