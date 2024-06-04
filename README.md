@@ -16,9 +16,9 @@
   <img height="50" alt="baseplate-logo-standard" src="https://github.com/single-spa/single-spa/assets/5524384/8f07afdb-dd30-4211-a460-8b8a354ccc0f" style="background-color: white;">
 </a>
 
-## A javascript framework for front-end microservices
+## A JavaScript framework for front-end microservices
 
-Build micro frontends that coexist and can ([but don't need to](https://single-spa.js.org/docs/faq.html#can-i-use-more-than-one-framework)) be written with their own framework. This allows you to:
+Build micro front-ends that coexist and can ([but don't need to](https://single-spa.js.org/docs/faq.html#can-i-use-more-than-one-framework)) be written with their own framework. This allows you to:
 
 - [Use multiple frameworks](/docs/single-spa-ecosystem.md#help-for-frameworks) on the same page [without refreshing the page](/docs/applications.md)
   ([React](https://github.com/single-spa/single-spa-react), [AngularJS](https://github.com/single-spa/single-spa-angularjs), [Angular](https://github.com/single-spa/single-spa-angular), [Ember](https://github.com/single-spa/single-spa-ember), or whatever you're using)
