@@ -2,8 +2,6 @@
   "name": "single-spa",
   "version": "6.0.1",
   "description": "The router for easy microfrontends",
-  "main": "lib/es2015/umd/single-spa.min.cjs",
-  "types": "typings/single-spa.d.ts",
   "type": "module",
   "publishConfig": {
     "access": "public"
@@ -29,7 +27,6 @@
     "./package.json": "./package.json",
     "./lib/*": "./lib/*"
   },
-  "module": "lib/es2015/esm/single-spa.min.js",
   "scripts": {
     "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod pnpm:build:types",
     "build:prod": "rollup -c --environment ROLLUP_ENV:'production'",
@@ -95,6 +92,7 @@
     "@rollup/plugin-replace": "^2.3.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@types/jest": "^26.0.23",
+    "@types/node": "^20.14.7",
     "@typescript-eslint/parser": "^7.5.0",
     "babel-jest": "^29.7.0",
     "babel-plugin-dynamic-import-node": "^2.3.0",
@@ -115,13 +113,6 @@
     "rollup-plugin-analyzer": "^4.0.0",
     "typescript": "^5.3.3"
   },
-  "browserslist": [
-    "ie >= 11",
-    "last 4 Safari major versions",
-    "last 10 Chrome major versions",
-    "last 10 Firefox major versions",
-    "last 4 Edge major versions"
-  ],
   "ignore": [
     "examples",
     "docs"
