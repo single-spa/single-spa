@@ -92,7 +92,6 @@
     "@rollup/plugin-replace": "^2.3.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@types/jest": "^26.0.23",
-    "@types/node": "^20.14.7",
     "@typescript-eslint/parser": "^7.5.0",
     "babel-jest": "^29.7.0",
     "babel-plugin-dynamic-import-node": "^2.3.0",

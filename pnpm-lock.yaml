@@ -47,9 +47,6 @@ importers:
       '@types/jest':
         specifier: ^26.0.23
         version: 26.0.23
-      '@types/node':
-        specifier: ^20.14.7
-        version: 20.14.7
       '@typescript-eslint/parser':
         specifier: ^7.5.0
         version: 7.5.0(eslint@7.30.0)(typescript@5.3.3)
