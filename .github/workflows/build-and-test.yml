@@ -25,4 +25,4 @@ jobs:
       - run: pnpm test
       - run: pnpm run check-format
       - run: pnpm run lint
-      - run: pnpm exec changeset status
+      - run: pnpm exec changeset status --since origin/7.0
