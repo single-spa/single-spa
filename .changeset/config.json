@@ -8,7 +8,7 @@
   "fixed": [],
   "linked": [],
   "access": "restricted",
-  "baseBranch": "main",
+  "baseBranch": "7.0",
   "updateInternalDependencies": "patch",
   "ignore": []
 }
