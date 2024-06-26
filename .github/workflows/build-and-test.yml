@@ -20,7 +20,6 @@ jobs:
         with:
           version: 8.11.0
       # Necessary for changeset status to work
-      - run: git checkout main && git checkout $GITHUB_SHA
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
       - run: pnpm test
