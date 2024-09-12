@@ -42,7 +42,7 @@ export default (async () => [
     input: `./src/single-spa${isProduction ? "" : ".profile"}.ts`,
     output: [
       {
-        file: `./lib/es5/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
+        file: `./lib/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
         format: "umd",
         name: "singleSpa",
         sourcemap: true,

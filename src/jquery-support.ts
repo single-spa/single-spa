@@ -3,10 +3,8 @@ import { routingEventsListeningTo } from "./navigation/navigation-events";
 let hasInitialized: boolean = false;
 
 export function ensureJQuerySupport(jQuery: any = window.jQuery): void {
-  if (!jQuery) {
-    if (window.$ && window.$.fn && window.$.fn.jquery) {
-      jQuery = window.$;
-    }
+  if (!jQuery && window?.$?.fn?.jquery) {
+    jQuery = window.$;
   }
 
   if (jQuery && !hasInitialized) {

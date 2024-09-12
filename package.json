@@ -10,18 +10,18 @@
   "exports": {
     ".": {
       "development": {
-        "import": "./lib/es2015/esm/single-spa.dev.js",
-        "require": "./lib/es2015/umd/single-spa.dev.cjs",
+        "import": "./lib/esm/single-spa.dev.js",
+        "require": "./lib/umd/single-spa.dev.cjs",
         "types": "./typings/single-spa.d.ts"
       },
       "production": {
-        "import": "./lib/es2015/esm/single-spa.min.js",
-        "require": "./lib/es2015/umd/single-spa.min.cjs",
+        "import": "./lib/esm/single-spa.min.js",
+        "require": "./lib/umd/single-spa.min.cjs",
         "types": "./typings/single-spa.d.ts"
       },
       "default": {
-        "import": "./lib/es2015/esm/single-spa.min.js",
-        "require": "./lib/es2015/umd/single-spa.min.cjs",
+        "import": "./lib/esm/single-spa.min.js",
+        "require": "./lib/umd/single-spa.min.cjs",
         "types": "./typings/single-spa.d.ts"
       }
     },
@@ -113,6 +113,10 @@
     "rollup-plugin-analyzer": "^4.0.0",
     "typescript": "^5.3.3"
   },
+  "browserslist": [
+    ">5%",
+    "not ie <= 11"
+  ],
   "ignore": [
     "examples",
     "docs"

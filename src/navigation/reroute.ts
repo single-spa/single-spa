@@ -120,7 +120,7 @@ export function reroute(
   function loadApps(): Promise<string[]> {
     return Promise.resolve().then(() => {
       const loadPromises = appsToLoad.map(toLoadPromise);
-      let succeeded;
+      let succeeded: boolean;
 
       return (
         Promise.all(loadPromises)
