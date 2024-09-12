@@ -178,7 +178,6 @@ export function patchHistoryApi(opts) {
         capturedEventListeners[eventName] = capturedEventListeners[
           eventName
         ].filter((fn) => fn !== listenerFn);
-        return;
       }
     }
 
