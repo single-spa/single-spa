@@ -42,7 +42,7 @@ describe("navigateToUrl", function () {
     const a = document.createElement("a");
     a.setAttribute("href", hrefWithoutHash() + "#a/other");
     a.addEventListener("click", singleSpa.navigateToUrl);
-    // IE requires an element to be on the dom before click events will be fired.
+    // JSDOM requires an element to be on the dom before click events will be fired.
     document.body.appendChild(a);
     a.click();
     expect(location.hash).toBe("#a/other");

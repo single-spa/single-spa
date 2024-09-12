@@ -24,7 +24,7 @@ import { toUnmountPromise } from "../lifecycles/unmount";
 import { ensureValidAppTimeouts } from "../applications/timeouts";
 import { formatErrorMessage } from "../applications/app-errors";
 
-let parcelCount = 0;
+let parcelCount: number = 0;
 const rootParcels: ParcelOwner = { name: "rootParcels", parcels: {} };
 
 // This is a public api, exported to users of single-spa

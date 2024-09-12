@@ -11,25 +11,25 @@
   "exports": {
     ".": {
       "development": {
-        "import": "./lib/es2015/esm/single-spa.dev.js",
-        "require": "./lib/es2015/umd/single-spa.dev.cjs",
+        "import": "./lib/esm/single-spa.dev.js",
+        "require": "./lib/umd/single-spa.dev.cjs",
         "types": "./typings/single-spa.d.ts"
       },
       "production": {
-        "import": "./lib/es2015/esm/single-spa.min.js",
-        "require": "./lib/es2015/umd/single-spa.min.cjs",
+        "import": "./lib/esm/single-spa.min.js",
+        "require": "./lib/umd/single-spa.min.cjs",
         "types": "./typings/single-spa.d.ts"
       },
       "default": {
-        "import": "./lib/es2015/esm/single-spa.min.js",
-        "require": "./lib/es2015/umd/single-spa.min.cjs",
+        "import": "./lib/esm/single-spa.min.js",
+        "require": "./lib/umd/single-spa.min.cjs",
         "types": "./typings/single-spa.d.ts"
       }
     },
     "./package.json": "./package.json",
     "./lib/*": "./lib/*"
   },
-  "module": "lib/es2015/esm/single-spa.min.js",
+  "module": "lib/esm/single-spa.min.js",
   "scripts": {
     "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod pnpm:build:types",
     "build:prod": "rollup -c --environment ROLLUP_ENV:'production'",
@@ -116,11 +116,8 @@
     "typescript": "^5.3.3"
   },
   "browserslist": [
-    "ie >= 11",
-    "last 4 Safari major versions",
-    "last 10 Chrome major versions",
-    "last 10 Firefox major versions",
-    "last 4 Edge major versions"
+    ">5%",
+    "not ie <= 11"
   ],
   "ignore": [
     "examples",

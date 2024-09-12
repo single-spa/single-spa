@@ -103,7 +103,7 @@ export function getRawAppData(): InternalApplication[] {
   return [...apps];
 }
 
-export function getAppStatus(appName): AppOrParcelStatus {
+export function getAppStatus(appName): AppOrParcelStatus | null {
   const app = apps.find((app) => toName(app) === appName);
   return app ? app.status : null;
 }
@@ -226,7 +226,7 @@ export function unloadApplication(
   }
 
   const appUnloadInfo = getAppUnloadInfo(toName(app));
-  if (opts && opts.waitForUnmount) {
+  if (opts?.waitForUnmount) {
     // We need to wait for unmount before unloading the app
 
     if (appUnloadInfo) {
@@ -502,13 +502,8 @@ export function pathToActiveWhen(
   const regex = toDynamicPathValidatorRegex(path, exactMatch);
 
   return (location: Location) => {
-    // compatible with IE10
-    let origin = location.origin;
-    if (!origin) {
-      origin = `${location.protocol}//${location.host}`;
-    }
     const route = location.href
-      .replace(origin, "")
+      .replace(location.origin, "")
       .replace(location.search, "")
       .split("?")[0];
     return regex.test(route);
