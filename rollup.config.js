@@ -49,13 +49,13 @@ export default (async () => [
         banner: generateBanner("UMD"),
       },
       {
-        file: `./lib/es5/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
         format: "system",
         sourcemap: true,
         banner: generateBanner("SystemJS"),
       },
       {
-        file: `./lib/es5/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
         format: "esm",
         sourcemap: true,
         banner: generateBanner("ESM"),
