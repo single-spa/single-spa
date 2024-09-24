@@ -125,7 +125,7 @@
     "prettier": "^2.0.2",
     "pretty-quick": "^3.1.1",
     "rimraf": "^3.0.2",
-    "rollup": "^2.2.0",
+    "rollup": "^3.29.5",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-terser": "^7.0.2",
     "tsd": "^0.17.0"
