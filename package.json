@@ -2,9 +2,8 @@
   "name": "single-spa",
   "version": "6.0.1",
   "description": "The router for easy microfrontends",
-  "main": "lib/es2015/umd/single-spa.min.cjs",
-  "types": "typings/single-spa.d.ts",
   "type": "module",
+  "main": "lib/umd/single-spa.min.cjs",
   "publishConfig": {
     "access": "public"
   },
@@ -29,7 +28,6 @@
     "./package.json": "./package.json",
     "./lib/*": "./lib/*"
   },
-  "module": "lib/esm/single-spa.min.js",
   "scripts": {
     "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod pnpm:build:types",
     "build:prod": "rollup -c --environment ROLLUP_ENV:'production'",

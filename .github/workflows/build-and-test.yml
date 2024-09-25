@@ -15,12 +15,11 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-      - uses: pnpm/action-setup@v2
+          node-version: "22"
+      - uses: pnpm/action-setup@v4
         with:
-          version: 8.11.0
-      # Necessary for changeset status to work
-      - run: git checkout main && git checkout $GITHUB_SHA
+          version: 9.10.0
+      - run: ls -al
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
       - run: pnpm test

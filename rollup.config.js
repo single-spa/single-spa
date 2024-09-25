@@ -30,6 +30,7 @@ const terserOpts = {
       return comment.value.trim().startsWith("single-spa@");
     },
   },
+  module: true,
 };
 
 const resolveOpts = {
@@ -48,34 +49,25 @@ export default (async () => [
         banner: generateBanner("UMD"),
       },
       {
-        file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
-        format: "esm",
-        sourcemap: true,
-        banner: generateBanner("ESM"),
-      },
-      {
         file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
         format: "system",
         sourcemap: true,
         banner: generateBanner("SystemJS"),
       },
+      {
+        file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
+        format: "esm",
+        sourcemap: true,
+        banner: generateBanner("ESM"),
+      },
     ],
     plugins: [
       replace(replaceOpts),
       resolve(resolveOpts),
-      babel(
-        Object.assign({}, babelOpts, {
-          envName: "esm",
-        })
-      ),
+      babel(babelOpts),
       commonjs(),
       isProduction &&
-        (await import("@rollup/plugin-terser")).default(
-          Object.assign({}, terserOpts, {
-            ecma: 6,
-            module: true,
-          })
-        ),
+        (await import("@rollup/plugin-terser")).default(terserOpts),
       useAnalyzer && analyzer(),
     ],
   },
