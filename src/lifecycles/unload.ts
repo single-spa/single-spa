@@ -48,8 +48,8 @@ export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
 
     if (
       app.status !== NOT_MOUNTED &&
-      app.status !== LOAD_ERROR
-      // app.status !== SKIP_BECAUSE_BROKEN
+      app.status !== LOAD_ERROR &&
+      app.status !== SKIP_BECAUSE_BROKEN
     ) {
       /* The app cannot be unloaded unless in certain statuses
        */
