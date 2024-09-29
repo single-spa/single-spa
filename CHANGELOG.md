@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.3
+
+### Patch Changes
+
+- [#1256](https://github.com/single-spa/single-spa/pull/1256) [`205d020`](https://github.com/single-spa/single-spa/commit/205d02018c10887efd01826cd6e54884d81c152f) Thanks [@joeldenning](https://github.com/joeldenning)! - Upgrade rollup to avoid security vulnerability
+
 ## 6.0.2
 
 ### Patch Changes
