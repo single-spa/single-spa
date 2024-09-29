@@ -5035,7 +5035,7 @@ snapshots:
       '@types/babel__core': 7.1.14
       babel-plugin-istanbul: 6.0.0
       babel-preset-jest: 27.0.6(@babel/core@7.25.2)
-      chalk: 4.1.1
+      chalk: 4.1.2
       graceful-fs: 4.2.6
       slash: 3.0.0
     transitivePeerDependencies:
@@ -6095,7 +6095,7 @@ snapshots:
       '@jest/test-result': 27.0.6
       '@jest/types': 27.0.6
       '@types/node': 16.0.0
-      chalk: 4.1.1
+      chalk: 4.1.2
       co: 4.6.0
       dedent: 0.7.0
       expect: 27.0.6
@@ -6172,7 +6172,7 @@ snapshots:
 
   jest-diff@27.0.6:
     dependencies:
-      chalk: 4.1.1
+      chalk: 4.1.2
       diff-sequences: 27.0.6
       jest-get-type: 27.0.6
       pretty-format: 27.0.6
@@ -6184,7 +6184,7 @@ snapshots:
   jest-each@27.0.6:
     dependencies:
       '@jest/types': 27.0.6
-      chalk: 4.1.1
+      chalk: 4.1.2
       jest-get-type: 27.0.6
       jest-util: 27.0.6
       pretty-format: 27.0.6
@@ -6258,7 +6258,7 @@ snapshots:
       '@jest/test-result': 27.0.6
       '@jest/types': 27.0.6
       '@types/node': 16.0.0
-      chalk: 4.1.1
+      chalk: 4.1.2
       co: 4.6.0
       expect: 27.0.6
       is-generator-fn: 2.1.0
@@ -6280,7 +6280,7 @@ snapshots:
 
   jest-matcher-utils@27.0.6:
     dependencies:
-      chalk: 4.1.1
+      chalk: 4.1.2
       jest-diff: 27.0.6
       jest-get-type: 27.0.6
       pretty-format: 27.0.6

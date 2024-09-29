@@ -46,8 +46,12 @@ export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
       return unloadInfo.promise!.then(() => app);
     }
 
-    if (app.status !== NOT_MOUNTED && app.status !== LOAD_ERROR) {
-      /* The app cannot be unloaded until it is unmounted.
+    if (
+      app.status !== NOT_MOUNTED &&
+      app.status !== LOAD_ERROR &&
+      app.status !== SKIP_BECAUSE_BROKEN
+    ) {
+      /* The app cannot be unloaded unless in certain statuses
        */
       return app;
     }
@@ -58,10 +62,9 @@ export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
       startTime = performance.now();
     }
 
-    const unloadPromise =
-      app.status === LOAD_ERROR
-        ? Promise.resolve()
-        : reasonableTime(app, "unload");
+    const unloadPromise = app.unload
+      ? reasonableTime(app, "unload")
+      : Promise.resolve();
 
     app.status = UNLOADING;
 
