@@ -8,7 +8,7 @@ describe(`happy-unload app :`, () => {
   beforeAll(() => {
     singleSpa.registerApplication(
       "skip-because-broken-unload",
-      () => import("./skip-because-broken-unload.app.js"),
+      () => import("./skip-because-broken-unload.app"),
       (location) => location.hash === activeHash
     );
     singleSpa.start();
