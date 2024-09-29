@@ -24,7 +24,7 @@ describe("error handlers api", () => {
     singleSpa.registerApplication(
       "load-error",
       () => Promise.reject("Could not load this one"),
-      (location) => location.hash === "#load-error"
+      (location) => location.hash === "#load-error",
     );
 
     location.hash = "#load-error";
@@ -33,7 +33,7 @@ describe("error handlers api", () => {
       expect(errs.length).toBe(1);
       expect(errs[0].appOrParcelName).toBe("load-error");
       expect(errs[0].message).toMatch(
-        `'load-error' died in status LOADING_SOURCE_CODE: "Could not load this one"`
+        `'load-error' died in status LOADING_SOURCE_CODE: "Could not load this one"`,
       );
       expect(singleSpa.getAppStatus("load-error")).toBe(singleSpa.LOAD_ERROR);
     });
@@ -55,7 +55,7 @@ describe("error handlers api", () => {
     singleSpa.registerApplication(
       "bootstrap-error",
       app,
-      (location) => location.hash === "#bootstrap-error"
+      (location) => location.hash === "#bootstrap-error",
     );
 
     location.hash = "#bootstrap-error";
@@ -64,10 +64,10 @@ describe("error handlers api", () => {
       expect(errs.length).toBe(1);
       expect(errs[0].appOrParcelName).toBe("bootstrap-error");
       expect(errs[0].message).toMatch(
-        `'bootstrap-error' died in status BOOTSTRAPPING: couldn't bootstrap`
+        `'bootstrap-error' died in status BOOTSTRAPPING: couldn't bootstrap`,
       );
       expect(singleSpa.getAppStatus("bootstrap-error")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN
+        singleSpa.SKIP_BECAUSE_BROKEN,
       );
     });
   });
@@ -88,7 +88,7 @@ describe("error handlers api", () => {
     singleSpa.registerApplication(
       "mount-error",
       app,
-      (location) => location.hash === "#mount-error"
+      (location) => location.hash === "#mount-error",
     );
 
     location.hash = "#mount-error";
@@ -98,8 +98,8 @@ describe("error handlers api", () => {
       expect(errs[0].appOrParcelName).toBe("mount-error");
       expect(
         errs[0].message.indexOf(
-          `'mount-error' died in status NOT_MOUNTED: "couldn't mount"`
-        )
+          `'mount-error' died in status NOT_MOUNTED: "couldn't mount"`,
+        ),
       ).toBeGreaterThan(-1);
     });
   });
@@ -120,7 +120,7 @@ describe("error handlers api", () => {
     singleSpa.registerApplication(
       "unmount-error",
       app,
-      (location) => location.hash === "#unmount-error"
+      (location) => location.hash === "#unmount-error",
     );
 
     location.hash = "#unmount-error";
@@ -136,8 +136,8 @@ describe("error handlers api", () => {
         expect(errs[0].appOrParcelName).toBe("unmount-error");
         expect(
           errs[0].message.indexOf(
-            `'unmount-error' died in status UNMOUNTING: couldn't unmount`
-          )
+            `'unmount-error' died in status UNMOUNTING: couldn't unmount`,
+          ),
         ).toBeGreaterThan(-1);
       });
   });
@@ -166,8 +166,8 @@ describe("error handlers api", () => {
       expect(errs[0].appOrParcelName).toBe("activity-error");
       expect(
         errs[0].message.indexOf(
-          `'activity-error' died in status NOT_LOADED: bad activity function`
-        )
+          `'activity-error' died in status NOT_LOADED: bad activity function`,
+        ),
       ).toBeGreaterThan(-1);
     });
   });
@@ -185,7 +185,7 @@ describe("error handlers api", () => {
     location.hash = "#";
     await singleSpa.triggerAppChange();
     singleSpa.registerApplication("one-error-only", app, (location) =>
-      location.hash.startsWith("#one-error-only")
+      location.hash.startsWith("#one-error-only"),
     );
     location.hash = "#one-error-only";
     await singleSpa.triggerAppChange();

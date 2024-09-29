@@ -33,7 +33,7 @@ describe("partial rerouting", () => {
     singleSpa.registerApplication(
       "partial-rerouting",
       () => delay().then(() => app),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
 
     location.hash = activeHash;
@@ -98,13 +98,13 @@ describe("partial rerouting", () => {
     singleSpa.registerApplication(
       "first-app",
       () => delay().then(() => firstApp),
-      (location) => location.hash === firstAppActiveHash
+      (location) => location.hash === firstAppActiveHash,
     );
 
     singleSpa.registerApplication(
       "second-app",
       () => Promise.resolve(secondApp),
-      (location) => location.hash === secondAppActiveHash
+      (location) => location.hash === secondAppActiveHash,
     );
 
     location.hash = firstAppActiveHash;

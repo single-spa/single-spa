@@ -14,7 +14,7 @@ describe(`invalid-bootstrap app`, () => {
     singleSpa.registerApplication(
       "./invalid-bootstrap.app",
       () => import("./invalid-bootstrap.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });
@@ -40,7 +40,7 @@ describe(`invalid-bootstrap app`, () => {
       expect(myApp.unmountWasCalled()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./invalid-bootstrap.app")).toEqual(
-        "SKIP_BECAUSE_BROKEN"
+        "SKIP_BECAUSE_BROKEN",
       );
       expect(errs.length).toBeGreaterThan(0);
     });

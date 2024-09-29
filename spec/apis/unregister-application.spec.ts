@@ -23,7 +23,7 @@ describe("unregisterApplication", function () {
   it(`should throw an error if no such application exists`, () => {
     expect(() => {
       window.__SINGLE_SPA_DEVTOOLS__.exposedMethods.unregisterApplication(
-        `app that doesn't exist`
+        `app that doesn't exist`,
       );
     }).toThrow();
   });
@@ -65,7 +65,7 @@ describe("unregisterApplication", function () {
     expect(mounted).toBe(true);
 
     expect(singleSpa.getAppStatus("about to unregister")).toBe(
-      singleSpa.MOUNTING
+      singleSpa.MOUNTING,
     );
 
     return singleSpa.unregisterApplication("about to unregister").then(() => {

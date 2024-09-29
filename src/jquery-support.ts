@@ -18,7 +18,7 @@ export function ensureJQuerySupport(jQuery: any = window.jQuery): void {
         window.addEventListener,
         eventString,
         fn,
-        arguments
+        arguments,
       );
     };
 
@@ -29,7 +29,7 @@ export function ensureJQuerySupport(jQuery: any = window.jQuery): void {
         window.removeEventListener,
         eventString,
         fn,
-        arguments
+        arguments,
       );
     };
 
@@ -42,7 +42,7 @@ function captureRoutingEvents(
   nativeFunctionToCall: Function,
   eventString: string,
   fn: Function,
-  originalArgs: any[]
+  originalArgs: any[],
 ) {
   if (typeof eventString !== "string") {
     return originalJQueryFunction.apply(this, originalArgs);

@@ -13,7 +13,7 @@ describe(`invalid-unmount app`, () => {
     singleSpa.registerApplication(
       "./invalid-unmount.app",
       () => import("./invalid-unmount.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });
@@ -41,7 +41,7 @@ describe(`invalid-unmount app`, () => {
       expect(myApp.numMounts()).toEqual(1);
       expect(singleSpa.getMountedApps()).toEqual(["./invalid-unmount.app"]);
       expect(singleSpa.getAppStatus("./invalid-unmount.app")).toEqual(
-        "MOUNTED"
+        "MOUNTED",
       );
 
       // now unmount, which will be the first time it enters a broken state
@@ -52,7 +52,7 @@ describe(`invalid-unmount app`, () => {
         expect(myApp.numUnmounts()).toEqual(1);
         expect(singleSpa.getMountedApps()).toEqual([]);
         expect(singleSpa.getAppStatus("./invalid-unmount.app")).toEqual(
-          "SKIP_BECAUSE_BROKEN"
+          "SKIP_BECAUSE_BROKEN",
         );
 
         // now remount and check if it tries to mount despite being in a broken state
@@ -63,7 +63,7 @@ describe(`invalid-unmount app`, () => {
           expect(myApp.numUnmounts()).toEqual(1);
           expect(singleSpa.getMountedApps()).toEqual([]);
           expect(singleSpa.getAppStatus("./invalid-unmount.app")).toEqual(
-            "SKIP_BECAUSE_BROKEN"
+            "SKIP_BECAUSE_BROKEN",
           );
         });
       });

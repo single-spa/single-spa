@@ -18,7 +18,7 @@ let firstMountFired: boolean = false;
 
 export function toMountPromise(
   appOrParcel: LoadedAppOrParcel,
-  hardFail?: boolean
+  hardFail?: boolean,
 ): Promise<LoadedAppOrParcel> {
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== NOT_MOUNTED) {
@@ -55,7 +55,7 @@ export function toMountPromise(
             "mount",
             startTime,
             performance.now(),
-            true
+            true,
           );
         }
 
@@ -68,7 +68,7 @@ export function toMountPromise(
         appOrParcel.status = MOUNTED;
         return toUnmountPromise(appOrParcel, true).then(
           setSkipBecauseBroken,
-          setSkipBecauseBroken
+          setSkipBecauseBroken,
         );
 
         function setSkipBecauseBroken() {
@@ -79,7 +79,7 @@ export function toMountPromise(
               "mount",
               startTime,
               performance.now(),
-              false
+              false,
             );
           }
 

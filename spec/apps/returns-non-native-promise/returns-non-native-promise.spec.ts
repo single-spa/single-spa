@@ -7,7 +7,7 @@ describe(`returns-non-native-promise`, () => {
     singleSpa.registerApplication(
       "./returns-non-native-promise.app.js",
       () => import("./returns-non-native-promise.app"),
-      (location) => location.hash === "#returns-non-native-promise"
+      (location) => location.hash === "#returns-non-native-promise",
     );
     singleSpa.start();
   });

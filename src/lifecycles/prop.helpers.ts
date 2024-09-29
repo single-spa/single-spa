@@ -12,7 +12,7 @@ interface SingleSpaProps {
 }
 
 export function getProps(
-  appOrParcel: AppOrParcel
+  appOrParcel: AppOrParcel,
 ): SingleSpaProps & CustomProps {
   const name = toName(appOrParcel);
   let customProps =
@@ -29,10 +29,10 @@ export function getProps(
       formatErrorMessage(
         40,
         __DEV__ &&
-          `single-spa: ${name}'s customProps function must return an object. Received ${customProps}`
+          `single-spa: ${name}'s customProps function must return an object. Received ${customProps}`,
       ),
       name,
-      customProps
+      customProps,
     );
   }
   const result: SingleSpaProps = Object.assign({}, customProps, {

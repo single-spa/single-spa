@@ -66,6 +66,6 @@ describe(`profiler routing events before start()`, () => {
 
 function getProfilerEventsByKind(name) {
   return getProfilerData().filter(
-    (d) => d.type === "routing" && d.name === name
+    (d) => d.type === "routing" && d.name === name,
   );
 }

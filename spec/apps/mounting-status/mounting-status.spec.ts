@@ -28,19 +28,19 @@ describe(`mounting-status`, () => {
     app.getEventTarget().addEventListener("mount-start", mountStartResolve);
 
     expect(singleSpa.getAppStatus("mounting-status")).toEqual(
-      singleSpa.NOT_LOADED
+      singleSpa.NOT_LOADED,
     );
     singleSpa.navigateToUrl(activeHash);
     const routingPromise = singleSpa.triggerAppChange();
 
     await mountStartPromise;
     expect(singleSpa.getAppStatus("mounting-status")).toEqual(
-      singleSpa.MOUNTING
+      singleSpa.MOUNTING,
     );
 
     await routingPromise;
     expect(singleSpa.getAppStatus("mounting-status")).toEqual(
-      singleSpa.MOUNTED
+      singleSpa.MOUNTED,
     );
 
     app.getEventTarget().removeEventListener("mount-start", mountStartResolve);

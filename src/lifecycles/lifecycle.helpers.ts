@@ -8,7 +8,7 @@ import { formatErrorMessage } from "../applications/app-errors";
 import { AppOrParcelTimeouts } from "../applications/timeouts";
 
 export function validLifecycleFn(
-  fn: LifeCycleFn<unknown> | LifeCycleFn<unknown>[]
+  fn: LifeCycleFn<unknown> | LifeCycleFn<unknown>[],
 ): boolean {
   return fn && (typeof fn === "function" || isArrayOfFns(fn));
 
@@ -22,7 +22,7 @@ export function validLifecycleFn(
 export function flattenFnArray(
   appOrParcel: LifeCycles<unknown>,
   lifecycle: "bootstrap" | "mount" | "update" | "unmount" | "unload",
-  isParcel: boolean
+  isParcel: boolean,
 ): LifeCycleFn<unknown> {
   let fns: LifeCycleFn<unknown>[] = Array.isArray(appOrParcel[lifecycle])
     ? (appOrParcel[lifecycle] as LifeCycleFn<unknown>[])
@@ -48,8 +48,8 @@ export function flattenFnArray(
                 type,
                 name,
                 lifecycle,
-                index
-              )
+                index,
+              ),
             );
       });
     }, Promise.resolve());
@@ -75,7 +75,7 @@ export interface ParcelCustomProps extends CustomProps {
 
 export type CustomPropsFn<ExtraProps extends CustomProps = CustomProps> = (
   name: string,
-  location: Location
+  location: Location,
 ) => ExtraProps;
 
 export type AppProps = {
@@ -83,7 +83,7 @@ export type AppProps = {
   singleSpa: any;
   mountParcel(
     parcelConfig: ParcelConfig,
-    customProps: ParcelProps & CustomProps
+    customProps: ParcelProps & CustomProps,
   ): Parcel;
 };
 
@@ -165,7 +165,7 @@ export type Application<ExtraProps = {}> =
   | LoadApp<ExtraProps>;
 
 export type LoadApp<ExtraProps = {}> = (
-  config: ExtraProps & AppProps
+  config: ExtraProps & AppProps,
 ) => Promise<LifeCycles<ExtraProps>>;
 
 export type ActivityFn = (location: Location) => boolean;

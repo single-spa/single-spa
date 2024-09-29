@@ -48,7 +48,7 @@ export function triggerAppChange() {
 export function reroute(
   pendingPromises: WaitingPromises[] = [],
   eventArguments: EventArguments = undefined,
-  silentNavigation: boolean = false
+  silentNavigation: boolean = false,
 ): Promise<string[]> {
   if (appChangeUnderway) {
     return new Promise((resolve, reject) => {
@@ -85,7 +85,7 @@ export function reroute(
     appsThatChanged = appsToUnload.concat(
       appsToLoad,
       appsToUnmount,
-      appsToMount
+      appsToMount,
     );
     return performAppChanges();
   } else {
@@ -105,15 +105,15 @@ export function reroute(
             formatErrorMessage(
               42,
               __DEV__ &&
-                `single-spa: A cancelNavigation promise rejected with the following value: ${err}`
-            )
-          )
+                `single-spa: A cancelNavigation promise rejected with the following value: ${err}`,
+            ),
+          ),
         );
         console.warn(err);
 
         // Interpret a Promise rejection to mean that the navigation should not be canceled
         return false;
-      })
+      }),
     );
   }
 
@@ -149,7 +149,7 @@ export function reroute(
                 profilerKind,
                 startTime,
                 performance.now(),
-                succeeded
+                succeeded,
               );
             }
           })
@@ -164,12 +164,12 @@ export function reroute(
         appsThatChanged.length === 0
           ? "before-no-app-change"
           : "before-app-change",
-        getCustomEventDetail(true)
+        getCustomEventDetail(true),
       );
 
       fireSingleSpaEvent(
         "before-routing-event",
-        getCustomEventDetail(true, { cancelNavigation })
+        getCustomEventDetail(true, { cancelNavigation }),
       );
 
       return Promise.all(cancelPromises).then((cancelValues) => {
@@ -181,7 +181,7 @@ export function reroute(
             window.history,
             history.state,
             "",
-            oldUrl.substring(location.origin.length)
+            oldUrl.substring(location.origin.length),
           );
 
           // Single-spa's internal tracking of current url needs to be updated after the url change above
@@ -197,7 +197,7 @@ export function reroute(
               profilerKind,
               startTime,
               performance.now(),
-              true
+              true,
             );
           }
 
@@ -211,7 +211,7 @@ export function reroute(
         const unmountUnloadPromises = (appsToUnmount as LoadedApp[])
           .map((app) => toUnmountPromise(app))
           .map((unmountPromise: Promise<LoadedApp>) =>
-            unmountPromise.then(toUnloadPromise)
+            unmountPromise.then(toUnloadPromise),
           );
 
         const allUnmountPromises: Promise<InternalApplication>[] = [
@@ -234,12 +234,12 @@ export function reroute(
                 profilerKind,
                 startTime,
                 performance.now(),
-                true
+                true,
               );
             }
             fireSingleSpaEvent(
               "before-mount-routing-event",
-              getCustomEventDetail(true)
+              getCustomEventDetail(true),
             );
           },
           (err) => {
@@ -250,12 +250,12 @@ export function reroute(
                 profilerKind,
                 startTime,
                 performance.now(),
-                true
+                true,
               );
             }
 
             throw err;
-          }
+          },
         );
 
         /* We load and bootstrap apps while other apps are unmounting, but we
@@ -264,7 +264,7 @@ export function reroute(
         const loadThenMountPromises: Promise<InternalApplication>[] =
           appsToLoad.map((app) => {
             return toLoadPromise(app).then((app) =>
-              tryToBootstrapAndMount(app, unmountAllPromise)
+              tryToBootstrapAndMount(app, unmountAllPromise),
             );
           });
 
@@ -303,7 +303,7 @@ export function reroute(
                       profilerKind,
                       unmountFinishedTime,
                       performance.now(),
-                      true
+                      true,
                     );
                   }
                 },
@@ -315,12 +315,12 @@ export function reroute(
                       profilerKind,
                       unmountFinishedTime,
                       performance.now(),
-                      false
+                      false,
                     );
                   }
 
                   throw err;
-                }
+                },
               )
               .then(finishUpAndReturn);
           });
@@ -386,7 +386,7 @@ export function reroute(
 
   function getCustomEventDetail(
     isBeforeChanges: boolean = false,
-    extraProperties?: Object
+    extraProperties?: Object,
   ): CustomEventInit {
     const newAppStatuses = {};
     const appsByNewStatus = {
@@ -435,7 +435,7 @@ export function reroute(
 
     function addApp(
       app: InternalApplication,
-      status?: InternalApplication["status"]
+      status?: InternalApplication["status"],
     ) {
       const appName = toName(app);
       status = status || getAppStatus(appName);
@@ -451,7 +451,7 @@ export function reroute(
     // fire any single-spa events
     if (!silentNavigation) {
       window.dispatchEvent(
-        new CustomEvent(`single-spa:${name}`, eventProperties)
+        new CustomEvent(`single-spa:${name}`, eventProperties),
       );
     }
   }
@@ -466,13 +466,13 @@ export function reroute(
  */
 function tryToBootstrapAndMount(
   app: InternalApplication,
-  unmountAllPromise: Promise<unknown>
+  unmountAllPromise: Promise<unknown>,
 ): Promise<InternalApplication> {
   if (shouldBeActive(app)) {
     return toBootstrapPromise(app as LoadedApp).then((app) =>
       unmountAllPromise.then(() =>
-        shouldBeActive(app) ? toMountPromise(app) : app
-      )
+        shouldBeActive(app) ? toMountPromise(app) : app,
+      ),
     ) as Promise<InternalApplication>;
   } else {
     return unmountAllPromise.then(() => app);

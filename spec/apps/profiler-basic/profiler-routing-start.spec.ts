@@ -71,7 +71,7 @@ describe(`profiler routing events after start()`, () => {
 
     window.addEventListener(
       "single-spa:before-routing-event",
-      handleBeforeRouting
+      handleBeforeRouting,
     );
 
     await singleSpa.triggerAppChange();
@@ -81,7 +81,7 @@ describe(`profiler routing events after start()`, () => {
 
     window.removeEventListener(
       "single-spa:before-routing-event",
-      handleBeforeRouting
+      handleBeforeRouting,
     );
 
     function handleBeforeRouting(evt) {
@@ -92,7 +92,7 @@ describe(`profiler routing events after start()`, () => {
 
 function getProfilerEventsByKind(name) {
   return getProfilerData().filter(
-    (d) => d.type === "routing" && d.name === name
+    (d) => d.type === "routing" && d.name === name,
   );
 }
 

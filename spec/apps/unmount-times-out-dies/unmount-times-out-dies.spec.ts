@@ -13,7 +13,7 @@ describe(`unmount-times-out-dies app`, () => {
     singleSpa.registerApplication(
       "./unmount-times-out-dies.app",
       () => import("./unmount-times-out-dies.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });
@@ -41,7 +41,7 @@ describe(`unmount-times-out-dies app`, () => {
         "./unmount-times-out-dies.app",
       ]);
       expect(singleSpa.getAppStatus("./unmount-times-out-dies.app")).toEqual(
-        "MOUNTED"
+        "MOUNTED",
       );
 
       location.hash = "#not-unmount-times-out";
@@ -50,7 +50,7 @@ describe(`unmount-times-out-dies app`, () => {
         expect(myApp.numUnmounts()).toEqual(1);
         expect(singleSpa.getMountedApps()).toEqual([]);
         expect(singleSpa.getAppStatus("./unmount-times-out-dies.app")).toEqual(
-          "SKIP_BECAUSE_BROKEN"
+          "SKIP_BECAUSE_BROKEN",
         );
       });
     });

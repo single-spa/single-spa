@@ -18,7 +18,7 @@ function hrefWithoutQuery() {
 
 function expectPathAndHashToEqual(string) {
   expect(
-    hrefWithoutQuery().slice(location.href.length - string.length)
+    hrefWithoutQuery().slice(location.href.length - string.length),
   ).toEqual(string);
 }
 
@@ -94,7 +94,7 @@ describe("navigateToUrl", function () {
 
   it(`should call push state when the url has no hash`, function () {
     singleSpa.navigateToUrl(
-      hrefWithoutHash() + "/some-other-path-without-hash"
+      hrefWithoutHash() + "/some-other-path-without-hash",
     );
     expectPathAndHashToEqual("/some-other-path-without-hash");
   });
@@ -106,7 +106,7 @@ describe("navigateToUrl", function () {
     expect(window.history.pushState).toHaveBeenCalledWith(
       null,
       null,
-      "/route?yoshi=criminal"
+      "/route?yoshi=criminal",
     );
   });
 

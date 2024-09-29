@@ -12,7 +12,7 @@ describe(`parcels mounting parcels`, () => {
     singleSpa.registerApplication(
       "parcel-mounts-parcels",
       app,
-      () => shouldAppBeMounted
+      () => shouldAppBeMounted,
     );
 
     return singleSpa.triggerAppChange().then(() => {
@@ -56,7 +56,7 @@ describe(`parcels mounting parcels`, () => {
     singleSpa.registerApplication(
       "parcel-unmounts-recursive",
       app,
-      () => shouldAppBeMounted
+      () => shouldAppBeMounted,
     );
 
     return singleSpa.triggerAppChange().then(() => {
@@ -77,7 +77,7 @@ describe(`parcels mounting parcels`, () => {
           return parcel2.mountPromise.then(() => {
             const parcel3 = parcelConfig2.mountProps.mountParcel(
               parcelConfig3,
-              { domElement: document.createElement("div") }
+              { domElement: document.createElement("div") },
             );
             return parcel3.mountPromise;
           });

@@ -37,7 +37,7 @@ describe("applications mounting parcels :", () => {
     singleSpa.registerApplication(
       "parcel-happy-1",
       app,
-      () => shouldAppBeMounted
+      () => shouldAppBeMounted,
     );
 
     parcelConfig = createParcelConfig();
@@ -105,7 +105,7 @@ describe("applications mounting parcels :", () => {
     singleSpa.registerApplication(
       "parcel-happy-2",
       app,
-      () => shouldAppBeMounted
+      () => shouldAppBeMounted,
     );
 
     parcelConfig = createParcelConfig();
@@ -131,7 +131,7 @@ describe("applications mounting parcels :", () => {
         () =>
           new Promise((resolve, reject) => {
             setTimeout(resolve, 30);
-          })
+          }),
       )
       .then(() => {
         const parcel = app.mountProps.mountParcel(parcelConfig, {
@@ -164,7 +164,7 @@ describe("applications mounting parcels :", () => {
     singleSpa.registerApplication(
       "parcel-force-unmount",
       app,
-      () => shouldAppBeMounted
+      () => shouldAppBeMounted,
     );
 
     parcelConfig = createParcelConfig();
@@ -195,7 +195,7 @@ describe("applications mounting parcels :", () => {
     singleSpa.registerApplication(
       "remount-parcel",
       app,
-      () => shouldAppBeMounted
+      () => shouldAppBeMounted,
     );
     parcelConfig = createParcelConfig();
 
@@ -213,7 +213,7 @@ describe("applications mounting parcels :", () => {
         parcel.unmount().then((value) => {
           // The mount promise isn't resolved with anything in particular
           expect(value).toBe(null);
-        })
+        }),
       )
       .then(() => {
         expect(parcel.getStatus()).toBe(singleSpa.NOT_MOUNTED);
@@ -240,7 +240,7 @@ describe("applications mounting parcels :", () => {
     singleSpa.registerApplication(
       "multiple-parcels",
       app,
-      () => shouldAppBeMounted
+      () => shouldAppBeMounted,
     );
     parcelConfig = createParcelConfig();
     const parcelConfig2 = createParcelConfig();
@@ -259,7 +259,7 @@ describe("applications mounting parcels :", () => {
         expect(parcelConfig.mountCalls).toBe(0);
         expect(parcelConfig2.mountCalls).toBe(0);
         return Promise.all([parcel.mountPromise, parcel2.mountPromise]).then(
-          () => [parcel, parcel2]
+          () => [parcel, parcel2],
         );
       })
       .then(([p, p2]) => {
@@ -302,7 +302,7 @@ describe("applications mounting parcels :", () => {
     singleSpa.registerApplication(
       "immediate-unmount",
       app,
-      () => shouldAppBeMounted
+      () => shouldAppBeMounted,
     );
 
     parcelConfig = {

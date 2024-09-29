@@ -14,7 +14,7 @@ describe(`lifecycle-props-function app`, () => {
       (location) => location.hash === activeHash,
       (name, location) => {
         return customProps;
-      }
+      },
     );
   });
 
@@ -87,7 +87,7 @@ describe(`lifecycle-props-function app`, () => {
 
     expect(console.warn).toHaveBeenCalled();
     expect(console.warn.mock.calls[0][0]).toMatch(
-      `lifecycle-props-function's customProps function must return an object`
+      `lifecycle-props-function's customProps function must return an object`,
     );
   });
 
@@ -115,7 +115,7 @@ describe(`lifecycle-props-function app`, () => {
 
     expect(console.warn).toHaveBeenCalled();
     expect(console.warn.mock.calls[0][0]).toMatch(
-      `lifecycle-props-function's customProps function must return an object`
+      `lifecycle-props-function's customProps function must return an object`,
     );
   });
 
@@ -143,7 +143,7 @@ describe(`lifecycle-props-function app`, () => {
 
     expect(console.warn).toHaveBeenCalled();
     expect(console.warn.mock.calls[0][0]).toMatch(
-      `lifecycle-props-function's customProps function must return an object`
+      `lifecycle-props-function's customProps function must return an object`,
     );
   });
 });

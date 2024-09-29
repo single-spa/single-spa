@@ -13,7 +13,7 @@ describe(`mount-fails app`, () => {
     singleSpa.registerApplication(
       "./mount-fails.app",
       () => import("./mount-fails.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });
@@ -40,7 +40,7 @@ describe(`mount-fails app`, () => {
       expect(myApp.wasUnmounted()).toEqual(true); // We try to unmount an application if it fails to mount.
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./mount-fails.app")).toEqual(
-        "SKIP_BECAUSE_BROKEN"
+        "SKIP_BECAUSE_BROKEN",
       );
 
       location.hash = "#not-mount-fails";
@@ -48,7 +48,7 @@ describe(`mount-fails app`, () => {
         expect(myApp.wasUnmounted()).toEqual(true);
         expect(singleSpa.getMountedApps()).toEqual([]);
         expect(singleSpa.getAppStatus("./mount-fails.app")).toEqual(
-          "SKIP_BECAUSE_BROKEN"
+          "SKIP_BECAUSE_BROKEN",
         );
       });
     });

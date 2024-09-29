@@ -12,7 +12,7 @@ describe(`bootstrap-times-out-dies`, () => {
     singleSpa.registerApplication(
       "./bootstrap-times-out-dies.app",
       () => import("./bootstrap-times-out-dies.app"),
-      (location) => location.hash === "#bootstrap-times-out-dies"
+      (location) => location.hash === "#bootstrap-times-out-dies",
     );
     singleSpa.start();
   });
@@ -40,7 +40,7 @@ describe(`bootstrap-times-out-dies`, () => {
       expect(myApp.wasMounted()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./bootstrap-times-out-dies.app")).toEqual(
-        "SKIP_BECAUSE_BROKEN"
+        "SKIP_BECAUSE_BROKEN",
       );
       expect(errs.length).toBeGreaterThan(0);
     });

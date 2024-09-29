@@ -25,7 +25,7 @@ describe(`invalid-load-function`, () => {
     singleSpa.registerApplication(
       "invalid-load-1",
       loadFunction,
-      (location) => location.hash === "#invalid-load-function"
+      (location) => location.hash === "#invalid-load-function",
     );
 
     location.hash = "#invalid-load-function";
@@ -35,11 +35,11 @@ describe(`invalid-load-function`, () => {
       expect(errs[0].appOrParcelName).toBe("invalid-load-1");
       expect(
         errs[0].message.indexOf(
-          "single-spa loading function did not return a promise. Check the second argument to registerApplication"
-        )
+          "single-spa loading function did not return a promise. Check the second argument to registerApplication",
+        ),
       ).toBeGreaterThan(-1);
       expect(singleSpa.getAppStatus("invalid-load-1")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN
+        singleSpa.SKIP_BECAUSE_BROKEN,
       );
     });
   });
@@ -51,7 +51,7 @@ describe(`invalid-load-function`, () => {
     singleSpa.registerApplication(
       "invalid-load-2",
       loadFunction,
-      (location) => location.hash === "#invalid-load-function"
+      (location) => location.hash === "#invalid-load-function",
     );
 
     location.hash = "#invalid-load-function";
@@ -61,11 +61,11 @@ describe(`invalid-load-function`, () => {
       expect(errs[0].appOrParcelName).toBe("invalid-load-2");
       expect(
         errs[0].message.indexOf(
-          "single-spa loading function did not return a promise. Check the second argument to registerApplication"
-        )
+          "single-spa loading function did not return a promise. Check the second argument to registerApplication",
+        ),
       ).toBeGreaterThan(-1);
       expect(singleSpa.getAppStatus("invalid-load-2")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN
+        singleSpa.SKIP_BECAUSE_BROKEN,
       );
     });
   });
@@ -77,7 +77,7 @@ describe(`invalid-load-function`, () => {
     singleSpa.registerApplication(
       "invalid-load-3",
       loadFunction,
-      (location) => location.hash === "#invalid-load-function"
+      (location) => location.hash === "#invalid-load-function",
     );
 
     location.hash = "#invalid-load-function";
@@ -87,11 +87,11 @@ describe(`invalid-load-function`, () => {
       expect(errs[0].appOrParcelName).toBe("invalid-load-3");
       expect(
         errs[0].message.indexOf(
-          "single-spa loading function did not return a promise. Check the second argument to registerApplication"
-        )
+          "single-spa loading function did not return a promise. Check the second argument to registerApplication",
+        ),
       ).toBeGreaterThan(-1);
       expect(singleSpa.getAppStatus("invalid-load-3")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN
+        singleSpa.SKIP_BECAUSE_BROKEN,
       );
     });
   });
@@ -109,7 +109,7 @@ describe(`invalid-load-function`, () => {
         });
     }
     singleSpa.registerApplication("invalid-load-4", loadFunction, (location) =>
-      location.hash.includes("#invalid-load-function")
+      location.hash.includes("#invalid-load-function"),
     );
 
     location.hash = "#invalid-load-function";
@@ -124,9 +124,9 @@ describe(`invalid-load-function`, () => {
       return new Promise((resolve) => setTimeout(resolve, 201)).then(() =>
         singleSpa.triggerAppChange().then(() => {
           expect(singleSpa.getAppStatus("invalid-load-4")).toBe(
-            singleSpa.NOT_BOOTSTRAPPED
+            singleSpa.NOT_BOOTSTRAPPED,
           );
-        })
+        }),
       );
     });
   });

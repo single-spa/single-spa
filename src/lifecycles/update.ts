@@ -11,7 +11,7 @@ import { ProfileEntry, addProfileEntry } from "../devtools/profiler";
 import { LoadedAppOrParcel } from "./lifecycle.helpers";
 
 export function toUpdatePromise(
-  appOrParcel: LoadedAppOrParcel
+  appOrParcel: LoadedAppOrParcel,
 ): Promise<LoadedAppOrParcel> {
   return Promise.resolve().then(() => {
     let startTime: number, profileEventType: ProfileEntry["type"];
@@ -27,10 +27,10 @@ export function toUpdatePromise(
           32,
           __DEV__ &&
             `Cannot update parcel '${toName(
-              appOrParcel
+              appOrParcel,
             )}' because it is not mounted`,
-          toName(appOrParcel)
-        )
+          toName(appOrParcel),
+        ),
       );
     }
 
@@ -47,7 +47,7 @@ export function toUpdatePromise(
             "update",
             startTime,
             performance.now(),
-            true
+            true,
           );
         }
 
@@ -61,7 +61,7 @@ export function toUpdatePromise(
             "update",
             startTime,
             performance.now(),
-            false
+            false,
           );
         }
 

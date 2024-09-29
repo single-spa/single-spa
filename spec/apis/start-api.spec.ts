@@ -1,8 +1,12 @@
 import { registerApplication } from "../../src/single-spa";
 
 describe("start()", () => {
-  beforeAll(jest.useFakeTimers);
-  afterAll(jest.useRealTimers);
+  beforeAll(() => {
+    jest.useFakeTimers({ legacyFakeTimers: true });
+  });
+  afterAll(() => {
+    jest.useRealTimers();
+  });
 
   it(`does not throw an error before start() is called`, async () => {
     jest.spyOn(console, "warn");

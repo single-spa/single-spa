@@ -12,7 +12,7 @@ describe(`bootstrap-rejects`, () => {
     singleSpa.registerApplication(
       "./bootstrap-rejects.app",
       () => import("./bootstrap-rejects.app"),
-      (location) => location.hash === "#bootstrap-rejects"
+      (location) => location.hash === "#bootstrap-rejects",
     );
     singleSpa.start();
   });
@@ -39,7 +39,7 @@ describe(`bootstrap-rejects`, () => {
       expect(myApp.wasMounted()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./bootstrap-rejects.app")).toEqual(
-        singleSpa.SKIP_BECAUSE_BROKEN
+        singleSpa.SKIP_BECAUSE_BROKEN,
       );
     });
   });

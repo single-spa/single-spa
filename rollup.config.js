@@ -3,7 +3,7 @@ import babel from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import analyzer from "rollup-plugin-analyzer";
 import replace from "@rollup/plugin-replace";
-import packageJson from "./package.json";
+import packageJson from "./package.json" with { type: "json" };
 
 const isProduction = process.env.ROLLUP_ENV === "production";
 const useAnalyzer = process.env.ANALYZER === "analyzer";

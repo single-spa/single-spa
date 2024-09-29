@@ -13,7 +13,7 @@ describe(`unmount-rejects app`, () => {
     singleSpa.registerApplication(
       "./unmount-rejects.app",
       () => import("./unmount-rejects.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });
@@ -40,7 +40,7 @@ describe(`unmount-rejects app`, () => {
       expect(myApp.numUnmounts()).toEqual(0);
       expect(singleSpa.getMountedApps()).toEqual(["./unmount-rejects.app"]);
       expect(singleSpa.getAppStatus("./unmount-rejects.app")).toEqual(
-        "MOUNTED"
+        "MOUNTED",
       );
 
       location.hash = "#not-unmount-rejects";
@@ -49,7 +49,7 @@ describe(`unmount-rejects app`, () => {
         expect(myApp.numUnmounts()).toEqual(1);
         expect(singleSpa.getMountedApps()).toEqual([]);
         expect(singleSpa.getAppStatus("./unmount-rejects.app")).toEqual(
-          "SKIP_BECAUSE_BROKEN"
+          "SKIP_BECAUSE_BROKEN",
         );
 
         location.hash = "#unmount-rejects";
@@ -59,7 +59,7 @@ describe(`unmount-rejects app`, () => {
           expect(myApp.numMounts()).toEqual(1);
           expect(singleSpa.getMountedApps()).toEqual([]);
           expect(singleSpa.getAppStatus("./unmount-rejects.app")).toEqual(
-            "SKIP_BECAUSE_BROKEN"
+            "SKIP_BECAUSE_BROKEN",
           );
         });
       });

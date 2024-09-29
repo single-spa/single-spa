@@ -13,7 +13,7 @@ import { LoadedAppOrParcel } from "./lifecycle.helpers";
 
 export function toUnmountPromise(
   appOrParcel: LoadedAppOrParcel,
-  hardFail?: boolean
+  hardFail?: boolean,
 ): Promise<LoadedAppOrParcel> {
   return Promise.resolve().then(() => {
     if (appOrParcel.status !== MOUNTED) {
@@ -30,7 +30,7 @@ export function toUnmountPromise(
     appOrParcel.status = UNMOUNTING;
 
     const unmountChildrenParcels = Object.keys(appOrParcel.parcels).map(
-      (parcelId) => appOrParcel.parcels[parcelId].unmountThisParcel()
+      (parcelId) => appOrParcel.parcels[parcelId].unmountThisParcel(),
     );
 
     let parcelError: Error;
@@ -66,7 +66,7 @@ export function toUnmountPromise(
               "unmount",
               startTime,
               performance.now(),
-              true
+              true,
             );
           }
         },
@@ -78,7 +78,7 @@ export function toUnmountPromise(
               "unmount",
               startTime,
               performance.now(),
-              false
+              false,
             );
           }
 
@@ -87,7 +87,7 @@ export function toUnmountPromise(
           } else {
             handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
           }
-        }
+        },
       );
     }
   });

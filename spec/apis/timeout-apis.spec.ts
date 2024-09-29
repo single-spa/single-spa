@@ -33,17 +33,17 @@ describe("global timeout configuration", () => {
       await controlledParcelActions(
         (parcel) => parcel.bootstrapPromise,
         "bootstrap-0",
-        3
+        3,
       );
       expect(consoleErrSpy).not.toHaveBeenCalled();
 
       await controlledParcelActions(
         (parcel) => parcel.bootstrapPromise,
         "bootstrap-1",
-        10
+        10,
       );
       expectError(
-        `single-spa minified message #31: Lifecycle function bootstrap for parcel bootstrap-1 lifecycle did not resolve or reject for 5 ms. See https://single-spa.js.org/error/?code=31&arg=bootstrap&arg=parcel&arg=bootstrap-1&arg=5`
+        `single-spa minified message #31: Lifecycle function bootstrap for parcel bootstrap-1 lifecycle did not resolve or reject for 5 ms. See https://single-spa.js.org/error/?code=31&arg=bootstrap&arg=parcel&arg=bootstrap-1&arg=5`,
       );
     });
 
@@ -53,17 +53,17 @@ describe("global timeout configuration", () => {
       await controlledParcelActions(
         (parcel) => parcel.bootstrapPromise,
         "bootstrap-2",
-        0
+        0,
       );
       expect(consoleWarnSpy).not.toHaveBeenCalled();
 
       await controlledParcelActions(
         (parcel) => parcel.bootstrapPromise,
         "bootstrap-3",
-        10
+        10,
       );
       expectWarning(
-        `single-spa minified message #31: Lifecycle function bootstrap for parcel bootstrap-3 lifecycle did not resolve or reject for 15 ms. See https://single-spa.js.org/error/?code=31&arg=bootstrap&arg=parcel&arg=bootstrap-3&arg=15`
+        `single-spa minified message #31: Lifecycle function bootstrap for parcel bootstrap-3 lifecycle did not resolve or reject for 15 ms. See https://single-spa.js.org/error/?code=31&arg=bootstrap&arg=parcel&arg=bootstrap-3&arg=15`,
       );
     });
   });
@@ -80,7 +80,7 @@ describe("global timeout configuration", () => {
         (parcel) => parcel.mountPromise,
         "mount-0",
         0,
-        3
+        3,
       );
       expect(consoleErrSpy).not.toHaveBeenCalled();
 
@@ -88,10 +88,10 @@ describe("global timeout configuration", () => {
         (parcel) => parcel.mountPromise,
         "mount-1",
         0,
-        10
+        10,
       );
       expectError(
-        `single-spa minified message #31: Lifecycle function mount for parcel mount-1 lifecycle did not resolve or reject for 5 ms. See https://single-spa.js.org/error/?code=31&arg=mount&arg=parcel&arg=mount-1&arg=5`
+        `single-spa minified message #31: Lifecycle function mount for parcel mount-1 lifecycle did not resolve or reject for 5 ms. See https://single-spa.js.org/error/?code=31&arg=mount&arg=parcel&arg=mount-1&arg=5`,
       );
     });
 
@@ -102,7 +102,7 @@ describe("global timeout configuration", () => {
         (parcel) => parcel.mountPromise,
         "mount-2",
         0,
-        3
+        3,
       );
       expect(consoleWarnSpy).not.toHaveBeenCalled();
 
@@ -110,10 +110,10 @@ describe("global timeout configuration", () => {
         (parcel) => parcel.mountPromise,
         "mount-3",
         0,
-        10
+        10,
       );
       expectWarning(
-        `single-spa minified message #31: Lifecycle function mount for parcel mount-3 lifecycle did not resolve or reject for 15 ms. See https://single-spa.js.org/error/?code=31&arg=mount&arg=parcel&arg=mount-3&arg=15`
+        `single-spa minified message #31: Lifecycle function mount for parcel mount-3 lifecycle did not resolve or reject for 15 ms. See https://single-spa.js.org/error/?code=31&arg=mount&arg=parcel&arg=mount-3&arg=15`,
       );
     });
   });
@@ -136,7 +136,7 @@ describe("global timeout configuration", () => {
 
       await controlledParcelActions(unmount, "unmount-1", 0, 0, 0, 10);
       expectError(
-        `single-spa minified message #31: Lifecycle function unmount for parcel unmount-1 lifecycle did not resolve or reject for 5 ms. See https://single-spa.js.org/error/?code=31&arg=unmount&arg=parcel&arg=unmount-1&arg=5`
+        `single-spa minified message #31: Lifecycle function unmount for parcel unmount-1 lifecycle did not resolve or reject for 5 ms. See https://single-spa.js.org/error/?code=31&arg=unmount&arg=parcel&arg=unmount-1&arg=5`,
       );
     });
 
@@ -148,7 +148,7 @@ describe("global timeout configuration", () => {
 
       await controlledParcelActions(unmount, "unmount-3", 0, 0, 0, 10);
       expectWarning(
-        `single-spa minified message #31: Lifecycle function unmount for parcel unmount-3 lifecycle did not resolve or reject for 15 ms. See https://single-spa.js.org/error/?code=31&arg=unmount&arg=parcel&arg=unmount-3&arg=15`
+        `single-spa minified message #31: Lifecycle function unmount for parcel unmount-3 lifecycle did not resolve or reject for 15 ms. See https://single-spa.js.org/error/?code=31&arg=unmount&arg=parcel&arg=unmount-3&arg=15`,
       );
     });
   });
@@ -176,7 +176,7 @@ function generateParcel(
   mountDelay = 0,
   updateDelay = 0,
   unmountDelay = 0,
-  unloadDelay = 0
+  unloadDelay = 0,
 ) {
   return [
     {

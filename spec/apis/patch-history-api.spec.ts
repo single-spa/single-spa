@@ -28,7 +28,7 @@ describe("patchHistoryApi", () => {
     window.removeEventListener("popstate", popstateListener);
 
     expect(patchHistoryApi).toThrowError(
-      "was called after the history api was already patched"
+      "was called after the history api was already patched",
     );
 
     function popstateListener() {

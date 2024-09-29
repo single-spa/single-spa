@@ -19,7 +19,7 @@ describe(`lifecycle-props app`, () => {
     singleSpa.registerApplication(
       "lifecycle-props",
       () => import("./lifecycle-props.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
 
     // This mounts the app
@@ -53,7 +53,7 @@ describe(`lifecycle-props app`, () => {
       "lifecycle-props-customProps",
       () => import("./lifecycle-props.app"),
       (location) => location.hash === activeHash,
-      { test: "test" }
+      { test: "test" },
     );
 
     // This mounts the app

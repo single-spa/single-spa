@@ -13,7 +13,7 @@ describe(`mount-times-out-dies app`, () => {
     singleSpa.registerApplication(
       "./mount-times-out-dies.app",
       () => import("./mount-times-out-dies.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });
@@ -39,7 +39,7 @@ describe(`mount-times-out-dies app`, () => {
       expect(myApp.mounts()).toEqual(1);
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./mount-times-out-dies.app")).toEqual(
-        "SKIP_BECAUSE_BROKEN"
+        "SKIP_BECAUSE_BROKEN",
       );
     });
   });

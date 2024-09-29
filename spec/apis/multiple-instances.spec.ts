@@ -18,7 +18,7 @@ describe(`multiple instances of single-spa`, () => {
     await import("single-spa");
 
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      "single-spa minified message #41: single-spa has been loaded twice on the page. This can result in unexpected behavior. See https://single-spa.js.org/error/?code=41"
+      "single-spa minified message #41: single-spa has been loaded twice on the page. This can result in unexpected behavior. See https://single-spa.js.org/error/?code=41",
     );
   });
 });

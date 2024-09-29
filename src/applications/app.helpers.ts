@@ -56,7 +56,7 @@ export function toName(app) {
 }
 
 export function isParcel(
-  appOrParcel: AppOrParcel
+  appOrParcel: AppOrParcel,
 ): appOrParcel is InternalParcel {
   return Boolean((appOrParcel as InternalParcel).unmountThisParcel);
 }
