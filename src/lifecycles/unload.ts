@@ -62,10 +62,9 @@ export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
       startTime = performance.now();
     }
 
-    const unloadPromise =
-      app.status === LOAD_ERROR || SKIP_BECAUSE_BROKEN
-        ? Promise.resolve()
-        : reasonableTime(app, "unload");
+    const unloadPromise = app.unload
+      ? reasonableTime(app, "unload")
+      : Promise.resolve();
 
     app.status = UNLOADING;
 
