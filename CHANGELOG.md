@@ -1,5 +1,17 @@
 # Changelog
 
+## 6.0.3
+
+### Patch Changes
+
+- [#1256](https://github.com/single-spa/single-spa/pull/1256) [`205d020`](https://github.com/single-spa/single-spa/commit/205d02018c10887efd01826cd6e54884d81c152f) Thanks [@joeldenning](https://github.com/joeldenning)! - Upgrade rollup to avoid security vulnerability
+
+## 6.0.2
+
+### Patch Changes
+
+- [#1227](https://github.com/single-spa/single-spa/pull/1227) [`f5df9ca`](https://github.com/single-spa/single-spa/commit/f5df9ca1e58c389d2c24dd1b84a92bbc3ece3c11) Thanks [@HighSkySky](https://github.com/HighSkySky)! - Always call native window.removeEventListener
+
 ## 6.0.1
 
 ### Patch Changes
