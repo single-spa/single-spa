@@ -50,15 +50,15 @@ const globalTimeoutConfig: AppOrParcelTimeouts = {
 export function setBootstrapMaxTime(
   time: number,
   dieOnTimeout: boolean,
-  warningMillis: number
+  warningMillis: number,
 ): void {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
         16,
         __DEV__ &&
-          `bootstrap max time must be a positive integer number of milliseconds`
-      )
+          `bootstrap max time must be a positive integer number of milliseconds`,
+      ),
     );
   }
 
@@ -72,15 +72,15 @@ export function setBootstrapMaxTime(
 export function setMountMaxTime(
   time: number,
   dieOnTimeout: boolean,
-  warningMillis: number
+  warningMillis: number,
 ): void {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
         17,
         __DEV__ &&
-          `mount max time must be a positive integer number of milliseconds`
-      )
+          `mount max time must be a positive integer number of milliseconds`,
+      ),
     );
   }
 
@@ -94,15 +94,15 @@ export function setMountMaxTime(
 export function setUnmountMaxTime(
   time: number,
   dieOnTimeout: boolean,
-  warningMillis: number
+  warningMillis: number,
 ) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
         18,
         __DEV__ &&
-          `unmount max time must be a positive integer number of milliseconds`
-      )
+          `unmount max time must be a positive integer number of milliseconds`,
+      ),
     );
   }
 
@@ -116,15 +116,15 @@ export function setUnmountMaxTime(
 export function setUnloadMaxTime(
   time: number,
   dieOnTimeout: boolean,
-  warningMillis: number
+  warningMillis: number,
 ) {
   if (typeof time !== "number" || time <= 0) {
     throw Error(
       formatErrorMessage(
         19,
         __DEV__ &&
-          `unload max time must be a positive integer number of milliseconds`
-      )
+          `unload max time must be a positive integer number of milliseconds`,
+      ),
     );
   }
 
@@ -137,7 +137,7 @@ export function setUnloadMaxTime(
 
 export function reasonableTime(
   appOrParcel: AppOrParcel,
-  lifecycle: "bootstrap" | "mount" | "update" | "unmount" | "unload"
+  lifecycle: "bootstrap" | "mount" | "update" | "unmount" | "unload",
 ): Promise<any> {
   const timeoutConfig = appOrParcel.timeouts[lifecycle];
   const warningPeriod = timeoutConfig.warningMillis;
@@ -164,12 +164,12 @@ export function reasonableTime(
       31,
       __DEV__ &&
         `Lifecycle function ${lifecycle} for ${type} ${toName(
-          appOrParcel
+          appOrParcel,
         )} lifecycle did not resolve or reject for ${timeoutConfig.millis} ms.`,
       lifecycle,
       type,
       toName(appOrParcel),
-      timeoutConfig.millis
+      timeoutConfig.millis,
     );
 
     function maybeTimingOut(shouldError: true | number) {
@@ -196,7 +196,7 @@ export function reasonableTime(
 }
 
 export function ensureValidAppTimeouts(
-  timeouts: Partial<AppOrParcelTimeouts>
+  timeouts: Partial<AppOrParcelTimeouts>,
 ): AppOrParcelTimeouts {
   const result = {};
 
@@ -204,7 +204,7 @@ export function ensureValidAppTimeouts(
     result[key] = Object.assign(
       {},
       globalTimeoutConfig[key],
-      timeouts?.[key] ?? {}
+      timeouts?.[key] ?? {},
     );
   }
 

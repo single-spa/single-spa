@@ -16,7 +16,7 @@ describe(`app-names`, () => {
     singleSpa.registerApplication(
       "usingArgumentAPI",
       app,
-      (location) => location.hash === "#app-names"
+      (location) => location.hash === "#app-names",
     );
     singleSpa.registerApplication({
       name: "usingObjectAPI",

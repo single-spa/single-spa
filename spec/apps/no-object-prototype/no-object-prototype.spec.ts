@@ -27,7 +27,7 @@ describe(`no-object-prototype app`, () => {
 
   it(`works when the application doesn't have the Object prototype`, async () => {
     expect(singleSpa.getAppStatus("no-object-prototype")).toBe(
-      singleSpa.NOT_LOADED
+      singleSpa.NOT_LOADED,
     );
 
     location.hash = activeHash;
@@ -35,7 +35,7 @@ describe(`no-object-prototype app`, () => {
     await singleSpa.triggerAppChange();
 
     expect(singleSpa.getAppStatus("no-object-prototype")).toBe(
-      singleSpa.MOUNTED
+      singleSpa.MOUNTED,
     );
   });
 });

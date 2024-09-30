@@ -5,7 +5,7 @@ describe("singleSpaNavigate() before patchHistoryApi()", () => {
   it(`doesn't throw an error when a navigation is canceled`, async () => {
     window.addEventListener(
       "single-spa:before-routing-event",
-      cancelTheNavigation
+      cancelTheNavigation,
     );
 
     navigateToUrl("/other-url");
@@ -15,7 +15,7 @@ describe("singleSpaNavigate() before patchHistoryApi()", () => {
       evt.detail.cancelNavigation();
       window.removeEventListener(
         "single-spa:before-routing-event",
-        cancelTheNavigation
+        cancelTheNavigation,
       );
     }
   });

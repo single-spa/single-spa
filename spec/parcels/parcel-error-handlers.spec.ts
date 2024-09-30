@@ -14,7 +14,7 @@ describe("parcel errors", () => {
         singleSpa.registerApplication(
           "parcel-bootstrap-errors",
           app,
-          () => shouldAppBeMounted
+          () => shouldAppBeMounted,
         );
         await singleSpa.triggerAppChange();
         expect(app.mountCalls).toBe(1);
@@ -45,7 +45,7 @@ describe("parcel errors", () => {
         singleSpa.registerApplication(
           "parcel-mount-errors",
           app,
-          () => shouldAppBeMounted
+          () => shouldAppBeMounted,
         );
         await singleSpa.triggerAppChange();
         expect(app.mountCalls).toBe(1);
@@ -88,7 +88,7 @@ describe("parcel errors", () => {
           singleSpa.registerApplication(
             "parcel-unmount-parcel-errors",
             app,
-            () => shouldAppBeMounted
+            () => shouldAppBeMounted,
           );
           await singleSpa.triggerAppChange();
 
@@ -147,7 +147,7 @@ describe("parcel errors", () => {
           singleSpa.registerApplication(
             "app-parcel-unmount-errors",
             app,
-            () => shouldAppBeMounted
+            () => shouldAppBeMounted,
           );
 
           await singleSpa.triggerAppChange();
@@ -182,7 +182,7 @@ describe("parcel errors", () => {
           expect(errs.length).toBe(1);
           expect(errs[0].appOrParcelName).toBe("app-parcel-unmount-errors");
           expect(errs[0].message).toMatch(
-            /application 'app-parcel-unmount-errors' died in status NOT_MOUNTED: parcel 'unmount-error2' died in status UNMOUNTING: unmount error/
+            /application 'app-parcel-unmount-errors' died in status NOT_MOUNTED: parcel 'unmount-error2' died in status UNMOUNTING: unmount error/,
           );
         });
       });
@@ -221,7 +221,7 @@ describe("parcel errors", () => {
         throw new Error("load promise should not have succeeded");
       } catch (err) {
         expect(
-          err.message.indexOf("did not resolve with a parcel config")
+          err.message.indexOf("did not resolve with a parcel config"),
         ).toBeGreaterThan(-1);
       }
     });
@@ -229,7 +229,7 @@ describe("parcel errors", () => {
     it(`rejects the load promise if the config doesn't have a valid mount function`, async () => {
       const parcel = singleSpa.mountRootParcel(
         { bootstrap() {}, unmount() {} },
-        { domElement: document.createElement("div") }
+        { domElement: document.createElement("div") },
       );
 
       // avoid unhandled rejection errors
@@ -241,7 +241,7 @@ describe("parcel errors", () => {
         throw new Error("load promise should not have succeeded");
       } catch (err) {
         expect(
-          err.message.indexOf("must have a valid mount function")
+          err.message.indexOf("must have a valid mount function"),
         ).toBeGreaterThan(-1);
       }
     });
@@ -249,7 +249,7 @@ describe("parcel errors", () => {
     it(`rejects the load promise if the config doesn't have a valid unmount function`, async () => {
       const parcel = singleSpa.mountRootParcel(
         { bootstrap() {}, mount() {} },
-        { domElement: document.createElement("div") }
+        { domElement: document.createElement("div") },
       );
 
       // avoid unhandled rejection errors
@@ -261,7 +261,7 @@ describe("parcel errors", () => {
         throw new Error("load promise should not have succeeded");
       } catch (err) {
         expect(
-          err.message.indexOf("must have a valid unmount function")
+          err.message.indexOf("must have a valid unmount function"),
         ).toBeGreaterThan(-1);
       }
     });

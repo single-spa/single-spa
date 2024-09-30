@@ -57,7 +57,7 @@ describe(`mount-before-other-loads`, () => {
             resolve(slowApp);
           }, 30);
         }),
-      (location) => location.hash.startsWith("#mount-before-other-loads")
+      (location) => location.hash.startsWith("#mount-before-other-loads"),
     );
 
     singleSpa.registerApplication(
@@ -66,7 +66,7 @@ describe(`mount-before-other-loads`, () => {
         order.push("fast:load");
         return fastApp;
       },
-      (location) => location.hash.startsWith("#mount-before-other-loads")
+      (location) => location.hash.startsWith("#mount-before-other-loads"),
     );
 
     expect(errs.length).toBe(0);

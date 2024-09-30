@@ -6,7 +6,7 @@ describe(`load-error`, () => {
     singleSpa.registerApplication(
       "load-error",
       () => Promise.reject(Error(`load failed`)),
-      (location) => location.hash === "#load-error"
+      (location) => location.hash === "#load-error",
     );
     location.hash = "#load-error";
     await singleSpa.triggerAppChange();
@@ -27,7 +27,7 @@ describe(`load-error`, () => {
     singleSpa.registerApplication(
       "load-error-2",
       () => Promise.reject(Error(`load failed`)),
-      (location) => location.hash === "#load-error-2"
+      (location) => location.hash === "#load-error-2",
     );
     location.hash = "#load-error-2";
     await singleSpa.triggerAppChange();
@@ -57,7 +57,7 @@ describe(`load-error`, () => {
     await singleSpa.triggerAppChange();
 
     expect(singleSpa.getAppStatus("load-error-unload")).toBe(
-      singleSpa.LOAD_ERROR
+      singleSpa.LOAD_ERROR,
     );
 
     const unloadPromise = singleSpa.unloadApplication("load-error-unload");
@@ -68,7 +68,7 @@ describe(`load-error`, () => {
     await unloadPromise;
 
     expect(singleSpa.getAppStatus("load-error-unload")).toBe(
-      singleSpa.NOT_LOADED
+      singleSpa.NOT_LOADED,
     );
 
     function errHandler() {

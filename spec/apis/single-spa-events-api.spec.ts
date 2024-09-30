@@ -45,7 +45,7 @@ describe(`events api :`, () => {
     singleSpa.registerApplication(
       "russell",
       russellApp,
-      () => window.location.hash.indexOf("#/russell") === 0
+      () => window.location.hash.indexOf("#/russell") === 0,
     );
     singleSpa.registerApplication("boom", boomApp, () => boom);
     singleSpa.start();
@@ -164,11 +164,11 @@ describe(`events api :`, () => {
       await singleSpa.triggerAppChange(); // start with a clean slate (no previous tests doing anything)
       window.addEventListener(
         "single-spa:before-routing-event",
-        beforeRoutingEvent
+        beforeRoutingEvent,
       );
       window.addEventListener(
         "single-spa:before-mount-routing-event",
-        beforeMountRoutingEvent
+        beforeMountRoutingEvent,
       );
       window.addEventListener("single-spa:routing-event", afterRoutingEvent);
 
@@ -184,7 +184,7 @@ describe(`events api :`, () => {
       function beforeRoutingEvent() {
         window.removeEventListener(
           "single-spa:before-routing-event",
-          beforeRoutingEvent
+          beforeRoutingEvent,
         );
         firedEvents.push("before-routing-event");
       }
@@ -192,7 +192,7 @@ describe(`events api :`, () => {
       function beforeMountRoutingEvent() {
         window.removeEventListener(
           "single-spa:before-mount-routing-event",
-          beforeMountRoutingEvent
+          beforeMountRoutingEvent,
         );
         firedEvents.push("before-mount-routing-event");
       }
@@ -200,7 +200,7 @@ describe(`events api :`, () => {
       function afterRoutingEvent() {
         window.removeEventListener(
           "single-spa:routing-event",
-          afterRoutingEvent
+          afterRoutingEvent,
         );
         firedEvents.push("routing-event");
       }
@@ -217,7 +217,7 @@ describe(`events api :`, () => {
 
       window.addEventListener(
         "single-spa:before-mount-routing-event",
-        listener
+        listener,
       );
 
       expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
@@ -236,7 +236,7 @@ describe(`events api :`, () => {
       function listener() {
         window.removeEventListener(
           "single-spa:before-mount-routing-event",
-          listener
+          listener,
         );
 
         // unmounts have been called
@@ -267,11 +267,11 @@ describe(`events api :`, () => {
         window.removeEventListener("single-spa:app-change", finishTest);
         expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
         expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
-          []
+          [],
         );
         expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual([]);
         expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
-          ["russell"].sort()
+          ["russell"].sort(),
         );
 
         expect(totalAppChanges).toBe(1);
@@ -305,11 +305,11 @@ describe(`events api :`, () => {
         } = evt;
         expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
         expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
-          []
+          [],
         );
         expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual([]);
         expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
-          ["russell", "boom"].sort()
+          ["russell", "boom"].sort(),
         );
 
         expect(totalAppChanges).toBe(2);
@@ -341,11 +341,11 @@ describe(`events api :`, () => {
         } = evt;
         expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
         expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
-          []
+          [],
         );
         expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual([]);
         expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual(
-          ["russell"].sort()
+          ["russell"].sort(),
         );
 
         expect(totalAppChanges).toBe(1);
@@ -379,13 +379,13 @@ describe(`events api :`, () => {
         window.removeEventListener("single-spa:app-change", finishTest);
         expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
         expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
-          []
+          [],
         );
         expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual(
-          ["boom"].sort()
+          ["boom"].sort(),
         );
         expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
-          ["russell"].sort()
+          ["russell"].sort(),
         );
 
         expect(totalAppChanges).toBe(2);
@@ -462,11 +462,11 @@ describe(`events api :`, () => {
         window.removeEventListener("single-spa:before-app-change", finishTest);
         window.removeEventListener(
           "single-spa:before-no-app-change",
-          finishTest
+          finishTest,
         );
         expect(evt.type).toBe("single-spa:before-app-change");
         expect(singleSpa.getAppStatus("boom")).toMatch(
-          /NOT_MOUNTED|NOT_LOADED/
+          /NOT_MOUNTED|NOT_LOADED/,
         );
         expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
         expect(evt.detail.appsByNewStatus[singleSpa.MOUNTED]).toEqual(["boom"]);
@@ -494,7 +494,7 @@ describe(`events api :`, () => {
       function finishTest(evt) {
         window.removeEventListener(
           "single-spa:before-no-app-change",
-          finishTest
+          finishTest,
         );
         window.removeEventListener("single-spa:before-app-change", finishTest);
         expect(evt.type).toEqual("single-spa:before-no-app-change");
@@ -519,7 +519,7 @@ describe(`events api :`, () => {
 
       window.addEventListener(
         "single-spa:before-routing-event",
-        beforeRoutingEvent
+        beforeRoutingEvent,
       );
 
       const originalStatus = singleSpa.getAppStatus("russell");
@@ -534,7 +534,7 @@ describe(`events api :`, () => {
       expect(window.location.href).toBe(originalUrl);
       window.removeEventListener(
         "single-spa:before-routing-event",
-        beforeRoutingEvent
+        beforeRoutingEvent,
       );
     });
 
@@ -551,7 +551,7 @@ describe(`events api :`, () => {
       const beforeRoutingEvent = (evt) => {
         window.removeEventListener(
           "single-spa:before-routing-event",
-          beforeRoutingEvent
+          beforeRoutingEvent,
         );
         expect(evt.detail.oldUrl).toMatch(/http:\/\/localhost\/(#\/)?/);
         expect(evt.detail.newUrl).toBe("http://localhost/cancel-pushstate");
@@ -565,7 +565,7 @@ describe(`events api :`, () => {
 
       window.addEventListener(
         "single-spa:before-routing-event",
-        beforeRoutingEvent
+        beforeRoutingEvent,
       );
 
       const originalStatus = singleSpa.getAppStatus("russell");
@@ -600,7 +600,7 @@ describe(`events api :`, () => {
       window.addEventListener("single-spa:before-routing-event", countEvents);
       window.addEventListener(
         "single-spa:before-mount-routing-event",
-        countEvents
+        countEvents,
       );
       window.addEventListener("single-spa:before-app-change", countEvents);
       window.addEventListener("single-spa:before-no-app-change", countEvents);
@@ -610,12 +610,12 @@ describe(`events api :`, () => {
 
       window.addEventListener(
         "single-spa:before-routing-event",
-        cancelTheNavigation
+        cancelTheNavigation,
       );
 
       let cancelationFinished,
         cancelationFinishedPromise = new Promise(
-          (r) => (cancelationFinished = r)
+          (r) => (cancelationFinished = r),
         );
 
       singleSpa.navigateToUrl("/app1");
@@ -624,23 +624,23 @@ describe(`events api :`, () => {
 
       window.removeEventListener(
         "single-spa:before-routing-event",
-        countEvents
+        countEvents,
       );
       window.removeEventListener(
         "single-spa:before-mount-routing-event",
-        countEvents
+        countEvents,
       );
       window.removeEventListener("single-spa:before-app-change", countEvents);
       window.removeEventListener(
         "single-spa:before-no-app-change",
-        countEvents
+        countEvents,
       );
       window.removeEventListener("single-spa:app-change", countEvents);
       window.removeEventListener("single-spa:no-app-change", countEvents);
       window.removeEventListener("single-spa:routing-event", countEvents);
       window.removeEventListener(
         "single-spa:before-routing-event",
-        cancelTheNavigation
+        cancelTheNavigation,
       );
 
       // Give time for single-spa to actually cancel the navigation
@@ -661,7 +661,7 @@ describe(`events api :`, () => {
       function cancelTheNavigation(evt) {
         window.removeEventListener(
           "single-spa:before-routing-event",
-          cancelTheNavigation
+          cancelTheNavigation,
         );
         expect(new URL(evt.detail.oldUrl).pathname).toEqual("/");
         expect(new URL(evt.detail.newUrl).pathname).toEqual("/app1");
@@ -677,7 +677,7 @@ describe(`events api :`, () => {
         shouldCancel: true,
         cancelValue: undefined,
         name: "undefined-cancel",
-      })
+      }),
     );
 
     it(
@@ -686,7 +686,7 @@ describe(`events api :`, () => {
         shouldCancel: true,
         cancelValue: true,
         name: "true-cancel",
-      })
+      }),
     );
 
     it(
@@ -695,7 +695,7 @@ describe(`events api :`, () => {
         shouldCancel: true,
         cancelValue: {},
         name: "truthy-cancel",
-      })
+      }),
     );
 
     it(
@@ -704,7 +704,7 @@ describe(`events api :`, () => {
         shouldCancel: false,
         cancelValue: false,
         name: "false-cancel",
-      })
+      }),
     );
 
     it(
@@ -713,7 +713,7 @@ describe(`events api :`, () => {
         shouldCancel: false,
         cancelValue: null,
         name: "null-cancel",
-      })
+      }),
     );
 
     it(
@@ -722,7 +722,7 @@ describe(`events api :`, () => {
         shouldCancel: false,
         cancelValue: "",
         name: "empty-string-cancel",
-      })
+      }),
     );
 
     // https://github.com/single-spa/single-spa/issues/670
@@ -732,7 +732,7 @@ describe(`events api :`, () => {
         shouldCancel: true,
         cancelValue: () => Promise.resolve(true),
         name: "async-cancel",
-      })
+      }),
     );
 
     it(
@@ -746,7 +746,7 @@ describe(`events api :`, () => {
             }, 10);
           }),
         name: "async-delayed-cancel",
-      })
+      }),
     );
 
     it(
@@ -755,7 +755,7 @@ describe(`events api :`, () => {
         cancelValue: () => Promise.reject(),
         shouldCancel: false,
         name: "async-cancel-rejection",
-      })
+      }),
     );
 
     it(
@@ -764,7 +764,7 @@ describe(`events api :`, () => {
         cancelValue: Promise.resolve(false),
         shouldCancel: false,
         name: "async-cancel-false",
-      })
+      }),
     );
 
     it(
@@ -773,7 +773,7 @@ describe(`events api :`, () => {
         cancelValue: Promise.resolve(""),
         shouldCancel: false,
         name: "async-cancel-falsy",
-      })
+      }),
     );
 
     it(
@@ -782,7 +782,7 @@ describe(`events api :`, () => {
         cancelValue: Promise.resolve(undefined),
         shouldCancel: false,
         name: "async-cancel-undefined",
-      })
+      }),
     );
 
     function cancelNavigationTest({ cancelValue, shouldCancel, name }) {
@@ -801,7 +801,7 @@ describe(`events api :`, () => {
 
         window.addEventListener(
           "single-spa:before-routing-event",
-          cancelTheNavigation
+          cancelTheNavigation,
         );
 
         singleSpa.navigateToUrl("/app1");
@@ -809,14 +809,14 @@ describe(`events api :`, () => {
 
         window.removeEventListener(
           "single-spa:before-routing-event",
-          cancelTheNavigation
+          cancelTheNavigation,
         );
 
         expect(location.pathname).toEqual(shouldCancel ? "/" : "/app1");
 
         function cancelTheNavigation(evt) {
           evt.detail.cancelNavigation(
-            typeof cancelValue === "function" ? cancelValue() : cancelValue
+            typeof cancelValue === "function" ? cancelValue() : cancelValue,
           );
         }
       };

@@ -13,7 +13,7 @@ describe(`mount-rejects app`, () => {
     singleSpa.registerApplication(
       "./mount-rejects.app",
       () => import("./mount-rejects.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });
@@ -39,14 +39,14 @@ describe(`mount-rejects app`, () => {
       expect(myApp.wasMounted()).toEqual(true);
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./mount-rejects.app")).toEqual(
-        "SKIP_BECAUSE_BROKEN"
+        "SKIP_BECAUSE_BROKEN",
       );
 
       location.hash = "#not-mount-rejects";
       return singleSpa.triggerAppChange().then(() => {
         expect(singleSpa.getMountedApps()).toEqual([]);
         expect(singleSpa.getAppStatus("./mount-rejects.app")).toEqual(
-          "SKIP_BECAUSE_BROKEN"
+          "SKIP_BECAUSE_BROKEN",
         );
       });
     });

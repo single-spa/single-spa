@@ -16,7 +16,7 @@ describe(`root parcels`, () => {
         () =>
           new Promise((resolve, reject) => {
             setTimeout(resolve, 20);
-          })
+          }),
       )
       .then(parcel.unmount)
       .then(() => {
@@ -60,12 +60,12 @@ describe(`root parcels`, () => {
     expect(parcel.getStatus()).toBe(singleSpa.LOADING_SOURCE_CODE);
     return Promise.resolve()
       .then(() =>
-        expect(parcel.getStatus()).toBe(singleSpa.LOADING_SOURCE_CODE)
+        expect(parcel.getStatus()).toBe(singleSpa.LOADING_SOURCE_CODE),
       )
       .then(() => resolveConfigLoading())
       .then(() => parcel.loadPromise)
       .then(() =>
-        expect(parcel.getStatus()).not.toBe(singleSpa.LOADING_SOURCE_CODE)
+        expect(parcel.getStatus()).not.toBe(singleSpa.LOADING_SOURCE_CODE),
       )
       .then(() => parcel.mountPromise)
       .then(() => expect(parcel.getStatus()).toBe(singleSpa.MOUNTED))
@@ -95,7 +95,7 @@ describe(`root parcels`, () => {
     });
 
     return parcel.mountPromise.then(() =>
-      expect(parcel.update).toBeUndefined()
+      expect(parcel.update).toBeUndefined(),
     );
   });
 

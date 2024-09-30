@@ -113,7 +113,7 @@ describe("registerApplication", function () {
         singleSpa.registerApplication(
           "bad-active-when-args-throw-error-app",
           app,
-          app
+          app,
         );
       }).toThrowError(errorsMessages.activeWhen.args);
       expect(() => {
@@ -135,7 +135,7 @@ describe("registerApplication", function () {
         singleSpa.registerApplication(
           "bad-active-when-throw-error-app",
           app,
-          "/valid-only-in-object-config"
+          "/valid-only-in-object-config",
         );
       }).toThrowError(errorsMessages.activeWhen.args);
       expect(() => {
@@ -172,7 +172,7 @@ describe("registerApplication", function () {
           "custom-props-fn-1",
           app,
           () => true,
-          () => {}
+          () => {},
         );
       }).not.toThrow();
       expect(() => {
@@ -191,7 +191,7 @@ describe("registerApplication", function () {
           "bad-custom-props-will-throw-error-app",
           app,
           () => true,
-          []
+          [],
         );
       }).toThrowError(errorsMessages.customProps.args);
       expect(() => {

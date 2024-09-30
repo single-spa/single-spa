@@ -20,7 +20,7 @@ import { getProps } from "./prop.helpers";
 import { addProfileEntry } from "../devtools/profiler";
 
 export function toLoadPromise(
-  app: InternalApplication | LoadedApp
+  app: InternalApplication | LoadedApp,
 ): Promise<LoadedApp | InternalApplication> {
   return Promise.resolve().then(() => {
     if ((app as LoadedApp).loadPromise) {
@@ -53,10 +53,10 @@ export function toLoadPromise(
               33,
               __DEV__ &&
                 `single-spa loading function did not return a promise. Check the second argument to registerApplication('${toName(
-                  app
+                  app,
                 )}', loadingFunction, activityFunction)`,
-              toName(appBeingLoaded)
-            )
+              toName(appBeingLoaded),
+            ),
           );
         }
         return loadPromise.then((val) => {
@@ -108,18 +108,18 @@ export function toLoadPromise(
                 validationErrCode,
                 __DEV__ &&
                   `The loading function for single-spa application '${toName(
-                    appBeingLoaded
+                    appBeingLoaded,
                   )}' resolved with the following, which does not have bootstrap, mount, and unmount functions`,
                 "application",
                 toName(appBeingLoaded),
-                appOptsStr
+                appOptsStr,
               ),
-              lifecycles
+              lifecycles,
             );
             handleAppError(
               validationErrMessage,
               appBeingLoaded,
-              SKIP_BECAUSE_BROKEN
+              SKIP_BECAUSE_BROKEN,
             );
             return appBeingLoaded;
           }
@@ -128,7 +128,7 @@ export function toLoadPromise(
             appBeingLoaded.devtools.overlays = Object.assign(
               {},
               app.devtools.overlays,
-              lifecycles.devtools.overlays
+              lifecycles.devtools.overlays,
             );
           }
 
@@ -136,7 +136,7 @@ export function toLoadPromise(
           appBeingLoaded.bootstrap = flattenFnArray(
             lifecycles,
             "bootstrap",
-            false
+            false,
           );
           appBeingLoaded.mount = flattenFnArray(lifecycles, "mount", false);
           appBeingLoaded.unmount = flattenFnArray(lifecycles, "unmount", false);
@@ -152,7 +152,7 @@ export function toLoadPromise(
               "load",
               startTime,
               performance.now(),
-              true
+              true,
             );
           }
 
@@ -178,7 +178,7 @@ export function toLoadPromise(
             "load",
             startTime,
             performance.now(),
-            false
+            false,
           );
         }
 

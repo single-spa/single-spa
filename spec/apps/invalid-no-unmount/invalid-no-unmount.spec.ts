@@ -14,7 +14,7 @@ describe(`invalid-no-unmount app`, () => {
     singleSpa.registerApplication(
       "./invalid-no-unmount.app",
       () => import("./invalid-no-unmount.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });
@@ -38,7 +38,7 @@ describe(`invalid-no-unmount app`, () => {
       expect(myApp.isMounted()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./invalid-no-unmount.app")).toEqual(
-        "SKIP_BECAUSE_BROKEN"
+        "SKIP_BECAUSE_BROKEN",
       );
     });
   });

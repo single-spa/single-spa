@@ -77,7 +77,7 @@ export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
             "unload",
             startTime,
             performance.now(),
-            true
+            true,
           );
         }
 
@@ -93,7 +93,7 @@ export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
             "unload",
             startTime,
             performance.now(),
-            false
+            false,
           );
         }
 
@@ -138,7 +138,7 @@ export function addAppToUnload(
   app: InternalApplication,
   promiseGetter: () => Promise<any>,
   resolve: (val?) => any,
-  reject: (val?) => any
+  reject: (val?) => any,
 ) {
   appsToUnload[toName(app)] = { app, resolve, reject };
   Object.defineProperty(appsToUnload[toName(app)], "promise", {

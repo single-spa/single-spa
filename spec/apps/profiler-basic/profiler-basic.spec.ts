@@ -49,7 +49,7 @@ describe(`profiler basics`, () => {
       shouldMount = true;
       await singleSpa.triggerAppChange();
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.MOUNTED
+        singleSpa.MOUNTED,
       );
       const loadProfilesAfter = getProfilerEventsByKind("load");
 
@@ -61,7 +61,7 @@ describe(`profiler basics`, () => {
 
     it(`captures load error profile events`, async () => {
       loadApp.mockImplementationOnce(() =>
-        Promise.reject(Error("Failed to load"))
+        Promise.reject(Error("Failed to load")),
       );
 
       const loadProfilesBefore = getProfilerEventsByKind("load");
@@ -70,7 +70,7 @@ describe(`profiler basics`, () => {
       shouldMount = true;
       await singleSpa.triggerAppChange();
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.LOAD_ERROR
+        singleSpa.LOAD_ERROR,
       );
       const loadProfilesAfter = getProfilerEventsByKind("load");
 
@@ -86,7 +86,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
       expect(singleSpa.checkActivityFunctions()).toContain("profiler-basics");
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.MOUNTED
+        singleSpa.MOUNTED,
       );
       const profilesAfter = getProfilerEventsByKind("bootstrap");
 
@@ -96,7 +96,7 @@ describe(`profiler basics`, () => {
 
     it(`captures bootstrap error profile events`, async () => {
       app.bootstrap.mockImplementationOnce(() =>
-        Promise.reject(Error("Bootstrap err"))
+        Promise.reject(Error("Bootstrap err")),
       );
 
       const profilesBefore = getProfilerEventsByKind("bootstrap");
@@ -106,7 +106,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
       expect(singleSpa.checkActivityFunctions()).toContain("profiler-basics");
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.SKIP_BECAUSE_BROKEN
+        singleSpa.SKIP_BECAUSE_BROKEN,
       );
       const profilesAfter = getProfilerEventsByKind("bootstrap");
 
@@ -122,7 +122,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
       expect(singleSpa.checkActivityFunctions()).toContain("profiler-basics");
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.MOUNTED
+        singleSpa.MOUNTED,
       );
       const profilesAfter = getProfilerEventsByKind("mount");
 
@@ -132,7 +132,7 @@ describe(`profiler basics`, () => {
 
     it(`captures mount error profile events`, async () => {
       app.mount.mockImplementationOnce(() =>
-        Promise.reject(Error("Mount err"))
+        Promise.reject(Error("Mount err")),
       );
 
       const profilesBefore = getProfilerEventsByKind("mount");
@@ -142,7 +142,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
       expect(singleSpa.checkActivityFunctions()).toContain("profiler-basics");
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.SKIP_BECAUSE_BROKEN
+        singleSpa.SKIP_BECAUSE_BROKEN,
       );
       const profilesAfter = getProfilerEventsByKind("mount");
 
@@ -167,7 +167,7 @@ describe(`profiler basics`, () => {
 
     it(`captures unmount error profile events`, async () => {
       app.unmount.mockImplementationOnce(() =>
-        Promise.reject(Error("Mount errr"))
+        Promise.reject(Error("Mount errr")),
       );
       const profilesBefore = getProfilerEventsByKind("unmount");
       expect(profilesBefore.length).toBe(0);
@@ -178,7 +178,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
 
       expect(singleSpa.getAppStatus("profiler-basics")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN
+        singleSpa.SKIP_BECAUSE_BROKEN,
       );
 
       const profilesAfter = getProfilerEventsByKind("unmount");
@@ -200,7 +200,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
       await singleSpa.triggerAppChange();
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.NOT_LOADED
+        singleSpa.NOT_LOADED,
       );
 
       const profilesAfter = getProfilerEventsByKind("unload");
@@ -211,7 +211,7 @@ describe(`profiler basics`, () => {
 
     it(`captures unloadErr error profile events`, async () => {
       app.unload.mockImplementationOnce(() =>
-        Promise.reject(Error("Unload errr"))
+        Promise.reject(Error("Unload errr")),
       );
       const profilesBefore = getProfilerEventsByKind("unload");
       expect(profilesBefore.length).toBe(0);
@@ -231,7 +231,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
 
       expect(singleSpa.getAppStatus("profiler-basics")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN
+        singleSpa.SKIP_BECAUSE_BROKEN,
       );
 
       const profilesAfter = getProfilerEventsByKind("unload");
@@ -316,6 +316,6 @@ describe(`profiler basics`, () => {
 
 function getProfilerEventsByKind(kind, type = "application") {
   return getProfilerData().filter(
-    (d) => d.type === type && d.name === "profiler-basics" && d.kind === kind
+    (d) => d.type === type && d.name === "profiler-basics" && d.kind === kind,
   );
 }

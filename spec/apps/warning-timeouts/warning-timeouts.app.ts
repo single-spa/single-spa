@@ -48,6 +48,6 @@ function advanceTimers() {
   window.dispatchEvent(
     new CustomEvent("fake-timers-advance", {
       detail: delay,
-    })
+    }),
   );
 }

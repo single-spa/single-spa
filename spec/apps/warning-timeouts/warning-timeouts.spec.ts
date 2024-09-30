@@ -13,7 +13,7 @@ describe(`warning-timeouts app`, () => {
     singleSpa.registerApplication(
       "warning-timeouts",
       () => import("./warning-timeouts.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
     consoleWarnSpy = jest.spyOn(console, "warn");
@@ -67,10 +67,10 @@ describe(`warning-timeouts app`, () => {
     expect(singleSpa.getAppStatus("warning-timeouts")).toEqual("MOUNTED");
     expect(errs.length).toBe(0);
     expectWarning(
-      `single-spa minified message #31: Lifecycle function bootstrap for application warning-timeouts lifecycle did not resolve or reject for 4000 ms. See https://single-spa.js.org/error/?code=31&arg=bootstrap&arg=application&arg=warning-timeouts&arg=4000`
+      `single-spa minified message #31: Lifecycle function bootstrap for application warning-timeouts lifecycle did not resolve or reject for 4000 ms. See https://single-spa.js.org/error/?code=31&arg=bootstrap&arg=application&arg=warning-timeouts&arg=4000`,
     );
     expectWarning(
-      `single-spa minified message #31: Lifecycle function mount for application warning-timeouts lifecycle did not resolve or reject for 3000 ms. See https://single-spa.js.org/error/?code=31&arg=mount&arg=application&arg=warning-timeouts&arg=3000`
+      `single-spa minified message #31: Lifecycle function mount for application warning-timeouts lifecycle did not resolve or reject for 3000 ms. See https://single-spa.js.org/error/?code=31&arg=mount&arg=application&arg=warning-timeouts&arg=3000`,
     );
 
     location.hash = "#not-warning-timeouts";

@@ -9,7 +9,7 @@ describe(`multiple-lifecycle-functions app`, () => {
     singleSpa.registerApplication(
       "./multiple-lifecycle-functions.app",
       () => import("./multiple-lifecycle-functions.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });

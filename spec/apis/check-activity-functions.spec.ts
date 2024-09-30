@@ -65,12 +65,12 @@ describe(`checkActivityFunctionsApi`, () => {
     singleSpa.registerApplication(
       "test1",
       () => Promise.resolve(dummyApp1),
-      (location) => location.href.indexOf("one") !== -1
+      (location) => location.href.indexOf("one") !== -1,
     );
     singleSpa.registerApplication(
       "test2",
       () => Promise.resolve(dummyApp2),
-      (location) => location.href.indexOf("two") !== -1
+      (location) => location.href.indexOf("two") !== -1,
     );
     singleSpa.registerApplication({
       name: "test3",
@@ -116,16 +116,16 @@ describe(`checkActivityFunctionsApi`, () => {
     const wLocation = mockWindowLocation("http://google.com/pathname");
     expect(singleSpa.checkActivityFunctions(wLocation)).toEqual(["test4"]);
     const wLocationWithTrailingSlash = mockWindowLocation(
-      "http://google.com/pathname/"
+      "http://google.com/pathname/",
     );
     expect(
-      singleSpa.checkActivityFunctions(wLocationWithTrailingSlash)
+      singleSpa.checkActivityFunctions(wLocationWithTrailingSlash),
     ).toEqual(["test4"]);
   });
 
   it(`returns both when the location contains all`, () => {
     const wLocation = mockWindowLocation(
-      "http://something.com/two/one/three/four"
+      "http://something.com/two/one/three/four",
     );
     expect(singleSpa.checkActivityFunctions(wLocation)).toEqual([
       "test1",

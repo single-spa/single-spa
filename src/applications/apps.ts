@@ -114,13 +114,13 @@ export function registerApplication<ExtraProps extends CustomProps = {}>(
   appNameOrConfig: string | RegisterApplicationConfig,
   appOrLoadApp: Application,
   activeWhen: Activity,
-  customProps?: ExtraProps | CustomPropsFn<ExtraProps>
+  customProps?: ExtraProps | CustomPropsFn<ExtraProps>,
 ) {
   const registration = sanitizeArguments(
     appNameOrConfig,
     appOrLoadApp,
     activeWhen,
-    customProps
+    customProps,
   );
 
   if (!isStarted() && !startWarningInitialized) {
@@ -132,8 +132,8 @@ export function registerApplication<ExtraProps extends CustomProps = {}>(
           formatErrorMessage(
             1,
             __DEV__ &&
-              `singleSpa.start() has not been called, 5000ms after single-spa was loaded. Before start() is called, apps can be declared and loaded, but not bootstrapped or mounted.`
-          )
+              `singleSpa.start() has not been called, 5000ms after single-spa was loaded. Before start() is called, apps can be declared and loaded, but not bootstrapped or mounted.`,
+          ),
         );
       }
     }, 5000);
@@ -145,8 +145,8 @@ export function registerApplication<ExtraProps extends CustomProps = {}>(
         21,
         __DEV__ &&
           `There is already an app registered with name ${registration.name}`,
-        registration.name
-      )
+        registration.name,
+      ),
     );
 
   apps.push(
@@ -162,8 +162,8 @@ export function registerApplication<ExtraProps extends CustomProps = {}>(
           },
         },
       },
-      registration
-    )
+      registration,
+    ),
   );
 
   if (isInBrowser) {
@@ -173,7 +173,7 @@ export function registerApplication<ExtraProps extends CustomProps = {}>(
 }
 
 export function checkActivityFunctions(
-  location: Location = window.location
+  location: Location = window.location,
 ): string[] {
   return apps.filter((app) => app.activeWhen(location)).map(toName);
 }
@@ -185,8 +185,8 @@ export function unregisterApplication(appName: string): Promise<void> {
         25,
         __DEV__ &&
           `Cannot unregister application '${appName}' because no such application has been registered`,
-        appName
-      )
+        appName,
+      ),
     );
   }
 
@@ -203,14 +203,14 @@ export function unregisterApplication(appName: string): Promise<void> {
 
 export function unloadApplication(
   appName: string,
-  opts: { waitForUnmount: boolean } = { waitForUnmount: false }
+  opts: { waitForUnmount: boolean } = { waitForUnmount: false },
 ): Promise<void> {
   if (typeof appName !== "string") {
     throw Error(
       formatErrorMessage(
         26,
-        __DEV__ && `unloadApplication requires a string 'appName'`
-      )
+        __DEV__ && `unloadApplication requires a string 'appName'`,
+      ),
     );
   }
   const app = apps.find((app) => toName(app) === appName);
@@ -220,8 +220,8 @@ export function unloadApplication(
         27,
         __DEV__ &&
           `Could not unload application '${appName}' because no such application has been registered`,
-        appName
-      )
+        appName,
+      ),
     );
   }
 
@@ -264,7 +264,7 @@ export function unloadApplication(
 function immediatelyUnloadApp(
   app: InternalApplication,
   resolve: (value?: any) => void,
-  reject: (value?: any) => void
+  reject: (value?: any) => void,
 ): void {
   Promise.resolve()
     .then(() => {
@@ -295,15 +295,15 @@ function validateRegisterWithArguments(
   name: string,
   appOrLoadApp: Application,
   activeWhen: Activity,
-  customProps?: CustomProps | CustomPropsFn
+  customProps?: CustomProps | CustomPropsFn,
 ): void {
   if (typeof name !== "string" || name.length === 0)
     throw Error(
       formatErrorMessage(
         20,
         __DEV__ &&
-          `The 1st argument to registerApplication must be a non-empty string 'appName'`
-      )
+          `The 1st argument to registerApplication must be a non-empty string 'appName'`,
+      ),
     );
 
   if (!appOrLoadApp)
@@ -311,8 +311,8 @@ function validateRegisterWithArguments(
       formatErrorMessage(
         23,
         __DEV__ &&
-          "The 2nd argument to registerApplication must be an application or loading application function"
-      )
+          "The 2nd argument to registerApplication must be an application or loading application function",
+      ),
     );
 
   if (typeof activeWhen !== "function")
@@ -320,8 +320,8 @@ function validateRegisterWithArguments(
       formatErrorMessage(
         24,
         __DEV__ &&
-          "The 3rd argument to registerApplication must be an activeWhen function"
-      )
+          "The 3rd argument to registerApplication must be an activeWhen function",
+      ),
     );
 
   if (!validCustomProps(customProps))
@@ -329,26 +329,26 @@ function validateRegisterWithArguments(
       formatErrorMessage(
         22,
         __DEV__ &&
-          "The optional 4th argument is a customProps and must be an object"
-      )
+          "The optional 4th argument is a customProps and must be an object",
+      ),
     );
 }
 
 export function validateRegisterWithConfig(
-  config: Partial<RegisterApplicationConfig>
+  config: Partial<RegisterApplicationConfig>,
 ): void {
   if (Array.isArray(config) || config === null)
     throw Error(
       formatErrorMessage(
         39,
-        __DEV__ && "Configuration object can't be an Array or null!"
-      )
+        __DEV__ && "Configuration object can't be an Array or null!",
+      ),
     );
   const validKeys = ["name", "app", "activeWhen", "customProps"];
   const invalidKeys = Object.keys(config).reduce(
     (invalidKeys, prop) =>
       validKeys.indexOf(prop) >= 0 ? invalidKeys : invalidKeys.concat(prop),
-    []
+    [],
   );
   if (invalidKeys.length !== 0)
     throw Error(
@@ -356,27 +356,27 @@ export function validateRegisterWithConfig(
         38,
         __DEV__ &&
           `The configuration object accepts only: ${validKeys.join(
-            ", "
+            ", ",
           )}. Invalid keys: ${invalidKeys.join(", ")}.`,
         validKeys.join(", "),
-        invalidKeys.join(", ")
-      )
+        invalidKeys.join(", "),
+      ),
     );
   if (typeof config.name !== "string" || config.name.length === 0)
     throw Error(
       formatErrorMessage(
         20,
         __DEV__ &&
-          "The config.name on registerApplication must be a non-empty string"
-      )
+          "The config.name on registerApplication must be a non-empty string",
+      ),
     );
   if (typeof config.app !== "object" && typeof config.app !== "function")
     throw Error(
       formatErrorMessage(
         20,
         __DEV__ &&
-          "The config.app on registerApplication must be an application or a loading function"
-      )
+          "The config.app on registerApplication must be an application or a loading function",
+      ),
     );
   const allowsStringAndFunction = (activeWhen) =>
     typeof activeWhen === "string" || typeof activeWhen === "function";
@@ -391,15 +391,15 @@ export function validateRegisterWithConfig(
       formatErrorMessage(
         24,
         __DEV__ &&
-          "The config.activeWhen on registerApplication must be a string, function or an array with both"
-      )
+          "The config.activeWhen on registerApplication must be a string, function or an array with both",
+      ),
     );
   if (!validCustomProps(config.customProps))
     throw Error(
       formatErrorMessage(
         22,
-        __DEV__ && "The optional config.customProps must be an object"
-      )
+        __DEV__ && "The optional config.customProps must be an object",
+      ),
     );
 }
 
@@ -424,7 +424,7 @@ function sanitizeArguments<ExtraProps extends CustomProps = {}>(
   appNameOrConfig: string | RegisterApplicationConfig,
   appOrLoadApp: Application,
   activeWhen: Activity,
-  customProps?: ExtraProps | CustomPropsFn<ExtraProps>
+  customProps?: ExtraProps | CustomPropsFn<ExtraProps>,
 ): ApplicationRegistration {
   const usingObjectAPI = typeof appNameOrConfig === "object";
 
@@ -448,7 +448,7 @@ function sanitizeArguments<ExtraProps extends CustomProps = {}>(
       appNameOrConfig,
       appOrLoadApp,
       activeWhen,
-      customProps
+      customProps,
     );
     unsanitizedRegistration = {
       name: appNameOrConfig,
@@ -467,7 +467,7 @@ function sanitizeArguments<ExtraProps extends CustomProps = {}>(
 }
 
 function sanitizeLoadApp<ExtraProps extends CustomProps = {}>(
-  loadApp: Application
+  loadApp: Application,
 ): (config: ExtraProps & AppProps) => Promise<LifeCycles<ExtraProps>> {
   if (typeof loadApp !== "function") {
     return () => Promise.resolve(loadApp);
@@ -488,7 +488,7 @@ function sanitizeActiveWhen(activeWhen: Activity): ActivityFn {
     (activeWhenOrPath) =>
       typeof activeWhenOrPath === "function"
         ? activeWhenOrPath
-        : pathToActiveWhen(activeWhenOrPath, false)
+        : pathToActiveWhen(activeWhenOrPath, false),
   );
 
   return (location) =>
@@ -497,7 +497,7 @@ function sanitizeActiveWhen(activeWhen: Activity): ActivityFn {
 
 export function pathToActiveWhen(
   path: string,
-  exactMatch: boolean
+  exactMatch: boolean,
 ): ActivityFn {
   const regex = toDynamicPathValidatorRegex(path, exactMatch);
 

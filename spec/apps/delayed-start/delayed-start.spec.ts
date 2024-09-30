@@ -23,13 +23,13 @@ describe(`delayed-start`, () => {
     await tick();
 
     expect(singleSpa.getAppStatus("delayed-start")).toBe(
-      singleSpa.LOADING_SOURCE_CODE
+      singleSpa.LOADING_SOURCE_CODE,
     );
 
     await singleSpa.triggerAppChange();
 
     expect(singleSpa.getAppStatus("delayed-start")).toBe(
-      singleSpa.NOT_BOOTSTRAPPED
+      singleSpa.NOT_BOOTSTRAPPED,
     );
 
     singleSpa.start();

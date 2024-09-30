@@ -13,7 +13,7 @@ describe(`invalid-mount app`, () => {
     singleSpa.registerApplication(
       "./invalid-mount.app",
       () => import("./invalid-mount.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });
@@ -39,7 +39,7 @@ describe(`invalid-mount app`, () => {
       expect(myApp.wasMounted()).toEqual(true);
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./invalid-mount.app")).toEqual(
-        "SKIP_BECAUSE_BROKEN"
+        "SKIP_BECAUSE_BROKEN",
       );
 
       location.hash = "not-invalid-mount";
@@ -47,7 +47,7 @@ describe(`invalid-mount app`, () => {
       return singleSpa.triggerAppChange().then(() => {
         expect(singleSpa.getMountedApps()).toEqual([]);
         expect(singleSpa.getAppStatus("./invalid-mount.app")).toEqual(
-          "SKIP_BECAUSE_BROKEN"
+          "SKIP_BECAUSE_BROKEN",
         );
       });
     });

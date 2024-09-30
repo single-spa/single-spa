@@ -7,7 +7,7 @@ describe(`happy-basic`, () => {
     singleSpa.registerApplication(
       "./happy-basic.app",
       () => import("./happy-basic.app"),
-      (location) => location.hash === "#happy-basic"
+      (location) => location.hash === "#happy-basic",
     );
     singleSpa.start();
   });

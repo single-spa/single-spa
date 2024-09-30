@@ -7,7 +7,7 @@ describe(`empty-array-lifecycles`, () => {
     singleSpa.registerApplication(
       "./empty-array-lifecycles.app",
       () => import("./empty-array-lifecycles.app"),
-      (location) => location.hash === "#empty-array-lifecycles"
+      (location) => location.hash === "#empty-array-lifecycles",
     );
     singleSpa.start();
   });

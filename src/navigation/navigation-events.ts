@@ -41,8 +41,8 @@ export function navigateToUrl(obj: NavigateArg): void {
       formatErrorMessage(
         14,
         __DEV__ &&
-          `singleSpaNavigate/navigateToUrl must be either called with a string url, with an <a> tag as its context, or with an event whose currentTarget is an <a> tag`
-      )
+          `singleSpaNavigate/navigateToUrl must be either called with a string url, with an <a> tag as its context, or with an event whose currentTarget is an <a> tag`,
+      ),
     );
   }
 
@@ -70,7 +70,7 @@ export function navigateToUrl(obj: NavigateArg): void {
 }
 
 export function callCapturedEventListeners(
-  eventArguments: [HashChangeEvent | PopStateEvent]
+  eventArguments: [HashChangeEvent | PopStateEvent],
 ): void {
   if (eventArguments) {
     const eventType = eventArguments[0].type;
@@ -100,7 +100,7 @@ type UpdateState = (data: any, unused: string, url?: string | URL) => void;
 
 function patchedUpdateState(
   updateState: UpdateState,
-  methodName: "pushState" | "replaceState"
+  methodName: "pushState" | "replaceState",
 ) {
   return function () {
     const urlBefore = window.location.href;
@@ -112,7 +112,7 @@ function patchedUpdateState(
       // single-spa applications know about routing that
       // occurs in a different application
       window.dispatchEvent(
-        createPopStateEvent(window.history.state, methodName)
+        createPopStateEvent(window.history.state, methodName),
       );
     }
 
@@ -127,7 +127,7 @@ interface SingleSpaPopStateEvent extends PopStateEvent {
 
 function createPopStateEvent(
   state,
-  originalMethodName
+  originalMethodName,
 ): SingleSpaPopStateEvent {
   // https://github.com/single-spa/single-spa/issues/224 and https://github.com/single-spa/single-spa-angular/issues/49
   // We need a popstate event even though the browser doesn't fire one by default when you call replaceState, so that
@@ -142,7 +142,7 @@ function createPopStateEvent(
 export let originalReplaceState: (
   data: any,
   unused: string,
-  url?: string | URL
+  url?: string | URL,
 ) => void = null;
 
 let historyApiIsPatched: boolean = false;
@@ -156,8 +156,8 @@ export function patchHistoryApi(opts?: StartOpts) {
       formatErrorMessage(
         43,
         __DEV__ &&
-          `single-spa: patchHistoryApi() was called after the history api was already patched.`
-      )
+          `single-spa: patchHistoryApi() was called after the history api was already patched.`,
+      ),
     );
   }
 
@@ -206,11 +206,11 @@ export function patchHistoryApi(opts?: StartOpts) {
 
   window.history.pushState = patchedUpdateState(
     window.history.pushState,
-    "pushState"
+    "pushState",
   );
   window.history.replaceState = patchedUpdateState(
     originalReplaceState,
-    "replaceState"
+    "replaceState",
   );
 }
 
@@ -224,8 +224,8 @@ if (isInBrowser) {
       formatErrorMessage(
         41,
         __DEV__ &&
-          "single-spa has been loaded twice on the page. This can result in unexpected behavior."
-      )
+          "single-spa has been loaded twice on the page. This can result in unexpected behavior.",
+      ),
     );
   } else {
     /* For convenience in `onclick` attributes, we expose a global function for navigating to

@@ -29,7 +29,7 @@ export function addProfileEntry(
   kind: ProfileEntry["kind"],
   start: ProfileEntry["start"],
   end: ProfileEntry["end"],
-  operationSucceeded: ProfileEntry["operationSucceeded"]
+  operationSucceeded: ProfileEntry["operationSucceeded"],
 ): void {
   profileEntries.push({
     type,

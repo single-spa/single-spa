@@ -13,7 +13,7 @@ import { LoadedAppOrParcel } from "./lifecycle.helpers";
 
 export function toBootstrapPromise(
   appOrParcel: LoadedAppOrParcel,
-  hardFail?: boolean
+  hardFail?: boolean,
 ): Promise<LoadedAppOrParcel> {
   let startTime: number, profileEventType: ProfileEntry["type"];
 
@@ -44,7 +44,7 @@ export function toBootstrapPromise(
             "bootstrap",
             startTime,
             performance.now(),
-            false
+            false,
           );
         }
 
@@ -67,7 +67,7 @@ export function toBootstrapPromise(
         "bootstrap",
         startTime,
         performance.now(),
-        true
+        true,
       );
     }
 

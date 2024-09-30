@@ -123,7 +123,7 @@ describe(`pathToActiveWhen`, () => {
         "http://app.com/pathname/#hash": true,
         "http://app.com/pathname/?query#hash": true,
       },
-      true
+      true,
     );
 
     expectPathToMatch(
@@ -133,7 +133,7 @@ describe(`pathToActiveWhen`, () => {
         "http://app.com/1/": true,
         "http://app.com/1/more": false,
       },
-      true
+      true,
     );
 
     expectPathToMatch(
@@ -143,7 +143,7 @@ describe(`pathToActiveWhen`, () => {
         "http://app.com/1/1/": true,
         "http://app.com/1/1/more": false,
       },
-      true
+      true,
     );
 
     expectPathToMatch(
@@ -153,7 +153,7 @@ describe(`pathToActiveWhen`, () => {
         "http://app.com/user/1/settings/": true,
         "http://app.com/user/1/settings/account": false,
       },
-      true
+      true,
     );
 
     expectPathToMatch(
@@ -161,7 +161,7 @@ describe(`pathToActiveWhen`, () => {
       {
         "http://app.com/user/1/almostt": false,
       },
-      true
+      true,
     );
 
     expectPathToMatch(
@@ -174,7 +174,7 @@ describe(`pathToActiveWhen`, () => {
         "http://app.com/123/more": false,
         "http://app.com/abc/more": false,
       },
-      true
+      true,
     );
   });
 });
@@ -186,7 +186,7 @@ function expectPathToMatch(dynamicPath, asserts, exactMatch) {
       expectTo ? "" : " not"
     } match ${print(path)}`, () => {
       expect(pathToActiveWhen(dynamicPath, exactMatch)(new URL(path))).toBe(
-        expectTo
+        expectTo,
       );
     });
   });

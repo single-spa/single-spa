@@ -9,7 +9,7 @@ describe(`happy-unload app :`, () => {
     singleSpa.registerApplication(
       "skip-because-broken-unload",
       () => import("./skip-because-broken-unload.app"),
-      (location) => location.hash === activeHash
+      (location) => location.hash === activeHash,
     );
     singleSpa.start();
   });
@@ -20,13 +20,13 @@ describe(`happy-unload app :`, () => {
     await singleSpa.triggerAppChange();
 
     expect(singleSpa.getAppStatus("skip-because-broken-unload")).toBe(
-      singleSpa.SKIP_BECAUSE_BROKEN
+      singleSpa.SKIP_BECAUSE_BROKEN,
     );
 
     await singleSpa.unloadApplication("skip-because-broken-unload");
 
     expect(singleSpa.getAppStatus("skip-because-broken-unload")).toBe(
-      singleSpa.NOT_LOADED
+      singleSpa.NOT_LOADED,
     );
   });
 });
