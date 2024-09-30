@@ -1,0 +1,22 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "single-spa": "6.0.3"
+  },
+  "changesets": [
+    "big-cameras-raise",
+    "eighty-terms-arrive",
+    "giant-teachers-notice",
+    "hot-weeks-peel",
+    "lazy-mugs-nail",
+    "lovely-rings-burn",
+    "new-rules-jam",
+    "pink-snails-study",
+    "real-scissors-rest",
+    "shaggy-days-mate",
+    "stupid-windows-unite",
+    "sweet-vans-approve",
+    "tasty-mirrors-try"
+  ]
+}
