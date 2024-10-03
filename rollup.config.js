@@ -3,7 +3,9 @@ import babel from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import analyzer from "rollup-plugin-analyzer";
 import replace from "@rollup/plugin-replace";
+import typescript from "@rollup/plugin-typescript";
 import packageJson from "./package.json" with { type: "json" };
+import { dts } from "rollup-plugin-dts";
 
 const isProduction = process.env.ROLLUP_ENV === "production";
 const useAnalyzer = process.env.ANALYZER === "analyzer";
@@ -37,44 +39,89 @@ const resolveOpts = {
   extensions: [".ts", ".js"],
 };
 
-export default (async () => [
-  {
-    input: `./src/single-spa${isProduction ? "" : ".profile"}.ts`,
-    output: [
-      {
-        file: `./lib/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
-        format: "umd",
-        name: "singleSpa",
-        sourcemap: true,
-        banner: generateBanner("UMD"),
-      },
-      {
-        file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.js`,
-        format: "system",
-        sourcemap: true,
-        banner: generateBanner("SystemJS"),
-      },
-      {
-        file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
-        format: "esm",
-        sourcemap: true,
-        banner: generateBanner("ESM"),
-      },
-    ],
-    plugins: [
-      replace(replaceOpts),
-      resolve(resolveOpts),
-      babel(babelOpts),
-      commonjs(),
-      isProduction &&
-        (await import("@rollup/plugin-terser")).default(terserOpts),
-      useAnalyzer && analyzer(),
-    ],
-  },
-])();
-
 function generateBanner(format) {
   return `/* single-spa@${packageJson.version} - ${format} - ${
     isProduction ? "prod" : "dev"
   } */`;
 }
+
+const commonPlugins = [
+  replace(replaceOpts),
+  resolve(resolveOpts),
+  babel(babelOpts),
+  commonjs(),
+  isProduction && (await import("@rollup/plugin-terser")).default(terserOpts),
+  useAnalyzer && analyzer(),
+];
+
+const commonConfiguration = {
+  input: `./src/single-spa${isProduction ? "" : ".profile"}.ts`,
+};
+
+export default async () => [
+  // UMD build
+  {
+    ...commonConfiguration,
+    output: {
+      file: `./lib/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
+      format: "umd",
+      name: "singleSpa",
+      sourcemap: true,
+      banner: generateBanner("UMD"),
+    },
+    plugins: [
+      ...commonPlugins,
+      typescript({
+        declarationDir: "./lib/umd/types-tsc",
+        outDir: "./lib/umd",
+      }),
+    ],
+  },
+  // ESM build
+  {
+    ...commonConfiguration,
+    output: {
+      file: `./lib/esm/single-spa${isProduction ? ".min" : ".dev"}.js`,
+      format: "esm",
+      sourcemap: true,
+      banner: generateBanner("ESM"),
+    },
+    plugins: [
+      ...commonPlugins,
+      typescript({
+        declarationDir: "./lib/esm/types-tsc",
+        outDir: "./lib/esm",
+      }),
+    ],
+  },
+  // System build
+  {
+    ...commonConfiguration,
+    output: {
+      file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
+      format: "system",
+      sourcemap: true,
+      banner: generateBanner("SystemJS"),
+    },
+    plugins: [...commonPlugins],
+  },
+  // For compatibility with node16 module resolution, types are bundled
+  // Bundle ESM types
+  {
+    input: `./lib/esm/types-tsc/single-spa.d.ts`,
+    output: {
+      file: `./lib/esm/types/single-spa.d.ts`,
+      format: "es",
+    },
+    plugins: [dts()],
+  },
+  // Bundle CJS types
+  {
+    input: `./lib/umd/types-tsc/single-spa.d.ts`,
+    output: {
+      file: `./lib/umd/types/single-spa.d.cts`,
+      format: "cjs",
+    },
+    plugins: [dts()],
+  },
+];
