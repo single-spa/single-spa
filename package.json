@@ -4,7 +4,7 @@
   "description": "The router for easy microfrontends",
   "type": "module",
   "main": "./lib/umd/single-spa.min.cjs",
-  "types": "./lib/umd/types/single-spa.d.cts",
+  "types": "./lib/umd/single-spa.d.cts",
   "module": "./lib/esm/single-spa.min.js",
   "publishConfig": {
     "access": "public"
@@ -13,31 +13,31 @@
     ".": {
       "development": {
         "import": {
-          "types": "./lib/esm/types/single-spa.d.ts",
+          "types": "./lib/esm/single-spa.d.ts",
           "default": "./lib/esm/single-spa.min.js"
         },
         "require": {
-          "types": "./lib/umd/types/single-spa.d.cts",
+          "types": "./lib/umd/single-spa.d.cts",
           "default": "./lib/umd/single-spa.min.cjs"
         }
       },
       "production": {
         "import": {
-          "types": "./lib/esm/types/single-spa.d.ts",
+          "types": "./lib/esm/single-spa.d.ts",
           "default": "./lib/esm/single-spa.min.js"
         },
         "require": {
-          "types": "./lib/umd/types/single-spa.d.cts",
+          "types": "./lib/umd/single-spa.d.cts",
           "default": "./lib/umd/single-spa.min.cjs"
         }
       },
       "default": {
         "import": {
-          "types": "./lib/esm/types/single-spa.d.ts",
+          "types": "./lib/esm/single-spa.d.ts",
           "default": "./lib/esm/single-spa.min.js"
         },
         "require": {
-          "types": "./lib/umd/types/single-spa.d.cts",
+          "types": "./lib/umd/single-spa.d.cts",
           "default": "./lib/umd/single-spa.min.cjs"
         }
       }

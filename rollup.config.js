@@ -110,7 +110,7 @@ export default async () => [
   {
     input: `./lib/esm/types-unbundled/single-spa.d.ts`,
     output: {
-      file: `./lib/esm/types/single-spa.d.ts`,
+      file: `./lib/esm/single-spa.d.ts`,
       format: "es",
     },
     plugins: [dts()],
@@ -119,7 +119,7 @@ export default async () => [
   {
     input: `./lib/umd/types-unbundled/single-spa.d.ts`,
     output: {
-      file: `./lib/umd/types/single-spa.d.cts`,
+      file: `./lib/umd/single-spa.d.cts`,
       format: "cjs",
     },
     plugins: [dts()],
