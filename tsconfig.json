@@ -8,6 +8,7 @@
   ],
   "compilerOptions": {
     "declaration": true,
-    "lib": ["dom", "es5", "es2020"]
+    "lib": ["dom", "es5", "es2020"],
+    "target": "ES2015"
   }
 }

@@ -121,7 +121,6 @@
     "rollup": "^4.22.5",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-dts": "^6.1.1",
-    "tslib": "^2.7.0",
     "typescript": "^5.3.3"
   },
   "browserslist": [
