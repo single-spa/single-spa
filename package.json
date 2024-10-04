@@ -51,7 +51,7 @@
     "build:dev": "rollup -c",
     "build:analyze": "rollup -c --environment ANALYZER:'analyzer'",
     "watch": "rollup -c -w",
-    "clean": "rimraf lib typings",
+    "clean": "rimraf lib",
     "test": "concurrently -n w: 'pnpm:test:*'",
     "test:browser": "cross-env BABEL_ENV=test jest --config jest-browser.config.js",
     "test:node": "cross-env BABEL_ENV=test jest --config jest-node.config.js",
