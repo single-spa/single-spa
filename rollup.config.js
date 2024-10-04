@@ -72,7 +72,7 @@ export default async () => [
     plugins: [
       ...commonPlugins,
       typescript({
-        declarationDir: "./lib/umd/types-tsc",
+        declarationDir: "./lib/umd/types-unbundled",
         outDir: "./lib/umd",
       }),
     ],
@@ -89,7 +89,7 @@ export default async () => [
     plugins: [
       ...commonPlugins,
       typescript({
-        declarationDir: "./lib/esm/types-tsc",
+        declarationDir: "./lib/esm/types-unbundled",
         outDir: "./lib/esm",
       }),
     ],
@@ -108,7 +108,7 @@ export default async () => [
   // For compatibility with node16 module resolution, types are bundled
   // Bundle ESM types
   {
-    input: `./lib/esm/types-tsc/single-spa.d.ts`,
+    input: `./lib/esm/types-unbundled/single-spa.d.ts`,
     output: {
       file: `./lib/esm/types/single-spa.d.ts`,
       format: "es",
@@ -117,7 +117,7 @@ export default async () => [
   },
   // Bundle CJS types
   {
-    input: `./lib/umd/types-tsc/single-spa.d.ts`,
+    input: `./lib/umd/types-unbundled/single-spa.d.ts`,
     output: {
       file: `./lib/umd/types/single-spa.d.cts`,
       format: "cjs",

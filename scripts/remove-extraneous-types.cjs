@@ -4,7 +4,10 @@
 const rimraf = require("rimraf");
 const path = require("path");
 
-const foldersToRemove = ["../lib/esm/types-tsc", "../lib/umd/types-tsc"];
+const foldersToRemove = [
+  "../lib/esm/types-unbundled",
+  "../lib/umd/types-unbundled",
+];
 
 foldersToRemove.forEach((dir) => {
   const fullPath = path.resolve(__dirname, dir);
