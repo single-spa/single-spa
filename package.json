@@ -46,7 +46,7 @@
     "./lib/*": "./lib/*"
   },
   "scripts": {
-    "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod && node ./scripts/remove-extraneous-types.cjs",
+    "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod && rimraf ./lib/umd/types-unbundled ./lib/esm/types-unbundled",
     "build:prod": "rollup -c --environment ROLLUP_ENV:'production'",
     "build:dev": "rollup -c",
     "build:analyze": "rollup -c --environment ANALYZER:'analyzer'",
