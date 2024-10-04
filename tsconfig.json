@@ -7,8 +7,6 @@
     "src/single-spa.profile.ts"
   ],
   "compilerOptions": {
-    "outDir": "typings",
-    "emitDeclarationOnly": true,
     "declaration": true,
     "lib": ["dom", "es5", "es2020"]
   }
