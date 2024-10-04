@@ -71,8 +71,10 @@ export default async () => [
     },
     plugins: [
       ...commonPlugins,
+      // Typecheck, and emit declaration files
       typescript({
         declarationDir: "./lib/umd/types-unbundled",
+        noEmitOnError: true,
       }),
     ],
   },
@@ -87,8 +89,10 @@ export default async () => [
     },
     plugins: [
       ...commonPlugins,
+      // Typecheck, and emit declaration files
       typescript({
         declarationDir: "./lib/esm/types-unbundled",
+        noEmitOnError: true,
       }),
     ],
   },
