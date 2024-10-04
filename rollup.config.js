@@ -73,7 +73,6 @@ export default async () => [
       ...commonPlugins,
       typescript({
         declarationDir: "./lib/umd/types-unbundled",
-        outDir: "./lib/umd",
       }),
     ],
   },
@@ -90,7 +89,6 @@ export default async () => [
       ...commonPlugins,
       typescript({
         declarationDir: "./lib/esm/types-unbundled",
-        outDir: "./lib/esm",
       }),
     ],
   },
