@@ -3,39 +3,55 @@
   "version": "7.0.0-beta.0",
   "description": "The router for easy microfrontends",
   "type": "module",
-  "main": "lib/umd/single-spa.min.cjs",
+  "main": "./lib/umd/single-spa.min.cjs",
+  "types": "./lib/umd/single-spa.d.cts",
+  "module": "./lib/esm/single-spa.min.js",
   "publishConfig": {
     "access": "public"
   },
   "exports": {
     ".": {
       "development": {
-        "import": "./lib/esm/single-spa.dev.js",
-        "require": "./lib/umd/single-spa.dev.cjs",
-        "types": "./typings/single-spa.d.ts"
+        "import": {
+          "types": "./lib/esm/single-spa.d.ts",
+          "default": "./lib/esm/single-spa.min.js"
+        },
+        "require": {
+          "types": "./lib/umd/single-spa.d.cts",
+          "default": "./lib/umd/single-spa.min.cjs"
+        }
       },
       "production": {
-        "import": "./lib/esm/single-spa.min.js",
-        "require": "./lib/umd/single-spa.min.cjs",
-        "types": "./typings/single-spa.d.ts"
+        "import": {
+          "types": "./lib/esm/single-spa.d.ts",
+          "default": "./lib/esm/single-spa.min.js"
+        },
+        "require": {
+          "types": "./lib/umd/single-spa.d.cts",
+          "default": "./lib/umd/single-spa.min.cjs"
+        }
       },
       "default": {
-        "import": "./lib/esm/single-spa.min.js",
-        "require": "./lib/umd/single-spa.min.cjs",
-        "types": "./typings/single-spa.d.ts"
+        "import": {
+          "types": "./lib/esm/single-spa.d.ts",
+          "default": "./lib/esm/single-spa.min.js"
+        },
+        "require": {
+          "types": "./lib/umd/single-spa.d.cts",
+          "default": "./lib/umd/single-spa.min.cjs"
+        }
       }
     },
     "./package.json": "./package.json",
     "./lib/*": "./lib/*"
   },
   "scripts": {
-    "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod pnpm:build:types",
+    "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod && rimraf ./lib/umd/types-unbundled ./lib/esm/types-unbundled",
     "build:prod": "rollup -c --environment ROLLUP_ENV:'production'",
     "build:dev": "rollup -c",
     "build:analyze": "rollup -c --environment ANALYZER:'analyzer'",
-    "build:types": "tsc",
     "watch": "rollup -c -w",
-    "clean": "rimraf lib typings",
+    "clean": "rimraf lib",
     "test": "concurrently -n w: 'pnpm:test:*'",
     "test:browser": "cross-env BABEL_ENV=test jest --config jest-browser.config.js",
     "test:node": "cross-env BABEL_ENV=test jest --config jest-node.config.js",
@@ -83,6 +99,7 @@
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.0",
     "@types/jest": "^29.5.13",
     "@typescript-eslint/parser": "^8.7.0",
     "babel-jest": "^29.7.0",
@@ -103,6 +120,7 @@
     "rimraf": "^6.0.1",
     "rollup": "^4.22.5",
     "rollup-plugin-analyzer": "^4.0.0",
+    "rollup-plugin-dts": "^6.1.1",
     "typescript": "^5.3.3"
   },
   "browserslist": [

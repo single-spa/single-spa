@@ -6,4 +6,3 @@ LICENSE
 .prettierignore
 coverage
 pnpm-lock.yaml
-typings
