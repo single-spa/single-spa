@@ -1,5 +1,13 @@
 # Changelog
 
+## 7.0.0-beta.1
+
+### Major Changes
+
+- [#1262](https://github.com/single-spa/single-spa/pull/1262) [`08e71ef`](https://github.com/single-spa/single-spa/commit/08e71efd3fd43d4601875da498fca6f2a1769473) Thanks [@joeldenning](https://github.com/joeldenning)! - Change main to ESM, types to ESM, and remove deprecated module field
+
+- [#1260](https://github.com/single-spa/single-spa/pull/1260) [`c4d0993`](https://github.com/single-spa/single-spa/commit/c4d099375078740af4ea3f96688f492b38cee969) Thanks [@MilanKovacic](https://github.com/MilanKovacic)! - Fix package exports/types
+
 ## 7.0.0-beta.0
 
 ### Major Changes
