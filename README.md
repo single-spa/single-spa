@@ -10,11 +10,21 @@
 
 [Donate to this project](https://opencollective.com/single-spa)
 
+[Official educational courses](https://single-spa-workshop.com)
+
 [Official single-spa hosting](https://baseplate.cloud)
 
-<a href="https://baseplate.cloud">
-  <img height="50" alt="baseplate-logo-standard" src="https://github.com/single-spa/single-spa/assets/5524384/8f07afdb-dd30-4211-a460-8b8a354ccc0f" style="background-color: white;">
-</a>
+<div>
+  <a href="https://single-spa-workshop.com">
+    <img height="50" alt="single-spa-workshop-logo" src="https://github.com/user-attachments/assets/9d485d9a-63d9-4eba-9c53-bc68718806e1">
+  </a>
+</div>
+
+<div>
+  <a href="https://baseplate.cloud">
+    <img height="50" alt="baseplate-logo-standard" src="https://github.com/single-spa/single-spa/assets/5524384/8f07afdb-dd30-4211-a460-8b8a354ccc0f" style="background-color: white;">
+  </a>
+</div>
 
 ## A javascript framework for front-end microservices
 
@@ -27,9 +37,7 @@ Build micro frontends that coexist and can ([but don't need to](https://single-s
 
 ## Sponsors
 
-<a href="https://datacamp.com/"><img height="50" alt="DataCamp-Logo" src="https://user-images.githubusercontent.com/5524384/117517708-1047f200-af5a-11eb-8d5d-0997d6df06d6.png"></a>
-<a href="https://pos.toasttab.com/"><img height="50" alt="Toast-Logo" src="https://user-images.githubusercontent.com/5524384/117516281-eab8e980-af55-11eb-9d3c-baff0c3c86e6.png"></a>
-<a href="https://medium.com/asurion-product-development"><img height="50" alt="asurion-logo" src="https://user-images.githubusercontent.com/1222137/166689686-14e38af4-0536-48fc-8720-60a324fb751e.svg"></a>
+<a href="https://single-spa-workshop.com"><img height="50" alt="Franklin" src="https://github.com/user-attachments/assets/91f5177b-33ba-448f-be16-90a5c4ec3f70"></a>
 
 To add your company's logo to this section:
 
