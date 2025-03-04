@@ -1,5 +1,11 @@
 # Changelog
 
+## 7.0.0-beta.2
+
+### Minor Changes
+
+- [#1294](https://github.com/single-spa/single-spa/pull/1294) [`bbacc60`](https://github.com/single-spa/single-spa/commit/bbacc601192b0db85c96477696880e733ff6776c) Thanks [@jolyndenning](https://github.com/jolyndenning)! - Export additional types for lifecycles
+
 ## 7.0.0-beta.1
 
 ### Major Changes

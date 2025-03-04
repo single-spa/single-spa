@@ -1,6 +1,6 @@
 {
   "name": "single-spa",
-  "version": "7.0.0-beta.1",
+  "version": "7.0.0-beta.2",
   "description": "The router for easy microfrontends",
   "type": "module",
   "main": "./lib/esm/single-spa.min.js",
