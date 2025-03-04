@@ -20,6 +20,22 @@ export { navigateToUrl, patchHistoryApi } from "./navigation/navigation-events";
 export { triggerAppChange } from "./navigation/reroute";
 export { addErrorHandler, removeErrorHandler } from "./applications/app-errors";
 export { mountRootParcel } from "./parcels/mount-parcel";
+export type {
+  CustomProps,
+  ParcelCustomProps,
+  CustomPropsFn,
+  AppProps,
+  ParcelConfig,
+  ParcelConfigObject,
+  LifeCycles,
+  LifeCycleFn,
+  Parcel,
+  Application,
+  LoadApp,
+  ActivityFn,
+  Activity,
+  RegisterApplicationConfig,
+} from "./lifecycles/lifecycle.helpers";
 
 export {
   NOT_LOADED,

@@ -97,7 +97,9 @@ export type ParcelConfigObject<ExtraProps = CustomProps> = {
   timeouts: AppOrParcelTimeouts;
 } & LifeCycles<ExtraProps>;
 
-type LifeCycleFn<ExtraProps> = (config: ExtraProps & AppProps) => Promise<any>;
+export type LifeCycleFn<ExtraProps> = (
+  config: ExtraProps & AppProps,
+) => Promise<any>;
 export type LifeCycles<ExtraProps = {}> = {
   bootstrap: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
   mount: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
