@@ -1,5 +1,11 @@
 # Changelog
 
+## 7.0.0-beta.3
+
+### Minor Changes
+
+- [#1300](https://github.com/single-spa/single-spa/pull/1300) [`2c45f70`](https://github.com/single-spa/single-spa/commit/2c45f707e2b546ef2bdd3c0d6039f6a7c9ff423c) Thanks [@jolyndenning](https://github.com/jolyndenning)! - Export StartOpts type
+
 ## 7.0.0-beta.2
 
 ### Minor Changes
