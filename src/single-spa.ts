@@ -1,4 +1,5 @@
 export { start } from "./start";
+export type { StartOpts } from "./start";
 export { ensureJQuerySupport } from "./jquery-support";
 export {
   setBootstrapMaxTime,
