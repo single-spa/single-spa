@@ -1,5 +1,11 @@
 # Changelog
 
+## 7.0.0-beta.4
+
+### Patch Changes
+
+- [#1304](https://github.com/single-spa/single-spa/pull/1304) [`6d02602`](https://github.com/single-spa/single-spa/commit/6d026022a2ca471ee06038b17e2dcfeb425baf02) Thanks [@jolyndenning](https://github.com/jolyndenning)! - Make StartOpts optional when calling start()
+
 ## 7.0.0-beta.3
 
 ### Minor Changes
