@@ -111,11 +111,20 @@ export function getAppStatus(appName): AppOrParcelStatus | null {
 let startWarningInitialized: boolean = false;
 
 export function registerApplication<ExtraProps extends CustomProps = {}>(
-  appNameOrConfig: string | RegisterApplicationConfig,
-  appOrLoadApp: Application,
+  RegisterApplicationConfig,
+): void;
+export function registerApplication<ExtraProps extends CustomProps = {}>(
+  appName: string,
+  app: Application,
   activeWhen: Activity,
+  customProps: ExtraProps | CustomPropsFn<ExtraProps>,
+): void;
+export function registerApplication<ExtraProps extends CustomProps = {}>(
+  appNameOrConfig: string | RegisterApplicationConfig,
+  appOrLoadApp?: Application,
+  activeWhen?: Activity,
   customProps?: ExtraProps | CustomPropsFn<ExtraProps>,
-) {
+): void {
   const registration = sanitizeArguments(
     appNameOrConfig,
     appOrLoadApp,
