@@ -4,7 +4,7 @@ import { isInBrowser } from "./utils/runtime-environment";
 
 let started: boolean = false;
 
-export function start(opts: StartOpts) {
+export function start(opts?: StartOpts) {
   started = true;
   if (isInBrowser) {
     patchHistoryApi(opts);
