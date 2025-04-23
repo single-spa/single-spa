@@ -1,5 +1,11 @@
 # Changelog
 
+## 7.0.0-beta.5
+
+### Patch Changes
+
+- [#1305](https://github.com/single-spa/single-spa/pull/1305) [`73fdd87`](https://github.com/single-spa/single-spa/commit/73fdd878432b3144eb77ba2c12becc3799812e9f) Thanks [@jolyndenning](https://github.com/jolyndenning)! - Fix types for registerApplication function
+
 ## 7.0.0-beta.4
 
 ### Patch Changes
