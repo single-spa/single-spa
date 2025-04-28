@@ -1,7 +1,5 @@
 import {
-  UPDATING,
-  MOUNTED,
-  SKIP_BECAUSE_BROKEN,
+  AppOrParcelStatus,
   toName,
   isParcel,
 } from "../applications/app.helpers";
@@ -21,7 +19,7 @@ export function toUpdatePromise(
       startTime = performance.now();
     }
 
-    if (appOrParcel.status !== MOUNTED) {
+    if (appOrParcel.status !== AppOrParcelStatus.MOUNTED) {
       throw Error(
         formatErrorMessage(
           32,
@@ -34,11 +32,11 @@ export function toUpdatePromise(
       );
     }
 
-    appOrParcel.status = UPDATING;
+    appOrParcel.status = AppOrParcelStatus.UPDATING;
 
     return reasonableTime(appOrParcel, "update")
       .then(() => {
-        appOrParcel.status = MOUNTED;
+        appOrParcel.status = AppOrParcelStatus.MOUNTED;
 
         if (__PROFILE__) {
           addProfileEntry(
@@ -65,7 +63,11 @@ export function toUpdatePromise(
           );
         }
 
-        throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
+        throw transformErr(
+          err,
+          appOrParcel,
+          AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
+        );
       });
   });
 }

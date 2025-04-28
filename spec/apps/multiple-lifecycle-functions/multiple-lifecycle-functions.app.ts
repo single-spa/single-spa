@@ -1,10 +1,10 @@
-let _bootstrapsCalledOutOfOrder = undefined;
+let _initsCalledOutOfOrder = undefined;
 let _mountsCalledOutOfOrder = undefined;
 let _unmountsCalledOutOfOrder = undefined;
 
-let _bootstrap1Called = false;
-let _bootstrap2Called = false;
-let _bootstrap3Called = false;
+let _init1Called = false;
+let _init2Called = false;
+let _init3Called = false;
 let _mount1Called = false;
 let _mount2Called = false;
 let _mount3Called = false;
@@ -12,32 +12,31 @@ let _unmount1Called = false;
 let _unmount2Called = false;
 let _unmount3Called = false;
 
-export const bootstrap = [
-  function bootstrap1() {
+export const init = [
+  function init1() {
     return new Promise((resolve) => {
       setTimeout(() => {
-        if (_bootstrap2Called)
-          _bootstrapsCalledOutOfOrder = `bootstrap 2 called before bootstrap 1`;
-        if (_bootstrap3Called)
-          _bootstrapsCalledOutOfOrder = `bootstrap 3 called before bootstrap 1`;
-        _bootstrap1Called = true;
+        if (_init2Called)
+          _initsCalledOutOfOrder = `init 2 called before init 1`;
+        if (_init3Called)
+          _initsCalledOutOfOrder = `init 3 called before init 1`;
+        _init1Called = true;
         resolve();
       }, 10);
     });
   },
 
-  function bootstrap2() {
+  function init2() {
     return new Promise((resolve) => {
-      if (_bootstrap3Called)
-        _bootstrapsCalledOutOfOrder = `bootstrap 2 called before bootstrap 3`;
-      _bootstrap2Called = true;
+      if (_init3Called) _initsCalledOutOfOrder = `init 2 called before init 3`;
+      _init2Called = true;
       resolve();
     });
   },
 
-  function bootstrap3() {
+  function init3() {
     return new Promise((resolve) => {
-      _bootstrap3Called = true;
+      _init3Called = true;
       resolve();
     });
   },
@@ -106,13 +105,13 @@ export const unmount = [
 ];
 
 export function reset() {
-  _bootstrapsCalledOutOfOrder =
+  _initsCalledOutOfOrder =
     _mountsCalledOutOfOrder =
     _unmountsCalledOutOfOrder =
       undefined;
-  _bootstrap1Called =
-    _bootstrap2Called =
-    _bootstrap3Called =
+  _init1Called =
+    _init2Called =
+    _init3Called =
     _mount1Called =
     _mount2Called =
     _mount3Called =
@@ -122,8 +121,8 @@ export function reset() {
       false;
 }
 
-export function bootstrapsCalledOutOfOrder() {
-  return _bootstrapsCalledOutOfOrder;
+export function initsCalledOutOfOrder() {
+  return _initsCalledOutOfOrder;
 }
 
 export function mountsCalledOutOfOrder() {
@@ -134,16 +133,16 @@ export function unmountsCalledOutOfOrder() {
   return _unmountsCalledOutOfOrder;
 }
 
-export function bootstrap1Called() {
-  return _bootstrap1Called;
+export function init1Called() {
+  return _init1Called;
 }
 
-export function bootstrap2Called() {
-  return _bootstrap2Called;
+export function init2Called() {
+  return _init2Called;
 }
 
-export function bootstrap3Called() {
-  return _bootstrap3Called;
+export function init3Called() {
+  return _init3Called;
 }
 
 export function mount1Called() {

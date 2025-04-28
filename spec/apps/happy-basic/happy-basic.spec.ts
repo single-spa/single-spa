@@ -27,14 +27,14 @@ describe(`happy-basic`, () => {
     location.hash = "happy-basic";
 
     return singleSpa.triggerAppChange().then(() => {
-      expect(myApp.wasBootstrapped()).toEqual(true);
+      expect(myApp.wasInitialized()).toEqual(true);
       expect(myApp.isMounted()).toEqual(true);
       expect(singleSpa.getMountedApps()).toEqual(["./happy-basic.app"]);
 
       location.hash = "#not-happy-basic";
 
       return singleSpa.triggerAppChange().then(() => {
-        expect(myApp.wasBootstrapped()).toEqual(true);
+        expect(myApp.wasInitialized()).toEqual(true);
         expect(myApp.isMounted()).toEqual(false);
         expect(singleSpa.getMountedApps()).toEqual([]);
       });

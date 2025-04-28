@@ -33,11 +33,11 @@ describe(`invalid-unmount app`, () => {
     errs.push(err);
   }
 
-  it(`is bootstrapped, mounted, and unmounted, but then put in a broken state and never again mounted`, () => {
+  it(`is initialized, mounted, and unmounted, but then put in a broken state and never again mounted`, () => {
     location.hash = activeHash;
 
     return singleSpa.triggerAppChange().then(() => {
-      expect(myApp.numBootstraps()).toEqual(1);
+      expect(myApp.numInits()).toEqual(1);
       expect(myApp.numMounts()).toEqual(1);
       expect(singleSpa.getMountedApps()).toEqual(["./invalid-unmount.app"]);
       expect(singleSpa.getAppStatus("./invalid-unmount.app")).toEqual(
@@ -47,7 +47,7 @@ describe(`invalid-unmount app`, () => {
       // now unmount, which will be the first time it enters a broken state
       location.hash = "#not-invalid-unmount";
       return singleSpa.triggerAppChange().then(() => {
-        expect(myApp.numBootstraps()).toEqual(1);
+        expect(myApp.numInits()).toEqual(1);
         expect(myApp.numMounts()).toEqual(1);
         expect(myApp.numUnmounts()).toEqual(1);
         expect(singleSpa.getMountedApps()).toEqual([]);
@@ -58,7 +58,7 @@ describe(`invalid-unmount app`, () => {
         // now remount and check if it tries to mount despite being in a broken state
         location.hash = activeHash;
         return singleSpa.triggerAppChange().then(() => {
-          expect(myApp.numBootstraps()).toEqual(1);
+          expect(myApp.numInits()).toEqual(1);
           expect(myApp.numMounts()).toEqual(1); // hasn't increased
           expect(myApp.numUnmounts()).toEqual(1);
           expect(singleSpa.getMountedApps()).toEqual([]);

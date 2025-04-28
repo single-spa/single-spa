@@ -2,13 +2,6 @@ import { ensureJQuerySupport } from "../jquery-support";
 import {
   isActive,
   toName,
-  NOT_LOADED,
-  NOT_BOOTSTRAPPED,
-  NOT_MOUNTED,
-  MOUNTED,
-  LOAD_ERROR,
-  SKIP_BECAUSE_BROKEN,
-  LOADING_SOURCE_CODE,
   shouldBeActive,
   InternalApplication,
   AppOrParcelStatus,
@@ -56,29 +49,30 @@ export function getAppChanges(): AppChanges {
 
   apps.forEach((app) => {
     const appShouldBeActive =
-      app.status !== SKIP_BECAUSE_BROKEN && shouldBeActive(app);
+      app.status !== AppOrParcelStatus.SKIP_BECAUSE_BROKEN &&
+      shouldBeActive(app);
 
     switch (app.status) {
-      case LOAD_ERROR:
+      case AppOrParcelStatus.LOAD_ERROR:
         if (appShouldBeActive && currentTime - app.loadErrorTime >= 200) {
           appsToLoad.push(app);
         }
         break;
-      case NOT_LOADED:
-      case LOADING_SOURCE_CODE:
+      case AppOrParcelStatus.NOT_LOADED:
+      case AppOrParcelStatus.LOADING_SOURCE_CODE:
         if (appShouldBeActive) {
           appsToLoad.push(app);
         }
         break;
-      case NOT_BOOTSTRAPPED:
-      case NOT_MOUNTED:
+      case AppOrParcelStatus.NOT_INITIALIZED:
+      case AppOrParcelStatus.NOT_MOUNTED:
         if (!appShouldBeActive && getAppUnloadInfo(toName(app))) {
           appsToUnload.push(app);
         } else if (appShouldBeActive) {
           appsToMount.push(app);
         }
         break;
-      case MOUNTED:
+      case AppOrParcelStatus.MOUNTED:
         if (!appShouldBeActive) {
           appsToUnmount.push(app);
         }
@@ -141,7 +135,7 @@ export function registerApplication<ExtraProps extends CustomProps = {}>(
           formatErrorMessage(
             1,
             __DEV__ &&
-              `singleSpa.start() has not been called, 5000ms after single-spa was loaded. Before start() is called, apps can be declared and loaded, but not bootstrapped or mounted.`,
+              `singleSpa.start() has not been called, 5000ms after single-spa was loaded. Before start() is called, apps can be declared and loaded, but not initialized or mounted.`,
           ),
         );
       }
@@ -162,7 +156,7 @@ export function registerApplication<ExtraProps extends CustomProps = {}>(
     Object.assign(
       {
         loadErrorTime: null,
-        status: NOT_LOADED,
+        status: AppOrParcelStatus.NOT_LOADED,
         parcels: {},
         devtools: {
           overlays: {

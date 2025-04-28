@@ -35,7 +35,7 @@ describe(`unmount-times-out app`, () => {
     location.hash = activeHash;
 
     return singleSpa.triggerAppChange().then(() => {
-      expect(myApp.numBootstraps()).toEqual(1);
+      expect(myApp.numInits()).toEqual(1);
       expect(myApp.numMounts()).toEqual(1);
       expect(singleSpa.getMountedApps()).toEqual(["./unmount-times-out.app"]);
       expect(singleSpa.getAppStatus("./unmount-times-out.app")).toEqual(

@@ -31,11 +31,11 @@ describe(`invalid-mount app`, () => {
     singleSpa.removeErrorHandler(handleError);
   });
 
-  it(`is bootstrapped and mounted, but then put in a broken state`, () => {
+  it(`is initialized and mounted, but then put in a broken state`, () => {
     location.hash = activeHash;
 
     return singleSpa.triggerAppChange().then(() => {
-      expect(myApp.wasBootstrapped()).toEqual(true);
+      expect(myApp.wasInitialized()).toEqual(true);
       expect(myApp.wasMounted()).toEqual(true);
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./invalid-mount.app")).toEqual(

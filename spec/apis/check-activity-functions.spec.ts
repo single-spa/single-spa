@@ -1,7 +1,7 @@
 import * as singleSpa from "single-spa";
 
 const dummyApp1 = {
-  bootstrap() {
+  init() {
     return Promise.resolve();
   },
   mount() {
@@ -16,7 +16,7 @@ const dummyApp1 = {
 };
 
 const dummyApp2 = {
-  bootstrap() {
+  init() {
     return Promise.resolve();
   },
   mount() {
@@ -31,7 +31,7 @@ const dummyApp2 = {
 };
 
 const dummyApp3 = {
-  bootstrap() {
+  init() {
     return Promise.resolve();
   },
   mount() {
@@ -46,7 +46,7 @@ const dummyApp3 = {
 };
 
 const dummyApp4 = {
-  bootstrap() {
+  init() {
     return Promise.resolve();
   },
   mount() {

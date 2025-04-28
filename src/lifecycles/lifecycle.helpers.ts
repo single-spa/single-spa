@@ -21,7 +21,7 @@ export function validLifecycleFn(
 
 export function flattenFnArray(
   appOrParcel: LifeCycles<unknown>,
-  lifecycle: "bootstrap" | "mount" | "update" | "unmount" | "unload",
+  lifecycle: string,
   isParcel: boolean,
 ): LifeCycleFn<unknown> {
   let fns: LifeCycleFn<unknown>[] = Array.isArray(appOrParcel[lifecycle])
@@ -101,7 +101,7 @@ export type LifeCycleFn<ExtraProps> = (
   config: ExtraProps & AppProps,
 ) => Promise<any>;
 export type LifeCycles<ExtraProps = {}> = {
-  bootstrap: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
+  init?: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
   mount: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
   unmount: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
   update?: LifeCycleFn<ExtraProps> | Array<LifeCycleFn<ExtraProps>>;
@@ -116,7 +116,7 @@ export type Parcel<ExtraProps = CustomProps> = {
   update?(customProps: ExtraProps): Promise<any>;
   getStatus(): AppOrParcelStatus;
   loadPromise: Promise<null>;
-  bootstrapPromise: Promise<null>;
+  initPromise: Promise<null>;
   mountPromise: Promise<null>;
   unmountPromise: Promise<null>;
   // Intended for internal use only
@@ -136,7 +136,7 @@ export interface ParcelMap {
 export interface InternalParcel {
   id: number;
   name: string;
-  bootstrap: LifeCycles["bootstrap"];
+  init: LifeCycles["init"];
   mount: LifeCycles["mount"];
   unmount: LifeCycles["unmount"];
   update: LifeCycles["update"];

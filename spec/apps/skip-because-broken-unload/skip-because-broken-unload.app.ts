@@ -1,17 +1,17 @@
-let numBootstrapCalls = 0,
+let numInitCalls = 0,
   numMountCalls = 0,
   numUnloadCalls = 0,
   numUnmountCalls = 0;
 
 export function reset() {
-  numBootstrapCalls = 0;
+  numInitCalls = 0;
   numMountCalls = 0;
   numUnloadCalls = 0;
   numUnmountCalls = 0;
 }
 
-export function bootstrap() {
-  numBootstrapCalls++;
+export function init() {
+  numInitCalls++;
   return Promise.resolve();
 }
 // Commenting this code is what causes the SKIP_BECAUSE_BROKEN, as needed for the spec.js to function as expected
@@ -27,8 +27,8 @@ export function unload() {
   numUnloadCalls++;
   return Promise.resolve();
 }
-export function getNumBootstrapCalls() {
-  return numBootstrapCalls;
+export function getNumInitCalls() {
+  return numInitCalls;
 }
 export function getNumMountCalls() {
   return numMountCalls;

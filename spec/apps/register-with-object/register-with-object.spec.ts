@@ -1,10 +1,10 @@
 import * as singleSpa from "single-spa";
 
-let bootstrapped, mounted;
+let initialized, mounted;
 
 const app = {
-  bootstrap() {
-    bootstrapped = true;
+  init() {
+    initialized = true;
     return Promise.resolve();
   },
   mount() {
@@ -30,7 +30,7 @@ describe(`register-with-object`, () => {
   beforeEach(() => {
     location.hash = "#not-register-with-object";
 
-    bootstrapped = false;
+    initialized = false;
     mounted = false;
   });
 
@@ -41,14 +41,14 @@ describe(`register-with-object`, () => {
     location.hash = "#register-with-object";
 
     return singleSpa.triggerAppChange().then(() => {
-      expect(bootstrapped).toEqual(true);
+      expect(initialized).toEqual(true);
       expect(mounted).toEqual(true);
       expect(singleSpa.getMountedApps()).toEqual(["register-with-object"]);
 
       location.hash = "#not-register-with-object";
 
       return singleSpa.triggerAppChange().then(() => {
-        expect(bootstrapped).toEqual(true);
+        expect(initialized).toEqual(true);
         expect(mounted).toEqual(false);
         expect(singleSpa.getMountedApps()).toEqual([]);
       });

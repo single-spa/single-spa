@@ -6,11 +6,13 @@ describe(`root parcels`, () => {
     const parcel = singleSpa.mountRootParcel(parcelConfig, {
       domElement: document.createElement("div"),
     });
-    expect(parcel.getStatus()).toBe(singleSpa.NOT_BOOTSTRAPPED);
+    expect(parcel.getStatus()).toBe(
+      singleSpa.AppOrParcelStatus.NOT_INITIALIZED,
+    );
 
     return parcel.mountPromise
       .then(() => {
-        expect(parcel.getStatus()).toBe(singleSpa.MOUNTED);
+        expect(parcel.getStatus()).toBe(singleSpa.AppOrParcelStatus.MOUNTED);
       })
       .then(
         () =>
@@ -20,18 +22,22 @@ describe(`root parcels`, () => {
       )
       .then(parcel.unmount)
       .then(() => {
-        expect(parcel.getStatus()).toBe(singleSpa.NOT_MOUNTED);
+        expect(parcel.getStatus()).toBe(
+          singleSpa.AppOrParcelStatus.NOT_MOUNTED,
+        );
       });
   });
 
-  it(`doesn't resolve bootstrapPromise, mountPromise, or unmountPromise with any values`, () => {
+  it(`doesn't resolve initPromise, mountPromise, or unmountPromise with any values`, () => {
     const parcelConfig = createParcelConfig();
     const parcel = singleSpa.mountRootParcel(parcelConfig, {
       domElement: document.createElement("div"),
     });
-    expect(parcel.getStatus()).toBe(singleSpa.NOT_BOOTSTRAPPED);
+    expect(parcel.getStatus()).toBe(
+      singleSpa.AppOrParcelStatus.NOT_INITIALIZED,
+    );
 
-    return parcel.bootstrapPromise
+    return parcel.initPromise
       .then((value) => {
         expect(value).toBe(null);
         return parcel.mountPromise;
@@ -57,20 +63,32 @@ describe(`root parcels`, () => {
     const parcel = singleSpa.mountRootParcel(configLoadingFunction, {
       domElement: document.createElement("div"),
     });
-    expect(parcel.getStatus()).toBe(singleSpa.LOADING_SOURCE_CODE);
+    expect(parcel.getStatus()).toBe(
+      singleSpa.AppOrParcelStatus.LOADING_SOURCE_CODE,
+    );
     return Promise.resolve()
       .then(() =>
-        expect(parcel.getStatus()).toBe(singleSpa.LOADING_SOURCE_CODE),
+        expect(parcel.getStatus()).toBe(
+          singleSpa.AppOrParcelStatus.LOADING_SOURCE_CODE,
+        ),
       )
       .then(() => resolveConfigLoading())
       .then(() => parcel.loadPromise)
       .then(() =>
-        expect(parcel.getStatus()).not.toBe(singleSpa.LOADING_SOURCE_CODE),
+        expect(parcel.getStatus()).not.toBe(
+          singleSpa.AppOrParcelStatus.LOADING_SOURCE_CODE,
+        ),
       )
       .then(() => parcel.mountPromise)
-      .then(() => expect(parcel.getStatus()).toBe(singleSpa.MOUNTED))
+      .then(() =>
+        expect(parcel.getStatus()).toBe(singleSpa.AppOrParcelStatus.MOUNTED),
+      )
       .then(() => parcel.unmount())
-      .then(() => expect(parcel.getStatus()).toBe(singleSpa.NOT_MOUNTED))
+      .then(() =>
+        expect(parcel.getStatus()).toBe(
+          singleSpa.AppOrParcelStatus.NOT_MOUNTED,
+        ),
+      )
       .then(() => parcel.unmountPromise);
   });
 
@@ -99,7 +117,7 @@ describe(`root parcels`, () => {
     );
   });
 
-  it(`can mount a parcel missing the bootstrap lifecycle`, async () => {
+  it(`can mount a parcel missing the init lifecycle`, async () => {
     const parcelConfig = { async mount() {}, async unmount() {} };
     const parcel = singleSpa.mountRootParcel(parcelConfig, {
       domElement: document.createElement("div"),
@@ -126,13 +144,51 @@ describe(`root parcels`, () => {
     });
     await parcel.unmount();
   });
+
+  it(`calls legacy bootstrap lifecycle, if init not provided`, async () => {
+    const parcelConfig = createParcelConfig();
+    let bootstrapCalled = false;
+    // @ts-ignore
+    parcelConfig.bootstrap = async () => {
+      bootstrapCalled = true;
+    };
+    // @ts-ignore
+    delete parcelConfig.init;
+
+    expect(bootstrapCalled).toBe(false);
+
+    const parcel = singleSpa.mountRootParcel(parcelConfig, {
+      domElement: document.createElement("div"),
+    });
+    expect(parcel.getStatus()).toBe(
+      singleSpa.AppOrParcelStatus.NOT_INITIALIZED,
+    );
+
+    return parcel.mountPromise
+      .then(() => {
+        expect(parcel.getStatus()).toBe(singleSpa.AppOrParcelStatus.MOUNTED);
+        expect(bootstrapCalled).toBe(true);
+      })
+      .then(
+        () =>
+          new Promise((resolve, reject) => {
+            setTimeout(resolve, 20);
+          }),
+      )
+      .then(parcel.unmount)
+      .then(() => {
+        expect(parcel.getStatus()).toBe(
+          singleSpa.AppOrParcelStatus.NOT_MOUNTED,
+        );
+      });
+  });
 });
 
 function createParcelConfig(opts = {}) {
   const parcelConfig = {
-    bootstrapCalls: 0,
-    bootstrap() {
-      parcelConfig.bootstrapCalls++;
+    initCalls: 0,
+    init() {
+      parcelConfig.initCalls++;
       return Promise.resolve();
     },
     mountCalls: 0,

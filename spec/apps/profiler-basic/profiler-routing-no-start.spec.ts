@@ -9,7 +9,7 @@ describe(`profiler routing events before start()`, () => {
 
   beforeEach(async () => {
     app = {
-      bootstrap: async () => {},
+      init: async () => {},
       mount: async () => {},
       unmount: async () => {},
     };

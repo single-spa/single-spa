@@ -18,18 +18,20 @@ describe(`delayed-start`, () => {
       activeWhen: () => true,
     });
 
-    expect(singleSpa.getAppStatus("delayed-start")).toBe(singleSpa.NOT_LOADED);
+    expect(singleSpa.getAppStatus("delayed-start")).toBe(
+      singleSpa.AppOrParcelStatus.NOT_LOADED,
+    );
 
     await tick();
 
     expect(singleSpa.getAppStatus("delayed-start")).toBe(
-      singleSpa.LOADING_SOURCE_CODE,
+      singleSpa.AppOrParcelStatus.LOADING_SOURCE_CODE,
     );
 
     await singleSpa.triggerAppChange();
 
     expect(singleSpa.getAppStatus("delayed-start")).toBe(
-      singleSpa.NOT_BOOTSTRAPPED,
+      singleSpa.AppOrParcelStatus.NOT_INITIALIZED,
     );
 
     singleSpa.start();
@@ -37,8 +39,10 @@ describe(`delayed-start`, () => {
     await Promise.all([loadPromise, routingEvent()]);
 
     // Before fixing https://github.com/single-spa/single-spa/issues/555,
-    // this assertion failed - status was NOT_BOOTSTRAPPED
-    expect(singleSpa.getAppStatus("delayed-start")).toBe(singleSpa.MOUNTED);
+    // this assertion failed - status was NOT_initPED
+    expect(singleSpa.getAppStatus("delayed-start")).toBe(
+      singleSpa.AppOrParcelStatus.MOUNTED,
+    );
   });
 });
 

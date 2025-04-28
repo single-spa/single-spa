@@ -31,9 +31,9 @@ describe(`invalid-no-mount app`, () => {
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
-  it(`is never bootstrapped`, () => {
+  it(`is never initialized`, () => {
     return singleSpa.triggerAppChange().then(() => {
-      expect(myApp.isBootstrapped()).toEqual(false);
+      expect(myApp.isInitialized()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./invalid-no-mount.app")).toEqual(
         "SKIP_BECAUSE_BROKEN",

@@ -9,15 +9,8 @@ import {
   ParcelOwner,
   InternalParcel,
 } from "../lifecycles/lifecycle.helpers";
-import {
-  NOT_BOOTSTRAPPED,
-  NOT_MOUNTED,
-  MOUNTED,
-  LOADING_SOURCE_CODE,
-  SKIP_BECAUSE_BROKEN,
-  toName,
-} from "../applications/app.helpers";
-import { toBootstrapPromise } from "../lifecycles/bootstrap";
+import { AppOrParcelStatus, toName } from "../applications/app.helpers";
+import { toInitPromise } from "../lifecycles/init";
 import { toMountPromise } from "../lifecycles/mount";
 import { toUpdatePromise } from "../lifecycles/update";
 import { toUnmountPromise } from "../lifecycles/unmount";
@@ -99,14 +92,14 @@ export function mountParcel(
     id,
     parcels: {},
     status: passedConfigLoadingFunction
-      ? LOADING_SOURCE_CODE
-      : NOT_BOOTSTRAPPED,
+      ? AppOrParcelStatus.LOADING_SOURCE_CODE
+      : AppOrParcelStatus.NOT_INITIALIZED,
     customProps,
     parentName: toName(owningAppOrParcel),
     unmountThisParcel() {
       return mountPromise
         .then(() => {
-          if (parcel.status !== MOUNTED) {
+          if (parcel.status !== AppOrParcelStatus.MOUNTED) {
             throw Error(
               formatErrorMessage(
                 6,
@@ -131,7 +124,7 @@ export function mountParcel(
           return value;
         })
         .catch((err) => {
-          parcel.status = SKIP_BECAUSE_BROKEN;
+          parcel.status = AppOrParcelStatus.SKIP_BECAUSE_BROKEN;
           rejectUnmount(err);
           throw err;
         });
@@ -165,13 +158,13 @@ export function mountParcel(
 
     if (
       // ES Module objects don't have the object prototype
-      Object.prototype.hasOwnProperty.call(config, "bootstrap") &&
-      !validLifecycleFn(config.bootstrap)
+      Object.prototype.hasOwnProperty.call(config, "init") &&
+      !validLifecycleFn(config.init)
     ) {
       throw Error(
         formatErrorMessage(
           9,
-          __DEV__ && `Parcel ${name} provided an invalid bootstrap function`,
+          __DEV__ && `Parcel ${name} provided an invalid init function`,
           name,
         ),
       );
@@ -207,13 +200,17 @@ export function mountParcel(
       );
     }
 
-    const bootstrap = flattenFnArray(config, "bootstrap", true);
+    const init = flattenFnArray(
+      config,
+      config.init ? "init" : "bootstrap",
+      true,
+    );
     const mount = flattenFnArray(config, "mount", true);
     const unmount = flattenFnArray(config, "unmount", true);
 
-    parcel.status = NOT_BOOTSTRAPPED;
+    parcel.status = AppOrParcelStatus.NOT_INITIALIZED;
     parcel.name = name;
-    parcel.bootstrap = bootstrap;
+    parcel.init = init;
     parcel.mount = mount;
     parcel.unmount = unmount;
     parcel.timeouts = ensureValidAppTimeouts(config.timeouts);
@@ -230,12 +227,12 @@ export function mountParcel(
     return config;
   });
 
-  // Start bootstrapping and mounting
+  // Start initializing and mounting
   // The .then() causes the work to be put on the event loop instead of happening immediately
-  const bootstrapPromise = loadPromise.then(() =>
-    toBootstrapPromise(parcel as InternalParcel, true),
+  const initPromise = loadPromise.then(() =>
+    toInitPromise(parcel as InternalParcel, true),
   );
-  const mountPromise = bootstrapPromise.then(() =>
+  const mountPromise = initPromise.then(() =>
     toMountPromise(parcel as InternalParcel, true),
   );
 
@@ -250,7 +247,7 @@ export function mountParcel(
     mount() {
       return promiseWithoutReturnValue(
         Promise.resolve().then(() => {
-          if (parcel.status !== NOT_MOUNTED) {
+          if (parcel.status !== AppOrParcelStatus.NOT_MOUNTED) {
             throw Error(
               formatErrorMessage(
                 13,
@@ -276,7 +273,7 @@ export function mountParcel(
       return parcel.status;
     },
     loadPromise: promiseWithoutReturnValue(loadPromise),
-    bootstrapPromise: promiseWithoutReturnValue(bootstrapPromise),
+    initPromise: promiseWithoutReturnValue(initPromise),
     mountPromise: promiseWithoutReturnValue(mountPromise),
     unmountPromise: promiseWithoutReturnValue(unmountPromise),
     _parcel: parcel as InternalParcel,

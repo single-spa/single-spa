@@ -1,7 +1,7 @@
-export let bootstrapped, mounted;
+export let initialized, mounted;
 
-export async function bootstrap() {
-  bootstrapped = true;
+export async function init() {
+  initialized = true;
 }
 
 export async function mount() {
@@ -13,12 +13,12 @@ export async function unmount() {
 }
 
 export function reset() {
-  bootstrapped = false;
+  initialized = false;
   mounted = false;
 }
 
-export function wasBootstrapped() {
-  return bootstrapped;
+export function wasInitialized() {
+  return initialized;
 }
 
 export function isMounted() {

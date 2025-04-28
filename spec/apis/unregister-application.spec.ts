@@ -14,7 +14,7 @@ describe("unregisterApplication", function () {
       unmount() {
         return Promise.resolve();
       },
-      bootstrap() {
+      init() {
         return Promise.resolve();
       },
     };
@@ -65,7 +65,7 @@ describe("unregisterApplication", function () {
     expect(mounted).toBe(true);
 
     expect(singleSpa.getAppStatus("about to unregister")).toBe(
-      singleSpa.MOUNTING,
+      singleSpa.AppOrParcelStatus.MOUNTING,
     );
 
     return singleSpa.unregisterApplication("about to unregister").then(() => {

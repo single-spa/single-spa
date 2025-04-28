@@ -4,7 +4,7 @@ import { formatErrorMessage } from "./app-errors";
 import { AppOrParcel } from "../lifecycles/lifecycle.helpers";
 
 export interface AppOrParcelTimeouts {
-  bootstrap: Timeout;
+  init: Timeout;
   mount: Timeout;
   unmount: Timeout;
   unload: Timeout;
@@ -20,7 +20,7 @@ export interface Timeout {
 const defaultWarningMillis: number = 1000;
 
 const globalTimeoutConfig: AppOrParcelTimeouts = {
-  bootstrap: {
+  init: {
     millis: 4000,
     dieOnTimeout: false,
     warningMillis: defaultWarningMillis,
@@ -47,7 +47,7 @@ const globalTimeoutConfig: AppOrParcelTimeouts = {
   },
 };
 
-export function setBootstrapMaxTime(
+export function setInitMaxTime(
   time: number,
   dieOnTimeout: boolean,
   warningMillis: number,
@@ -57,12 +57,12 @@ export function setBootstrapMaxTime(
       formatErrorMessage(
         16,
         __DEV__ &&
-          `bootstrap max time must be a positive integer number of milliseconds`,
+          `init max time must be a positive integer number of milliseconds`,
       ),
     );
   }
 
-  globalTimeoutConfig.bootstrap = {
+  globalTimeoutConfig.init = {
     millis: time,
     dieOnTimeout,
     warningMillis: warningMillis || defaultWarningMillis,
@@ -137,7 +137,7 @@ export function setUnloadMaxTime(
 
 export function reasonableTime(
   appOrParcel: AppOrParcel,
-  lifecycle: "bootstrap" | "mount" | "update" | "unmount" | "unload",
+  lifecycle: "init" | "mount" | "update" | "unmount" | "unload",
 ): Promise<any> {
   const timeoutConfig = appOrParcel.timeouts[lifecycle];
   const warningPeriod = timeoutConfig.warningMillis;

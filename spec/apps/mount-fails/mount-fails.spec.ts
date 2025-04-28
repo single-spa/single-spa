@@ -31,11 +31,11 @@ describe(`mount-fails app`, () => {
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
-  it(`bootstraps and mounts, but then is put into SKIP_BECAUSE_BROKEN and unmounts as a last effort`, () => {
+  it(`initializes and mounts, but then is put into SKIP_BECAUSE_BROKEN and unmounts as a last effort`, () => {
     location.hash = activeHash;
 
     return singleSpa.triggerAppChange().then(() => {
-      expect(myApp.wasBootstrapped()).toEqual(true);
+      expect(myApp.wasInitialized()).toEqual(true);
       expect(myApp.wasMounted()).toEqual(true);
       expect(myApp.wasUnmounted()).toEqual(true); // We try to unmount an application if it fails to mount.
       expect(singleSpa.getMountedApps()).toEqual([]);

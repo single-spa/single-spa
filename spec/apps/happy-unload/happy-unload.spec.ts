@@ -34,7 +34,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "MOUNTED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(0);
           expect(myApp.getNumUnloadCalls()).toBe(0);
@@ -45,7 +45,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "NOT_LOADED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(1);
           expect(myApp.getNumUnloadCalls()).toBe(1);
@@ -59,7 +59,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "MOUNTED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(2);
+          expect(myApp.getNumInitCalls()).toBe(2);
           expect(myApp.getNumMountCalls()).toBe(2);
           expect(myApp.getNumUnmountCalls()).toBe(1);
           expect(myApp.getNumUnloadCalls()).toBe(1);
@@ -73,7 +73,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "NOT_LOADED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(0);
+          expect(myApp.getNumInitCalls()).toBe(0);
           expect(myApp.getNumMountCalls()).toBe(0);
           expect(myApp.getNumUnmountCalls()).toBe(0);
           expect(myApp.getNumUnloadCalls()).toBe(0);
@@ -85,7 +85,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "MOUNTED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(0);
           expect(myApp.getNumUnloadCalls()).toBe(0);
@@ -97,7 +97,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "NOT_MOUNTED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(1);
           expect(myApp.getNumUnloadCalls()).toBe(0);
@@ -107,7 +107,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "NOT_LOADED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(1);
           expect(myApp.getNumUnloadCalls()).toBe(1);
@@ -121,7 +121,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "NOT_LOADED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(0);
+          expect(myApp.getNumInitCalls()).toBe(0);
           expect(myApp.getNumMountCalls()).toBe(0);
           expect(myApp.getNumUnmountCalls()).toBe(0);
           expect(myApp.getNumUnloadCalls()).toBe(0);
@@ -131,7 +131,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "NOT_LOADED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(0);
+          expect(myApp.getNumInitCalls()).toBe(0);
           expect(myApp.getNumMountCalls()).toBe(0);
           expect(myApp.getNumUnmountCalls()).toBe(0);
           expect(myApp.getNumUnloadCalls()).toBe(0);
@@ -147,7 +147,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "MOUNTED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(0);
           expect(myApp.getNumUnloadCalls()).toBe(0);
@@ -159,7 +159,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "NOT_MOUNTED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(1);
           expect(myApp.getNumUnloadCalls()).toBe(0);
@@ -169,7 +169,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "NOT_LOADED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(1);
           expect(myApp.getNumUnloadCalls()).toBe(1);
@@ -181,7 +181,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "MOUNTED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(2);
+          expect(myApp.getNumInitCalls()).toBe(2);
           expect(myApp.getNumMountCalls()).toBe(2);
           expect(myApp.getNumUnmountCalls()).toBe(1);
           expect(myApp.getNumUnloadCalls()).toBe(1);
@@ -201,7 +201,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "MOUNTED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(0);
           expect(myApp.getNumUnloadCalls()).toBe(0);
@@ -218,7 +218,7 @@ describe(`happy-unload app :`, () => {
                 "NOT_LOADED",
               );
 
-              expect(myApp.getNumBootstrapCalls()).toBe(1);
+              expect(myApp.getNumInitCalls()).toBe(1);
               expect(myApp.getNumMountCalls()).toBe(1);
               expect(myApp.getNumUnmountCalls()).toBe(1);
               expect(myApp.getNumUnloadCalls()).toBe(1);
@@ -234,7 +234,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "MOUNTED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(0);
           expect(myApp.getNumUnloadCalls()).toBe(0);
@@ -246,7 +246,7 @@ describe(`happy-unload app :`, () => {
           expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual(
             "NOT_LOADED",
           );
-          expect(myApp.getNumBootstrapCalls()).toBe(1);
+          expect(myApp.getNumInitCalls()).toBe(1);
           expect(myApp.getNumMountCalls()).toBe(1);
           expect(myApp.getNumUnmountCalls()).toBe(1);
           expect(myApp.getNumUnloadCalls()).toBe(1);
@@ -266,7 +266,7 @@ describe(`happy-unload app :`, () => {
       .triggerAppChange()
       .then(() => {
         expect(singleSpa.getAppStatus("./happy-unload.app")).toEqual("MOUNTED");
-        expect(myApp.getNumBootstrapCalls()).toBe(1);
+        expect(myApp.getNumInitCalls()).toBe(1);
         expect(myApp.getNumMountCalls()).toBe(1);
         expect(myApp.getNumUnmountCalls()).toBe(0);
         expect(myApp.getNumUnloadCalls()).toBe(0);

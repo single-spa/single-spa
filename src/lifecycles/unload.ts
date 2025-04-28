@@ -1,10 +1,6 @@
 import {
-  NOT_MOUNTED,
-  UNLOADING,
-  NOT_LOADED,
-  LOAD_ERROR,
-  SKIP_BECAUSE_BROKEN,
   toName,
+  AppOrParcelStatus,
   InternalApplication,
 } from "../applications/app.helpers";
 import { handleAppError } from "../applications/app-errors";
@@ -31,7 +27,7 @@ export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
       return app;
     }
 
-    if (app.status === NOT_LOADED) {
+    if (app.status === AppOrParcelStatus.NOT_LOADED) {
       /* This app is already unloaded. We just need to clean up
        * anything that still thinks we need to unload the app.
        */
@@ -39,7 +35,7 @@ export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
       return app;
     }
 
-    if (app.status === UNLOADING) {
+    if (app.status === AppOrParcelStatus.UNLOADING) {
       /* Both unloadApplication and reroute want to unload this app.
        * It only needs to be done once, though.
        */
@@ -47,9 +43,9 @@ export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
     }
 
     if (
-      app.status !== NOT_MOUNTED &&
-      app.status !== LOAD_ERROR &&
-      app.status !== SKIP_BECAUSE_BROKEN
+      app.status !== AppOrParcelStatus.NOT_MOUNTED &&
+      app.status !== AppOrParcelStatus.LOAD_ERROR &&
+      app.status !== AppOrParcelStatus.SKIP_BECAUSE_BROKEN
     ) {
       /* The app cannot be unloaded unless in certain statuses
        */
@@ -66,7 +62,7 @@ export function toUnloadPromise(app: LoadedApp): Promise<LoadedApp> {
       ? reasonableTime(app, "unload")
       : Promise.resolve();
 
-    app.status = UNLOADING;
+    app.status = AppOrParcelStatus.UNLOADING;
 
     return unloadPromise
       .then(() => {
@@ -108,12 +104,12 @@ function finishUnloadingApp(app: LoadedApp, unloadInfo: UnloadInfo) {
   delete appsToUnload[toName(app)];
 
   // Unloaded apps don't have lifecycles
-  delete app.bootstrap;
+  delete app.init;
   delete app.mount;
   delete app.unmount;
   delete app.unload;
 
-  app.status = NOT_LOADED;
+  app.status = AppOrParcelStatus.NOT_LOADED;
 
   /* resolve the promise of whoever called unloadApplication.
    * This should be done after all other cleanup/bookkeeping
@@ -125,12 +121,12 @@ function errorUnloadingApp(app: LoadedApp, unloadInfo: UnloadInfo, err: Error) {
   delete appsToUnload[toName(app)];
 
   // Unloaded apps don't have lifecycles
-  delete app.bootstrap;
+  delete app.init;
   delete app.mount;
   delete app.unmount;
   delete app.unload;
 
-  handleAppError(err, app, SKIP_BECAUSE_BROKEN);
+  handleAppError(err, app, AppOrParcelStatus.SKIP_BECAUSE_BROKEN);
   unloadInfo.reject(err);
 }
 

@@ -1,11 +1,11 @@
-let _wasBootstrapped, _wasMounted, _wasUnmounted;
+let _wasInitialized, _wasMounted, _wasUnmounted;
 
 export function reset() {
-  _wasBootstrapped = _wasMounted = _wasUnmounted = false;
+  _wasInitialized = _wasMounted = _wasUnmounted = false;
 }
 
-export function bootstrap() {
-  _wasBootstrapped = true;
+export function init() {
+  _wasInitialized = true;
   return nonNativePromise();
 }
 
@@ -19,8 +19,8 @@ export function unmount() {
   return nonNativePromise();
 }
 
-export function wasBootstrapped() {
-  return _wasBootstrapped;
+export function wasInitialized() {
+  return _wasInitialized;
 }
 
 export function wasMounted() {

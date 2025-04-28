@@ -16,7 +16,7 @@ describe(`profiler basics`, () => {
   describe("application profiler events", () => {
     beforeEach(() => {
       app = {
-        bootstrap: jest.fn(() => Promise.resolve()),
+        init: jest.fn(() => Promise.resolve()),
         mount: jest.fn(() => Promise.resolve()),
         unmount: jest.fn(() => Promise.resolve()),
         unload: jest.fn(() => Promise.resolve()),
@@ -49,7 +49,7 @@ describe(`profiler basics`, () => {
       shouldMount = true;
       await singleSpa.triggerAppChange();
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.MOUNTED,
+        singleSpa.AppOrParcelStatus.MOUNTED,
       );
       const loadProfilesAfter = getProfilerEventsByKind("load");
 
@@ -70,7 +70,7 @@ describe(`profiler basics`, () => {
       shouldMount = true;
       await singleSpa.triggerAppChange();
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.LOAD_ERROR,
+        singleSpa.AppOrParcelStatus.LOAD_ERROR,
       );
       const loadProfilesAfter = getProfilerEventsByKind("load");
 
@@ -78,37 +78,35 @@ describe(`profiler basics`, () => {
       expect(loadProfilesAfter[0].operationSucceeded).toBe(false);
     });
 
-    it(`captures bootstrap profile events`, async () => {
-      const profilesBefore = getProfilerEventsByKind("bootstrap");
+    it(`captures init profile events`, async () => {
+      const profilesBefore = getProfilerEventsByKind("init");
       expect(profilesBefore.length).toBe(0);
 
       shouldMount = true;
       await singleSpa.triggerAppChange();
       expect(singleSpa.checkActivityFunctions()).toContain("profiler-basics");
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.MOUNTED,
+        singleSpa.AppOrParcelStatus.MOUNTED,
       );
-      const profilesAfter = getProfilerEventsByKind("bootstrap");
+      const profilesAfter = getProfilerEventsByKind("init");
 
       expect(profilesAfter.length).toBe(1);
       expect(profilesAfter[0].operationSucceeded).toBe(true);
     });
 
-    it(`captures bootstrap error profile events`, async () => {
-      app.bootstrap.mockImplementationOnce(() =>
-        Promise.reject(Error("Bootstrap err")),
-      );
+    it(`captures init error profile events`, async () => {
+      app.init.mockImplementationOnce(() => Promise.reject(Error("init err")));
 
-      const profilesBefore = getProfilerEventsByKind("bootstrap");
+      const profilesBefore = getProfilerEventsByKind("init");
       expect(profilesBefore.length).toBe(0);
 
       shouldMount = true;
       await singleSpa.triggerAppChange();
       expect(singleSpa.checkActivityFunctions()).toContain("profiler-basics");
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.SKIP_BECAUSE_BROKEN,
+        singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
       );
-      const profilesAfter = getProfilerEventsByKind("bootstrap");
+      const profilesAfter = getProfilerEventsByKind("init");
 
       expect(profilesAfter.length).toBe(1);
       expect(profilesAfter[0].operationSucceeded).toBe(false);
@@ -122,7 +120,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
       expect(singleSpa.checkActivityFunctions()).toContain("profiler-basics");
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.MOUNTED,
+        singleSpa.AppOrParcelStatus.MOUNTED,
       );
       const profilesAfter = getProfilerEventsByKind("mount");
 
@@ -142,7 +140,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
       expect(singleSpa.checkActivityFunctions()).toContain("profiler-basics");
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.SKIP_BECAUSE_BROKEN,
+        singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
       );
       const profilesAfter = getProfilerEventsByKind("mount");
 
@@ -178,7 +176,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
 
       expect(singleSpa.getAppStatus("profiler-basics")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN,
+        singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
       );
 
       const profilesAfter = getProfilerEventsByKind("unmount");
@@ -200,7 +198,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
       await singleSpa.triggerAppChange();
       expect(singleSpa.getAppStatus("profiler-basics")).toEqual(
-        singleSpa.NOT_LOADED,
+        singleSpa.AppOrParcelStatus.NOT_LOADED,
       );
 
       const profilesAfter = getProfilerEventsByKind("unload");
@@ -231,7 +229,7 @@ describe(`profiler basics`, () => {
       await singleSpa.triggerAppChange();
 
       expect(singleSpa.getAppStatus("profiler-basics")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN,
+        singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
       );
 
       const profilesAfter = getProfilerEventsByKind("unload");
@@ -248,7 +246,7 @@ describe(`profiler basics`, () => {
       clearProfilerData();
 
       parcelConfig = {
-        async bootstrap() {},
+        async init() {},
         async mount() {},
         async update() {},
         async unmount() {},
@@ -260,14 +258,14 @@ describe(`profiler basics`, () => {
       };
     });
 
-    it("captures successful bootstrap events", async () => {
-      const profilesBefore = getProfilerEventsByKind("bootstrap", "parcel");
+    it("captures successful init events", async () => {
+      const profilesBefore = getProfilerEventsByKind("init", "parcel");
       expect(profilesBefore.length).toBe(0);
 
       const parcel = singleSpa.mountRootParcel(parcelConfig, props);
-      await parcel.bootstrapPromise;
+      await parcel.initPromise;
 
-      const profilesAfter = getProfilerEventsByKind("bootstrap", "parcel");
+      const profilesAfter = getProfilerEventsByKind("init", "parcel");
       expect(profilesAfter.length).toBe(1);
       expect(profilesAfter[0].operationSucceeded).toBe(true);
     });

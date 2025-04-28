@@ -1,4 +1,4 @@
-let numBootstraps, numMounts, numUnmounts;
+let numInits, numMounts, numUnmounts;
 
 export const timeouts = {
   mount: {
@@ -7,9 +7,9 @@ export const timeouts = {
   },
 };
 
-export function bootstrap() {
+export function init() {
   return new Promise((resolve) => {
-    numBootstraps++;
+    numInits++;
     resolve();
   });
 }
@@ -29,11 +29,11 @@ export function unmount() {
 }
 
 export function reset() {
-  numBootstraps = numMounts = numUnmounts = 0;
+  numInits = numMounts = numUnmounts = 0;
 }
 
-export function bootstraps() {
-  return numBootstraps;
+export function inits() {
+  return numInits;
 }
 
 export function mounts() {

@@ -26,7 +26,7 @@ describe(`parcels mounting parcels`, () => {
 
       return parcel1.mountPromise
         .then(() => {
-          expect(parcelConfig1.bootstrapCalls).toBe(1);
+          expect(parcelConfig1.initCalls).toBe(1);
           expect(parcelConfig1.mountCalls).toBe(1);
           expect(parcelConfig1.unmountCalls).toBe(0);
 
@@ -34,7 +34,7 @@ describe(`parcels mounting parcels`, () => {
             domElement: document.createElement("div"),
           });
           return parcel2.mountPromise.then(() => {
-            expect(parcelConfig2.bootstrapCalls).toBe(1);
+            expect(parcelConfig2.initCalls).toBe(1);
             expect(parcelConfig2.mountCalls).toBe(1);
             expect(parcelConfig2.unmountCalls).toBe(0);
           });
@@ -98,9 +98,9 @@ describe(`parcels mounting parcels`, () => {
 
 function createApp() {
   const app = {
-    bootstrapCalls: 0,
-    bootstrap() {
-      app.bootstrapCalls++;
+    initCalls: 0,
+    init() {
+      app.initCalls++;
       return Promise.resolve();
     },
     mountCalls: 0,
@@ -122,9 +122,9 @@ function createApp() {
 
 function createParcelConfig() {
   const parcelConfig = {
-    bootstrapCalls: 0,
-    bootstrap() {
-      parcelConfig.bootstrapCalls++;
+    initCalls: 0,
+    init() {
+      parcelConfig.initCalls++;
       return Promise.resolve();
     },
     mountCalls: 0,

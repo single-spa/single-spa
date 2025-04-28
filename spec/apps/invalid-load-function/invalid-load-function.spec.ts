@@ -39,7 +39,7 @@ describe(`invalid-load-function`, () => {
         ),
       ).toBeGreaterThan(-1);
       expect(singleSpa.getAppStatus("invalid-load-1")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN,
+        singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
       );
     });
   });
@@ -65,7 +65,7 @@ describe(`invalid-load-function`, () => {
         ),
       ).toBeGreaterThan(-1);
       expect(singleSpa.getAppStatus("invalid-load-2")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN,
+        singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
       );
     });
   });
@@ -91,7 +91,7 @@ describe(`invalid-load-function`, () => {
         ),
       ).toBeGreaterThan(-1);
       expect(singleSpa.getAppStatus("invalid-load-3")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN,
+        singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
       );
     });
   });
@@ -103,7 +103,7 @@ describe(`invalid-load-function`, () => {
       if (count === 1) return Promise.reject(`It didn't load`);
       else
         return Promise.resolve({
-          bootstrap: () => new Promise(),
+          init: () => new Promise(),
           mount: () => new Promise(),
           unmount: () => new Promise(),
         });
@@ -124,7 +124,7 @@ describe(`invalid-load-function`, () => {
       return new Promise((resolve) => setTimeout(resolve, 201)).then(() =>
         singleSpa.triggerAppChange().then(() => {
           expect(singleSpa.getAppStatus("invalid-load-4")).toBe(
-            singleSpa.NOT_BOOTSTRAPPED,
+            singleSpa.AppOrParcelStatus.NOT_INITIALIZED,
           );
         }),
       );

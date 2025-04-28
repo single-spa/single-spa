@@ -1,12 +1,12 @@
 import * as singleSpa from "single-spa";
 
 const russellApp = {
-  bootstrapCount: 0,
+  initCount: 0,
   mountCount: 0,
   unmountCount: 0,
   unloadCount: 0,
-  bootstrap: async () => {
-    russellApp.bootstrapCount++;
+  init: async () => {
+    russellApp.initCount++;
   },
   mount: async () => {
     russellApp.mountCount++;
@@ -20,12 +20,12 @@ const russellApp = {
 };
 
 const boomApp = {
-  bootstrapCount: 0,
+  initCount: 0,
   mountCount: 0,
   unmountCount: 0,
   unloadCount: 0,
-  bootstrap: async () => {
-    boomApp.bootstrapCount++;
+  init: async () => {
+    boomApp.initCount++;
   },
   mount: async () => {
     boomApp.mountCount++;
@@ -52,12 +52,12 @@ describe(`events api :`, () => {
   });
 
   afterEach(async () => {
-    russellApp.bootstrapCount = 0;
+    russellApp.initCount = 0;
     russellApp.mountCount = 0;
     russellApp.unmountCount = 0;
     russellApp.unloadCount = 0;
 
-    boomApp.bootstrapCount = 0;
+    boomApp.initCount = 0;
     boomApp.mountCount = 0;
     boomApp.unmountCount = 0;
     boomApp.unloadCount = 0;
@@ -220,7 +220,9 @@ describe(`events api :`, () => {
         listener,
       );
 
-      expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
+      expect(singleSpa.getAppStatus("russell")).toBe(
+        singleSpa.AppOrParcelStatus.MOUNTED,
+      );
       expect(russellApp.unmountCount).toBe(0);
       expect(boomApp.mountCount).toBe(0);
 
@@ -229,7 +231,9 @@ describe(`events api :`, () => {
       location.hash = "#/other";
       await singleSpa.triggerAppChange();
 
-      expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.NOT_MOUNTED);
+      expect(singleSpa.getAppStatus("russell")).toBe(
+        singleSpa.AppOrParcelStatus.NOT_MOUNTED,
+      );
       expect(russellApp.unmountCount).toBe(1);
       expect(boomApp.mountCount).toBe(1);
 
@@ -265,19 +269,25 @@ describe(`events api :`, () => {
           detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
         } = evt;
         window.removeEventListener("single-spa:app-change", finishTest);
-        expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
-        expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
-          [],
-        );
-        expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual([]);
-        expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
-          ["russell"].sort(),
-        );
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.NOT_LOADED].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[
+            singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN
+          ].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.NOT_MOUNTED].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.MOUNTED].sort(),
+        ).toEqual(["russell"].sort());
 
         expect(totalAppChanges).toBe(1);
 
         expect(newAppStatuses).toEqual({
-          russell: singleSpa.MOUNTED,
+          russell: singleSpa.AppOrParcelStatus.MOUNTED,
         });
 
         finish();
@@ -303,20 +313,26 @@ describe(`events api :`, () => {
         const {
           detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
         } = evt;
-        expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
-        expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
-          [],
-        );
-        expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual([]);
-        expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
-          ["russell", "boom"].sort(),
-        );
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.NOT_LOADED].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[
+            singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN
+          ].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.NOT_MOUNTED].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.MOUNTED].sort(),
+        ).toEqual(["russell", "boom"].sort());
 
         expect(totalAppChanges).toBe(2);
 
         expect(newAppStatuses).toEqual({
-          russell: singleSpa.MOUNTED,
-          boom: singleSpa.MOUNTED,
+          russell: singleSpa.AppOrParcelStatus.MOUNTED,
+          boom: singleSpa.AppOrParcelStatus.MOUNTED,
         });
         finish();
       }
@@ -339,19 +355,25 @@ describe(`events api :`, () => {
         const {
           detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
         } = evt;
-        expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
-        expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
-          [],
-        );
-        expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual([]);
-        expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual(
-          ["russell"].sort(),
-        );
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.NOT_LOADED].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[
+            singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN
+          ].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.MOUNTED].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.NOT_MOUNTED].sort(),
+        ).toEqual(["russell"].sort());
 
         expect(totalAppChanges).toBe(1);
 
         expect(newAppStatuses).toEqual({
-          russell: singleSpa.NOT_MOUNTED,
+          russell: singleSpa.AppOrParcelStatus.NOT_MOUNTED,
         });
         finish();
       }
@@ -377,22 +399,26 @@ describe(`events api :`, () => {
           detail: { appsByNewStatus, newAppStatuses, totalAppChanges },
         } = evt;
         window.removeEventListener("single-spa:app-change", finishTest);
-        expect(appsByNewStatus[singleSpa.NOT_LOADED].sort()).toEqual([]);
-        expect(appsByNewStatus[singleSpa.SKIP_BECAUSE_BROKEN].sort()).toEqual(
-          [],
-        );
-        expect(appsByNewStatus[singleSpa.NOT_MOUNTED].sort()).toEqual(
-          ["boom"].sort(),
-        );
-        expect(appsByNewStatus[singleSpa.MOUNTED].sort()).toEqual(
-          ["russell"].sort(),
-        );
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.NOT_LOADED].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[
+            singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN
+          ].sort(),
+        ).toEqual([]);
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.NOT_MOUNTED].sort(),
+        ).toEqual(["boom"].sort());
+        expect(
+          appsByNewStatus[singleSpa.AppOrParcelStatus.MOUNTED].sort(),
+        ).toEqual(["russell"].sort());
 
         expect(totalAppChanges).toBe(2);
 
         expect(newAppStatuses).toEqual({
-          boom: singleSpa.NOT_MOUNTED,
-          russell: singleSpa.MOUNTED,
+          boom: singleSpa.AppOrParcelStatus.NOT_MOUNTED,
+          russell: singleSpa.AppOrParcelStatus.MOUNTED,
         });
         finish();
       }
@@ -422,7 +448,7 @@ describe(`events api :`, () => {
   });
 
   describe(`single-spa:no-app-change`, () => {
-    it(`is fired when no app is loaded, bootstrapped, mounted, unmounted, or unloaded`, async () => {
+    it(`is fired when no app is loaded, initped, mounted, unmounted, or unloaded`, async () => {
       window.location.hash = `#`;
 
       await singleSpa.triggerAppChange();
@@ -447,7 +473,9 @@ describe(`events api :`, () => {
       await singleSpa.triggerAppChange();
 
       expect(singleSpa.getAppStatus("boom")).toMatch(/NOT_MOUNTED|NOT_LOADED/);
-      expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
+      expect(singleSpa.getAppStatus("russell")).toBe(
+        singleSpa.AppOrParcelStatus.MOUNTED,
+      );
       window.addEventListener("single-spa:before-app-change", finishTest);
       window.addEventListener("single-spa:before-no-app-change", finishTest);
       boom = true;
@@ -468,11 +496,15 @@ describe(`events api :`, () => {
         expect(singleSpa.getAppStatus("boom")).toMatch(
           /NOT_MOUNTED|NOT_LOADED/,
         );
-        expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
-        expect(evt.detail.appsByNewStatus[singleSpa.MOUNTED]).toEqual(["boom"]);
-        expect(evt.detail.appsByNewStatus[singleSpa.NOT_MOUNTED]).toEqual([
-          "russell",
-        ]);
+        expect(singleSpa.getAppStatus("russell")).toBe(
+          singleSpa.AppOrParcelStatus.MOUNTED,
+        );
+        expect(
+          evt.detail.appsByNewStatus[singleSpa.AppOrParcelStatus.MOUNTED],
+        ).toEqual(["boom"]);
+        expect(
+          evt.detail.appsByNewStatus[singleSpa.AppOrParcelStatus.NOT_MOUNTED],
+        ).toEqual(["russell"]);
         finish();
       }
     });
@@ -486,7 +518,9 @@ describe(`events api :`, () => {
 
       await singleSpa.triggerAppChange();
       expect(singleSpa.getAppStatus("boom")).toMatch(/NOT_MOUNTED|NOT_LOADED/);
-      expect(singleSpa.getAppStatus("russell")).toBe(singleSpa.MOUNTED);
+      expect(singleSpa.getAppStatus("russell")).toBe(
+        singleSpa.AppOrParcelStatus.MOUNTED,
+      );
       window.addEventListener("single-spa:before-no-app-change", finishTest);
       window.addEventListener("single-spa:before-app-change", finishTest);
       await singleSpa.triggerAppChange();
@@ -498,8 +532,12 @@ describe(`events api :`, () => {
         );
         window.removeEventListener("single-spa:before-app-change", finishTest);
         expect(evt.type).toEqual("single-spa:before-no-app-change");
-        expect(evt.detail.appsByNewStatus[singleSpa.MOUNTED]).toEqual([]);
-        expect(evt.detail.appsByNewStatus[singleSpa.NOT_MOUNTED]).toEqual([]);
+        expect(
+          evt.detail.appsByNewStatus[singleSpa.AppOrParcelStatus.MOUNTED],
+        ).toEqual([]);
+        expect(
+          evt.detail.appsByNewStatus[singleSpa.AppOrParcelStatus.NOT_MOUNTED],
+        ).toEqual([]);
         finish();
       }
       await testFinishPromise;

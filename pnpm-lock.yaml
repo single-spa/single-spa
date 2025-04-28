@@ -71,9 +71,6 @@ importers:
       cross-env:
         specifier: ^7.0.2
         version: 7.0.3
-      custom-event:
-        specifier: ^1.0.1
-        version: 1.0.1
       eslint:
         specifier: 9.21.0
         version: 9.21.0
@@ -1584,9 +1581,6 @@ packages:
   cssstyle@2.3.0:
     resolution: {integrity: sha512-AZL67abkUzIuvcHqk7c09cezpGNcxUxU4Ioi/05xHk4DQeTkWmGYftIE6ctU6AEt+Gn4n1lDStOtj7FKycP71A==}
     engines: {node: '>=8'}
-
-  custom-event@1.0.1:
-    resolution: {integrity: sha1-XQKkaFCt8bSjF5RqOSj8y1v9BCU=}
 
   data-urls@3.0.2:
     resolution: {integrity: sha512-Jy/tj3ldjZJo63sVAvg6LHt2mHvl4V6AgRAmNDtLdm7faqtsx+aJG42rsyCo9JCoRVKwPFzKlIPx3DIibwSIaQ==}
@@ -4932,8 +4926,6 @@ snapshots:
   cssstyle@2.3.0:
     dependencies:
       cssom: 0.3.8
-
-  custom-event@1.0.1: {}
 
   data-urls@3.0.2:
     dependencies:
