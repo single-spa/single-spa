@@ -1,5 +1,55 @@
 # Changelog
 
+## 7.0.0-beta.6
+
+### Major Changes
+
+- [#1307](https://github.com/single-spa/single-spa/pull/1307) [`ca45dda`](https://github.com/single-spa/single-spa/commit/ca45ddae8a02196098247d2ef8b2a12827add4dc) Thanks [@jolyndenning](https://github.com/jolyndenning)! - Application timeouts.bootstrap has been renamed to timeouts.init
+
+  ```ts
+  // New single-spa@7 syntax
+  export const timeouts = {
+    init: {
+      millis: 4000,
+      dieOnTimeout: false,
+      warningMillis: 1000,
+    },
+  };
+
+  // Old single-spa@6 syntax
+  export const timeouts = {
+    bootstrap: {
+      millis: 4000,
+      dieOnTimeout: false,
+      warningMillis: 1000,
+    },
+  };
+  ```
+
+- [#1307](https://github.com/single-spa/single-spa/pull/1307) [`ca45dda`](https://github.com/single-spa/single-spa/commit/ca45ddae8a02196098247d2ef8b2a12827add4dc) Thanks [@jolyndenning](https://github.com/jolyndenning)! - The bootstrap lifecycle function has been renamed to init
+
+  For backwards compatibility, the bootstrap lifecycle still functions, when init is not provided. However, in a future release of single-spa, that may no longer be the case.
+
+- [#1307](https://github.com/single-spa/single-spa/pull/1307) [`ca45dda`](https://github.com/single-spa/single-spa/commit/ca45ddae8a02196098247d2ef8b2a12827add4dc) Thanks [@jolyndenning](https://github.com/jolyndenning)! - setBootstrapMaxTime renamed to setInitMaxTime
+
+- [#1307](https://github.com/single-spa/single-spa/pull/1307) [`ca45dda`](https://github.com/single-spa/single-spa/commit/ca45ddae8a02196098247d2ef8b2a12827add4dc) Thanks [@jolyndenning](https://github.com/jolyndenning)! - app/parcel statuses are now exported under the AppOrParcelStatus object
+
+  ```ts
+  // New single-spa@7 imports
+  import { getAppStatus, AppOrParcelStatus } from "single-spa";
+
+  getAppStatus("navbar") === AppOrParcelStatus.LOADING;
+
+  // Old single-spa@6 imports that need to be migrated
+  import { getAppStatus, LOADING } from "single-spa";
+
+  getAppStatus("navbar") === LOADING;
+  ```
+
+### Minor Changes
+
+- [#1307](https://github.com/single-spa/single-spa/pull/1307) [`ca45dda`](https://github.com/single-spa/single-spa/commit/ca45ddae8a02196098247d2ef8b2a12827add4dc) Thanks [@jolyndenning](https://github.com/jolyndenning)! - custom-event polyfill removed since all browsers now support it
+
 ## 7.0.0-beta.5
 
 ### Patch Changes
