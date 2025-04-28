@@ -27,7 +27,7 @@ describe(`returns-non-native-promise`, () => {
     location.hash = "#returns-non-native-promise";
 
     return singleSpa.triggerAppChange().then(() => {
-      expect(myApp.wasBootstrapped()).toEqual(true);
+      expect(myApp.wasInitialized()).toEqual(true);
       expect(myApp.wasMounted()).toEqual(true);
       expect(singleSpa.getMountedApps()).toEqual([
         "./returns-non-native-promise.app.js",
@@ -36,7 +36,7 @@ describe(`returns-non-native-promise`, () => {
       location.hash = "#something-else";
 
       return singleSpa.triggerAppChange().then(() => {
-        expect(myApp.wasBootstrapped()).toEqual(true);
+        expect(myApp.wasInitialized()).toEqual(true);
         expect(myApp.wasUnmounted()).toEqual(true);
         expect(singleSpa.getMountedApps()).toEqual([]);
       });

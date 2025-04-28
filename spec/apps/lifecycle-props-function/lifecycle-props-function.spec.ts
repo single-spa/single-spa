@@ -46,16 +46,16 @@ describe(`lifecycle-props-function app`, () => {
     await singleSpa.unloadApplication("lifecycle-props-function");
 
     expect(myApp.getMountProps().singleSpa).toBeDefined();
-    expect(myApp.getBootstrapProps().singleSpa).toBeDefined();
+    expect(myApp.getInitProps().singleSpa).toBeDefined();
     expect(myApp.getUnmountProps().singleSpa).toBeDefined();
     expect(myApp.getUnloadProps().singleSpa).toBeDefined();
 
-    expect(myApp.getBootstrapProps().name).toEqual("lifecycle-props-function");
+    expect(myApp.getInitProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getMountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnmountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnloadProps().name).toEqual("lifecycle-props-function");
 
-    expect(myApp.getBootstrapProps().dynamically).toEqual("set");
+    expect(myApp.getInitProps().dynamically).toEqual("set");
     expect(myApp.getMountProps().dynamically).toEqual("set");
     expect(myApp.getUnmountProps().dynamically).toEqual("set");
     expect(myApp.getUnloadProps().dynamically).toEqual("set");
@@ -76,11 +76,11 @@ describe(`lifecycle-props-function app`, () => {
     await singleSpa.unloadApplication("lifecycle-props-function");
 
     expect(myApp.getMountProps().singleSpa).toBeDefined();
-    expect(myApp.getBootstrapProps().singleSpa).toBeDefined();
+    expect(myApp.getInitProps().singleSpa).toBeDefined();
     expect(myApp.getUnmountProps().singleSpa).toBeDefined();
     expect(myApp.getUnloadProps().singleSpa).toBeDefined();
 
-    expect(myApp.getBootstrapProps().name).toEqual("lifecycle-props-function");
+    expect(myApp.getInitProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getMountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnmountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnloadProps().name).toEqual("lifecycle-props-function");
@@ -104,11 +104,11 @@ describe(`lifecycle-props-function app`, () => {
     await singleSpa.unloadApplication("lifecycle-props-function");
 
     expect(myApp.getMountProps().singleSpa).toBeDefined();
-    expect(myApp.getBootstrapProps().singleSpa).toBeDefined();
+    expect(myApp.getInitProps().singleSpa).toBeDefined();
     expect(myApp.getUnmountProps().singleSpa).toBeDefined();
     expect(myApp.getUnloadProps().singleSpa).toBeDefined();
 
-    expect(myApp.getBootstrapProps().name).toEqual("lifecycle-props-function");
+    expect(myApp.getInitProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getMountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnmountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnloadProps().name).toEqual("lifecycle-props-function");
@@ -132,11 +132,11 @@ describe(`lifecycle-props-function app`, () => {
     await singleSpa.unloadApplication("lifecycle-props-function");
 
     expect(myApp.getMountProps().singleSpa).toBeDefined();
-    expect(myApp.getBootstrapProps().singleSpa).toBeDefined();
+    expect(myApp.getInitProps().singleSpa).toBeDefined();
     expect(myApp.getUnmountProps().singleSpa).toBeDefined();
     expect(myApp.getUnloadProps().singleSpa).toBeDefined();
 
-    expect(myApp.getBootstrapProps().name).toEqual("lifecycle-props-function");
+    expect(myApp.getInitProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getMountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnmountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnloadProps().name).toEqual("lifecycle-props-function");

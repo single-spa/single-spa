@@ -37,11 +37,11 @@ describe(`lifecycle-props app`, () => {
       })
       .then(() => {
         expect(myApp.getMountProps().singleSpa).toBeDefined();
-        expect(myApp.getBootstrapProps().singleSpa).toBeDefined();
+        expect(myApp.getInitProps().singleSpa).toBeDefined();
         expect(myApp.getUnmountProps().singleSpa).toBeDefined();
         expect(myApp.getUnloadProps().singleSpa).toBeDefined();
 
-        expect(myApp.getBootstrapProps().name).toEqual("lifecycle-props");
+        expect(myApp.getInitProps().name).toEqual("lifecycle-props");
         expect(myApp.getMountProps().name).toEqual("lifecycle-props");
         expect(myApp.getUnmountProps().name).toEqual("lifecycle-props");
         expect(myApp.getUnloadProps().name).toEqual("lifecycle-props");
@@ -68,7 +68,7 @@ describe(`lifecycle-props app`, () => {
       })
       .then(() => singleSpa.unloadApplication("lifecycle-props-customProps"))
       .then(() => {
-        expect(myApp.getBootstrapProps().test).toEqual("test");
+        expect(myApp.getInitProps().test).toEqual("test");
         expect(myApp.getMountProps().test).toEqual("test");
         expect(myApp.getUnmountProps().test).toEqual("test");
         expect(myApp.getUnloadProps().test).toEqual("test");

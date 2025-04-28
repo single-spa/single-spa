@@ -1,8 +1,8 @@
-let bootstrapped;
+let initialized;
 
-export function bootstrap() {
+export function init() {
   return new Promise((resolve) => {
-    bootstrapped = true;
+    initialized = true;
     resolve();
   });
 }
@@ -12,9 +12,9 @@ export function unmount() {
 }
 
 export function reset() {
-  return (bootstrapped = false);
+  return (initialized = false);
 }
 
-export function isBootstrapped() {
-  return bootstrapped;
+export function isInitialized() {
+  return initialized;
 }

@@ -5,6 +5,7 @@
   "type": "module",
   "main": "./lib/esm/single-spa.min.js",
   "types": "./lib/esm/single-spa.d.ts",
+  "packageManager": "pnpm@10.10.0",
   "publishConfig": {
     "access": "public"
   },
@@ -105,7 +106,6 @@
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "concurrently": "^9.1.2",
     "cross-env": "^7.0.2",
-    "custom-event": "^1.0.1",
     "eslint": "9.21.0",
     "eslint-config-important-stuff": "^1.1.0",
     "eslint-plugin-es5": "^1.5.0",

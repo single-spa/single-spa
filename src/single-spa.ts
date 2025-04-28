@@ -2,7 +2,7 @@ export { start } from "./start";
 export type { StartOpts } from "./start";
 export { ensureJQuerySupport } from "./jquery-support";
 export {
-  setBootstrapMaxTime,
+  setInitMaxTime,
   setMountMaxTime,
   setUnmountMaxTime,
   setUnloadMaxTime,
@@ -38,20 +38,7 @@ export type {
   RegisterApplicationConfig,
 } from "./lifecycles/lifecycle.helpers";
 
-export {
-  NOT_LOADED,
-  LOADING_SOURCE_CODE,
-  NOT_BOOTSTRAPPED,
-  BOOTSTRAPPING,
-  NOT_MOUNTED,
-  MOUNTING,
-  UPDATING,
-  LOAD_ERROR,
-  MOUNTED,
-  UNLOADING,
-  UNMOUNTING,
-  SKIP_BECAUSE_BROKEN,
-} from "./applications/app.helpers";
+export { AppOrParcelStatus } from "./applications/app.helpers";
 
 import devtools from "./devtools/devtools";
 import { isInBrowser } from "./utils/runtime-environment";

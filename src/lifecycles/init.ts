@@ -1,8 +1,5 @@
 import {
-  NOT_BOOTSTRAPPED,
-  BOOTSTRAPPING,
-  NOT_MOUNTED,
-  SKIP_BECAUSE_BROKEN,
+  AppOrParcelStatus,
   toName,
   isParcel,
 } from "../applications/app.helpers";
@@ -11,14 +8,14 @@ import { handleAppError, transformErr } from "../applications/app-errors";
 import { ProfileEntry, addProfileEntry } from "../devtools/profiler";
 import { LoadedAppOrParcel } from "./lifecycle.helpers";
 
-export function toBootstrapPromise(
+export function toInitPromise(
   appOrParcel: LoadedAppOrParcel,
   hardFail?: boolean,
 ): Promise<LoadedAppOrParcel> {
   let startTime: number, profileEventType: ProfileEntry["type"];
 
   return Promise.resolve().then(() => {
-    if (appOrParcel.status !== NOT_BOOTSTRAPPED) {
+    if (appOrParcel.status !== AppOrParcelStatus.NOT_INITIALIZED) {
       return appOrParcel;
     }
 
@@ -27,21 +24,16 @@ export function toBootstrapPromise(
       startTime = performance.now();
     }
 
-    appOrParcel.status = BOOTSTRAPPING;
+    appOrParcel.status = AppOrParcelStatus.INITIALIZING;
 
-    if (!appOrParcel.bootstrap) {
-      // Default implementation of bootstrap
-      return Promise.resolve().then(successfulBootstrap);
-    }
-
-    return reasonableTime(appOrParcel, "bootstrap")
-      .then(successfulBootstrap)
+    return reasonableTime(appOrParcel, "init")
+      .then(successfulInit)
       .catch((err) => {
         if (__PROFILE__) {
           addProfileEntry(
             profileEventType,
             toName(appOrParcel),
-            "bootstrap",
+            "init",
             startTime,
             performance.now(),
             false,
@@ -49,22 +41,30 @@ export function toBootstrapPromise(
         }
 
         if (hardFail) {
-          throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
+          throw transformErr(
+            err,
+            appOrParcel,
+            AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
+          );
         } else {
-          handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
+          handleAppError(
+            err,
+            appOrParcel,
+            AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
+          );
           return appOrParcel;
         }
       });
   });
 
-  function successfulBootstrap(): LoadedAppOrParcel {
-    appOrParcel.status = NOT_MOUNTED;
+  function successfulInit(): LoadedAppOrParcel {
+    appOrParcel.status = AppOrParcelStatus.NOT_MOUNTED;
 
     if (__PROFILE__) {
       addProfileEntry(
         profileEventType,
         toName(appOrParcel),
-        "bootstrap",
+        "init",
         startTime,
         performance.now(),
         true,

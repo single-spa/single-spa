@@ -1,8 +1,5 @@
 import {
-  UNMOUNTING,
-  NOT_MOUNTED,
-  MOUNTED,
-  SKIP_BECAUSE_BROKEN,
+  AppOrParcelStatus,
   toName,
   isParcel,
 } from "../applications/app.helpers";
@@ -16,7 +13,7 @@ export function toUnmountPromise(
   hardFail?: boolean,
 ): Promise<LoadedAppOrParcel> {
   return Promise.resolve().then(() => {
-    if (appOrParcel.status !== MOUNTED) {
+    if (appOrParcel.status !== AppOrParcelStatus.MOUNTED) {
       return appOrParcel;
     }
 
@@ -27,7 +24,7 @@ export function toUnmountPromise(
       profileEventType = isParcel(appOrParcel) ? "parcel" : "application";
     }
 
-    appOrParcel.status = UNMOUNTING;
+    appOrParcel.status = AppOrParcelStatus.UNMOUNTING;
 
     const unmountChildrenParcels = Object.keys(appOrParcel.parcels).map(
       (parcelId) => appOrParcel.parcels[parcelId].unmountThisParcel(),
@@ -42,9 +39,17 @@ export function toUnmountPromise(
           // Unmounting the app/parcel succeeded, but unmounting its children parcels did not
           const parentError = Error(parcelError.message);
           if (hardFail) {
-            throw transformErr(parentError, appOrParcel, SKIP_BECAUSE_BROKEN);
+            throw transformErr(
+              parentError,
+              appOrParcel,
+              AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
+            );
           } else {
-            handleAppError(parentError, appOrParcel, SKIP_BECAUSE_BROKEN);
+            handleAppError(
+              parentError,
+              appOrParcel,
+              AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
+            );
           }
         });
       })
@@ -56,7 +61,7 @@ export function toUnmountPromise(
         () => {
           // The appOrParcel needs to stay in a broken status if its children parcels fail to unmount
           if (!parcelError) {
-            appOrParcel.status = NOT_MOUNTED;
+            appOrParcel.status = AppOrParcelStatus.NOT_MOUNTED;
           }
 
           if (__PROFILE__) {
@@ -83,9 +88,17 @@ export function toUnmountPromise(
           }
 
           if (hardFail) {
-            throw transformErr(err, appOrParcel, SKIP_BECAUSE_BROKEN);
+            throw transformErr(
+              err,
+              appOrParcel,
+              AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
+            );
           } else {
-            handleAppError(err, appOrParcel, SKIP_BECAUSE_BROKEN);
+            handleAppError(
+              err,
+              appOrParcel,
+              AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
+            );
           }
         },
       );

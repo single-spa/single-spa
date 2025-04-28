@@ -6,21 +6,21 @@ describe("parcel errors", () => {
   });
 
   describe("lifecycle errors", () => {
-    describe("bootstrap errors", () => {
-      it(`should throw an error when bootstrapping fails`, async () => {
+    describe("initialize errors", () => {
+      it(`should throw an error when initializing fails`, async () => {
         const app = createApp();
         let shouldAppBeMounted = true;
 
         singleSpa.registerApplication(
-          "parcel-bootstrap-errors",
+          "parcel-initialize-errors",
           app,
           () => shouldAppBeMounted,
         );
         await singleSpa.triggerAppChange();
         expect(app.mountCalls).toBe(1);
 
-        const parcelConfig1 = createParcelConfig("bootstrap");
-        parcelConfig1.name = "bootstrap-error";
+        const parcelConfig1 = createParcelConfig("initialize");
+        parcelConfig1.name = "initialize-error";
         const parcel1 = app.mountProps.mountParcel(parcelConfig1, {
           domElement: document.createElement("div"),
         });
@@ -28,10 +28,10 @@ describe("parcel errors", () => {
         // avoid unhandled rejection causing test failure
         parcel1.mountPromise.catch((err) => {});
 
-        await parcel1.bootstrapPromise.catch((err) => {
-          expect(err.appOrParcelName).toBe("bootstrap-error");
-          expect(err.message).toMatch(`BOOTSTRAPPING`);
-          expect(err.message.indexOf(`bootstrap-error`)).toBeGreaterThan(-1);
+        await parcel1.initPromise.catch((err) => {
+          expect(err.appOrParcelName).toBe("initialize-error");
+          expect(err.message).toMatch(`INITIALIZING`);
+          expect(err.message.indexOf(`init-error`)).toBeGreaterThan(-1);
           expect(parcel1.getStatus()).toBe("SKIP_BECAUSE_BROKEN");
         });
       });
@@ -61,7 +61,9 @@ describe("parcel errors", () => {
         } catch (err) {
           expect(err.appOrParcelName).toBe("mount-error");
           expect(err.message).toMatch("NOT_MOUNTED");
-          expect(parcel1.getStatus()).toBe(singleSpa.SKIP_BECAUSE_BROKEN);
+          expect(parcel1.getStatus()).toBe(
+            singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
+          );
         }
       });
     });
@@ -105,7 +107,7 @@ describe("parcel errors", () => {
 
           await parcel1.mountPromise;
           expect(parcel1.getStatus()).toBe("MOUNTED");
-          expect(parcelConfig1.bootstrapCalls).toBe(1);
+          expect(parcelConfig1.initCalls).toBe(1);
           expect(parcelConfig1.mountCalls).toBe(1);
           expect(parcelConfig1.unmountCalls).toBe(0);
 
@@ -163,7 +165,7 @@ describe("parcel errors", () => {
           parcel1.unmountPromise.catch((err) => {});
 
           await parcel1.mountPromise;
-          expect(parcelConfig1.bootstrapCalls).toBe(1);
+          expect(parcelConfig1.initCalls).toBe(1);
           expect(parcelConfig1.mountCalls).toBe(1);
           expect(parcelConfig1.unmountCalls).toBe(0);
 
@@ -213,7 +215,7 @@ describe("parcel errors", () => {
       });
 
       // avoid unhandled rejection errors
-      parcel.bootstrapPromise.catch((err) => {});
+      parcel.initPromise.catch((err) => {});
       parcel.mountPromise.catch((err) => {});
 
       try {
@@ -228,12 +230,12 @@ describe("parcel errors", () => {
 
     it(`rejects the load promise if the config doesn't have a valid mount function`, async () => {
       const parcel = singleSpa.mountRootParcel(
-        { bootstrap() {}, unmount() {} },
+        { init() {}, unmount() {} },
         { domElement: document.createElement("div") },
       );
 
       // avoid unhandled rejection errors
-      parcel.bootstrapPromise.catch((err) => {});
+      parcel.initPromise.catch((err) => {});
       parcel.mountPromise.catch((err) => {});
 
       try {
@@ -248,12 +250,12 @@ describe("parcel errors", () => {
 
     it(`rejects the load promise if the config doesn't have a valid unmount function`, async () => {
       const parcel = singleSpa.mountRootParcel(
-        { bootstrap() {}, mount() {} },
+        { init() {}, mount() {} },
         { domElement: document.createElement("div") },
       );
 
       // avoid unhandled rejection errors
-      parcel.bootstrapPromise.catch((err) => {});
+      parcel.initPromise.catch((err) => {});
       parcel.mountPromise.catch((err) => {});
 
       try {
@@ -270,9 +272,9 @@ describe("parcel errors", () => {
 
 function createApp() {
   const app = {
-    bootstrapCalls: 0,
-    bootstrap() {
-      app.bootstrapCalls++;
+    initCalls: 0,
+    init() {
+      app.initCalls++;
       return Promise.resolve();
     },
     mountCalls: 0,
@@ -294,12 +296,12 @@ function createApp() {
 
 function createParcelConfig(errLocation) {
   const parcelConfig = {
-    bootstrapCalls: 0,
-    bootstrap() {
-      if (errLocation === "bootstrap") {
-        return delayedSettle(Promise.reject(new Error("bootstrap error")));
+    initCalls: 0,
+    init() {
+      if (errLocation === "init") {
+        return delayedSettle(Promise.reject(new Error("init error")));
       } else {
-        parcelConfig.bootstrapCalls++;
+        parcelConfig.initCalls++;
         return delayedSettle(Promise.resolve());
       }
     },

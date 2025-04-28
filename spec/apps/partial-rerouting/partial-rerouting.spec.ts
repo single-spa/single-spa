@@ -11,16 +11,16 @@ describe("partial rerouting", () => {
     location.hash = "#";
   });
 
-  it("shouldn't bootstrap and mount app if the route has been changed while app was loading, but if the user navigates back it should be bootstrapped and mounted successfully", async () => {
+  it("shouldn't init and mount app if the route has been changed while app was loading, but if the user navigates back it should be initialized and mounted successfully", async () => {
     const activeHash = "#partial-rerouting";
 
-    let bootstrapped = false;
+    let initialized = false;
     let mounted = false;
     let unmounted = false;
 
     const app = {
-      async bootstrap() {
-        bootstrapped = true;
+      async init() {
+        initialized = true;
       },
       async mount() {
         mounted = true;
@@ -43,14 +43,14 @@ describe("partial rerouting", () => {
     singleSpa.navigateToUrl("#another-url");
     await Promise.all([singleSpa.triggerAppChange(), promise]);
 
-    expect(bootstrapped).toBeFalsy();
+    expect(initialized).toBeFalsy();
     expect(mounted).toBeFalsy();
     expect(unmounted).toBeFalsy();
 
     singleSpa.navigateToUrl(activeHash);
     await singleSpa.triggerAppChange();
 
-    expect(bootstrapped).toBeTruthy();
+    expect(initialized).toBeTruthy();
     expect(mounted).toBeTruthy();
 
     singleSpa.navigateToUrl("#another-url");
@@ -59,14 +59,14 @@ describe("partial rerouting", () => {
     expect(unmounted).toBeTruthy();
   });
 
-  it("should bootstrap and mount second app succcessfully, but should skip bootstrapping and mounting first app if the route has been changed", async () => {
-    let firstAppBootstrapped = false,
+  it("should initialize and mount second app succcessfully, but should skip initializing and mounting first app if the route has been changed", async () => {
+    let firstAppInitialized = false,
       firstAppMounted = false,
       firstAppUnmounted = false;
 
     const firstApp = {
-      async bootstrap() {
-        firstAppBootstrapped = true;
+      async init() {
+        firstAppInitialized = true;
       },
       async mount() {
         firstAppMounted = true;
@@ -76,13 +76,13 @@ describe("partial rerouting", () => {
       },
     };
 
-    let secondAppBootstrapped = false,
+    let secondAppInitialized = false,
       secondAppMounted = false,
       secondAppUnmounted = false;
 
     const secondApp = {
-      async bootstrap() {
-        secondAppBootstrapped = true;
+      async init() {
+        secondAppInitialized = true;
       },
       async mount() {
         secondAppMounted = true;
@@ -114,8 +114,8 @@ describe("partial rerouting", () => {
     singleSpa.navigateToUrl(secondAppActiveHash);
     await Promise.all([singleSpa.triggerAppChange(), promise]);
 
-    expect(firstAppBootstrapped).toBeFalsy();
-    expect(secondAppBootstrapped).toBeTruthy();
+    expect(firstAppInitialized).toBeFalsy();
+    expect(secondAppInitialized).toBeTruthy();
     expect(secondAppMounted).toBeTruthy();
     expect(secondAppUnmounted).toBeFalsy();
 
@@ -123,7 +123,7 @@ describe("partial rerouting", () => {
     await singleSpa.triggerAppChange();
 
     expect(secondAppUnmounted).toBeTruthy();
-    expect(firstAppBootstrapped).toBeTruthy();
+    expect(firstAppInitialized).toBeTruthy();
     expect(firstAppMounted).toBeTruthy();
   });
 });

@@ -1,9 +1,5 @@
 import {
-  LOAD_ERROR,
-  NOT_BOOTSTRAPPED,
-  LOADING_SOURCE_CODE,
-  SKIP_BECAUSE_BROKEN,
-  NOT_LOADED,
+  AppOrParcelStatus,
   toName,
   InternalApplication,
 } from "../applications/app.helpers";
@@ -27,7 +23,10 @@ export function toLoadPromise(
       return (app as LoadedApp).loadPromise;
     }
 
-    if (app.status !== NOT_LOADED && app.status !== LOAD_ERROR) {
+    if (
+      app.status !== AppOrParcelStatus.NOT_LOADED &&
+      app.status !== AppOrParcelStatus.LOAD_ERROR
+    ) {
       return app;
     }
 
@@ -38,7 +37,7 @@ export function toLoadPromise(
 
     const appBeingLoaded: InternalApplication & Partial<LoadedApp> = app;
 
-    appBeingLoaded.status = LOADING_SOURCE_CODE;
+    appBeingLoaded.status = AppOrParcelStatus.LOADING_SOURCE_CODE;
 
     let lifecycles: LifeCycles, isUserErr: boolean;
 
@@ -73,17 +72,6 @@ export function toLoadPromise(
             }
           }
 
-          if (
-            // ES Modules don't have the Object prototype
-            Object.prototype.hasOwnProperty.call(lifecycles, "bootstrap") &&
-            !validLifecycleFn(lifecycles.bootstrap)
-          ) {
-            validationErrCode = 35;
-            if (__DEV__) {
-              validationErrMessage = `does not export a valid bootstrap function or array of functions`;
-            }
-          }
-
           if (!validLifecycleFn(lifecycles.mount)) {
             validationErrCode = 36;
             if (__DEV__) {
@@ -109,7 +97,7 @@ export function toLoadPromise(
                 __DEV__ &&
                   `The loading function for single-spa application '${toName(
                     appBeingLoaded,
-                  )}' resolved with the following, which does not have bootstrap, mount, and unmount functions`,
+                  )}' resolved with the following, which does not have mount and unmount functions`,
                 "application",
                 toName(appBeingLoaded),
                 appOptsStr,
@@ -119,7 +107,7 @@ export function toLoadPromise(
             handleAppError(
               validationErrMessage,
               appBeingLoaded,
-              SKIP_BECAUSE_BROKEN,
+              AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
             );
             return appBeingLoaded;
           }
@@ -132,12 +120,15 @@ export function toLoadPromise(
             );
           }
 
-          appBeingLoaded.status = NOT_BOOTSTRAPPED;
-          appBeingLoaded.bootstrap = flattenFnArray(
-            lifecycles,
-            "bootstrap",
-            false,
-          );
+          appBeingLoaded.status = AppOrParcelStatus.NOT_INITIALIZED;
+          appBeingLoaded.init = flattenFnArray(lifecycles, "init", false);
+          if (!lifecycles.init && lifecycles["bootstrap"]) {
+            appBeingLoaded.init = flattenFnArray(
+              lifecycles,
+              "bootstrap",
+              false,
+            );
+          }
           appBeingLoaded.mount = flattenFnArray(lifecycles, "mount", false);
           appBeingLoaded.unmount = flattenFnArray(lifecycles, "unmount", false);
           appBeingLoaded.unload = flattenFnArray(lifecycles, "unload", false);
@@ -164,9 +155,9 @@ export function toLoadPromise(
 
         let newStatus;
         if (isUserErr) {
-          newStatus = SKIP_BECAUSE_BROKEN;
+          newStatus = AppOrParcelStatus.SKIP_BECAUSE_BROKEN;
         } else {
-          newStatus = LOAD_ERROR;
+          newStatus = AppOrParcelStatus.LOAD_ERROR;
           appBeingLoaded.loadErrorTime = new Date().getTime();
         }
         handleAppError(err, appBeingLoaded, newStatus);

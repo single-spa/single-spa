@@ -1,16 +1,16 @@
 import { getRawAppData, unregisterApplication } from "../applications/apps";
 import { reroute } from "../navigation/reroute";
-import { NOT_LOADED } from "../applications/app.helpers";
+import { AppOrParcelStatus } from "../applications/app.helpers";
 import { toLoadPromise } from "../lifecycles/load";
-import { toBootstrapPromise } from "../lifecycles/bootstrap";
+import { toInitPromise } from "../lifecycles/init";
 import { getProfilerData } from "./profiler";
 
 export default {
   getRawAppData,
   reroute,
-  NOT_LOADED,
+  NOT_LOADED: AppOrParcelStatus.NOT_LOADED,
   toLoadPromise,
-  toBootstrapPromise,
+  toBootstrapPromise: toInitPromise,
   unregisterApplication,
   getProfilerData,
 };

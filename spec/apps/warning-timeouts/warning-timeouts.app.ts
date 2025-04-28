@@ -1,6 +1,6 @@
 let delay = 0;
 
-export function bootstrap() {
+export function init() {
   return new Promise((resolve) => {
     setTimeout(resolve, delay);
     advanceTimers();
@@ -22,7 +22,7 @@ export function unmount() {
 }
 
 export const timeouts = {
-  bootstrap: {
+  init: {
     warningMillis: 2,
   },
   mount: {

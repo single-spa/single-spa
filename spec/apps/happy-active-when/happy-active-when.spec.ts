@@ -51,13 +51,13 @@ describe(`happy-active-when`, () => {
   });
 
   function expectMyAppToBeMounted() {
-    expect(myApp.wasBootstrapped()).toEqual(true);
+    expect(myApp.wasInitialized()).toEqual(true);
     expect(myApp.isMounted()).toEqual(true);
     expect(singleSpa.getMountedApps()).toEqual(["myApp"]);
   }
 
   function expectMyAppToBeUnmounted() {
-    expect(myApp.wasBootstrapped()).toEqual(true);
+    expect(myApp.wasInitialized()).toEqual(true);
     expect(myApp.isMounted()).toEqual(false);
     expect(singleSpa.getMountedApps()).toEqual([]);
   }

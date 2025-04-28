@@ -10,7 +10,9 @@ describe(`load-error`, () => {
     );
     location.hash = "#load-error";
     await singleSpa.triggerAppChange();
-    expect(singleSpa.getAppStatus("load-error")).toBe(singleSpa.LOAD_ERROR);
+    expect(singleSpa.getAppStatus("load-error")).toBe(
+      singleSpa.AppOrParcelStatus.LOAD_ERROR,
+    );
     singleSpa.removeErrorHandler(handleError);
 
     function handleError(err) {
@@ -37,7 +39,9 @@ describe(`load-error`, () => {
     function handleError(evt) {
       numErrs++;
       const appName = evt.appOrParcelName;
-      expect(singleSpa.getAppStatus(appName)).toBe(singleSpa.LOAD_ERROR);
+      expect(singleSpa.getAppStatus(appName)).toBe(
+        singleSpa.AppOrParcelStatus.LOAD_ERROR,
+      );
     }
   });
 
@@ -57,7 +61,7 @@ describe(`load-error`, () => {
     await singleSpa.triggerAppChange();
 
     expect(singleSpa.getAppStatus("load-error-unload")).toBe(
-      singleSpa.LOAD_ERROR,
+      singleSpa.AppOrParcelStatus.LOAD_ERROR,
     );
 
     const unloadPromise = singleSpa.unloadApplication("load-error-unload");
@@ -68,7 +72,7 @@ describe(`load-error`, () => {
     await unloadPromise;
 
     expect(singleSpa.getAppStatus("load-error-unload")).toBe(
-      singleSpa.NOT_LOADED,
+      singleSpa.AppOrParcelStatus.NOT_LOADED,
     );
 
     function errHandler() {

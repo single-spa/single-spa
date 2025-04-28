@@ -1,8 +1,8 @@
 import * as singleSpa from "single-spa";
 
-const activeHash = `#invalid-bootstrap`;
+const activeHash = `#invalid-init`;
 
-describe(`invalid-bootstrap app`, () => {
+describe(`invalid-init app`, () => {
   let myApp,
     errs = [];
 
@@ -12,8 +12,8 @@ describe(`invalid-bootstrap app`, () => {
 
   beforeAll(() => {
     singleSpa.registerApplication(
-      "./invalid-bootstrap.app",
-      () => import("./invalid-bootstrap.app"),
+      "./invalid-init.app",
+      () => import("./invalid-init.app"),
       (location) => location.hash === activeHash,
     );
     singleSpa.start();
@@ -25,7 +25,7 @@ describe(`invalid-bootstrap app`, () => {
     errs = [];
     singleSpa.addErrorHandler(handleError);
 
-    return import("./invalid-bootstrap.app")
+    return import("./invalid-init.app")
       .then((app) => (myApp = app))
       .then((app) => app.reset());
   });
@@ -34,12 +34,12 @@ describe(`invalid-bootstrap app`, () => {
     singleSpa.removeErrorHandler(handleError);
   });
 
-  it(`is never bootstrapped, mounted, or unmounted`, () => {
+  it(`is never initped, mounted, or unmounted`, () => {
     return singleSpa.triggerAppChange().then(() => {
       expect(myApp.mountWasCalled()).toEqual(false);
       expect(myApp.unmountWasCalled()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
-      expect(singleSpa.getAppStatus("./invalid-bootstrap.app")).toEqual(
+      expect(singleSpa.getAppStatus("./invalid-init.app")).toEqual(
         "SKIP_BECAUSE_BROKEN",
       );
       expect(errs.length).toBeGreaterThan(0);

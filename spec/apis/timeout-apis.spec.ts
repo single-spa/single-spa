@@ -22,48 +22,48 @@ describe("global timeout configuration", () => {
     jest.clearAllTimers();
   });
 
-  describe("setBootstrapMaxTime", () => {
+  describe("setInitMaxTime", () => {
     afterEach(() => {
-      singleSpa.setBootstrapMaxTime(5000, false, 1000);
+      singleSpa.setInitMaxTime(5000, false, 1000);
     });
 
     it(`respects the millis configuration option`, async () => {
-      singleSpa.setBootstrapMaxTime(5, false, 1000);
+      singleSpa.setInitMaxTime(5, false, 1000);
 
       await controlledParcelActions(
-        (parcel) => parcel.bootstrapPromise,
-        "bootstrap-0",
+        (parcel) => parcel.initPromise,
+        "init-0",
         3,
       );
       expect(consoleErrSpy).not.toHaveBeenCalled();
 
       await controlledParcelActions(
-        (parcel) => parcel.bootstrapPromise,
-        "bootstrap-1",
+        (parcel) => parcel.initPromise,
+        "init-1",
         10,
       );
       expectError(
-        `single-spa minified message #31: Lifecycle function bootstrap for parcel bootstrap-1 lifecycle did not resolve or reject for 5 ms. See https://single-spa.js.org/error/?code=31&arg=bootstrap&arg=parcel&arg=bootstrap-1&arg=5`,
+        `single-spa minified message #31: Lifecycle function init for parcel init-1 lifecycle did not resolve or reject for 5 ms. See https://single-spa.js.org/error/?code=31&arg=init&arg=parcel&arg=init-1&arg=5`,
       );
     });
 
     it(`respects warningMillis configuration option`, async () => {
-      singleSpa.setBootstrapMaxTime(15, false, 5);
+      singleSpa.setInitMaxTime(15, false, 5);
 
       await controlledParcelActions(
-        (parcel) => parcel.bootstrapPromise,
-        "bootstrap-2",
+        (parcel) => parcel.initPromise,
+        "init-2",
         0,
       );
       expect(consoleWarnSpy).not.toHaveBeenCalled();
 
       await controlledParcelActions(
-        (parcel) => parcel.bootstrapPromise,
-        "bootstrap-3",
+        (parcel) => parcel.initPromise,
+        "init-3",
         10,
       );
       expectWarning(
-        `single-spa minified message #31: Lifecycle function bootstrap for parcel bootstrap-3 lifecycle did not resolve or reject for 15 ms. See https://single-spa.js.org/error/?code=31&arg=bootstrap&arg=parcel&arg=bootstrap-3&arg=15`,
+        `single-spa minified message #31: Lifecycle function init for parcel init-3 lifecycle did not resolve or reject for 15 ms. See https://single-spa.js.org/error/?code=31&arg=init&arg=parcel&arg=init-3&arg=15`,
       );
     });
   });
@@ -172,7 +172,7 @@ describe("global timeout configuration", () => {
 
 function generateParcel(
   name,
-  bootstrapDelay = 0,
+  initDelay = 0,
   mountDelay = 0,
   updateDelay = 0,
   unmountDelay = 0,
@@ -181,10 +181,10 @@ function generateParcel(
   return [
     {
       name,
-      bootstrap: () =>
+      init: () =>
         new Promise((resolve) => {
-          setTimeout(resolve, bootstrapDelay);
-          jest.advanceTimersByTime(bootstrapDelay);
+          setTimeout(resolve, initDelay);
+          jest.advanceTimersByTime(initDelay);
         }),
       mount: () =>
         new Promise((resolve) => {

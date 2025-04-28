@@ -1,7 +1,6 @@
-import CustomEvent from "custom-event";
 import { isStarted } from "../start";
 import { toLoadPromise } from "../lifecycles/load";
-import { toBootstrapPromise } from "../lifecycles/bootstrap";
+import { toInitPromise } from "../lifecycles/init";
 import { toMountPromise } from "../lifecycles/mount";
 import { toUnmountPromise } from "../lifecycles/unmount";
 import {
@@ -17,10 +16,7 @@ import { toUnloadPromise } from "../lifecycles/unload";
 import {
   toName,
   shouldBeActive,
-  NOT_MOUNTED,
-  MOUNTED,
-  NOT_LOADED,
-  SKIP_BECAUSE_BROKEN,
+  AppOrParcelStatus,
   InternalApplication,
 } from "../applications/app.helpers";
 import { isInBrowser } from "../utils/runtime-environment";
@@ -258,24 +254,24 @@ export function reroute(
           },
         );
 
-        /* We load and bootstrap apps while other apps are unmounting, but we
+        /* We load and init apps while other apps are unmounting, but we
          * wait to mount the app until all apps are finishing unmounting
          */
         const loadThenMountPromises: Promise<InternalApplication>[] =
           appsToLoad.map((app) => {
             return toLoadPromise(app).then((app) =>
-              tryToBootstrapAndMount(app, unmountAllPromise),
+              tryToInitAndMount(app, unmountAllPromise),
             );
           });
 
-        /* These are the apps that are already bootstrapped and just need
+        /* These are the apps that are already initialized and just need
          * to be mounted. They each wait for all unmounting apps to finish up
          * before they mount.
          */
         const mountPromises: Promise<InternalApplication>[] = appsToMount
           .filter((appToMount) => !appsToLoad.includes(appToMount))
           .map((appToMount) => {
-            return tryToBootstrapAndMount(appToMount, unmountAllPromise);
+            return tryToInitAndMount(appToMount, unmountAllPromise);
           });
         return unmountAllPromise
           .catch((err) => {
@@ -391,24 +387,24 @@ export function reroute(
     const newAppStatuses = {};
     const appsByNewStatus = {
       // for apps that were mounted
-      [MOUNTED]: [],
+      [AppOrParcelStatus.MOUNTED]: [],
       // for apps that were unmounted
-      [NOT_MOUNTED]: [],
+      [AppOrParcelStatus.NOT_MOUNTED]: [],
       // apps that were forcibly unloaded
-      [NOT_LOADED]: [],
+      [AppOrParcelStatus.NOT_LOADED]: [],
       // apps that attempted to do something but are broken now
-      [SKIP_BECAUSE_BROKEN]: [],
+      [AppOrParcelStatus.SKIP_BECAUSE_BROKEN]: [],
     };
 
     if (isBeforeChanges) {
       appsToLoad.concat(appsToMount).forEach((app, index) => {
-        addApp(app, MOUNTED);
+        addApp(app, AppOrParcelStatus.MOUNTED);
       });
       appsToUnload.forEach((app) => {
-        addApp(app, NOT_LOADED);
+        addApp(app, AppOrParcelStatus.NOT_LOADED);
       });
       appsToUnmount.forEach((app) => {
-        addApp(app, NOT_MOUNTED);
+        addApp(app, AppOrParcelStatus.NOT_MOUNTED);
       });
     } else {
       appsThatChanged.forEach((app) => {
@@ -460,16 +456,16 @@ export function reroute(
 /**
  * Let's imagine that some kind of delay occurred during application loading.
  * The user without waiting for the application to load switched to another route,
- * this means that we shouldn't bootstrap and mount that application, thus we check
- * twice if that application should be active before bootstrapping and mounting.
+ * this means that we shouldn't initialize and mount that application, thus we check
+ * twice if that application should be active before initialize and mounting.
  * https://github.com/single-spa/single-spa/issues/524
  */
-function tryToBootstrapAndMount(
+function tryToInitAndMount(
   app: InternalApplication,
   unmountAllPromise: Promise<unknown>,
 ): Promise<InternalApplication> {
   if (shouldBeActive(app)) {
-    return toBootstrapPromise(app as LoadedApp).then((app) =>
+    return toInitPromise(app as LoadedApp).then((app) =>
       unmountAllPromise.then(() =>
         shouldBeActive(app) ? toMountPromise(app) : app,
       ),

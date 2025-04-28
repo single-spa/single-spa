@@ -27,7 +27,7 @@ describe(`happy-register-object`, () => {
     location.hash = "#happy-register-object";
 
     return singleSpa.triggerAppChange().then(() => {
-      expect(myApp.wasBootstrapped()).toEqual(true);
+      expect(myApp.wasInitialized()).toEqual(true);
       expect(myApp.isMounted()).toEqual(true);
       expect(singleSpa.getMountedApps()).toEqual([
         "./happy-register-object.app",
@@ -36,7 +36,7 @@ describe(`happy-register-object`, () => {
       location.hash = "#not-happy-register-object";
 
       return singleSpa.triggerAppChange().then(() => {
-        expect(myApp.wasBootstrapped()).toEqual(true);
+        expect(myApp.wasInitialized()).toEqual(true);
         expect(myApp.isMounted()).toEqual(false);
         expect(singleSpa.getMountedApps()).toEqual([]);
       });

@@ -35,14 +35,16 @@ describe("error handlers api", () => {
       expect(errs[0].message).toMatch(
         `'load-error' died in status LOADING_SOURCE_CODE: "Could not load this one"`,
       );
-      expect(singleSpa.getAppStatus("load-error")).toBe(singleSpa.LOAD_ERROR);
+      expect(singleSpa.getAppStatus("load-error")).toBe(
+        singleSpa.AppOrParcelStatus.LOAD_ERROR,
+      );
     });
   });
 
-  it(`reports an error during bootstrap`, () => {
+  it(`reports an error during init`, () => {
     const app = {
-      bootstrap() {
-        return Promise.reject(new Error(`couldn't bootstrap`));
+      init() {
+        return Promise.reject(new Error(`couldn't init`));
       },
       mount() {
         return Promise.resolve();
@@ -53,28 +55,28 @@ describe("error handlers api", () => {
     };
 
     singleSpa.registerApplication(
-      "bootstrap-error",
+      "init-error",
       app,
-      (location) => location.hash === "#bootstrap-error",
+      (location) => location.hash === "#init-error",
     );
 
-    location.hash = "#bootstrap-error";
+    location.hash = "#init-error";
 
     return singleSpa.triggerAppChange().then(() => {
       expect(errs.length).toBe(1);
-      expect(errs[0].appOrParcelName).toBe("bootstrap-error");
+      expect(errs[0].appOrParcelName).toBe("init-error");
       expect(errs[0].message).toMatch(
-        `'bootstrap-error' died in status BOOTSTRAPPING: couldn't bootstrap`,
+        `'init-error' died in status INITIALIZING: couldn't init`,
       );
-      expect(singleSpa.getAppStatus("bootstrap-error")).toBe(
-        singleSpa.SKIP_BECAUSE_BROKEN,
+      expect(singleSpa.getAppStatus("init-error")).toBe(
+        singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
       );
     });
   });
 
   it(`reports an error during mount`, () => {
     const app = {
-      bootstrap() {
+      init() {
         return Promise.resolve();
       },
       mount() {
@@ -106,7 +108,7 @@ describe("error handlers api", () => {
 
   it(`reports an error during unmount`, () => {
     const app = {
-      bootstrap() {
+      init() {
         return Promise.resolve();
       },
       mount() {
@@ -144,7 +146,7 @@ describe("error handlers api", () => {
 
   it(`reports an error during activity functions`, () => {
     const app = {
-      bootstrap() {
+      init() {
         return Promise.resolve();
       },
       mount() {
@@ -174,7 +176,7 @@ describe("error handlers api", () => {
 
   it(`only throws one error when the application or parcel fails to mount`, async () => {
     const app = {
-      async bootstrap() {},
+      async init() {},
       async mount() {
         throw Error("the mount failed");
       },

@@ -20,13 +20,13 @@ describe(`happy-unload app :`, () => {
     await singleSpa.triggerAppChange();
 
     expect(singleSpa.getAppStatus("skip-because-broken-unload")).toBe(
-      singleSpa.SKIP_BECAUSE_BROKEN,
+      singleSpa.AppOrParcelStatus.SKIP_BECAUSE_BROKEN,
     );
 
     await singleSpa.unloadApplication("skip-because-broken-unload");
 
     expect(singleSpa.getAppStatus("skip-because-broken-unload")).toBe(
-      singleSpa.NOT_LOADED,
+      singleSpa.AppOrParcelStatus.NOT_LOADED,
     );
   });
 });

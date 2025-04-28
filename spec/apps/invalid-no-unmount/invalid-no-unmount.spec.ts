@@ -32,9 +32,9 @@ describe(`invalid-no-unmount app`, () => {
 
   afterEach(() => singleSpa.removeErrorHandler(handleError));
 
-  it(`is never bootstrapped`, () => {
+  it(`is never initialized`, () => {
     return singleSpa.triggerAppChange().then(() => {
-      expect(myApp.isBootstrapped()).toEqual(false);
+      expect(myApp.isInitialized()).toEqual(false);
       expect(myApp.isMounted()).toEqual(false);
       expect(singleSpa.getMountedApps()).toEqual([]);
       expect(singleSpa.getAppStatus("./invalid-no-unmount.app")).toEqual(

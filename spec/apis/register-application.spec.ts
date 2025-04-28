@@ -33,7 +33,7 @@ describe("registerApplication", function () {
       unmount() {
         return Promise.resolve();
       },
-      bootstrap() {
+      init() {
         return Promise.resolve();
       },
     };
