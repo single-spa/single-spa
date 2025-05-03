@@ -64,7 +64,7 @@
   },
   "files": [
     "lib",
-    "typings"
+    "src"
   ],
   "homepage": "https://single-spa.js.org",
   "repository": "https://github.com/single-spa/single-spa",
