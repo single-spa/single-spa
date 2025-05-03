@@ -1,5 +1,11 @@
 # Changelog
 
+## 7.0.0-beta.7
+
+### Patch Changes
+
+- [#1309](https://github.com/single-spa/single-spa/pull/1309) [`d27ba8e`](https://github.com/single-spa/single-spa/commit/d27ba8eb18a4916f26f5d8e56507e6b678a1cf7f) Thanks [@jolyndenning](https://github.com/jolyndenning)! - Publish src folder to npm for source maps
+
 ## 7.0.0-beta.6
 
 ### Major Changes
