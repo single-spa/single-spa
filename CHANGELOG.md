@@ -1,5 +1,11 @@
 # Changelog
 
+## 7.0.0-beta.8
+
+### Patch Changes
+
+- [#1312](https://github.com/single-spa/single-spa/pull/1312) [`1419b68`](https://github.com/single-spa/single-spa/commit/1419b68c5f1b7d5f7efbafb244bff3ba97a1ec04) Thanks [@jolyndenning](https://github.com/jolyndenning)! - Make timeouts optional on ParcelConfig type
+
 ## 7.0.0-beta.7
 
 ### Patch Changes
