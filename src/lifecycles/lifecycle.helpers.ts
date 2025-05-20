@@ -94,7 +94,7 @@ export type ParcelConfig<ExtraProps = CustomProps> =
 type ParcelProps = { domElement: HTMLElement };
 export type ParcelConfigObject<ExtraProps = CustomProps> = {
   name?: string;
-  timeouts: AppOrParcelTimeouts;
+  timeouts?: AppOrParcelTimeouts;
 } & LifeCycles<ExtraProps>;
 
 export type LifeCycleFn<ExtraProps> = (
