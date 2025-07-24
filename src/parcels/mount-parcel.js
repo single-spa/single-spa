@@ -90,38 +90,48 @@ export function mountParcel(config, customProps) {
       : NOT_BOOTSTRAPPED,
     customProps,
     parentName: toName(owningAppOrParcel),
+    internalUnmountPromise: undefined,
     unmountThisParcel() {
-      return mountPromise
-        .then(() => {
-          if (parcel.status !== MOUNTED) {
-            throw Error(
-              formatErrorMessage(
-                6,
-                __DEV__ &&
-                  `Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`,
-                name,
-                parcel.status
-              )
-            );
-          }
-          return toUnmountPromise(parcel, true);
-        })
-        .then((value) => {
-          if (parcel.parentName) {
-            delete owningAppOrParcel.parcels[parcel.id];
-          }
+      // In some cases it is possible for a parcel to be in an unmounting status when `unmountThisParcel` is called a second time.
+      // https://github.com/single-spa/single-spa/issues/1184
+      if (parcel.internalUnmountPromise) {
+        return parcel.internalUnmountPromise;
+      } else {
+        const unmountPromise = mountPromise
+          .then(() => {
+            if (parcel.status !== MOUNTED) {
+              throw Error(
+                formatErrorMessage(
+                  6,
+                  __DEV__ &&
+                    `Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`,
+                  name,
+                  parcel.status
+                )
+              );
+            }
+            return toUnmountPromise(parcel, true);
+          })
+          .then((value) => {
+            if (parcel.parentName) {
+              delete owningAppOrParcel.parcels[parcel.id];
+            }
 
-          return value;
-        })
-        .then((value) => {
-          resolveUnmount(value);
-          return value;
-        })
-        .catch((err) => {
-          parcel.status = SKIP_BECAUSE_BROKEN;
-          rejectUnmount(err);
-          throw err;
-        });
+            return value;
+          })
+          .then((value) => {
+            resolveUnmount(value);
+            this.internalUnmountPromise = undefined;
+            return value;
+          })
+          .catch((err) => {
+            parcel.status = SKIP_BECAUSE_BROKEN;
+            rejectUnmount(err);
+            throw err;
+          });
+        parcel.internalUnmountPromise = unmountPromise;
+        return unmountPromise;
+      }
     },
   };
 
