@@ -40,6 +40,8 @@ export type {
 
 export { AppOrParcelStatus } from "./applications/app.helpers";
 
+export { serverRender } from "./server/server-render";
+
 import devtools from "./devtools/devtools";
 import { isInBrowser } from "./utils/runtime-environment";
 
