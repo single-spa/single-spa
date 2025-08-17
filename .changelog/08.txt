@@ -1,0 +1,2 @@
+breaking
+Remove support for legacy lifecyle method
