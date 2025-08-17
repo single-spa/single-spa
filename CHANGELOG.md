@@ -1,5 +1,9 @@
 # Changelog
 
+## 7.0.0-beta.9
+
+- feature: Support calling parcel lifecycle methods consecutively without waiting for completion
+
 ## 7.0.0-beta.8
 
 ### Patch Changes
