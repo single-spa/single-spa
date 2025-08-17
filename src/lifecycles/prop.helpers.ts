@@ -6,7 +6,6 @@ import { AppOrParcel, CustomProps, InternalParcel } from "./lifecycle.helpers";
 interface SingleSpaProps {
   name: string;
   mountParcel: typeof mountParcel;
-  singleSpa: typeof singleSpa;
   unmountSelf(): Promise<AppOrParcel>;
 }
 

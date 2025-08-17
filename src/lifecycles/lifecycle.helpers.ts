@@ -80,7 +80,6 @@ export type CustomPropsFn<ExtraProps extends CustomProps = CustomProps> = (
 
 export type AppProps = {
   name: string;
-  singleSpa: any;
   mountParcel(
     parcelConfig: ParcelConfig,
     customProps: ParcelProps & CustomProps,
