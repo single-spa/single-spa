@@ -172,13 +172,11 @@ describe(`root parcels`, () => {
       .then(
         () =>
           new Promise((resolve, reject) => {
-            console.log("mount promise");
             setTimeout(resolve, 20);
           }),
       )
       .then(parcel.unmount)
       .then(() => {
-        console.log("unmounted");
         expect(parcel.getStatus()).toBe(
           singleSpa.AppOrParcelStatus.NOT_MOUNTED,
         );
