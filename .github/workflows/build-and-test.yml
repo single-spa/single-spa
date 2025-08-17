@@ -10,18 +10,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          # Necessary for changeset status to work
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
       - uses: pnpm/action-setup@v4
-      # Necessary for changeset status to work
-      - run: git checkout main && git checkout $GITHUB_SHA
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
       - run: pnpm test
       - run: pnpm run check-format
       - run: pnpm run lint
-      - run: pnpm exec changeset status
