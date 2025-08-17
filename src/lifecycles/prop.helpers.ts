@@ -1,4 +1,3 @@
-import * as singleSpa from "../single-spa";
 import { mountParcel } from "../parcels/mount-parcel";
 import { isParcel, toName } from "../applications/app.helpers";
 import { formatErrorMessage } from "../applications/app-errors";
@@ -7,7 +6,6 @@ import { AppOrParcel, CustomProps, InternalParcel } from "./lifecycle.helpers";
 interface SingleSpaProps {
   name: string;
   mountParcel: typeof mountParcel;
-  singleSpa: typeof singleSpa;
   unmountSelf(): Promise<AppOrParcel>;
 }
 
@@ -38,7 +36,6 @@ export function getProps(
   const result: SingleSpaProps = Object.assign({}, customProps, {
     name,
     mountParcel: mountParcel.bind(appOrParcel),
-    singleSpa,
   });
 
   if (isParcel(appOrParcel)) {
