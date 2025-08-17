@@ -1,9 +1,3 @@
-# single-spa
-
-## 7.0.0
-
-- fix: Replace changesets with heeler
-
 # Changelog
 
 ## 7.0.0-beta.8
