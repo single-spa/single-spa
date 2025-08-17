@@ -1,1 +1,1 @@
-pnpm exec pretty-quick --staged && pnpm exec concurrently pnpm:test pnpm:lint
+pnpm exec pretty-quick --staged && pnpm test

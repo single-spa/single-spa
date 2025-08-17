@@ -3,47 +3,22 @@
   "version": "7.0.0-beta.8",
   "description": "The router for easy microfrontends",
   "type": "module",
-  "main": "./lib/esm/single-spa.min.js",
-  "types": "./lib/esm/single-spa.d.ts",
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748",
   "publishConfig": {
     "access": "public"
   },
   "exports": {
     ".": {
       "development": {
-        "import": {
-          "types": "./lib/esm/single-spa.d.ts",
-          "default": "./lib/esm/single-spa.min.js"
-        },
-        "require": {
-          "types": "./lib/umd/single-spa.d.cts",
-          "default": "./lib/umd/single-spa.min.cjs"
-        }
-      },
-      "production": {
-        "import": {
-          "types": "./lib/esm/single-spa.d.ts",
-          "default": "./lib/esm/single-spa.min.js"
-        },
-        "require": {
-          "types": "./lib/umd/single-spa.d.cts",
-          "default": "./lib/umd/single-spa.min.cjs"
-        }
+        "default": "./lib/esm/single-spa.dev.js",
+        "types": "./lib/esm/single-spa.d.ts"
       },
       "default": {
-        "import": {
-          "types": "./lib/esm/single-spa.d.ts",
-          "default": "./lib/esm/single-spa.min.js"
-        },
-        "require": {
-          "types": "./lib/umd/single-spa.d.cts",
-          "default": "./lib/umd/single-spa.min.cjs"
-        }
+        "default": "./lib/esm/single-spa.min.js",
+        "types": "./lib/esm/single-spa.d.ts"
       }
     },
-    "./package.json": "./package.json",
-    "./lib/*": "./lib/*"
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "pnpm run clean && concurrently pnpm:build:dev pnpm:build:prod && rimraf ./lib/umd/types-unbundled ./lib/esm/types-unbundled",
@@ -58,7 +33,6 @@
     "test:lockfile": "js-correct-lockfile pnpm",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
-    "lint": "eslint src",
     "prepare": "husky",
     "prepublishOnly": "pnpm run build"
   },
@@ -82,7 +56,7 @@
     "microservices",
     "frontend"
   ],
-  "author": "Joel Denning",
+  "author": "Jolyn Denning",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.26.9",
@@ -90,8 +64,6 @@
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-typescript": "^7.26.0",
     "@babel/runtime": "^7.26.9",
-    "@eslint/eslintrc": "^3.3.0",
-    "@eslint/js": "^9.21.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
@@ -99,15 +71,10 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/jest": "^29.5.14",
-    "@typescript-eslint/parser": "^8.26.0",
     "babel-jest": "^29.7.0",
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "concurrently": "^9.1.2",
     "cross-env": "^7.0.2",
-    "eslint": "9.21.0",
-    "eslint-config-important-stuff": "^1.1.0",
-    "eslint-plugin-es5": "^1.5.0",
-    "globals": "^16.0.0",
     "heeler": "^3.1.0",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
