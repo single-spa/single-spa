@@ -122,13 +122,6 @@ export function toLoadPromise(
 
           appBeingLoaded.status = AppOrParcelStatus.NOT_INITIALIZED;
           appBeingLoaded.init = flattenFnArray(lifecycles, "init", false);
-          if (!lifecycles.init && lifecycles["bootstrap"]) {
-            appBeingLoaded.init = flattenFnArray(
-              lifecycles,
-              "bootstrap",
-              false,
-            );
-          }
           appBeingLoaded.mount = flattenFnArray(lifecycles, "mount", false);
           appBeingLoaded.unmount = flattenFnArray(lifecycles, "unmount", false);
           appBeingLoaded.unload = flattenFnArray(lifecycles, "unload", false);
