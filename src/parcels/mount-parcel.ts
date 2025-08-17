@@ -96,38 +96,39 @@ export function mountParcel(
       : AppOrParcelStatus.NOT_INITIALIZED,
     customProps,
     parentName: toName(owningAppOrParcel),
+    currentTask: undefined,
     unmountThisParcel() {
-      return mountPromise
-        .then(() => {
-          if (parcel.status !== AppOrParcelStatus.MOUNTED) {
-            throw Error(
-              formatErrorMessage(
-                6,
-                __DEV__ &&
-                  `Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`,
-                name,
-                parcel.status,
-              ),
-            );
-          }
-          return toUnmountPromise(parcel as InternalParcel, true);
-        })
-        .then((value) => {
-          if (parcel.parentName) {
-            delete owningAppOrParcel.parcels[parcel.id];
-          }
+      return parcel.currentTask.then(() => {
+        if (parcel.status !== AppOrParcelStatus.MOUNTED) {
+          throw Error(
+            formatErrorMessage(
+              6,
+              __DEV__ &&
+                `Cannot unmount parcel '${name}' -- it is in a ${parcel.status} status`,
+              name,
+              parcel.status,
+            ),
+          );
+        }
 
-          return value;
-        })
-        .then((value) => {
-          resolveUnmount(value);
-          return value;
-        })
-        .catch((err) => {
-          parcel.status = AppOrParcelStatus.SKIP_BECAUSE_BROKEN;
-          rejectUnmount(err);
-          throw err;
-        });
+        return toUnmountPromise(parcel as InternalParcel, true)
+          .then((value) => {
+            if (parcel.parentName) {
+              delete owningAppOrParcel.parcels[parcel.id];
+            }
+
+            return value;
+          })
+          .then((value) => {
+            resolveUnmount(value);
+            return value;
+          })
+          .catch((err) => {
+            parcel.status = AppOrParcelStatus.SKIP_BECAUSE_BROKEN;
+            rejectUnmount(err);
+            throw err;
+          });
+      });
     },
   };
 
@@ -232,9 +233,11 @@ export function mountParcel(
   const initPromise = loadPromise.then(() =>
     toInitPromise(parcel as InternalParcel, true),
   );
-  const mountPromise = initPromise.then(() =>
-    toMountPromise(parcel as InternalParcel, true),
+
+  const mountPromise = initPromise.then(
+    () => (parcel.currentTask = toMountPromise(parcel as InternalParcel, true)),
   );
+  parcel.currentTask = mountPromise;
 
   let resolveUnmount, rejectUnmount;
 
@@ -283,11 +286,13 @@ export function mountParcel(
     (config) => {
       if (config.update) {
         externalRepresentation.update = function (customProps) {
-          parcel.customProps = customProps;
+          return (parcel.currentTask = parcel.currentTask.then(() => {
+            parcel.customProps = customProps;
 
-          return promiseWithoutReturnValue(
-            toUpdatePromise(parcel as InternalParcel),
-          );
+            return promiseWithoutReturnValue(
+              toUpdatePromise(parcel as InternalParcel),
+            );
+          }));
         };
       }
     },

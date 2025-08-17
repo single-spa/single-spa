@@ -182,6 +182,53 @@ describe(`root parcels`, () => {
         );
       });
   });
+
+  it(`allows for calling update before mount promise has finished`, async () => {
+    const parcelConfig = createParcelConfig({ withUpdate: true });
+
+    const parcel = singleSpa.mountRootParcel(parcelConfig, {
+      domElement: document.createElement("div"),
+    });
+
+    expect(parcel.getStatus()).toBe(
+      singleSpa.AppOrParcelStatus.NOT_INITIALIZED,
+    );
+    await parcel.initPromise;
+
+    expect(parcel.getStatus()).toBe(singleSpa.AppOrParcelStatus.MOUNTING);
+    const updatePromise = parcel.update({ newProp: 1 });
+    await parcel.mountPromise;
+
+    expect(parcel.getStatus()).toBe(singleSpa.AppOrParcelStatus.UPDATING);
+
+    await updatePromise;
+    expect(parcel.getStatus()).toBe(singleSpa.AppOrParcelStatus.MOUNTED);
+  });
+
+  it(`allows for calling update multiple times consecutively`, async () => {
+    const parcelConfig = createParcelConfig({ withUpdate: true });
+
+    const parcel = singleSpa.mountRootParcel(parcelConfig, {
+      domElement: document.createElement("div"),
+    });
+
+    expect(parcel.getStatus()).toBe(
+      singleSpa.AppOrParcelStatus.NOT_INITIALIZED,
+    );
+    await parcel.initPromise;
+
+    expect(parcel.getStatus()).toBe(singleSpa.AppOrParcelStatus.MOUNTING);
+    const updatePromise = parcel.update({ newProp: 1 });
+    const updatePromise2 = parcel.update({ newProp: 2 });
+
+    await updatePromise;
+    expect(parcelConfig.updateCalls).toEqual(1);
+    expect(parcelConfig.updateProps.newProp).toEqual(1);
+
+    await updatePromise2;
+    expect(parcelConfig.updateCalls).toEqual(2);
+    expect(parcelConfig.updateProps.newProp).toEqual(2);
+  });
 });
 
 function createParcelConfig(opts = {}) {
@@ -209,6 +256,7 @@ function createParcelConfig(opts = {}) {
     parcelConfig.updateCalls = 0;
     parcelConfig.update = function (props) {
       parcelConfig.updateCalls++;
+      parcelConfig.updateProps = props;
       return Promise.resolve();
     };
   }

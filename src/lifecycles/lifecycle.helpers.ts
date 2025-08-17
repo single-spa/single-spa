@@ -145,6 +145,7 @@ export interface InternalParcel {
   customProps: CustomProps;
   parentName: string;
   unmountThisParcel(): Promise<AppOrParcel>;
+  currentTask: Promise<LoadedAppOrParcel>;
   timeouts: AppOrParcelTimeouts;
 }
 
