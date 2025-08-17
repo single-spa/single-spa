@@ -1,2 +1,0 @@
-breaking
-Remove UMD and SystemJS builds

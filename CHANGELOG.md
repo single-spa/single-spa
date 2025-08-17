@@ -1,4 +1,16 @@
-# Changelog
+# single-spa
+
+## 7.0.0-beta.9
+
+- breaking: Remove singleSpa prop
+- breaking: Remove support for legacy lifecyle method
+- fix: Fix author in package.json
+- breaking: Remove lib folder from exports
+- breaking: Remove types and main from package.json.
+- breaking: Remove UMD and SystemJS builds
+- fix: Update FUNDING.yml
+- fix: Switch from changesets to heeler
+- fix: Replace changesets with heeler
 
 ## 7.0.0-beta.8
 
