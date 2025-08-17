@@ -39,8 +39,8 @@ const resolveOpts = {
   extensions: [".ts", ".js"],
 };
 
-function generateBanner(format) {
-  return `/* single-spa@${packageJson.version} - ${format} - ${
+function generateBanner() {
+  return `/* single-spa@${packageJson.version} - ESM - ${
     isProduction ? "prod" : "dev"
   } */`;
 }
@@ -59,25 +59,6 @@ const commonConfiguration = {
 };
 
 export default async () => [
-  // UMD build
-  {
-    ...commonConfiguration,
-    output: {
-      file: `./lib/umd/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
-      format: "umd",
-      name: "singleSpa",
-      sourcemap: true,
-      banner: generateBanner("UMD"),
-    },
-    plugins: [
-      ...commonPlugins,
-      // Typecheck, and emit declaration files
-      typescript({
-        declarationDir: "./lib/umd/types-unbundled",
-        noEmitOnError: true,
-      }),
-    ],
-  },
   // ESM build
   {
     ...commonConfiguration,
@@ -96,17 +77,6 @@ export default async () => [
       }),
     ],
   },
-  // System build
-  {
-    ...commonConfiguration,
-    output: {
-      file: `./lib/system/single-spa${isProduction ? ".min" : ".dev"}.cjs`,
-      format: "system",
-      sourcemap: true,
-      banner: generateBanner("SystemJS"),
-    },
-    plugins: [...commonPlugins],
-  },
   // For compatibility with node16 module resolution, types are bundled
   // Bundle ESM types
   {
@@ -114,15 +84,6 @@ export default async () => [
     output: {
       file: `./lib/esm/single-spa.d.ts`,
       format: "es",
-    },
-    plugins: [dts()],
-  },
-  // Bundle CJS types
-  {
-    input: `./lib/umd/types-unbundled/single-spa.d.ts`,
-    output: {
-      file: `./lib/umd/single-spa.d.cts`,
-      format: "cjs",
     },
     plugins: [dts()],
   },

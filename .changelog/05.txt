@@ -1,0 +1,2 @@
+breaking
+Remove types and main from package.json.
