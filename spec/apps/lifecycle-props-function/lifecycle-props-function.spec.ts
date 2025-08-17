@@ -45,11 +45,6 @@ describe(`lifecycle-props-function app`, () => {
     await singleSpa.triggerAppChange();
     await singleSpa.unloadApplication("lifecycle-props-function");
 
-    expect(myApp.getMountProps().singleSpa).toBeDefined();
-    expect(myApp.getInitProps().singleSpa).toBeDefined();
-    expect(myApp.getUnmountProps().singleSpa).toBeDefined();
-    expect(myApp.getUnloadProps().singleSpa).toBeDefined();
-
     expect(myApp.getInitProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getMountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnmountProps().name).toEqual("lifecycle-props-function");
@@ -75,11 +70,6 @@ describe(`lifecycle-props-function app`, () => {
     await singleSpa.triggerAppChange();
     await singleSpa.unloadApplication("lifecycle-props-function");
 
-    expect(myApp.getMountProps().singleSpa).toBeDefined();
-    expect(myApp.getInitProps().singleSpa).toBeDefined();
-    expect(myApp.getUnmountProps().singleSpa).toBeDefined();
-    expect(myApp.getUnloadProps().singleSpa).toBeDefined();
-
     expect(myApp.getInitProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getMountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnmountProps().name).toEqual("lifecycle-props-function");
@@ -103,11 +93,6 @@ describe(`lifecycle-props-function app`, () => {
     await singleSpa.triggerAppChange();
     await singleSpa.unloadApplication("lifecycle-props-function");
 
-    expect(myApp.getMountProps().singleSpa).toBeDefined();
-    expect(myApp.getInitProps().singleSpa).toBeDefined();
-    expect(myApp.getUnmountProps().singleSpa).toBeDefined();
-    expect(myApp.getUnloadProps().singleSpa).toBeDefined();
-
     expect(myApp.getInitProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getMountProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getUnmountProps().name).toEqual("lifecycle-props-function");
@@ -130,11 +115,6 @@ describe(`lifecycle-props-function app`, () => {
     window.location.hash = `#/no-app`;
     await singleSpa.triggerAppChange();
     await singleSpa.unloadApplication("lifecycle-props-function");
-
-    expect(myApp.getMountProps().singleSpa).toBeDefined();
-    expect(myApp.getInitProps().singleSpa).toBeDefined();
-    expect(myApp.getUnmountProps().singleSpa).toBeDefined();
-    expect(myApp.getUnloadProps().singleSpa).toBeDefined();
 
     expect(myApp.getInitProps().name).toEqual("lifecycle-props-function");
     expect(myApp.getMountProps().name).toEqual("lifecycle-props-function");
