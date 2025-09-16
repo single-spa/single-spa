@@ -1,2 +1,0 @@
-fix
-Allow ActivityFn type to be called with URL, in addition to Location

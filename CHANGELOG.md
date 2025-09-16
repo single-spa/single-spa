@@ -1,5 +1,9 @@
 # single-spa
 
+## 7.0.0-beta.10
+
+- fix: Allow ActivityFn type to be called with URL, in addition to Location
+
 ## 7.0.0-beta.9
 
 - breaking: Remove singleSpa prop
