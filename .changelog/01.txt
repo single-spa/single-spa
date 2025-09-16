@@ -1,2 +1,2 @@
 fix
-Allow Activity type to be called with URL, in addition to Location
+Allow ActivityFn type to be called with URL, in addition to Location
