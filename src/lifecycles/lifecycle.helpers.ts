@@ -170,7 +170,8 @@ export type LoadApp<ExtraProps = {}> = (
   config: ExtraProps & AppProps,
 ) => Promise<LifeCycles<ExtraProps>>;
 
-export type ActivityFn = (location: Location) => boolean;
+// URL type for server-side usage, or manually calling activity functions
+export type ActivityFn = (location: Location | URL) => boolean;
 
 export type Activity = ActivityFn | string | (ActivityFn | string)[];
 
