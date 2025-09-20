@@ -1,5 +1,9 @@
 # single-spa
 
+## 7.0.0-beta.11
+
+- fix: Mark exactMatch parameter as optional 42fcb0b ([#1339](https://single-spa.js.org/pull/1339)) by Jolyn
+
 ## 7.0.0-beta.10
 
 - fix: Allow ActivityFn type to be called with URL, in addition to Location
