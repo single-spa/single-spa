@@ -500,7 +500,7 @@ function sanitizeActiveWhen(activeWhen: Activity): ActivityFn {
 
 export function pathToActiveWhen(
   path: string,
-  exactMatch: boolean,
+  exactMatch?: boolean,
 ): ActivityFn {
   const regex = toDynamicPathValidatorRegex(path, exactMatch);
 
@@ -513,7 +513,7 @@ export function pathToActiveWhen(
   };
 }
 
-function toDynamicPathValidatorRegex(path: string, exactMatch: boolean) {
+function toDynamicPathValidatorRegex(path: string, exactMatch?: boolean) {
   let lastIndex: number = 0,
     inDynamic: boolean = false,
     regexStr: string = "^";

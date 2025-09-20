@@ -75,7 +75,7 @@
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "concurrently": "^9.1.2",
     "cross-env": "^7.0.2",
-    "heeler": "^3.1.0",
+    "heeler": "^4.0.2",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
