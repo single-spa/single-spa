@@ -19,7 +19,12 @@ export {
 } from "./applications/apps";
 export { navigateToUrl, patchHistoryApi } from "./navigation/navigation-events";
 export { triggerAppChange } from "./navigation/reroute";
-export { addErrorHandler, removeErrorHandler } from "./applications/app-errors";
+export {
+  addErrorHandler,
+  removeErrorHandler,
+  type SingleSpaError,
+  type ErrorHandler,
+} from "./applications/app-errors";
 export { mountRootParcel } from "./parcels/mount-parcel";
 export type {
   CustomProps,
