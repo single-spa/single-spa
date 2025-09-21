@@ -22,8 +22,8 @@ export { triggerAppChange } from "./navigation/reroute";
 export {
   addErrorHandler,
   removeErrorHandler,
-  SingleSpaError,
-  ErrorHandler,
+  type SingleSpaError,
+  type ErrorHandler,
 } from "./applications/app-errors";
 export { mountRootParcel } from "./parcels/mount-parcel";
 export type {
