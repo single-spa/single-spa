@@ -1,2 +1,0 @@
-feature
-Export SingleSpaError and ErrorHandler types

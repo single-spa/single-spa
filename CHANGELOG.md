@@ -1,5 +1,9 @@
 # single-spa
 
+## 7.0.0-beta.12
+
+- feature: Export SingleSpaError and ErrorHandler types acd2ca2 ([#1340](https://single-spa.js.org/pull/1340)) by Jolyn
+
 ## 7.0.0-beta.11
 
 - fix: Mark exactMatch parameter as optional 42fcb0b ([#1339](https://single-spa.js.org/pull/1339)) by Jolyn
