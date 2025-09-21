@@ -3,11 +3,11 @@ import { AppOrParcelStatus, objectType, toName } from "./app.helpers";
 
 let errorHandlers: ErrorHandler[] = [];
 
-type SingleSpaError = Error & {
+export type SingleSpaError = Error & {
   appOrParcelName: string;
 };
 
-type ErrorHandler = (err: SingleSpaError) => any;
+export type ErrorHandler = (err: SingleSpaError) => any;
 
 export function handleAppError(
   err: Error,
