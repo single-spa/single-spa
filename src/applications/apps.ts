@@ -27,6 +27,7 @@ import {
   LoadApp,
   LoadedApp,
   RegisterApplicationConfig,
+  SingleSpaLocation,
 } from "../lifecycles/lifecycle.helpers";
 
 const apps: InternalApplication[] = [];
@@ -176,7 +177,7 @@ export function registerApplication<ExtraProps extends CustomProps = {}>(
 }
 
 export function checkActivityFunctions(
-  location: Location = window.location,
+  location: SingleSpaLocation = window.location,
 ): string[] {
   return apps.filter((app) => app.activeWhen(location)).map(toName);
 }
