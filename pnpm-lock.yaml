@@ -57,8 +57,8 @@ importers:
         specifier: ^7.0.2
         version: 7.0.3
       heeler:
-        specifier: ^4.0.3
-        version: 4.0.3
+        specifier: ^4.0.4
+        version: 4.0.4
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -1635,8 +1635,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  heeler@4.0.3:
-    resolution: {integrity: sha512-cFhbxif7zijtG7Tw7MNIylFJS+sGG6dRc9J7mwgcYly4etVPxZ9E17ib0jaDzDcotZKs0KwuGHGcbikMMXSxxw==}
+  heeler@4.0.4:
+    resolution: {integrity: sha512-to5dNnuxJFXEmIX7rGwhSCsVYFIWA+hUBx7pPTDA9L0XgeXirPMJGbal2YnBlEPWsyYNSoLi4lhnShI2MyTTgA==}
     hasBin: true
 
   html-encoding-sniffer@3.0.0:
@@ -4335,7 +4335,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  heeler@4.0.3: {}
+  heeler@4.0.4: {}
 
   html-encoding-sniffer@3.0.0:
     dependencies:
