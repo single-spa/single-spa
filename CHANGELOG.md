@@ -1,5 +1,11 @@
 # single-spa
 
+## 7.0.0-beta.13
+
+- fix: Upgrade heeler 10d315a ([#1344](https://single-spa.js.org/pull/1344)) by Jolyn
+- fix: Upgrade heeler f9dc712 ([#1342](https://single-spa.js.org/pull/1342)) by Jolyn
+- feature: Relax type constraints on activity functions and checkActivityFunctions c74119c ([#1341](https://single-spa.js.org/pull/1341)) by Jolyn
+
 ## 7.0.0-beta.12
 
 - feature: Export SingleSpaError and ErrorHandler types acd2ca2 ([#1340](https://single-spa.js.org/pull/1340)) by Jolyn
