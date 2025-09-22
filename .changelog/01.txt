@@ -1,0 +1,2 @@
+feature
+Relax type constraints on activity functions and checkActivityFunctions

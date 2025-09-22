@@ -170,8 +170,13 @@ export type LoadApp<ExtraProps = {}> = (
   config: ExtraProps & AppProps,
 ) => Promise<LifeCycles<ExtraProps>>;
 
-// URL type for server-side usage, or manually calling activity functions
-export type ActivityFn = (location: Location | URL) => boolean;
+export interface SingleSpaLocation {
+  pathname: URL["pathname"];
+  hash?: URL["hash"];
+  search?: string;
+}
+
+export type ActivityFn = (location: SingleSpaLocation) => boolean;
 
 export type Activity = ActivityFn | string | (ActivityFn | string)[];
 
