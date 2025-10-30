@@ -9,14 +9,14 @@ declare module "single-spa" {
     location: Location
   ) => ExtraProps;
 
-  export type AppProps = {
+  export interface AppProps {
     name: string;
-    singleSpa: any;
+    singleSpa: typeof import("single-spa");
     mountParcel(
       parcelConfig: ParcelConfig,
       customProps: ParcelProps & CustomProps
     ): Parcel;
-  };
+  }
 
   export type ParcelConfig<ExtraProps = CustomProps> =
     | ParcelConfigObject<ExtraProps>
