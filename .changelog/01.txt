@@ -1,0 +1,2 @@
+feature
+Replace jQuery any types with an exported SingleSpaJQuery interface
