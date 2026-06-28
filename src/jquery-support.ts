@@ -1,8 +1,18 @@
 import { routingEventsListeningTo } from "./navigation/navigation-events";
 
+export interface SingleSpaJQuery {
+  fn: {
+    jquery?: string;
+    on: Function;
+    off: Function;
+  };
+}
+
 let hasInitialized: boolean = false;
 
-export function ensureJQuerySupport(jQuery: any = window.jQuery): void {
+export function ensureJQuerySupport(
+  jQuery: SingleSpaJQuery | undefined = window.jQuery,
+): void {
   if (!jQuery && window?.$?.fn?.jquery) {
     jQuery = window.$;
   }
@@ -65,7 +75,7 @@ function captureRoutingEvents(
 
 declare global {
   interface Window {
-    jQuery?: any;
-    $?: any;
+    jQuery?: SingleSpaJQuery;
+    $?: SingleSpaJQuery;
   }
 }

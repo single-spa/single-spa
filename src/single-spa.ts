@@ -1,6 +1,6 @@
 export { start } from "./start";
 export type { StartOpts } from "./start";
-export { ensureJQuerySupport } from "./jquery-support";
+export { ensureJQuerySupport, type SingleSpaJQuery } from "./jquery-support";
 export {
   setInitMaxTime,
   setMountMaxTime,
